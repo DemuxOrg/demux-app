@@ -1,0 +1,56 @@
+# Continuous integration: runs on every push and pull request.
+# - backend: ruff + pytest against a real Postgres service container
+# - frontend: eslint + type check + production build
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: demux
+          POSTGRES_PASSWORD: demux
+          POSTGRES_DB: demux_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U demux" --health-interval 5s
+          --health-timeout 3s --health-retries 10
+    env:
+      DATABASE_URL: postgresql+asyncpg://demux:demux@localhost:5432/demux_test
+      TEST_DATABASE_URL: postgresql+asyncpg://demux:demux@localhost:5432/demux_test
+      FRONTEND_URL: http://localhost:3000
+      ENV: test
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pytest
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm exec tsc --noEmit
+      - run: pnpm build

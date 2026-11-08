@@ -1,0 +1,23 @@
+# Local infrastructure: Postgres only. Backend and frontend run natively (see Makefile).
+# Credentials come from .env (copy .env.example). Data persists in the `pgdata` volume.
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-demux}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-demux}
+      POSTGRES_DB: ${POSTGRES_DB:-demux}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Creates the `demux_test` database on first start.
+      - ./docker/init-test-db.sql:/docker-entrypoint-initdb.d/init-test-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:
