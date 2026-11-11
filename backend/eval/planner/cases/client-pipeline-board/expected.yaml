@@ -1,0 +1,12 @@
+outcome: ok
+record_types:
+  - name: client
+    synonyms: [lead, prospect, contact, client_conversation, deal]
+    source: extracted
+    required_fields:
+      - {name: name, synonyms: [client_name, company, contact_name, client], type: string, support: found}
+      - {name: stage, synonyms: [status, pipeline_stage, state], type: enum, support: found}
+    optional_fields: [quote_amount, quoted_amount, quote, project, last_contact, last_contact_date, email, contact_email, summary]
+    forbidden_fields: [newsletter_topic, sale_discount, dentist_time]
+forbidden_record_types: [invoice, newsletter, calendar_event]
+notes: "Stage enum from wording: enquiry/new, quote_sent, gone_quiet (Reed, Lindqvist, Haddad pending), accepted/won (Sage Green, Marini, Wright Fit, Wild Thistle, Mei), lost/declined (Lindqvist, Daniel Kerr turned away). Clients span several threads (Mei, Reed, Marini, Wright, Haddad, Lindqvist) and quotes get revised (Bloom 4,250 revised; Wild Thistle 5,200; Wright 7,000), so extracted; some labellers might say thread (one conversation = one card) - genuinely ambiguous. Quote amount is only in a paraphrase so optional, not required; some clients have no quote (Oliver, Ana, Ravi). Noise: LinkedIn, newsletters, dentist, sale, security, thank-you note."

@@ -1,0 +1,14 @@
+outcome: ok
+record_types:
+  - name: shipment
+    synonyms: [parcel, incoming_shipment, order, package, delivery]
+    source: extracted
+    required_fields:
+      - {name: supplier, synonyms: [sender, vendor, seller, from], type: string, support: found}
+      - {name: expected_arrival, synonyms: [eta, expected_delivery, delivery_date, expected_date, arrival_date], type: date, support: found}
+      - {name: tracking_number, synonyms: [tracking, tracking_reference, tracking_id, tracking_ref], type: string, support: found}
+      - {name: duty, synonyms: [import_duty, duty_amount, customs_duty, duty_charges], type: money, support: not_found}
+    optional_fields: [status, order_number, order_reference, description, carrier, items]
+    forbidden_fields: [flight_time, hotel_stay, restaurant_name]
+forbidden_record_types: [flight, hotel_booking, food_order, supplier]
+notes: "No thread mentions import duty or customs charges: keep duty not_found (the 2.99 'release fee' is a phishing email, not duty). Shipments span several threads (SZ-5501 ordered/shipped/damaged/hub; Falk RF-77412-DE address exception then redelivery), some have no tracking (Mori air mail, Falk first mail) or only a vague ETA; delivered ones (PL Components, SZ-5501 arrived) are not 'still on its way'. Noise: food delivery, hotel, flight, book order (not parts), scam fee, delivery promo, bulk-discount mail."

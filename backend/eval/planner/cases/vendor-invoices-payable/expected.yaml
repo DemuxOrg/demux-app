@@ -1,0 +1,21 @@
+outcome: ok
+record_types:
+  - name: supplier
+    synonyms: [vendor, provider, company]
+    source: extracted
+    required_fields:
+      - {name: name, synonyms: [supplier_name, company, vendor_name, supplier], type: string, support: found}
+    optional_fields: [contact, contact_name, email, category, what_they_supply, outstanding_total]
+    forbidden_fields: [newsletter_topic, bank_account_balance]
+  - name: invoice
+    synonyms: [bill, supplier_bill, unpaid_bill, payable]
+    source: extracted
+    required_fields:
+      - {name: supplier, synonyms: [vendor, supplier_name, from, company], type: string, support: found}
+      - {name: amount, synonyms: [amount_owed, total, amount_due, owed], type: money, support: found}
+      - {name: due_date, synonyms: [due, deadline, payment_due], type: date, support: found}
+      - {name: po_number, synonyms: [purchase_order, po, po_reference, purchase_order_number, po_ref], type: string, support: not_found}
+    optional_fields: [invoice_number, status, paid, currency, notes]
+    forbidden_fields: [household_energy_bill, card_receipt_total]
+forbidden_record_types: [purchase_order, customer, expense]
+notes: "No thread contains any purchase order number: po_number must be kept as not_found. Many bills are already paid (CityWaste CW-40912, INV-2207, Greenfield 5531, Kestrel, eggs), superseded (Greenfield 5602 replaced by 5602A, Lumen 7714 to be reissued), disputed, or have no invoice number (Kestrel hand-written). Amounts shift with credits. Traps: phishing 'FINAL NOTICE' email, home energy bill (personal), fuel receipt, bank statement, survey, Billwise ad, bookkeeper request. Supplier set includes Harbor Flour, Packwell, CityWaste, Greenfield Dairy, Kestrel Cleaning, Sunny Lane Farm, Oak & Anvil, Lumen Print, Brightline Business."

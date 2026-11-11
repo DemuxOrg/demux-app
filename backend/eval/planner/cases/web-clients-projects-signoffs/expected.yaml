@@ -1,0 +1,28 @@
+outcome: ok
+record_types:
+  - name: client
+    synonyms: [customer, account]
+    source: extracted
+    required_fields:
+      - {name: name, synonyms: [client_name, company, business, client], type: string, support: found}
+    optional_fields: [contact, contact_name, email, status]
+    forbidden_fields: [newsletter_topic, domain_renewal_cost]
+  - name: project
+    synonyms: [job, website, site, build, engagement]
+    source: extracted
+    required_fields:
+      - {name: client, synonyms: [client_name, customer, company], type: string, support: found}
+      - {name: name, synonyms: [project_name, title, description, website, work, deliverable, what_building], type: string, support: found}
+      - {name: value, synonyms: [job_value, price, quote, amount, project_value, worth, budget, fee], type: money, support: found}
+    optional_fields: [status, stage, launch_date, deadline, deliverables]
+    forbidden_fields: [invoice_number]
+  - name: approval
+    synonyms: [signoff, sign_off, pending_approval, approval_request, pending_item]
+    source: extracted
+    required_fields:
+      - {name: client, synonyms: [client_name, customer, approver], type: string, support: found}
+      - {name: item, synonyms: [description, what, deliverable, approval_item, subject, request, awaiting], type: string, support: found}
+    optional_fields: [project, status, requested_date, asked_date, approver_name, state]
+    forbidden_fields: []
+forbidden_record_types: [invoice, domain, newsletter, task]
+notes: "Value is only stated for Qureshi (4,800 EUR) and Aubert (9,500 EUR); others (Lund, Okoye, Whitmore, Platt) have no stated value, but the field stays required with support found. Approvals: some are already given (Lund homepage, Whitmore go-live, Qureshi sitemap, Aubert template), some pending (Lund ordering wireframe -> asked to change delivery step, Qureshi contact form conditional ok, treatment pages copy, Whitmore staging) so status is useful (optional). Okoye: two contacts, 'changes please' is not approval. Zoe Platt blog redesign is only a prospect. Noise: invoices to Marco, accountant, domain, newsletters, ProofPilot ad. Genuinely unsure: approval might be modelled as a field on project instead of a separate type."

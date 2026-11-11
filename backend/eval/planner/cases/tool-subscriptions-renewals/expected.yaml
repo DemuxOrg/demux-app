@@ -1,0 +1,14 @@
+outcome: ok
+record_types:
+  - name: subscription
+    synonyms: [tool, software_subscription, saas, recurring_payment, service, plan]
+    source: extracted
+    required_fields:
+      - {name: tool_name, synonyms: [name, service, vendor, product, tool, subscription], type: string, support: found}
+      - {name: cost, synonyms: [price, amount, monthly_cost, plan_cost, fee], type: money, support: found}
+      - {name: renewal_date, synonyms: [next_renewal, next_billing_date, next_charge, renews_on, next_payment_date], type: date, support: found}
+      - {name: user, synonyms: [used_by, team_member, owner, users, assigned_to], type: string, support: found}
+    optional_fields: [billing_cycle, billing_period, plan, seats, status, auto_renew, currency]
+    forbidden_fields: [bank_statement_balance, receipt_total, expense_reimbursement]
+forbidden_record_types: [expense, invoice, team_member, newsletter]
+notes: "Who uses a tool appears only for some (Pixelforge: Mara and Jonas; Taskwise unused by Jonas; Chatterbox 6->8 seats; Mailrocket none), so support found but sparse. Prices change over time (StoreBox 14.99->17.99, Mailrocket 35->42, Pixelforge 329.94 vs 659.88, Chatterbox 48->64) and subscriptions are cancelled (ShieldVPN, Meetly) or still free (Plotline). Cost units vary (monthly vs annual). Noise: personal StreamBox, FitHub gym, QuickMart, one-off coffee machine, bank statement, domain renewal (borderline), side-project Dependabot, newsletters, promos."

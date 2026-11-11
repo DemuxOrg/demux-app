@@ -1,0 +1,21 @@
+outcome: ok
+record_types:
+  - name: candidate
+    synonyms: [applicant, applicant_record]
+    source: extracted
+    required_fields:
+      - {name: name, synonyms: [candidate_name, applicant_name, full_name], type: string, support: found}
+      - {name: stage, synonyms: [status, pipeline_stage, hiring_stage, process_stage], type: enum, support: found}
+      - {name: expected_pay, synonyms: [salary_expectation, expected_salary, desired_pay, pay_expectation, salary], type: money, support: not_found}
+    optional_fields: [email, applied_date, role, source, notes, next_interview, resume]
+    forbidden_fields: [reference_check_result, job_posting_views]
+  - name: interview
+    synonyms: [interview_slot, scheduled_interview, meeting]
+    source: extracted
+    required_fields:
+      - {name: candidate, synonyms: [candidate_name, applicant, name], type: string, support: found}
+      - {name: interview_date, synonyms: [date, datetime, date_time, scheduled_at, time, scheduled_time], type: date, support: found}
+    optional_fields: [round, interview_type, type, interviewer, duration, status]
+    forbidden_fields: []
+forbidden_record_types: [job_posting, job_alert, recruiter, newsletter]
+notes: "Nobody states pay expectations in any thread: keep expected_pay not_found. Noise: Marketing Manager applicant (Lucas) is a different role, hiring ads, job alerts, dentist, People Ops reminders. Stage enum from wording: applied, intro/screening call, technical interview, final interview, offer, rejected, withdrawn (Mina). Anonymous agency candidate 0412 has no name. Some interview dates are past (e.g. Kwame final 12 July) vs upcoming; Diego intro call date ambiguous (Wednesday). Candidates span several threads so extracted."

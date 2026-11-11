@@ -1,0 +1,12 @@
+outcome: ok
+record_types:
+  - name: email
+    synonyms: [message, thread, inbox_item, task, request, email_thread]
+    source: thread
+    required_fields:
+      - {name: urgency, synonyms: [priority, urgency_level, column, status], type: enum, support: found}
+      - {name: sender, synonyms: [from, requester, asked_by, sender_name, requested_by], type: string, support: found}
+    optional_fields: [subject, title, summary, deadline, due_date, sender_email, received_date, date]
+    forbidden_fields: [invoice_amount, flight_time, sale_discount]
+forbidden_record_types: [invoice, contact, meeting]
+notes: "One thread = one card, so thread source. Urgency enum from wording: burning/urgent (site down, ASAP, EOD sign-off), this_week (feedback this week, deadline Thursday), whenever (no rush, when you have a moment), fyi (policy, weekly numbers, invoice paid, printer). Traps: 'Urgent??' subject that turned out not bad; no-rush wording in urgent-looking threads (Katz bump vs. original); deadlines only sometimes present; threads already resolved by reply. Deadline only in a paraphrase so optional. Many automated/newsletter threads go to fyi."

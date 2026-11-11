@@ -1,0 +1,12 @@
+outcome: ok
+record_types:
+  - name: customer_email
+    synonyms: [support_request, customer_message, ticket, inquiry, customer_thread, support_thread]
+    source: thread
+    required_fields:
+      - {name: customer, synonyms: [customer_name, sender, from, requester, name], type: string, support: found}
+      - {name: waiting_since, synonyms: [received_date, last_customer_message_date, date, date_received, waiting_days, days_waiting, waiting_time], type: date, support: found}
+    optional_fields: [subject, topic, issue, summary, order_number, status, customer_email, category]
+    forbidden_fields: [invoice_amount, bank_statement, review_rating]
+forbidden_record_types: [invoice, order, review, newsletter]
+notes: "Only unanswered customer emails count: threads whose last message is from the customer and needs an answer (Rob discount code, Fatima third email, Chiara address change, Laura order 10482, Tomasz refund status, Yuki gift receipt, gregory broken wheel after photo, Dee paint question). Traps: already-answered threads, customer last message is just thanks (no reply needed), Yuki damaged box says no action needed, Katherine quote later sent. Auto-reply, surveys, vendor invoice, bank, promos are noise. How long waiting is derived from the date, so a date field with days_waiting synonym is accepted."

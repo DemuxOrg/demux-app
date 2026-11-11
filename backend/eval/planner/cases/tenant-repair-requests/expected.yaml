@@ -1,0 +1,12 @@
+outcome: ok
+record_types:
+  - name: repair_request
+    synonyms: [repair_issue, maintenance_issue, issue, repair, maintenance_request, ticket]
+    source: extracted
+    required_fields:
+      - {name: description, synonyms: [issue, problem, summary, title, issue_description, fault], type: string, support: found}
+      - {name: status, synonyms: [stage, progress, state, repair_status], type: enum, support: found}
+    optional_fields: [flat, property, unit, address, tenant, tenant_name, contractor, reported_date, scheduled_date, appointment_date]
+    forbidden_fields: [rent_amount, energy_bill, council_tax, insurance_premium]
+forbidden_record_types: [tenant, property, invoice, contractor]
+notes: "Status enum from wording: new/reported, contractor_arranged/scheduled (Hal Monday, Pete tomorrow, Sparks Friday), awaiting_parts (hinge, washing machine ordered), fixed/resolved (tap, lock, boiler, sockets-1, radiator self-fixed). Same issue often spans threads (mould Feb then May; sockets Jan fix vs Jun new issue; lock; boiler; washing machine twice) so extracted, and some threads are past work already done. Flat is only in paraphrase 2 and is often missing/revealed later (Luis 'top floor', Amara asked 'which flat'). Noise: rent payment confirmation, bills, insurance, council tax, newsletters, PropManager ad, dentist. Not tenant repairs: Pete's guttering quote, bins/council (Nina bins, maybe borderline), garden fence (borderline repair)."
