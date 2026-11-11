@@ -1,0 +1,748 @@
+[
+ {
+  "thread_id": "t001",
+  "messages": [
+   {
+    "message_id": "t001-m1",
+    "sender": "The Weekly Brief <digest@morningbrief.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-01-22T17:25:04.528367+00:00",
+    "subject": "Your Tuesday brief: 7 stories worth your time",
+    "body": "Good morning. Today: rate decisions, a new EU rule on data portability, and why everyone is talking about four-day weeks. Read online | Unsubscribe | Manage preferences",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t002",
+  "messages": [
+   {
+    "message_id": "t002-m1",
+    "sender": "Aiden Clarke <aiden.clarke@webmail.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-01-29T16:47:19.056351+00:00",
+    "subject": "Re: the studio near the station",
+    "body": "Is the studio near the station still available?",
+    "attachments": []
+   },
+   {
+    "message_id": "t002-m2",
+    "sender": "Sandra Ivanova <sandra@cityletsrealty.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-01-30T03:11:19.056351+00:00",
+    "subject": "Re: the studio near the station",
+    "body": "Hello. Yes, 975 per month, 1 month deposit. Available from 1 May. No pets though.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t003",
+  "messages": [
+   {
+    "message_id": "t003-m1",
+    "sender": "Aiden Clarke <aiden.clarke@webmail.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-02-08T11:15:07.535734+00:00",
+    "subject": "Re: 3 bed house",
+    "body": "Hi Paul, slight problem, I need to reschedule the viewing. Can we move to the afternoon?",
+    "attachments": []
+   },
+   {
+    "message_id": "t003-m2",
+    "sender": "Paul Dewar <paul@dewar-property.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-02-08T20:36:07.535734+00:00",
+    "subject": "Re: 3 bed house",
+    "body": "Sure, 14:30 the same day.",
+    "attachments": []
+   },
+   {
+    "message_id": "t003-m3",
+    "sender": "Aiden Clarke <aiden.clarke@webmail.example>",
+    "to": [
+     "paul@dewar-property.example"
+    ],
+    "date": "2026-02-10T05:20:07.535734+00:00",
+    "subject": "Re: 3 bed house",
+    "body": "Thanks.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t004",
+  "messages": [
+   {
+    "message_id": "t004-m1",
+    "sender": "FitHub <no-reply@fithub.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-02-15T03:38:45.432661+00:00",
+    "subject": "Your class booking is confirmed",
+    "body": "You're booked for Spin 45 on Thursday at 18:30. Cancel up to 2 hours before to avoid a fee.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t005",
+  "messages": [
+   {
+    "message_id": "t005-m1",
+    "sender": "Aiden Clarke <aiden.clarke@webmail.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-02-23T10:06:11.911104+00:00",
+    "subject": "Application for the Canal Street flat",
+    "body": "Hi, after the viewing I'd like to apply for the Canal Street flat. What documents do you need?",
+    "attachments": []
+   },
+   {
+    "message_id": "t005-m2",
+    "sender": "Lettings Team <lettings@northbank-agents.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-02-23T20:40:11.911104+00:00",
+    "subject": "Re: Application for the Canal Street flat",
+    "body": "Please send proof of income and 2 references. Holding deposit is one week's rent.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t006",
+  "messages": [
+   {
+    "message_id": "t006-m1",
+    "sender": "Swift Movers <quotes@swiftmovers.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-03-06T00:20:56.531683+00:00",
+    "subject": "Moving quote - Swift Movers",
+    "body": "Thanks for your interest in a moving quote. Our man-and-van service starts at 85 per hour. Tell us your move date and addresses to get a quote.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t007",
+  "messages": [
+   {
+    "message_id": "t007-m1",
+    "sender": "Aiden Clarke <aiden.clarke@webmail.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-03-11T23:56:26.956229+00:00",
+    "subject": "Re: Riverside new listing",
+    "body": "Looks lovely. Any chance of viewing next week?",
+    "attachments": []
+   },
+   {
+    "message_id": "t007-m2",
+    "sender": "Hanif Siddiqui <hanif@riverside-rentals.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-03-14T10:14:26.956229+00:00",
+    "subject": "Re: Riverside new listing",
+    "body": "Let me check with the owner and come back to you.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t008",
+  "messages": [
+   {
+    "message_id": "t008-m1",
+    "sender": "SkyBridge Airlines <booking@skybridge.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-03-21T02:45:37.359812+00:00",
+    "subject": "Check-in opens soon for your flight",
+    "body": "Your flight to Porto departs in 48 hours. Online check-in opens 24 hours before departure.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t009",
+  "messages": [
+   {
+    "message_id": "t009-m1",
+    "sender": "Paul Dewar <paul@dewar-property.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-03-28T04:59:51.297085+00:00",
+    "subject": "Viewing feedback",
+    "body": "Hi Aiden, the owner of the 3-bed house would like to know if you're still interested after the viewing. Another couple is keen too.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t010",
+  "messages": [
+   {
+    "message_id": "t010-m1",
+    "sender": "Aiden Clarke <aiden.clarke@webmail.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-04-06T08:31:24.632051+00:00",
+    "subject": "Flat at the top of Marlow Road",
+    "body": "Hi, I saw your ad for the 1 bed on Marlow Road. Is it pet friendly? I have a cat.",
+    "attachments": []
+   },
+   {
+    "message_id": "t010-m2",
+    "sender": "Tom at Kestrel Homes <tom@kestrelhomes.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-04-08T08:12:24.632051+00:00",
+    "subject": "Re: Flat at the top of Marlow Road",
+    "body": "Hi Aiden, the landlord would consider a cat for a small extra deposit. Rent is 1,150 pcm. Want to come and see it?",
+    "attachments": []
+   },
+   {
+    "message_id": "t010-m3",
+    "sender": "Aiden Clarke <aiden.clarke@webmail.example>",
+    "to": [
+     "tom@kestrelhomes.example"
+    ],
+    "date": "2026-04-11T01:44:24.632051+00:00",
+    "subject": "Re: Flat at the top of Marlow Road",
+    "body": "Yes please, weekend?",
+    "attachments": []
+   },
+   {
+    "message_id": "t010-m4",
+    "sender": "Tom at Kestrel Homes <tom@kestrelhomes.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-04-12T05:03:24.632051+00:00",
+    "subject": "Re: Flat at the top of Marlow Road",
+    "body": "Saturday 11 April at 10am?",
+    "attachments": []
+   },
+   {
+    "message_id": "t010-m5",
+    "sender": "Aiden Clarke <aiden.clarke@webmail.example>",
+    "to": [
+     "tom@kestrelhomes.example"
+    ],
+    "date": "2026-04-13T02:25:24.632051+00:00",
+    "subject": "Re: Flat at the top of Marlow Road",
+    "body": "Perfect.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t011",
+  "messages": [
+   {
+    "message_id": "t011-m1",
+    "sender": "Hanif Siddiqui <hanif@riverside-rentals.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-04-14T15:16:04.274474+00:00",
+    "subject": "Riverside Rentals - new listing",
+    "body": "Hi, thought of you for a new listing: 2-bed riverside apartment, balcony, 1,480 pcm, available from June. Deposit 1,707. Interested?",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t012",
+  "messages": [
+   {
+    "message_id": "t012-m1",
+    "sender": "Aiden Clarke <aiden.clarke@webmail.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-04-21T10:36:32.279664+00:00",
+    "subject": "Is the Elm Street flat gone?",
+    "body": "Hi Rachel, just checking, is the holding deposit receipt coming? I paid 3 days ago.",
+    "attachments": []
+   },
+   {
+    "message_id": "t012-m2",
+    "sender": "Rachel Moore <rachel@oakleaf-lettings.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-04-22T16:58:32.279664+00:00",
+    "subject": "Re: Is the Elm Street flat gone?",
+    "body": "Yes sorry, receipt attached. References are being processed.",
+    "attachments": [
+     "holding-deposit-receipt.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t013",
+  "messages": [
+   {
+    "message_id": "t013-m1",
+    "sender": "Aiden Clarke <aiden.clarke@webmail.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-04-29T18:21:35.324772+00:00",
+    "subject": "Re: Viewing feedback",
+    "body": "I'm still interested, but I'd like to know whether pets are allowed before I commit.",
+    "attachments": []
+   },
+   {
+    "message_id": "t013-m2",
+    "sender": "Paul Dewar <paul@dewar-property.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-05-01T15:35:35.324772+00:00",
+    "subject": "Re: Viewing feedback",
+    "body": "Owner says no pets, sorry.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t014",
+  "messages": [
+   {
+    "message_id": "t014-m1",
+    "sender": "Gerald Pryce <gerald.pryce@homemail.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-05-08T05:58:45.523761+00:00",
+    "subject": "Highfield Rise - sorry",
+    "body": "Aiden, I need to postpone Sunday, I'm ill. Could we do the Sunday after at the same time?",
+    "attachments": []
+   },
+   {
+    "message_id": "t014-m2",
+    "sender": "Aiden Clarke <aiden.clarke@webmail.example>",
+    "to": [
+     "gerald.pryce@homemail.example"
+    ],
+    "date": "2026-05-10T08:17:45.523761+00:00",
+    "subject": "Re: Highfield Rise - sorry",
+    "body": "No worries, feel better. Next Sunday 10am is fine.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t015",
+  "messages": [
+   {
+    "message_id": "t015-m1",
+    "sender": "Aiden Clarke <aiden.clarke@webmail.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-05-18T02:45:14.760793+00:00",
+    "subject": "Fwd: new places matching your search",
+    "body": "Sharing with myself.\n\nFrom: HomeFinder alerts\n6 new properties in your area: 1-bed Maple Court 1,100 pcm; 2-bed Greenway Mews 1,420 pcm; ...",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t016",
+  "messages": [
+   {
+    "message_id": "t016-m1",
+    "sender": "Gerald Pryce <gerald.pryce@homemail.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-05-25T13:00:08.635905+00:00",
+    "subject": "The 2 bed on the hill",
+    "body": "Hello Aiden, I'm the landlord of the 2 bed on Highfield Rise. The agent says you're interested. I can show you round on Sunday morning if you like. Rent 1,400, no agent fees. Gerald",
+    "attachments": []
+   },
+   {
+    "message_id": "t016-m2",
+    "sender": "Aiden Clarke <aiden.clarke@webmail.example>",
+    "to": [
+     "gerald.pryce@homemail.example"
+    ],
+    "date": "2026-05-25T18:12:08.635905+00:00",
+    "subject": "Re: The 2 bed on the hill",
+    "body": "Hi Gerald, Sunday 10am would be great.",
+    "attachments": []
+   },
+   {
+    "message_id": "t016-m3",
+    "sender": "Gerald Pryce <gerald.pryce@homemail.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-05-26T16:31:08.635905+00:00",
+    "subject": "Re: The 2 bed on the hill",
+    "body": "See you then.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t017",
+  "messages": [
+   {
+    "message_id": "t017-m1",
+    "sender": "Aiden Clarke <aiden.clarke@webmail.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-06-01T07:14:12.417552+00:00",
+    "subject": "Enquiry: 2 bed flat, 14 Elm Street",
+    "body": "Hello, I'm interested in the 2-bedroom flat at 14 Elm Street listed at 1,350 pcm. Is it still available? Could I view this week?",
+    "attachments": []
+   },
+   {
+    "message_id": "t017-m2",
+    "sender": "Rachel Moore <rachel@oakleaf-lettings.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-06-02T06:50:12.417552+00:00",
+    "subject": "Re: Enquiry: 2 bed flat, 14 Elm Street",
+    "body": "Hi Aiden, yes it's available. Viewing slots: Thursday 5 June at 17:30 or Saturday at 11:00.",
+    "attachments": []
+   },
+   {
+    "message_id": "t017-m3",
+    "sender": "Aiden Clarke <aiden.clarke@webmail.example>",
+    "to": [
+     "rachel@oakleaf-lettings.example"
+    ],
+    "date": "2026-06-04T16:47:12.417552+00:00",
+    "subject": "Re: Enquiry: 2 bed flat, 14 Elm Street",
+    "body": "Thursday 17:30 please.",
+    "attachments": []
+   },
+   {
+    "message_id": "t017-m4",
+    "sender": "Rachel Moore <rachel@oakleaf-lettings.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-06-05T23:55:12.417552+00:00",
+    "subject": "Re: Enquiry: 2 bed flat, 14 Elm Street",
+    "body": "Booked in. Please bring ID.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t018",
+  "messages": [
+   {
+    "message_id": "t018-m1",
+    "sender": "LoanLoop <promo@loanloop.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-06-10T09:27:38.173587+00:00",
+    "subject": "Get a mortgage in minutes",
+    "body": "Thinking of buying instead of renting? Compare mortgage rates today with LoanLoop. Your home may be repossessed if you do not keep up repayments.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t019",
+  "messages": [
+   {
+    "message_id": "t019-m1",
+    "sender": "Mum <mum.hammond@family-mail.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-06-18T15:39:35.632694+00:00",
+    "subject": "Sunday lunch?",
+    "body": "Are you coming on Sunday? Dad is doing the roast. Let me know by Friday so I know how much to buy x",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t020",
+  "messages": [
+   {
+    "message_id": "t020-m1",
+    "sender": "Beth Calloway <beth.c@mailbox.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-06-26T02:19:22.522170+00:00",
+    "subject": "Flat share? Parkview",
+    "body": "Hi, heard you're looking. My housemate is moving out of our Parkview flat. Room is 700 a month. Interested?",
+    "attachments": []
+   },
+   {
+    "message_id": "t020-m2",
+    "sender": "Aiden Clarke <aiden.clarke@webmail.example>",
+    "to": [
+     "beth.c@mailbox.example"
+    ],
+    "date": "2026-06-26T15:01:22.522170+00:00",
+    "subject": "Re: Flat share? Parkview",
+    "body": "Thanks Beth, I'm after a place on my own but appreciate it!",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t021",
+  "messages": [
+   {
+    "message_id": "t021-m1",
+    "sender": "Estate Office <office@harbourview-estates.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-07-04T00:43:10.867284+00:00",
+    "subject": "Your lease end - 42 Aldwick Road",
+    "body": "Dear tenant, your current tenancy ends on 2 September. Please confirm whether you wish to renew or give notice.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t022",
+  "messages": [
+   {
+    "message_id": "t022-m1",
+    "sender": "HomeFinder <alerts@homefinder.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-07-12T22:56:54.480539+00:00",
+    "subject": "HomeFinder: 8 new properties for you",
+    "body": "New listings this week matching your search: 2 bed flats in Riverside from 1,300 pcm; studios from 900 pcm. Log in to see more or save your search.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t023",
+  "messages": [
+   {
+    "message_id": "t023-m1",
+    "sender": "Aiden Clarke <aiden.clarke@webmail.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-07-22T04:33:19.567595+00:00",
+    "subject": "Re: 14 Elm Street - after viewing",
+    "body": "Thanks for showing me round, I'd like to go ahead. What's the next step?",
+    "attachments": []
+   },
+   {
+    "message_id": "t023-m2",
+    "sender": "Rachel Moore <rachel@oakleaf-lettings.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-07-23T06:34:19.567595+00:00",
+    "subject": "Re: 14 Elm Street - after viewing",
+    "body": "Great! We'll need a holding deposit of one week's rent (311 GBP) to take it off the market, then references. The full security deposit is 1,557 GBP.",
+    "attachments": []
+   },
+   {
+    "message_id": "t023-m3",
+    "sender": "Aiden Clarke <aiden.clarke@webmail.example>",
+    "to": [
+     "rachel@oakleaf-lettings.example"
+    ],
+    "date": "2026-07-24T01:55:19.567595+00:00",
+    "subject": "Re: 14 Elm Street - after viewing",
+    "body": "OK, I'll transfer the holding deposit today.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t024",
+  "messages": [
+   {
+    "message_id": "t024-m1",
+    "sender": "Rachel Moore <rachel@oakleaf-lettings.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-07-29T09:25:57.502296+00:00",
+    "subject": "Viewing confirmation - 14 Elm Street",
+    "body": "Just confirming your viewing on 2 August at 17:30. Meet at the entrance. Rachel, Oakleaf Lettings",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t025",
+  "messages": [
+   {
+    "message_id": "t025-m1",
+    "sender": "StyleBarn <offers@stylebarn.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-08-07T11:23:00.502302+00:00",
+    "subject": "48 hours only: 30% off everything",
+    "body": "Our biggest sale of the season ends Sunday midnight. Use code SPRING30 at checkout. Free returns.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t026",
+  "messages": [
+   {
+    "message_id": "t026-m1",
+    "sender": "Sandra Ivanova <sandra@cityletsrealty.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-08-16T02:39:38.175737+00:00",
+    "subject": "Studio viewing time",
+    "body": "I can show you the studio Wednesday at 12:15. Is that OK?",
+    "attachments": []
+   },
+   {
+    "message_id": "t026-m2",
+    "sender": "Aiden Clarke <aiden.clarke@webmail.example>",
+    "to": [
+     "sandra@cityletsrealty.example"
+    ],
+    "date": "2026-08-18T19:52:38.175737+00:00",
+    "subject": "Re: Studio viewing time",
+    "body": "I can't do Wednesday lunch, any evening slots?",
+    "attachments": []
+   },
+   {
+    "message_id": "t026-m3",
+    "sender": "Sandra Ivanova <sandra@cityletsrealty.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-08-19T05:48:38.175737+00:00",
+    "subject": "Re: Studio viewing time",
+    "body": "Wednesday 18:00 then.",
+    "attachments": []
+   },
+   {
+    "message_id": "t026-m4",
+    "sender": "Aiden Clarke <aiden.clarke@webmail.example>",
+    "to": [
+     "sandra@cityletsrealty.example"
+    ],
+    "date": "2026-08-19T12:44:38.175737+00:00",
+    "subject": "Re: Studio viewing time",
+    "body": "Great, see you then.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t027",
+  "messages": [
+   {
+    "message_id": "t027-m1",
+    "sender": "Tom at Kestrel Homes <tom@kestrelhomes.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-08-24T15:10:30.202980+00:00",
+    "subject": "Marlow Road viewing - cancelled",
+    "body": "Hi Aiden, so sorry, the landlord has rented the flat to someone else this morning. Viewing cancelled. I'll let you know if anything similar comes up.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t028",
+  "messages": [
+   {
+    "message_id": "t028-m1",
+    "sender": "Lettings Team <lettings@northbank-agents.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-08-30T07:46:05.250743+00:00",
+    "subject": "Viewing request - Canal Street",
+    "body": "Your viewing is confirmed for 5 September at 16:00. Please arrive 5 minutes early. Reply to this email to cancel.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t029",
+  "messages": [
+   {
+    "message_id": "t029-m1",
+    "sender": "Lettings Team <lettings@northbank-agents.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-09-07T04:50:30.566143+00:00",
+    "subject": "Northbank - flat on Canal Street",
+    "body": "Dear Aiden, thank you for your enquiry. The property is a one-bedroom flat, rent 1,250 pcm. Please complete the viewing request form on our site.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t030",
+  "messages": [
+   {
+    "message_id": "t030-m1",
+    "sender": "Paul Dewar <paul@dewar-property.example>",
+    "to": [
+     "aiden.clarke@webmail.example"
+    ],
+    "date": "2026-09-15T20:27:36.445987+00:00",
+    "subject": "3 bed house - Dewar Property",
+    "body": "Hi Aiden, following your call, the 3-bed house with the garden is 1,900 pcm. Deposit 5 weeks. We have viewings on 22 September between 10 and 12, can you do 11:00?",
+    "attachments": []
+   },
+   {
+    "message_id": "t030-m2",
+    "sender": "Aiden Clarke <aiden.clarke@webmail.example>",
+    "to": [
+     "paul@dewar-property.example"
+    ],
+    "date": "2026-09-16T17:51:36.445987+00:00",
+    "subject": "Re: 3 bed house - Dewar Property",
+    "body": "Yes 11:00 works.",
+    "attachments": []
+   }
+  ]
+ }
+]

@@ -1,0 +1,7 @@
+id: vendor-invoices-payable
+prompt: "I run a small bakery and I lose track of who I owe money to. Show me the suppliers I deal with and the bills I still haven't paid - what's owed, when it's due, and which purchase order it's for."
+paraphrases:
+  - "Who are my suppliers and which of their bills are still outstanding? I'd like the amount, the due date and the PO it relates to."
+  - "Keep a list of the companies that supply the bakery along with any unpaid bills from them: how much, by when, and the purchase order reference."
+domain: finance
+holdout: false

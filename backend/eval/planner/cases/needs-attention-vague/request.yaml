@@ -1,0 +1,7 @@
+id: needs-attention-vague
+prompt: "What needs my attention?"
+paraphrases:
+  - "What should I be looking at right now?"
+  - "Is there anything important I'm missing?"
+domain: other
+holdout: false

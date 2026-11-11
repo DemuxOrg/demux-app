@@ -1,0 +1,783 @@
+[
+ {
+  "thread_id": "t001",
+  "messages": [
+   {
+    "message_id": "t001-m1",
+    "sender": "Hanna Olsen <hanna@harborflour.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-01-23T05:00:09.882011+00:00",
+    "subject": "Flour order for next week",
+    "body": "Hi Rosa, I can do the usual delivery Tuesday. I'll send the invoice once it's loaded. Same price as last time (it went up 2% for the new year, sorry!).\nHanna",
+    "attachments": []
+   },
+   {
+    "message_id": "t001-m2",
+    "sender": "Rosa Delgado <rosa@crumbandcrust.example>",
+    "to": [
+     "hanna@harborflour.example"
+    ],
+    "date": "2026-01-24T11:48:09.882011+00:00",
+    "subject": "Re: Flour order for next week",
+    "body": "Fine by me, Tuesday is good.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t002",
+  "messages": [
+   {
+    "message_id": "t002-m1",
+    "sender": "CityWaste Services <accounts@citywaste.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-01-29T07:58:29.555183+00:00",
+    "subject": "Waste invoice - paid?",
+    "body": "Hello, our records show CW-40912 as unpaid. Please let us know when payment has been made.",
+    "attachments": []
+   },
+   {
+    "message_id": "t002-m2",
+    "sender": "Rosa Delgado <rosa@crumbandcrust.example>",
+    "to": [
+     "accounts@citywaste.example"
+    ],
+    "date": "2026-01-30T15:20:29.555183+00:00",
+    "subject": "Re: Waste invoice - paid?",
+    "body": "Paid on the 2nd by card online, reference attached.",
+    "attachments": []
+   },
+   {
+    "message_id": "t002-m3",
+    "sender": "CityWaste Services <accounts@citywaste.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-01-31T23:03:29.555183+00:00",
+    "subject": "Re: Waste invoice - paid?",
+    "body": "Thanks, found it, ignore the reminder.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t003",
+  "messages": [
+   {
+    "message_id": "t003-m1",
+    "sender": "Brightline Business <business-billing@brightline-energy.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-02-05T02:05:51.681242+00:00",
+    "subject": "Brightline Business bill ready",
+    "body": "Hi, your latest statement is ready to view. Amount 1,388.05 GBP. Direct debit will be collected on 14 February.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t004",
+  "messages": [
+   {
+    "message_id": "t004-m1",
+    "sender": "Pulse Surveys <feedback@pulsesurveys.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-02-14T14:49:08.698703+00:00",
+    "subject": "How did we do? 2 minutes of your time",
+    "body": "Thanks for your recent purchase. Please rate your experience from 1 to 10. Your feedback helps us improve.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t005",
+  "messages": [
+   {
+    "message_id": "t005-m1",
+    "sender": "Brightline Home <accounts@brightline-home.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-02-21T18:33:49.868636+00:00",
+    "subject": "Your latest home energy bill",
+    "body": "Your bill for the household supply at your flat is ready: 61.40 GBP, direct debit on the 3rd. View in your account.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t006",
+  "messages": [
+   {
+    "message_id": "t006-m1",
+    "sender": "Harbor Flour Accounts <accounts@harborflour.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-02-28T11:01:15.545652+00:00",
+    "subject": "Invoice INV-2291 Harbor Flour",
+    "body": "Invoice INV-2291, 1,540.00 GBP, due 30 March. Includes the new rye flour.",
+    "attachments": [
+     "INV-2291.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t007",
+  "messages": [
+   {
+    "message_id": "t007-m1",
+    "sender": "Packwell Packaging <invoices@packwell.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-03-08T10:15:45.432563+00:00",
+    "subject": "Invoice from Packwell Packaging",
+    "body": "Invoice PK-88103\nAmount due: 934.00 GBP\nDue date: 29 March\nThank you for choosing Packwell.",
+    "attachments": [
+     "PK-88103.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t008",
+  "messages": [
+   {
+    "message_id": "t008-m1",
+    "sender": "CityWaste Services <accounts@citywaste.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-03-16T12:28:37.266556+00:00",
+    "subject": "CityWaste - bin collection invoice",
+    "body": "Quarterly commercial waste invoice CW-40912: 289.00 GBP, due 13 April. Pay online with the reference on the invoice.",
+    "attachments": [
+     "CW-40912.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t009",
+  "messages": [
+   {
+    "message_id": "t009-m1",
+    "sender": "Greenfield Dairy Billing <billing@greenfield-dairy.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-03-23T12:59:10.876368+00:00",
+    "subject": "Corrected invoice - Greenfield 5602A",
+    "body": "Corrected invoice 5602A attached, replaces 5602. New total 617.90 GBP after credit. Due 2 April.",
+    "attachments": [
+     "inv_5602A.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t010",
+  "messages": [
+   {
+    "message_id": "t010-m1",
+    "sender": "Harbor Flour Accounts <accounts@harborflour.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-03-29T06:40:39.562393+00:00",
+    "subject": "Harbor Flour - reminder INV-2207",
+    "body": "Hello, this is a friendly reminder that invoice INV-2207 (1,186.50 GBP) fell due on 26 March and we don't see payment yet. If you've already paid please ignore this. Regards, Accounts",
+    "attachments": []
+   },
+   {
+    "message_id": "t010-m2",
+    "sender": "Rosa Delgado <rosa@crumbandcrust.example>",
+    "to": [
+     "accounts@harborflour.example"
+    ],
+    "date": "2026-04-01T01:05:39.562393+00:00",
+    "subject": "Re: Harbor Flour - reminder INV-2207",
+    "body": "Sorry, it slipped. Transfer going out this afternoon.",
+    "attachments": []
+   },
+   {
+    "message_id": "t010-m3",
+    "sender": "Harbor Flour Accounts <accounts@harborflour.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-04-01T07:35:39.562393+00:00",
+    "subject": "Re: Harbor Flour - reminder INV-2207",
+    "body": "Received with thanks - marking INV-2207 as settled.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t011",
+  "messages": [
+   {
+    "message_id": "t011-m1",
+    "sender": "Brightline Business <business-billing@brightline-energy.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-04-05T12:24:38.201142+00:00",
+    "subject": "Your business energy bill - March",
+    "body": "Your bill for the bakery premises: 1,420.77 GBP. Pay by direct debit on 15 April. Account ref BB-33021. No action needed unless you want to change your payment date.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t012",
+  "messages": [
+   {
+    "message_id": "t012-m1",
+    "sender": "Rosa Delgado <rosa@crumbandcrust.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-04-14T04:07:36.066255+00:00",
+    "subject": "Can we split the payment?",
+    "body": "Hi Hanna, would it be OK to pay the latest flour invoice in two halves? I'll send half now and the rest in 3 weeks.",
+    "attachments": []
+   },
+   {
+    "message_id": "t012-m2",
+    "sender": "Hanna Olsen <hanna@harborflour.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-04-16T05:12:36.066255+00:00",
+    "subject": "Re: Can we split the payment?",
+    "body": "Sure, that's fine, just keep the second half on time please. Hanna",
+    "attachments": []
+   },
+   {
+    "message_id": "t012-m3",
+    "sender": "Rosa Delgado <rosa@crumbandcrust.example>",
+    "to": [
+     "hanna@harborflour.example"
+    ],
+    "date": "2026-04-18T15:54:36.066255+00:00",
+    "subject": "Re: Can we split the payment?",
+    "body": "Will do, thanks.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t013",
+  "messages": [
+   {
+    "message_id": "t013-m1",
+    "sender": "Marta Kowalski <marta@kowalski-bookkeeping.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-04-21T00:01:13.236663+00:00",
+    "subject": "Fwd: Sunny Lane Farm eggs",
+    "body": "Rosa - the farm sent this to me by mistake. Looks like a bill for eggs. Can you deal with it? Marta\n\n---------- Forwarded message ----------\nFrom: Ellie <ellie@sunnylanefarm.example>\nSorry for the delay! 40 trays of eggs, 8 each = 320 GBP in total. Could you pay by 28 April? Thanks!!",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t014",
+  "messages": [
+   {
+    "message_id": "t014-m1",
+    "sender": "Kestrel Cleaning <office@kestrel-clean.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-04-29T13:02:19.075656+00:00",
+    "subject": "Kestrel Cleaning invoice",
+    "body": "Hi Rosa, here's this month's invoice for the evening cleans - 380 GBP. Can you pay by the end of the week? Cheers, Kestrel",
+    "attachments": [
+     "kestrel_apr.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t015",
+  "messages": [
+   {
+    "message_id": "t015-m1",
+    "sender": "Billwise <growth@billwise.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-05-06T17:01:11.079491+00:00",
+    "subject": "Cut your invoicing time in half with Billwise",
+    "body": "Hi Rosa, thousands of small food businesses use Billwise to create and send invoices in seconds. Start your free 14-day trial today and get your first 3 invoices free.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t016",
+  "messages": [
+   {
+    "message_id": "t016-m1",
+    "sender": "Accounts Dept <billing@secure-pay-verify.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-05-12T23:14:23.554732+00:00",
+    "subject": "FINAL NOTICE: invoice unpaid, act now",
+    "body": "Dear customer, your invoice is overdue. Click the link below within 24 hours to avoid suspension of services. http://secure-pay-verify.example/pay",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t017",
+  "messages": [
+   {
+    "message_id": "t017-m1",
+    "sender": "Sunny Lane Farm <ellie@sunnylanefarm.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-05-20T21:23:10.467381+00:00",
+    "subject": "eggs",
+    "body": "Hi Rosa, just checking you got my message about the eggs bill? No rush, but the farm shop needs the cash before the weekend :)",
+    "attachments": []
+   },
+   {
+    "message_id": "t017-m2",
+    "sender": "Rosa Delgado <rosa@crumbandcrust.example>",
+    "to": [
+     "ellie@sunnylanefarm.example"
+    ],
+    "date": "2026-05-23T15:37:10.467381+00:00",
+    "subject": "Re: eggs",
+    "body": "Yes! Paying now.",
+    "attachments": []
+   },
+   {
+    "message_id": "t017-m3",
+    "sender": "Sunny Lane Farm <ellie@sunnylanefarm.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-05-23T19:26:10.467381+00:00",
+    "subject": "Re: eggs",
+    "body": "Thank you x",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t018",
+  "messages": [
+   {
+    "message_id": "t018-m1",
+    "sender": "Dev at Oak & Anvil <dev@oakanvil.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-05-27T10:22:16.460628+00:00",
+    "subject": "Oven repair quote and invoice",
+    "body": "Fixed the main deck oven (thermostat + door seal). Parts and labour 465.00 GBP. Invoice OA-1190 attached, 30 days.",
+    "attachments": [
+     "OA-1190.pdf"
+    ]
+   },
+   {
+    "message_id": "t018-m2",
+    "sender": "Rosa Delgado <rosa@crumbandcrust.example>",
+    "to": [
+     "dev@oakanvil.example"
+    ],
+    "date": "2026-05-29T15:54:16.460628+00:00",
+    "subject": "Re: Oven repair quote and invoice",
+    "body": "Great, thank you. Will pass to my bookkeeper.",
+    "attachments": []
+   },
+   {
+    "message_id": "t018-m3",
+    "sender": "Dev at Oak & Anvil <dev@oakanvil.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-05-31T14:48:16.460628+00:00",
+    "subject": "Re: Oven repair quote and invoice",
+    "body": "Cheers!",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t019",
+  "messages": [
+   {
+    "message_id": "t019-m1",
+    "sender": "Marta Kowalski <marta@kowalski-bookkeeping.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-06-04T23:31:20.777818+00:00",
+    "subject": "Monthly bookkeeping - what I need from you",
+    "body": "Hi Rosa, for the month-end I need all supplier bills you've received and which have been paid. Can you forward anything you're holding? Thanks, Marta",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t020",
+  "messages": [
+   {
+    "message_id": "t020-m1",
+    "sender": "Harbor Flour Accounts <accounts@harborflour.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-06-11T12:09:28.149644+00:00",
+    "subject": "Invoice INV-2207 from Harbor Flour Mills",
+    "body": "Dear Rosa,\n\nPlease find attached invoice INV-2207 for 25 x 25kg strong white flour and 10 x 25kg wholemeal. Total 1,186.50 GBP, payment terms 30 days, so due 11 July.\n\nKind regards,\nHarbor Flour Mills - Accounts",
+    "attachments": [
+     "INV-2207.pdf"
+    ]
+   },
+   {
+    "message_id": "t020-m2",
+    "sender": "Rosa Delgado <rosa@crumbandcrust.example>",
+    "to": [
+     "accounts@harborflour.example"
+    ],
+    "date": "2026-06-11T14:33:28.149644+00:00",
+    "subject": "Re: Invoice INV-2207 from Harbor Flour Mills",
+    "body": "Thanks, got it. I'll pay at the end of the month.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t021",
+  "messages": [
+   {
+    "message_id": "t021-m1",
+    "sender": "Northgate Bank <alerts@northgate-bank.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-06-20T11:35:28.890839+00:00",
+    "subject": "Your statement is ready",
+    "body": "Your monthly statement for the account ending 4471 is now available. Log in to online banking to view it. We will never ask for your password by email.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t022",
+  "messages": [
+   {
+    "message_id": "t022-m1",
+    "sender": "StyleBarn <offers@stylebarn.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-06-25T22:01:21.451636+00:00",
+    "subject": "48 hours only: 30% off everything",
+    "body": "Our biggest sale of the season ends Sunday midnight. Use code SPRING30 at checkout. Free returns.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t023",
+  "messages": [
+   {
+    "message_id": "t023-m1",
+    "sender": "Imran Qureshi <imran@packwell.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-07-03T21:51:37.249630+00:00",
+    "subject": "Packwell - boxes & bags order confirmed",
+    "body": "Hi Rosa, your order of 2,000 cake boxes and 5,000 paper bags is confirmed for dispatch Monday. Invoice to follow separately.\nImran",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t024",
+  "messages": [
+   {
+    "message_id": "t024-m1",
+    "sender": "Rosa Delgado <rosa@crumbandcrust.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-07-13T01:05:15.723131+00:00",
+    "subject": "Re: Kestrel invoice",
+    "body": "Hi, I can't find the invoice for the extra deep clean on the 9th. Can you resend?",
+    "attachments": []
+   },
+   {
+    "message_id": "t024-m2",
+    "sender": "Kestrel Cleaning <office@kestrel-clean.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-07-14T04:37:15.723131+00:00",
+    "subject": "Re: Kestrel invoice",
+    "body": "Oh sorry! Attached. 120 GBP for the deep clean, no invoice number on that one, I wrote it by hand. Pay whenever.",
+    "attachments": []
+   },
+   {
+    "message_id": "t024-m3",
+    "sender": "Rosa Delgado <rosa@crumbandcrust.example>",
+    "to": [
+     "office@kestrel-clean.example"
+    ],
+    "date": "2026-07-16T11:08:15.723131+00:00",
+    "subject": "Re: Kestrel invoice",
+    "body": "Thanks - paid by bank transfer just now.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t025",
+  "messages": [
+   {
+    "message_id": "t025-m1",
+    "sender": "Packwell Packaging <invoices@packwell.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-07-20T03:58:24.347020+00:00",
+    "subject": "Packwell invoice PK-88340",
+    "body": "Invoice PK-88340: 512.25 GBP for bags and tissue paper. Due 10 August.",
+    "attachments": [
+     "PK-88340.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t026",
+  "messages": [
+   {
+    "message_id": "t026-m1",
+    "sender": "The Weekly Brief <digest@morningbrief.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-07-25T05:59:28.949007+00:00",
+    "subject": "Your Tuesday brief: 7 stories worth your time",
+    "body": "Good morning. Today: rate decisions, a new EU rule on data portability, and why everyone is talking about four-day weeks. Read online | Unsubscribe | Manage preferences",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t027",
+  "messages": [
+   {
+    "message_id": "t027-m1",
+    "sender": "Lumen Print <orders@lumenprint.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-08-03T21:30:59.111979+00:00",
+    "subject": "Lumen Print - menu boards",
+    "body": "Hi Rosa, your A2 menu boards are ready for collection. Invoice 7714 for 215.40 GBP attached - net 14 days, due 17 August.",
+    "attachments": [
+     "7714.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t028",
+  "messages": [
+   {
+    "message_id": "t028-m1",
+    "sender": "Joe Marsh <joe.marsh@greenfield-dairy.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-08-10T16:26:49.736618+00:00",
+    "subject": "Invoice reminder",
+    "body": "Hi Rosa, just a gentle nudge on invoice 5531 for 642.18 GBP, I think it's about a week past due. Let me know if you need it resent. Joe",
+    "attachments": []
+   },
+   {
+    "message_id": "t028-m2",
+    "sender": "Rosa Delgado <rosa@crumbandcrust.example>",
+    "to": [
+     "joe.marsh@greenfield-dairy.example"
+    ],
+    "date": "2026-08-11T17:01:49.736618+00:00",
+    "subject": "Re: Invoice reminder",
+    "body": "Already paid on the 20th, I'll send the remittance.",
+    "attachments": []
+   },
+   {
+    "message_id": "t028-m3",
+    "sender": "Joe Marsh <joe.marsh@greenfield-dairy.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-08-12T18:56:49.736618+00:00",
+    "subject": "Re: Invoice reminder",
+    "body": "Got it, found the payment. Thanks!",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t029",
+  "messages": [
+   {
+    "message_id": "t029-m1",
+    "sender": "Rosa Delgado <rosa@crumbandcrust.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-08-16T19:13:04.903010+00:00",
+    "subject": "Disputing line 3 on Lumen invoice",
+    "body": "Hi, on invoice 7714 you've charged for 6 boards but I only ordered 4. Can you check line 3?",
+    "attachments": []
+   },
+   {
+    "message_id": "t029-m2",
+    "sender": "Lumen Print <orders@lumenprint.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-08-18T05:15:04.903010+00:00",
+    "subject": "Re: Disputing line 3 on Lumen invoice",
+    "body": "Checked: you're right, it was a mistake on our side. I'll reissue shortly.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t030",
+  "messages": [
+   {
+    "message_id": "t030-m1",
+    "sender": "Greenfield Dairy Billing <billing@greenfield-dairy.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-08-26T03:38:36.624162+00:00",
+    "subject": "Greenfield Dairy - invoice 5531",
+    "body": "Invoice 5531 attached: butter, cream and milk for the month, 642.18 GBP. Due on receipt but we give you 14 days, i.e. 9 September.",
+    "attachments": [
+     "inv_5531.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t031",
+  "messages": [
+   {
+    "message_id": "t031-m1",
+    "sender": "Fuelstop <receipts@fuelstop.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-09-02T21:38:16.750116+00:00",
+    "subject": "Your receipt from Fuelstop",
+    "body": "Receipt for your purchase on 2 September: diesel 54.20 GBP. Card ending 4471. Thank you.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t032",
+  "messages": [
+   {
+    "message_id": "t032-m1",
+    "sender": "Greenfield Dairy Billing <billing@greenfield-dairy.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-09-09T20:51:59.912458+00:00",
+    "subject": "Greenfield Dairy - invoice 5602",
+    "body": "Hi, invoice 5602 for last month's deliveries: 701.90 GBP, due 23 September. Thanks for your business!",
+    "attachments": [
+     "inv_5602.pdf"
+    ]
+   },
+   {
+    "message_id": "t032-m2",
+    "sender": "Rosa Delgado <rosa@crumbandcrust.example>",
+    "to": [
+     "billing@greenfield-dairy.example"
+    ],
+    "date": "2026-09-11T08:58:59.912458+00:00",
+    "subject": "Re: Greenfield Dairy - invoice 5602",
+    "body": "Hi Joe, the butter on the 12th was short by 2 cases - can you credit that before I pay?",
+    "attachments": []
+   },
+   {
+    "message_id": "t032-m3",
+    "sender": "Joe Marsh <joe.marsh@greenfield-dairy.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-09-12T10:20:59.912458+00:00",
+    "subject": "Re: Greenfield Dairy - invoice 5602",
+    "body": "Good catch, I'll issue a credit note for 2 cases (84.00) and send a corrected invoice.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t033",
+  "messages": [
+   {
+    "message_id": "t033-m1",
+    "sender": "Packwell Packaging <invoices@packwell.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-09-15T19:34:01.696063+00:00",
+    "subject": "Packwell statement - overdue items",
+    "body": "Account statement: PK-88103 (934.00 GBP) is now 12 days overdue. Please arrange payment or contact us if there's an issue.",
+    "attachments": []
+   },
+   {
+    "message_id": "t033-m2",
+    "sender": "Rosa Delgado <rosa@crumbandcrust.example>",
+    "to": [
+     "invoices@packwell.example"
+    ],
+    "date": "2026-09-17T06:07:01.696063+00:00",
+    "subject": "Re: Packwell statement - overdue items",
+    "body": "Paying tomorrow, sorry. Cash flow is tight this month.",
+    "attachments": []
+   },
+   {
+    "message_id": "t033-m3",
+    "sender": "Imran Qureshi <imran@packwell.example>",
+    "to": [
+     "rosa@crumbandcrust.example"
+    ],
+    "date": "2026-09-18T05:49:01.696063+00:00",
+    "subject": "Re: Packwell statement - overdue items",
+    "body": "No problem Rosa, thanks for letting me know.",
+    "attachments": []
+   }
+  ]
+ }
+]

@@ -1,0 +1,7 @@
+id: client-pipeline-board
+prompt: "I'm a freelance brand designer. I'd love to see my client conversations laid out like a board, so I can tell at a glance who has just enquired, who I've sent a quote to, who's gone quiet and who has said yes."
+paraphrases:
+  - "Show each potential or current client as a card on a board by how far along we are, from first contact through to a signed job."
+  - "Can you organise my client emails into columns showing where each client is in the process, plus how much I quoted them?"
+domain: clients
+holdout: false

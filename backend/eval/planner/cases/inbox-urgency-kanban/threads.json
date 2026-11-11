@@ -1,0 +1,671 @@
+[
+ {
+  "thread_id": "t001",
+  "messages": [
+   {
+    "message_id": "t001-m1",
+    "sender": "Revenue Service <noreply@revenue-service.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-01-22T05:06:45.017529+00:00",
+    "subject": "Reminder: self-assessment filing window",
+    "body": "This is an automated reminder that the filing window for the current year is open. No action is required if you have already filed.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t002",
+  "messages": [
+   {
+    "message_id": "t002-m1",
+    "sender": "Elena Vasquez <elena@brightmoor-ops.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-01-27T16:35:03.213163+00:00",
+    "subject": "Re: Urgent?? please read",
+    "body": "Called, no answer. Sending you what I know by email.",
+    "attachments": []
+   },
+   {
+    "message_id": "t002-m2",
+    "sender": "Graham Pike <graham.pike@brightmoor-ops.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-01-28T06:34:03.213163+00:00",
+    "subject": "Re: Urgent?? please read",
+    "body": "OK, got it. Let's discuss tomorrow, not as bad as I thought.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t003",
+  "messages": [
+   {
+    "message_id": "t003-m1",
+    "sender": "Estate Office <office@harbourview-estates.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-02-05T16:16:15.244315+00:00",
+    "subject": "Lease addendum to sign",
+    "body": "Please find the lease addendum for signature. We'd appreciate it returned within 10 working days.",
+    "attachments": [
+     "lease-addendum.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t004",
+  "messages": [
+   {
+    "message_id": "t004-m1",
+    "sender": "Meetly <notifications@meetly.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-02-10T22:43:03.695697+00:00",
+    "subject": "Recording available: Weekly sync",
+    "body": "Your cloud recording for 'Weekly sync' is ready to view. It will be deleted after 30 days.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t005",
+  "messages": [
+   {
+    "message_id": "t005-m1",
+    "sender": "Natalie Cho <natalie@brightmoor-ops.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-02-19T04:09:11.878740+00:00",
+    "subject": "Security training - mandatory",
+    "body": "All staff must complete the annual security training by the end of the month. Link inside. You'll lose system access if you don't.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t006",
+  "messages": [
+   {
+    "message_id": "t006-m1",
+    "sender": "SkyBridge Airlines <booking@skybridge.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-02-26T07:01:41.862039+00:00",
+    "subject": "Check-in opens soon for your flight",
+    "body": "Your flight to Porto departs in 48 hours. Online check-in opens 24 hours before departure.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t007",
+  "messages": [
+   {
+    "message_id": "t007-m1",
+    "sender": "Graham Pike <graham.pike@brightmoor-ops.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-03-04T07:27:31.095469+00:00",
+    "subject": "Urgent?? please read",
+    "body": "Elena, saw the news about the delayed shipment. Call me as soon as you see this.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t008",
+  "messages": [
+   {
+    "message_id": "t008-m1",
+    "sender": "The Weekly Brief <digest@morningbrief.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-03-11T08:18:55.724441+00:00",
+    "subject": "Your Tuesday brief: 7 stories worth your time",
+    "body": "Good morning. Today: rate decisions, a new EU rule on data portability, and why everyone is talking about four-day weeks. Read online | Unsubscribe | Manage preferences",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t009",
+  "messages": [
+   {
+    "message_id": "t009-m1",
+    "sender": "Dmitri Volkov <dmitri@brightmoor-ops.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-03-17T15:16:42.613945+00:00",
+    "subject": "Can you look at this?",
+    "body": "Elena, can you take a look at the draft proposal? I'd like your feedback sometime this week. Attached.",
+    "attachments": [
+     "proposal-draft.docx"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t010",
+  "messages": [
+   {
+    "message_id": "t010-m1",
+    "sender": "Aisha Rahman <aisha.rahman@brightmoor-ops.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-03-24T04:23:06.662142+00:00",
+    "subject": "Reminder: timesheets due Friday",
+    "body": "Reminder to submit your timesheets by Friday 28 March. Late ones will be paid next cycle.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t011",
+  "messages": [
+   {
+    "message_id": "t011-m1",
+    "sender": "Stefan Kruger <stefan@kruger-logistics.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-04-01T18:43:33.969233+00:00",
+    "subject": "ASAP: invoice dispute",
+    "body": "We were charged twice for the March service. Please correct ASAP, accounts is chasing me. Invoice number 20311.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t012",
+  "messages": [
+   {
+    "message_id": "t012-m1",
+    "sender": "Elena Vasquez <elena@brightmoor-ops.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-04-08T00:15:04.974397+00:00",
+    "subject": "Re: Meeting moved to 3pm",
+    "body": "OK thanks, see you then.",
+    "attachments": []
+   },
+   {
+    "message_id": "t012-m2",
+    "sender": "Graham Pike <graham.pike@brightmoor-ops.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-04-10T07:13:04.974397+00:00",
+    "subject": "Re: Meeting moved to 3pm",
+    "body": "👍",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t013",
+  "messages": [
+   {
+    "message_id": "t013-m1",
+    "sender": "Natalie Cho <natalie@brightmoor-ops.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-04-14T18:22:32.223712+00:00",
+    "subject": "Re: onboarding for new hire",
+    "body": "Reminder: new hire starts Monday and still needs a laptop and desk. Can you confirm those are sorted? Starts Monday 19 April.",
+    "attachments": []
+   },
+   {
+    "message_id": "t013-m2",
+    "sender": "Elena Vasquez <elena@brightmoor-ops.example>",
+    "to": [
+     "natalie@brightmoor-ops.example"
+    ],
+    "date": "2026-04-15T19:44:32.223712+00:00",
+    "subject": "Re: onboarding for new hire",
+    "body": "Laptop ready, desk on Friday.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t014",
+  "messages": [
+   {
+    "message_id": "t014-m1",
+    "sender": "LinkedIn Updates <updates@linknet.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-04-22T13:13:11.587484+00:00",
+    "subject": "5 people viewed your profile this week",
+    "body": "See who is looking at your profile. Upgrade to Premium to see all viewers. Unsubscribe from these emails.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t015",
+  "messages": [
+   {
+    "message_id": "t015-m1",
+    "sender": "DevSummit <team@devsummit.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-04-29T22:07:44.822579+00:00",
+    "subject": "Early bird tickets end Friday",
+    "body": "Join 2,000 builders in Lisbon this autumn. Early bird pricing ends Friday. Speakers announced: see the full lineup on our site.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t016",
+  "messages": [
+   {
+    "message_id": "t016-m1",
+    "sender": "Dmitri Volkov <dmitri@brightmoor-ops.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-05-05T20:32:40.068206+00:00",
+    "subject": "when you get a chance - team lunch",
+    "body": "Hey, no rush at all, but could you pick a place for the team lunch next month? Dmitri",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t017",
+  "messages": [
+   {
+    "message_id": "t017-m1",
+    "sender": "Julia Ferreira <julia@ferreira-co.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-05-12T22:37:42.958910+00:00",
+    "subject": "Contract renewal - Ferreira & Co",
+    "body": "Hi Elena, our contract expires on 24 May. Can you send us the renewal terms? We'd like to sign before then.",
+    "attachments": []
+   },
+   {
+    "message_id": "t017-m2",
+    "sender": "Elena Vasquez <elena@brightmoor-ops.example>",
+    "to": [
+     "julia@ferreira-co.example"
+    ],
+    "date": "2026-05-14T06:44:42.958910+00:00",
+    "subject": "Re: Contract renewal - Ferreira & Co",
+    "body": "Sure, I'll pull the terms together by Monday.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t018",
+  "messages": [
+   {
+    "message_id": "t018-m1",
+    "sender": "Oren Katz <oren@katz-supplies.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-05-19T22:38:12.565200+00:00",
+    "subject": "Re: Quick question about the vendor list",
+    "body": "Just bumping this up. We need to confirm production by the end of next week.",
+    "attachments": []
+   },
+   {
+    "message_id": "t018-m2",
+    "sender": "Elena Vasquez <elena@brightmoor-ops.example>",
+    "to": [
+     "oren@katz-supplies.example"
+    ],
+    "date": "2026-05-22T10:39:12.565200+00:00",
+    "subject": "Re: Quick question about the vendor list",
+    "body": "Ah sorry, will confirm by Wednesday.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t019",
+  "messages": [
+   {
+    "message_id": "t019-m1",
+    "sender": "Estate Office <office@harbourview-estates.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-05-26T01:31:56.659873+00:00",
+    "subject": "Parking permits",
+    "body": "Dear tenant, parking permits for the new quarter must be renewed by the 30th. Forms are available at reception.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t020",
+  "messages": [
+   {
+    "message_id": "t020-m1",
+    "sender": "Julia Ferreira <julia@ferreira-co.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-06-04T22:43:31.844185+00:00",
+    "subject": "Can we reschedule?",
+    "body": "Hi Elena, something came up and I can't do Tuesday. Any time next week works for me, whatever suits you.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t021",
+  "messages": [
+   {
+    "message_id": "t021-m1",
+    "sender": "Priya Nair <priya@lakeside-events.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-06-11T02:07:55.267891+00:00",
+    "subject": "Team offsite poll",
+    "body": "Hi, please fill in the poll about your preferred dates for the team offsite. Doesn't have to be today, voting closes at the end of the month.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t022",
+  "messages": [
+   {
+    "message_id": "t022-m1",
+    "sender": "Oren Katz <oren@katz-supplies.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-06-17T00:53:32.420583+00:00",
+    "subject": "Quick question about the vendor list",
+    "body": "Hi Elena, when you have a moment, could you confirm whether you still need the 200 units? No hurry. Oren",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t023",
+  "messages": [
+   {
+    "message_id": "t023-m1",
+    "sender": "Aisha Rahman <aisha.rahman@brightmoor-ops.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-06-25T11:14:02.061610+00:00",
+    "subject": "budget sign-off needed by EOD",
+    "body": "Hi Elena, need your sign-off on the Q2 travel budget today before 5pm, otherwise it misses the finance run. Spreadsheet attached.",
+    "attachments": [
+     "Q2-travel-budget.xlsx"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t024",
+  "messages": [
+   {
+    "message_id": "t024-m1",
+    "sender": "Graham Pike <graham.pike@brightmoor-ops.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-07-03T02:08:05.528818+00:00",
+    "subject": "Meeting moved to 3pm",
+    "body": "Moved the ops review to 3pm today. Be there pls.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t025",
+  "messages": [
+   {
+    "message_id": "t025-m1",
+    "sender": "IT Helpdesk <helpdesk@brightmoor-ops.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-07-09T12:02:26.885941+00:00",
+    "subject": "Printer on 2nd floor",
+    "body": "FYI the 2nd floor printer will be offline for maintenance on Saturday. Use the 1st floor one.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t026",
+  "messages": [
+   {
+    "message_id": "t026-m1",
+    "sender": "Natalie Cho <natalie@brightmoor-ops.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-07-14T17:34:54.821086+00:00",
+    "subject": "Holiday request approval",
+    "body": "Dmitri has requested 10 days off from 14 July. Please approve or decline in the portal when you can.",
+    "attachments": []
+   },
+   {
+    "message_id": "t026-m2",
+    "sender": "Elena Vasquez <elena@brightmoor-ops.example>",
+    "to": [
+     "natalie@brightmoor-ops.example"
+    ],
+    "date": "2026-07-15T12:50:54.821086+00:00",
+    "subject": "Re: Holiday request approval",
+    "body": "Approved.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t027",
+  "messages": [
+   {
+    "message_id": "t027-m1",
+    "sender": "Stefan Kruger <stefan@kruger-logistics.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-07-22T02:19:39.697321+00:00",
+    "subject": "URGENT: client site down",
+    "body": "Elena, our booking portal has been down since 7am and customers are calling. We need someone on this NOW. Stefan",
+    "attachments": []
+   },
+   {
+    "message_id": "t027-m2",
+    "sender": "Elena Vasquez <elena@brightmoor-ops.example>",
+    "to": [
+     "stefan@kruger-logistics.example"
+    ],
+    "date": "2026-07-22T05:42:39.697321+00:00",
+    "subject": "Re: URGENT: client site down",
+    "body": "On it, escalating to engineering. Will update within the hour.",
+    "attachments": []
+   },
+   {
+    "message_id": "t027-m3",
+    "sender": "Stefan Kruger <stefan@kruger-logistics.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-07-22T13:11:39.697321+00:00",
+    "subject": "Re: URGENT: client site down",
+    "body": "Please hurry.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t028",
+  "messages": [
+   {
+    "message_id": "t028-m1",
+    "sender": "Cloudlane <hello@cloudlane.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-07-28T14:00:31.777758+00:00",
+    "subject": "What's new in Cloudlane - March release notes",
+    "body": "Hi there, this month we shipped faster dashboards, SSO for all plans and a refreshed mobile app. See the full changelog on our blog. You are receiving this because you signed up for product updates.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t029",
+  "messages": [
+   {
+    "message_id": "t029-m1",
+    "sender": "Graham Pike <graham.pike@brightmoor-ops.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-08-05T20:51:41.331712+00:00",
+    "subject": "Re: Board pack draft",
+    "body": "Can you have the ops slides to me by Thursday 8 August midday? No rush before then but I'll need time to review.",
+    "attachments": []
+   },
+   {
+    "message_id": "t029-m2",
+    "sender": "Elena Vasquez <elena@brightmoor-ops.example>",
+    "to": [
+     "graham.pike@brightmoor-ops.example"
+    ],
+    "date": "2026-08-08T05:49:41.331712+00:00",
+    "subject": "Re: Board pack draft",
+    "body": "Will do.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t030",
+  "messages": [
+   {
+    "message_id": "t030-m1",
+    "sender": "Natalie Cho <natalie@brightmoor-ops.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-08-11T11:31:12.045384+00:00",
+    "subject": "FYI: new expense policy",
+    "body": "Hi all, for your information, the updated expense policy is attached. No action needed, just a heads up that it starts next quarter.",
+    "attachments": [
+     "Expense-policy-v4.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t031",
+  "messages": [
+   {
+    "message_id": "t031-m1",
+    "sender": "CloudHost <billing@cloudhost.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-08-18T03:06:46.146047+00:00",
+    "subject": "Your invoice from CloudHost",
+    "body": "Invoice 55021 for hosting: 118.00 EUR, paid by card on file. No action needed.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t032",
+  "messages": [
+   {
+    "message_id": "t032-m1",
+    "sender": "Aisha Rahman <aisha.rahman@brightmoor-ops.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-08-26T23:51:53.588877+00:00",
+    "subject": "Weekly numbers",
+    "body": "Here are this week's numbers, nothing unusual. For your records.",
+    "attachments": [
+     "weekly-numbers.xlsx"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t033",
+  "messages": [
+   {
+    "message_id": "t033-m1",
+    "sender": "IT Helpdesk <helpdesk@brightmoor-ops.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-09-01T07:03:39.301439+00:00",
+    "subject": "Password expires in 2 days",
+    "body": "Your password will expire in 2 days. Please change it to avoid being locked out. This is an automated message.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t034",
+  "messages": [
+   {
+    "message_id": "t034-m1",
+    "sender": "Marcus Hale <marcus@deltatools.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-09-08T14:32:56.002427+00:00",
+    "subject": "Intro: Marcus from Delta Tools",
+    "body": "Hi Elena, I'm Marcus from Delta Tools. We help ops teams automate their procurement. Would you be up for a 15-minute chat sometime in the coming weeks?",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t035",
+  "messages": [
+   {
+    "message_id": "t035-m1",
+    "sender": "Dmitri Volkov <dmitri@brightmoor-ops.example>",
+    "to": [
+     "elena@brightmoor-ops.example"
+    ],
+    "date": "2026-09-17T13:25:33.236467+00:00",
+    "subject": "thanks!",
+    "body": "Thanks for sorting that out yesterday!",
+    "attachments": []
+   }
+  ]
+ }
+]

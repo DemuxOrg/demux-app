@@ -1,0 +1,631 @@
+[
+ {
+  "thread_id": "t001",
+  "messages": [
+   {
+    "message_id": "t001-m1",
+    "sender": "Studio Landlord <rent@brickworks-studios.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-01-23T14:38:40.619619+00:00",
+    "subject": "Studio rent",
+    "body": "Rent for your studio space this month: 480 EUR. Due on the 1st.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t002",
+  "messages": [
+   {
+    "message_id": "t002-m1",
+    "sender": "Bruno Sauer <bruno@sauer-motors.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-01-28T17:01:01.494764+00:00",
+    "subject": "Sauer Motors - extra shoot day",
+    "body": "Can we add one more shoot day for the service department? Happy to pay extra.",
+    "attachments": []
+   },
+   {
+    "message_id": "t002-m2",
+    "sender": "Iris Novak <iris@novak-film.example>",
+    "to": [
+     "bruno@sauer-motors.example"
+    ],
+    "date": "2026-01-29T09:43:01.494764+00:00",
+    "subject": "Re: Sauer Motors - extra shoot day",
+    "body": "Sure, an extra day is 900 EUR. I'll update the contract.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t003",
+  "messages": [
+   {
+    "message_id": "t003-m1",
+    "sender": "Felix Amado <felix@amadocam.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-02-06T04:47:15.153896+00:00",
+    "subject": "Camera operator for Khan shoot",
+    "body": "Hey Iris, I'm free for the 5 days. 400 a day OK? Felix",
+    "attachments": []
+   },
+   {
+    "message_id": "t003-m2",
+    "sender": "Iris Novak <iris@novak-film.example>",
+    "to": [
+     "felix@amadocam.example"
+    ],
+    "date": "2026-02-07T23:43:15.153896+00:00",
+    "subject": "Re: Camera operator for Khan shoot",
+    "body": "Yes, that works.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t004",
+  "messages": [
+   {
+    "message_id": "t004-m1",
+    "sender": "Iris Novak <iris@novak-film.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-02-14T10:58:40.344992+00:00",
+    "subject": "Sauer Motors - contract updated",
+    "body": "Updated contract with the extra day attached.",
+    "attachments": [
+     "sauer-contract-v2.pdf"
+    ]
+   },
+   {
+    "message_id": "t004-m2",
+    "sender": "Bruno Sauer <bruno@sauer-motors.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-02-14T19:33:40.344992+00:00",
+    "subject": "Re: Sauer Motors - contract updated",
+    "body": "Signed.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t005",
+  "messages": [
+   {
+    "message_id": "t005-m1",
+    "sender": "Cloudlane <hello@cloudlane.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-02-20T16:59:38.692796+00:00",
+    "subject": "What's new in Cloudlane - March release notes",
+    "body": "Hi there, this month we shipped faster dashboards, SSO for all plans and a refreshed mobile app. See the full changelog on our blog. You are receiving this because you signed up for product updates.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t006",
+  "messages": [
+   {
+    "message_id": "t006-m1",
+    "sender": "Shieldwell Insurance <service@shieldwell.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-03-02T00:14:08.188685+00:00",
+    "subject": "Insurance for shoot",
+    "body": "Production insurance for 3 days, premium 95 EUR. Certificate attached.",
+    "attachments": [
+     "cert.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t007",
+  "messages": [
+   {
+    "message_id": "t007-m1",
+    "sender": "DevSummit <team@devsummit.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-03-09T03:38:38.329071+00:00",
+    "subject": "Early bird tickets end Friday",
+    "body": "Join 2,000 builders in Lisbon this autumn. Early bird pricing ends Friday. Speakers announced: see the full lineup on our site.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t008",
+  "messages": [
+   {
+    "message_id": "t008-m1",
+    "sender": "Leo Marchetti <leo@marchetti-wines.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-03-15T05:53:44.143760+00:00",
+    "subject": "Marchetti proposal accepted",
+    "body": "Proposal accepted, go ahead. Please send the first invoice for 50%.",
+    "attachments": []
+   },
+   {
+    "message_id": "t008-m2",
+    "sender": "Iris Novak <iris@novak-film.example>",
+    "to": [
+     "leo@marchetti-wines.example"
+    ],
+    "date": "2026-03-16T17:15:44.143760+00:00",
+    "subject": "Re: Marchetti proposal accepted",
+    "body": "Invoice 2026-011 attached, 4,000 EUR.",
+    "attachments": [
+     "2026-011.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t009",
+  "messages": [
+   {
+    "message_id": "t009-m1",
+    "sender": "LensRent <bookings@lensrent.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-03-25T20:43:29.963551+00:00",
+    "subject": "LensRent booking confirmation",
+    "body": "Booking confirmed: cinema lens kit and 2 LED panels, 5 days from the 14th. Total 640.00 EUR. Pickup from 9am.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t010",
+  "messages": [
+   {
+    "message_id": "t010-m1",
+    "sender": "Grand Meridian <reservations@grandmeridian.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-03-31T12:33:46.758247+00:00",
+    "subject": "Your stay: confirmation 88213",
+    "body": "Thank you for booking. Arrival 14 June, 2 nights, breakfast included. Free cancellation until 12 June.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t011",
+  "messages": [
+   {
+    "message_id": "t011-m1",
+    "sender": "Ayesha Khan <ayesha@khan-foundation.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-04-08T07:25:12.302356+00:00",
+    "subject": "Khan Foundation documentary - timeline",
+    "body": "Hi Iris, thank you for the call. We'd like a 12 minute documentary, shooting over 5 days. How long would post-production take?",
+    "attachments": []
+   },
+   {
+    "message_id": "t011-m2",
+    "sender": "Iris Novak <iris@novak-film.example>",
+    "to": [
+     "ayesha@khan-foundation.example"
+    ],
+    "date": "2026-04-11T01:36:12.302356+00:00",
+    "subject": "Re: Khan Foundation documentary - timeline",
+    "body": "Around 4 weeks after the shoot.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t012",
+  "messages": [
+   {
+    "message_id": "t012-m1",
+    "sender": "Felix Amado <felix@amadocam.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-04-15T01:33:34.734856+00:00",
+    "subject": "Editing hours - Sauer",
+    "body": "Hi Iris, I spent about 14 hours colour grading the Sauer footage, will bill at 45 an hour.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t013",
+  "messages": [
+   {
+    "message_id": "t013-m1",
+    "sender": "Leo Marchetti <leo@marchetti-wines.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-04-24T02:20:04.101283+00:00",
+    "subject": "Marchetti - invoice paid",
+    "body": "Paid today, check your account.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t014",
+  "messages": [
+   {
+    "message_id": "t014-m1",
+    "sender": "Bruno Sauer <bruno@sauer-motors.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-05-01T13:58:41.399658+00:00",
+    "subject": "Sauer Motors - showroom video",
+    "body": "Iris, loved the first cut! Just a few tweaks to the music and we're good.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t015",
+  "messages": [
+   {
+    "message_id": "t015-m1",
+    "sender": "Marta Kowalski <marta@kowalski-bookkeeping.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-05-10T02:07:41.295161+00:00",
+    "subject": "Accounting - receipts",
+    "body": "Hi Iris, I'm missing receipts for February travel and equipment. Can you send them when possible? Marta",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t016",
+  "messages": [
+   {
+    "message_id": "t016-m1",
+    "sender": "StyleBarn <offers@stylebarn.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-05-17T02:09:52.578089+00:00",
+    "subject": "48 hours only: 30% off everything",
+    "body": "Our biggest sale of the season ends Sunday midnight. Use code SPRING30 at checkout. Free returns.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t017",
+  "messages": [
+   {
+    "message_id": "t017-m1",
+    "sender": "The Weekly Brief <digest@morningbrief.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-05-25T02:48:16.123909+00:00",
+    "subject": "Your Tuesday brief: 7 stories worth your time",
+    "body": "Good morning. Today: rate decisions, a new EU rule on data portability, and why everyone is talking about four-day weeks. Read online | Unsubscribe | Manage preferences",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t018",
+  "messages": [
+   {
+    "message_id": "t018-m1",
+    "sender": "Iris Novak <iris@novak-film.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-05-31T17:32:41.145534+00:00",
+    "subject": "Marchetti final invoice",
+    "body": "Final invoice 2026-019 for 4,000 EUR attached.",
+    "attachments": [
+     "2026-019.pdf"
+    ]
+   },
+   {
+    "message_id": "t018-m2",
+    "sender": "Leo Marchetti <leo@marchetti-wines.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-06-01T02:04:41.145534+00:00",
+    "subject": "Re: Marchetti final invoice",
+    "body": "Will pay Friday.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t019",
+  "messages": [
+   {
+    "message_id": "t019-m1",
+    "sender": "Tilda Rowe <tilda@rowe-sound.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-06-08T20:10:00.720387+00:00",
+    "subject": "Sound recordist - Marchetti shoot",
+    "body": "Hi Iris, confirming I'm booked for both days on the Marchetti shoot. My day rate is 350 as agreed. Invoice to follow. Tilda",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t020",
+  "messages": [
+   {
+    "message_id": "t020-m1",
+    "sender": "Soundlibrary <licences@soundlibrary.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-06-16T03:31:47.390678+00:00",
+    "subject": "Music licence",
+    "body": "Thanks for purchasing the Standard Commercial licence for track 'Open Road'. Amount 120.00 EUR. Licence attached.",
+    "attachments": [
+     "licence-open-road.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t021",
+  "messages": [
+   {
+    "message_id": "t021-m1",
+    "sender": "Revenue Service <noreply@revenue-service.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-06-25T19:31:47.507808+00:00",
+    "subject": "Tax reminder",
+    "body": "Reminder: your VAT return for the quarter is due. Log in to file.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t022",
+  "messages": [
+   {
+    "message_id": "t022-m1",
+    "sender": "LensRent <bookings@lensrent.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-07-03T06:18:27.174603+00:00",
+    "subject": "Travel for Khan shoot",
+    "body": "Reminder for the van booking: 3 days, 270 EUR.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t023",
+  "messages": [
+   {
+    "message_id": "t023-m1",
+    "sender": "LinkedIn Updates <updates@linknet.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-07-10T22:28:45.533267+00:00",
+    "subject": "5 people viewed your profile this week",
+    "body": "See who is looking at your profile. Upgrade to Premium to see all viewers. Unsubscribe from these emails.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t024",
+  "messages": [
+   {
+    "message_id": "t024-m1",
+    "sender": "Leo Marchetti <leo@marchetti-wines.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-07-16T08:05:29.007132+00:00",
+    "subject": "Marchetti Wines promo film - brief",
+    "body": "Hi Iris, we'd like a 90 second promo film for the harvest festival. Shoot in two days, delivery by end of May. Budget in the region of 8k?",
+    "attachments": []
+   },
+   {
+    "message_id": "t024-m2",
+    "sender": "Iris Novak <iris@novak-film.example>",
+    "to": [
+     "leo@marchetti-wines.example"
+    ],
+    "date": "2026-07-16T10:22:29.007132+00:00",
+    "subject": "Re: Marchetti Wines promo film - brief",
+    "body": "Sounds doable. I'll put together a proposal with a day rate breakdown.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t025",
+  "messages": [
+   {
+    "message_id": "t025-m1",
+    "sender": "Iris Novak <iris@novak-film.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-07-26T05:20:45.377083+00:00",
+    "subject": "Hours this week",
+    "body": "Note to self: 11 hours editing Marchetti, 6 hours on Khan treatment.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t026",
+  "messages": [
+   {
+    "message_id": "t026-m1",
+    "sender": "Iris Novak <iris@novak-film.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-07-31T15:55:39.279990+00:00",
+    "subject": "Khan Foundation - invoice",
+    "body": "Hi Ayesha, attached is invoice 2026-014 for the first milestone, 6,500 EUR.",
+    "attachments": [
+     "2026-014.pdf"
+    ]
+   },
+   {
+    "message_id": "t026-m2",
+    "sender": "Ayesha Khan <ayesha@khan-foundation.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-07-31T23:10:39.279990+00:00",
+    "subject": "Re: Khan Foundation - invoice",
+    "body": "Received, our finance team will pay within 30 days.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t027",
+  "messages": [
+   {
+    "message_id": "t027-m1",
+    "sender": "LensRent <bookings@lensrent.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-08-09T15:53:24.782963+00:00",
+    "subject": "LensRent invoice",
+    "body": "Invoice LR-90177: equipment hire 640.00 EUR, due on receipt.",
+    "attachments": [
+     "LR-90177.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t028",
+  "messages": [
+   {
+    "message_id": "t028-m1",
+    "sender": "The Long Game <pod@longgame.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-08-16T18:44:32.985462+00:00",
+    "subject": "New episode: why small teams win",
+    "body": "This week we talk to a founder about staying small on purpose. Listen now on your favourite app.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t029",
+  "messages": [
+   {
+    "message_id": "t029-m1",
+    "sender": "Iris Novak <iris@novak-film.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-08-24T01:08:00.705629+00:00",
+    "subject": "Marchetti - final delivery",
+    "body": "Hi Leo, final film delivered via the link. Let me know if you need anything else!",
+    "attachments": []
+   },
+   {
+    "message_id": "t029-m2",
+    "sender": "Leo Marchetti <leo@marchetti-wines.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-08-24T18:22:00.705629+00:00",
+    "subject": "Re: Marchetti - final delivery",
+    "body": "Beautiful work, thank you!",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t030",
+  "messages": [
+   {
+    "message_id": "t030-m1",
+    "sender": "Ayesha Khan <ayesha@khan-foundation.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-09-02T05:57:38.153575+00:00",
+    "subject": "Khan Foundation - rough cut feedback",
+    "body": "We watched the rough cut. Wonderful, only a couple of small notes on the intro. See attached.",
+    "attachments": [
+     "notes.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t031",
+  "messages": [
+   {
+    "message_id": "t031-m1",
+    "sender": "Tilda Rowe <tilda@rowe-sound.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-09-08T21:16:42.576880+00:00",
+    "subject": "Rowe Sound invoice",
+    "body": "Invoice RS-221 for the Marchetti shoot, 2 days, 700 EUR.",
+    "attachments": [
+     "RS-221.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t032",
+  "messages": [
+   {
+    "message_id": "t032-m1",
+    "sender": "FilmBiz Toolkit <hello@filmbiztoolkit.example>",
+    "to": [
+     "iris@novak-film.example"
+    ],
+    "date": "2026-09-17T05:44:10.435936+00:00",
+    "subject": "Budget film production templates",
+    "body": "Download our project budget and profit tracking templates for freelance filmmakers. Spreadsheet + guide, 19 EUR.",
+    "attachments": []
+   }
+  ]
+ }
+]

@@ -1,0 +1,7 @@
+id: support-needs-reply
+prompt: "People write to the shop's help address all day. Show me which customer emails are still waiting for an answer from me and how long they've been waiting, so I can catch up."
+paraphrases:
+  - "Which customer messages haven't I answered yet? I want to know who's waiting and for how many days."
+  - "List the customer questions and complaints that still need a reply from me, oldest first."
+domain: support
+holdout: true

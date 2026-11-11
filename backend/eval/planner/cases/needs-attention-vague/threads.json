@@ -1,0 +1,530 @@
+[
+ {
+  "thread_id": "t001",
+  "messages": [
+   {
+    "message_id": "t001-m1",
+    "sender": "Telco One <bills@telcoone.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-01-23T13:25:57.061291+00:00",
+    "subject": "Phone bill",
+    "body": "Your bill for this month is 28.50 GBP. Direct debit on the 3rd.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t002",
+  "messages": [
+   {
+    "message_id": "t002-m1",
+    "sender": "Sam Whitlock <sam@whitlock-studio.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-01-29T10:42:01.200695+00:00",
+    "subject": "Re: Fishing trip",
+    "body": "Count me in!",
+    "attachments": []
+   },
+   {
+    "message_id": "t002-m2",
+    "sender": "Uncle Pete <pete.whitlock@family-mail.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-01-29T16:31:01.200695+00:00",
+    "subject": "Re: Fishing trip",
+    "body": "Great, I'll book it.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t003",
+  "messages": [
+   {
+    "message_id": "t003-m1",
+    "sender": "City Parking <notices@cityparking.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-02-08T01:31:11.812349+00:00",
+    "subject": "Parking fine",
+    "body": "A penalty charge notice has been issued to your vehicle. Pay within 14 days for a reduced amount of 35 GBP.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t004",
+  "messages": [
+   {
+    "message_id": "t004-m1",
+    "sender": "Ravi Menon <ravi@kiteanalytics.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-02-17T09:23:17.111712+00:00",
+    "subject": "Thanks!",
+    "body": "Thanks for the call, super helpful.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t005",
+  "messages": [
+   {
+    "message_id": "t005-m1",
+    "sender": "StyleBarn <offers@stylebarn.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-02-24T21:36:03.610693+00:00",
+    "subject": "48 hours only: 30% off everything",
+    "body": "Our biggest sale of the season ends Sunday midnight. Use code SPRING30 at checkout. Free returns.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t006",
+  "messages": [
+   {
+    "message_id": "t006-m1",
+    "sender": "Hosting Support <support@hostmatic.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-03-05T03:52:46.918666+00:00",
+    "subject": "Website down?",
+    "body": "We detected downtime on your website for 12 minutes today. The issue has been resolved. No action is needed.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t007",
+  "messages": [
+   {
+    "message_id": "t007-m1",
+    "sender": "Tom Becker <tom.becker@family-mail.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-03-12T05:30:39.823593+00:00",
+    "subject": "Re: Saturday",
+    "body": "Cool, 8 works. I'll bring the board games. Do you still have my charger lol",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t008",
+  "messages": [
+   {
+    "message_id": "t008-m1",
+    "sender": "Anya Volkova <anya@volkova.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-03-21T21:19:43.870429+00:00",
+    "subject": "Can you review my CV?",
+    "body": "Hey Sam, could you take a look at my CV when you've got a free minute? No rush.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t009",
+  "messages": [
+   {
+    "message_id": "t009-m1",
+    "sender": "Cloudlane <hello@cloudlane.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-03-29T23:22:31.020713+00:00",
+    "subject": "What's new in Cloudlane - March release notes",
+    "body": "Hi there, this month we shipped faster dashboards, SSO for all plans and a refreshed mobile app. See the full changelog on our blog. You are receiving this because you signed up for product updates.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t010",
+  "messages": [
+   {
+    "message_id": "t010-m1",
+    "sender": "Helen Cho <helen@chostrategy.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-04-05T00:27:31.695664+00:00",
+    "subject": "Proposal feedback",
+    "body": "Sam, I've read through the proposal. A few points to discuss, can we speak Thursday? Helen",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t011",
+  "messages": [
+   {
+    "message_id": "t011-m1",
+    "sender": "Helen Cho <helen@chostrategy.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-04-13T02:10:14.656521+00:00",
+    "subject": "Project update",
+    "body": "Quick update from our side: we've moved the launch to the 20th. Is that OK with you?",
+    "attachments": []
+   },
+   {
+    "message_id": "t011-m2",
+    "sender": "Sam Whitlock <sam@whitlock-studio.example>",
+    "to": [
+     "helen@chostrategy.example"
+    ],
+    "date": "2026-04-14T17:34:14.656521+00:00",
+    "subject": "Re: Project update",
+    "body": "Fine with me.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t012",
+  "messages": [
+   {
+    "message_id": "t012-m1",
+    "sender": "Uncle Pete <pete.whitlock@family-mail.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-04-21T02:12:41.430650+00:00",
+    "subject": "Fishing trip",
+    "body": "Sam, are you in for the fishing trip in June? Need to book the cabin soon.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t013",
+  "messages": [
+   {
+    "message_id": "t013-m1",
+    "sender": "Victor Alonso <victor@alonsoarch.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-05-01T05:01:45.425507+00:00",
+    "subject": "Invoice 114 - second reminder",
+    "body": "Dear Sam, invoice 114 (2,400 EUR) is now 3 weeks overdue. Please advise on payment.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t014",
+  "messages": [
+   {
+    "message_id": "t014-m1",
+    "sender": "Janet Booth <janet.booth@homemail.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-05-09T23:44:49.324849+00:00",
+    "subject": "Mum's birthday",
+    "body": "Hi love, don't forget Dad's 70th on the 19th! Janet x",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t015",
+  "messages": [
+   {
+    "message_id": "t015-m1",
+    "sender": "Ravi Menon <ravi@kiteanalytics.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-05-16T17:58:00.064006+00:00",
+    "subject": "Intro call",
+    "body": "Hi Sam, are we still on for the intro call this week? Let me know a time.",
+    "attachments": []
+   },
+   {
+    "message_id": "t015-m2",
+    "sender": "Sam Whitlock <sam@whitlock-studio.example>",
+    "to": [
+     "ravi@kiteanalytics.example"
+    ],
+    "date": "2026-05-17T05:34:00.064006+00:00",
+    "subject": "Re: Intro call",
+    "body": "Yes, Wednesday afternoon would suit me.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t016",
+  "messages": [
+   {
+    "message_id": "t016-m1",
+    "sender": "DevSummit <team@devsummit.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-05-25T14:10:14.713251+00:00",
+    "subject": "Early bird tickets end Friday",
+    "body": "Join 2,000 builders in Lisbon this autumn. Early bird pricing ends Friday. Speakers announced: see the full lineup on our site.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t017",
+  "messages": [
+   {
+    "message_id": "t017-m1",
+    "sender": "Landlord Office <office@harbourview-estates.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-06-01T03:46:27.776213+00:00",
+    "subject": "Rent increase notice",
+    "body": "Dear tenant, please find attached notice of a rent increase effective 31 July. Please acknowledge receipt.",
+    "attachments": [
+     "rent-notice.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t018",
+  "messages": [
+   {
+    "message_id": "t018-m1",
+    "sender": "The Weekly Brief <digest@morningbrief.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-06-11T19:02:48.555341+00:00",
+    "subject": "Your Tuesday brief: 7 stories worth your time",
+    "body": "Good morning. Today: rate decisions, a new EU rule on data portability, and why everyone is talking about four-day weeks. Read online | Unsubscribe | Manage preferences",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t019",
+  "messages": [
+   {
+    "message_id": "t019-m1",
+    "sender": "Victor Alonso <victor@alonsoarch.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-06-17T19:14:23.756353+00:00",
+    "subject": "Re: quote for brochure",
+    "body": "Hi Sam, thanks for the quote. We'll decide next week.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t020",
+  "messages": [
+   {
+    "message_id": "t020-m1",
+    "sender": "LinkedIn Updates <updates@linknet.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-06-25T15:59:44.370042+00:00",
+    "subject": "5 people viewed your profile this week",
+    "body": "See who is looking at your profile. Upgrade to Premium to see all viewers. Unsubscribe from these emails.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t021",
+  "messages": [
+   {
+    "message_id": "t021-m1",
+    "sender": "Dr. Lopez Surgery <reception@lopezsurgery.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-07-05T13:04:34.472916+00:00",
+    "subject": "Appointment reminder",
+    "body": "This is a reminder of your appointment on 8 July at 10:20. Please arrive 5 minutes early.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t022",
+  "messages": [
+   {
+    "message_id": "t022-m1",
+    "sender": "Marta Kowalski <marta@kowalski-bookkeeping.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-07-13T03:34:17.922002+00:00",
+    "subject": "Tax return documents",
+    "body": "Hi Sam, I still need your income statements and the expenses file for the tax return. The deadline is end of next month. Marta",
+    "attachments": []
+   },
+   {
+    "message_id": "t022-m2",
+    "sender": "Sam Whitlock <sam@whitlock-studio.example>",
+    "to": [
+     "marta@kowalski-bookkeeping.example"
+    ],
+    "date": "2026-07-15T06:41:17.922002+00:00",
+    "subject": "Re: Tax return documents",
+    "body": "Will send this weekend.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t023",
+  "messages": [
+   {
+    "message_id": "t023-m1",
+    "sender": "Helen Cho <helen@chostrategy.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-07-20T23:55:45.993902+00:00",
+    "subject": "Signed contract",
+    "body": "Sam, signed copy of the contract attached. Looking forward to getting started!",
+    "attachments": [
+     "contract-signed.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t024",
+  "messages": [
+   {
+    "message_id": "t024-m1",
+    "sender": "Shieldwell Insurance <service@shieldwell.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-07-29T01:14:30.858088+00:00",
+    "subject": "Insurance renewal",
+    "body": "Your business insurance renews in 30 days. Premium 412 GBP. Review your cover online.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t025",
+  "messages": [
+   {
+    "message_id": "t025-m1",
+    "sender": "FitHub <no-reply@fithub.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-08-08T00:33:56.643884+00:00",
+    "subject": "Your class booking is confirmed",
+    "body": "You're booked for Spin 45 on Thursday at 18:30. Cancel up to 2 hours before to avoid a fee.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t026",
+  "messages": [
+   {
+    "message_id": "t026-m1",
+    "sender": "Docsy <share@docsy.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-08-14T03:40:10.067900+00:00",
+    "subject": "Lena shared a document with you",
+    "body": "Lena Fischer shared 'Q3 reading list' with you. Open in Docsy.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t027",
+  "messages": [
+   {
+    "message_id": "t027-m1",
+    "sender": "Mailhub Security <security@mailhub.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-08-23T02:11:27.989038+00:00",
+    "subject": "New sign-in from Chrome on Windows",
+    "body": "We noticed a new sign-in to your account. If this was you, no action is needed. If not, reset your password.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t028",
+  "messages": [
+   {
+    "message_id": "t028-m1",
+    "sender": "Growth Lab <events@growthlab.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-08-30T07:51:12.681135+00:00",
+    "subject": "Webinar tomorrow",
+    "body": "Reminder: tomorrow's webinar 'Pricing your services' starts at 15:00 UTC. Link inside.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t029",
+  "messages": [
+   {
+    "message_id": "t029-m1",
+    "sender": "The Long Game <pod@longgame.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-09-09T06:01:01.167589+00:00",
+    "subject": "New episode: why small teams win",
+    "body": "This week we talk to a founder about staying small on purpose. Listen now on your favourite app.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t030",
+  "messages": [
+   {
+    "message_id": "t030-m1",
+    "sender": "HomeGoods <orders@homegoods.example>",
+    "to": [
+     "sam@whitlock-studio.example"
+    ],
+    "date": "2026-09-15T18:54:07.378466+00:00",
+    "subject": "Order confirmation: desk lamp",
+    "body": "Thank you for your order 77120. Desk lamp x1, 39.00 GBP. Arriving within 3 working days.",
+    "attachments": []
+   }
+  ]
+ }
+]

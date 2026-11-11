@@ -1,0 +1,7 @@
+id: tool-subscriptions-renewals
+prompt: "I've signed up for way too many tools for the agency. List everything I'm paying for, how much it costs, when it renews, and who on the team actually uses it, so I can start cutting."
+paraphrases:
+  - "What software subscriptions does the business have? I want the price, the next renewal date and which team member uses each one."
+  - "Make me an overview of all my recurring tool payments - cost, renewal timing and who's using them - so I can cancel what we don't need."
+domain: subscriptions
+holdout: false

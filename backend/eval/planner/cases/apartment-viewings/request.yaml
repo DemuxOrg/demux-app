@@ -1,0 +1,7 @@
+id: apartment-viewings
+prompt: "I'm hunting for a flat to rent. Show me the places I've been in touch about and any viewings I've lined up, and whether the agent said anything about a deposit."
+paraphrases:
+  - "Which apartments have I enquired about, which viewings are booked, and how much deposit do they want?"
+  - "Give me a list of the flats I'm looking at and the viewing appointments, including deposit amounts."
+domain: real_estate
+holdout: true

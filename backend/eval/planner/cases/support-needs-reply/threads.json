@@ -1,0 +1,680 @@
+[
+ {
+  "thread_id": "t001",
+  "messages": [
+   {
+    "message_id": "t001-m1",
+    "sender": "Marcus Webb <mwebb@workplace.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-01-22T19:41:08.564093+00:00",
+    "subject": "Cancel my order please",
+    "body": "Please cancel order 10498, I ordered by mistake. Thanks, Marcus",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t002",
+  "messages": [
+   {
+    "message_id": "t002-m1",
+    "sender": "Pulse Surveys <feedback@pulsesurveys.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-01-31T07:28:50.699192+00:00",
+    "subject": "How did we do? 2 minutes of your time",
+    "body": "Thanks for your recent purchase. Please rate your experience from 1 to 10. Your feedback helps us improve.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t003",
+  "messages": [
+   {
+    "message_id": "t003-m1",
+    "sender": "Rob <rob.t@webmail.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-02-06T12:05:24.706379+00:00",
+    "subject": "discount code not working",
+    "body": "The code WELCOME10 says invalid at checkout",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t004",
+  "messages": [
+   {
+    "message_id": "t004-m1",
+    "sender": "Pinecone Toys Help <help@pinecone-toys.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-02-16T09:09:39.498535+00:00",
+    "subject": "Re: Cancel my order please",
+    "body": "Hi Marcus, done - order 10498 cancelled and refund issued.",
+    "attachments": []
+   },
+   {
+    "message_id": "t004-m2",
+    "sender": "Marcus Webb <mwebb@workplace.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-02-18T12:54:39.498535+00:00",
+    "subject": "Re: Cancel my order please",
+    "body": "Thanks!",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t005",
+  "messages": [
+   {
+    "message_id": "t005-m1",
+    "sender": "Hannah Cole <hannah.cole@fabricsupplier.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-02-24T00:02:51.363577+00:00",
+    "subject": "Automatic reply: Away from the office",
+    "body": "Thanks for your email. I am out of the office until the 22nd with limited access to email. For urgent matters please contact orders@fabricsupplier.example.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t006",
+  "messages": [
+   {
+    "message_id": "t006-m1",
+    "sender": "Ahmed Yilmaz <ahmed.y@webmail.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-03-03T20:27:22.510280+00:00",
+    "subject": "Wrong colour received",
+    "body": "I ordered the red stacking cups and got blue. Order 10455. Please advise how to swap them.",
+    "attachments": []
+   },
+   {
+    "message_id": "t006-m2",
+    "sender": "Pinecone Toys Help <help@pinecone-toys.example>",
+    "to": [
+     "ahmed.y@webmail.example"
+    ],
+    "date": "2026-03-04T16:23:22.510280+00:00",
+    "subject": "Re: Wrong colour received",
+    "body": "So sorry Ahmed! We'll send the red ones right away, no need to return the blue. Can you confirm your delivery address is unchanged?",
+    "attachments": []
+   },
+   {
+    "message_id": "t006-m3",
+    "sender": "Ahmed Yilmaz <ahmed.y@webmail.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-03-06T16:29:22.510280+00:00",
+    "subject": "Re: Wrong colour received",
+    "body": "Yes, same address. Thanks!",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t007",
+  "messages": [
+   {
+    "message_id": "t007-m1",
+    "sender": "Chiara Rossi <chiara.rossi@webmail.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-03-09T14:02:32.782608+00:00",
+    "subject": "Do you ship to Ireland?",
+    "body": "Hi! Do you ship to Dublin and how much is delivery for a 3kg parcel?",
+    "attachments": []
+   },
+   {
+    "message_id": "t007-m2",
+    "sender": "Pinecone Toys Help <help@pinecone-toys.example>",
+    "to": [
+     "chiara.rossi@webmail.example"
+    ],
+    "date": "2026-03-11T01:45:32.782608+00:00",
+    "subject": "Re: Do you ship to Ireland?",
+    "body": "Hi Chiara, yes we do! 8.50 for up to 5kg, 4-6 working days.",
+    "attachments": []
+   },
+   {
+    "message_id": "t007-m3",
+    "sender": "Chiara Rossi <chiara.rossi@webmail.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-03-13T11:34:32.782608+00:00",
+    "subject": "Re: Do you ship to Ireland?",
+    "body": "Perfect, ordering now. Thank you!",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t008",
+  "messages": [
+   {
+    "message_id": "t008-m1",
+    "sender": "gregory.h <gregory.h@homemail.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-03-19T03:28:16.914412+00:00",
+    "subject": "broken wheel",
+    "body": "the wheel fell off the pull along dog after 2 days. very disappointed. what are you going to do about it",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t009",
+  "messages": [
+   {
+    "message_id": "t009-m1",
+    "sender": "Ahmed Yilmaz <ahmed.y@webmail.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-03-26T18:43:05.768505+00:00",
+    "subject": "Delivery to a locker?",
+    "body": "Do you deliver to parcel lockers? Order 10512.",
+    "attachments": []
+   },
+   {
+    "message_id": "t009-m2",
+    "sender": "Pinecone Toys Help <help@pinecone-toys.example>",
+    "to": [
+     "ahmed.y@webmail.example"
+    ],
+    "date": "2026-03-28T17:17:05.768505+00:00",
+    "subject": "Re: Delivery to a locker?",
+    "body": "Hi Ahmed, unfortunately not yet but we're working on it. Home or work address only for now.",
+    "attachments": []
+   },
+   {
+    "message_id": "t009-m3",
+    "sender": "Ahmed Yilmaz <ahmed.y@webmail.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-03-30T23:54:05.768505+00:00",
+    "subject": "Re: Delivery to a locker?",
+    "body": "OK no worries",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t010",
+  "messages": [
+   {
+    "message_id": "t010-m1",
+    "sender": "The Weekly Brief <digest@morningbrief.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-04-02T19:43:21.671503+00:00",
+    "subject": "Your Tuesday brief: 7 stories worth your time",
+    "body": "Good morning. Today: rate decisions, a new EU rule on data portability, and why everyone is talking about four-day weeks. Read online | Unsubscribe | Manage preferences",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t011",
+  "messages": [
+   {
+    "message_id": "t011-m1",
+    "sender": "Pinecone Toys Help <help@pinecone-toys.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-04-12T13:47:03.228833+00:00",
+    "subject": "Re: Follow up - still no response",
+    "body": "Fatima, I'm so sorry, your earlier emails went to spam. I'm checking with the warehouse right now and will update you today.",
+    "attachments": []
+   },
+   {
+    "message_id": "t011-m2",
+    "sender": "Fatima Al-Sayed <fatima.alsayed@homemail.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-04-14T03:25:03.228833+00:00",
+    "subject": "Re: Follow up - still no response",
+    "body": "Ok. Please do, I'm waiting.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t012",
+  "messages": [
+   {
+    "message_id": "t012-m1",
+    "sender": "Fatima Al-Sayed <fatima.alsayed@homemail.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-04-19T19:41:38.618258+00:00",
+    "subject": "Follow up - still no response",
+    "body": "This is my third email. I ordered a doll house (10401) three weeks ago and nobody has replied to me. If I don't hear back by Friday I'm disputing the payment with my bank.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t013",
+  "messages": [
+   {
+    "message_id": "t013-m1",
+    "sender": "MailDesk <stats@maildesk.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-04-28T13:13:20.474390+00:00",
+    "subject": "Your Pinecone Toys help address - weekly stats",
+    "body": "Your help@ mailbox received 41 emails this week. Average first response time: 19h. Upgrade to see more insights.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t014",
+  "messages": [
+   {
+    "message_id": "t014-m1",
+    "sender": "Chiara Rossi <chiara.rossi@webmail.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-05-05T06:54:52.827815+00:00",
+    "subject": "Can I change the delivery address?",
+    "body": "Hi, I just ordered (10507) but need to change the address to my office. Is that possible before it ships?",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t015",
+  "messages": [
+   {
+    "message_id": "t015-m1",
+    "sender": "HelpHero <sales@helphero.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-05-13T18:08:29.144858+00:00",
+    "subject": "Boost your support response time with HelpHero",
+    "body": "Is your support inbox overflowing? HelpHero's shared inbox helps small shops reply 3x faster. Book a free demo today. Unsubscribe.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t016",
+  "messages": [
+   {
+    "message_id": "t016-m1",
+    "sender": "Tomasz Nowak <tomasz.n@homemail.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-05-20T05:21:20.328986+00:00",
+    "subject": "Missing piece in the building blocks",
+    "body": "There's only 47 blocks in the 50 pack. Order #10390. Can you send the missing ones?",
+    "attachments": []
+   },
+   {
+    "message_id": "t016-m2",
+    "sender": "Pinecone Toys Help <help@pinecone-toys.example>",
+    "to": [
+     "tomasz.n@homemail.example"
+    ],
+    "date": "2026-05-22T20:26:20.328986+00:00",
+    "subject": "Re: Missing piece in the building blocks",
+    "body": "Hi Tomasz, apologies! Sending 3 blocks in the post today.",
+    "attachments": []
+   },
+   {
+    "message_id": "t016-m3",
+    "sender": "Tomasz Nowak <tomasz.n@homemail.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-05-24T19:17:20.328986+00:00",
+    "subject": "Re: Missing piece in the building blocks",
+    "body": "Got them, thanks. All good now.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t017",
+  "messages": [
+   {
+    "message_id": "t017-m1",
+    "sender": "ShopRate <alerts@shoprate.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-05-27T11:49:43.898997+00:00",
+    "subject": "Customer review request: reply to your 3-star review",
+    "body": "A customer left a 3-star review of Pinecone Toys: 'Nice toy but slow delivery'. Reply publicly from your dashboard.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t018",
+  "messages": [
+   {
+    "message_id": "t018-m1",
+    "sender": "Katherine Lowe <k.lowe@school-pta.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-06-05T06:46:13.385369+00:00",
+    "subject": "Bulk order for school fair",
+    "body": "Hello, we're organising a school fair and would like to buy 40 small wooden puzzles. Is there a discount for bulk orders? Katherine, Oakfield PTA",
+    "attachments": []
+   },
+   {
+    "message_id": "t018-m2",
+    "sender": "Pinecone Toys Help <help@pinecone-toys.example>",
+    "to": [
+     "k.lowe@school-pta.example"
+    ],
+    "date": "2026-06-05T23:48:13.385369+00:00",
+    "subject": "Re: Bulk order for school fair",
+    "body": "Hi Katherine! Happy to help. For 40 pieces we can offer 15% off. I'll put together a quote.",
+    "attachments": []
+   },
+   {
+    "message_id": "t018-m3",
+    "sender": "Katherine Lowe <k.lowe@school-pta.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-06-06T07:12:13.385369+00:00",
+    "subject": "Re: Bulk order for school fair",
+    "body": "That sounds great, thanks. Waiting for the quote.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t019",
+  "messages": [
+   {
+    "message_id": "t019-m1",
+    "sender": "CodeHost <notifications@codehost.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-06-14T09:40:55.255626+00:00",
+    "subject": "[side-project] Dependabot: bump lodash from 4.17.20",
+    "body": "Bumps lodash from 4.17.20 to 4.17.21. Release notes and commits linked below. Merge when ready.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t020",
+  "messages": [
+   {
+    "message_id": "t020-m1",
+    "sender": "Laura Bishop <laura.bishop@homemail.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-06-22T18:00:24.849187+00:00",
+    "subject": "Where is my order #10482?",
+    "body": "Hi, I ordered a wooden train set 9 days ago (order #10482) and tracking hasn't moved since Monday. Birthday is on Saturday! Can you tell me what's going on?",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t021",
+  "messages": [
+   {
+    "message_id": "t021-m1",
+    "sender": "Northgate Bank <alerts@northgate-bank.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-06-28T13:01:51.546993+00:00",
+    "subject": "Your statement is ready",
+    "body": "Your monthly statement for the account ending 4471 is now available. Log in to online banking to view it. We will never ask for your password by email.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t022",
+  "messages": [
+   {
+    "message_id": "t022-m1",
+    "sender": "Sarah O'Neil <soneil@workplace.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-07-05T19:33:26.337464+00:00",
+    "subject": "Return request",
+    "body": "Hello, I'd like to return the puzzle I bought as a gift, it's a duplicate. Order number 10431. Do you have a returns label?",
+    "attachments": []
+   },
+   {
+    "message_id": "t022-m2",
+    "sender": "Pinecone Toys Help <help@pinecone-toys.example>",
+    "to": [
+     "soneil@workplace.example"
+    ],
+    "date": "2026-07-08T17:35:26.337464+00:00",
+    "subject": "Re: Return request",
+    "body": "Hi Sarah, of course. Returns label attached, refund within 5 working days of receipt.",
+    "attachments": [
+     "return-label-10431.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t023",
+  "messages": [
+   {
+    "message_id": "t023-m1",
+    "sender": "Nordwald Timber <accounts@nordwald-timber.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-07-16T17:42:04.034400+00:00",
+    "subject": "Invoice for beech wood - March",
+    "body": "Invoice NW-3321 for 3 pallets beech boards, 1,980 EUR, due in 30 days.",
+    "attachments": [
+     "NW-3321.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t024",
+  "messages": [
+   {
+    "message_id": "t024-m1",
+    "sender": "Tomasz Nowak <tomasz.n@homemail.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-07-23T11:26:42.110531+00:00",
+    "subject": "Refund status",
+    "body": "Hi, returned my parcel last week (order 10412). When will the refund show? Tracking says delivered to you on Tuesday.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t025",
+  "messages": [
+   {
+    "message_id": "t025-m1",
+    "sender": "Laura Bishop <laura.bishop@homemail.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-07-29T18:49:27.107703+00:00",
+    "subject": "Order 10366 - thanks!",
+    "body": "Just wanted to say the xylophone arrived and my son loves it. Thank you for the quick delivery!",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t026",
+  "messages": [
+   {
+    "message_id": "t026-m1",
+    "sender": "Pinecone Toys Help <help@pinecone-toys.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-08-07T12:59:49.407771+00:00",
+    "subject": "Quote for school fair",
+    "body": "Hi Katherine, quote attached for 40 puzzles. Valid for 30 days.",
+    "attachments": [
+     "quote-oakfield.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t027",
+  "messages": [
+   {
+    "message_id": "t027-m1",
+    "sender": "Yuki Sato <yuki.sato@webmail.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-08-17T02:18:59.709616+00:00",
+    "subject": "Gift receipt",
+    "body": "Hi, can I get a gift receipt without prices for order 10477? Thanks, Yuki",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t028",
+  "messages": [
+   {
+    "message_id": "t028-m1",
+    "sender": "Pinecone Toys Help <help@pinecone-toys.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-08-25T00:46:59.753143+00:00",
+    "subject": "Re: broken wheel",
+    "body": "Hi Gregory, I'm really sorry about that. Could you send a photo of the damage and your order number? We'll send a replacement.",
+    "attachments": []
+   },
+   {
+    "message_id": "t028-m2",
+    "sender": "gregory.h <gregory.h@homemail.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-08-25T16:25:59.753143+00:00",
+    "subject": "Re: broken wheel",
+    "body": "photo attached. dont have the order number, bought it at xmas market stall then registered online?? my name is on the account",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t029",
+  "messages": [
+   {
+    "message_id": "t029-m1",
+    "sender": "Sarah O'Neil <soneil@workplace.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-09-02T07:28:33.943217+00:00",
+    "subject": "Allergy info on wooden toys finish",
+    "body": "Hello again, could you tell me what finish you use on the wooden rattles? My nephew has a nut allergy and I want to be sure there's no nut oil.",
+    "attachments": []
+   },
+   {
+    "message_id": "t029-m2",
+    "sender": "Pinecone Toys Help <help@pinecone-toys.example>",
+    "to": [
+     "soneil@workplace.example"
+    ],
+    "date": "2026-09-04T17:08:33.943217+00:00",
+    "subject": "Re: Allergy info on wooden toys finish",
+    "body": "Hi Sarah, we use a plant-based beeswax finish, no nut oils. Hope that helps!",
+    "attachments": []
+   },
+   {
+    "message_id": "t029-m3",
+    "sender": "Sarah O'Neil <soneil@workplace.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-09-06T02:07:33.943217+00:00",
+    "subject": "Re: Allergy info on wooden toys finish",
+    "body": "Super helpful, thanks.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t030",
+  "messages": [
+   {
+    "message_id": "t030-m1",
+    "sender": "Yuki Sato <yuki.sato@webmail.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-09-08T01:03:03.004739+00:00",
+    "subject": "Damaged box",
+    "body": "The box arrived crushed but the toy inside is fine. Just letting you know in case it's a carrier issue. No action needed.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t031",
+  "messages": [
+   {
+    "message_id": "t031-m1",
+    "sender": "Dee <dee1987@webmail.example>",
+    "to": [
+     "help@pinecone-toys.example"
+    ],
+    "date": "2026-09-15T23:18:55.821305+00:00",
+    "subject": "question",
+    "body": "is the paint non toxic? my daughter is 2",
+    "attachments": []
+   }
+  ]
+ }
+]

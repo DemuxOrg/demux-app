@@ -1,0 +1,635 @@
+[
+ {
+  "thread_id": "t001",
+  "messages": [
+   {
+    "message_id": "t001-m1",
+    "sender": "Jürgen Falk <j.falk@falk-elektronik.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-01-21T00:52:29.411843+00:00",
+    "subject": "Falk Elektronik - Versandbestätigung / dispatch",
+    "body": "Dear Wes, the 15 motherboards are packed and will be collected tomorrow by Rapid Freight. I will send tracking as soon as I have it. Delivery should be end of next week.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t002",
+  "messages": [
+   {
+    "message_id": "t002-m1",
+    "sender": "Wes Tanner <wes@tanner-repairs.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-01-30T07:37:26.467142+00:00",
+    "subject": "Re: boards",
+    "body": "Thanks Dale. Any chance of an ETA?",
+    "attachments": []
+   },
+   {
+    "message_id": "t002-m2",
+    "sender": "Dale Whitaker <dale@vintageparts-usa.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-01-31T01:37:26.467142+00:00",
+    "subject": "Re: boards",
+    "body": "Realistically around 7 February, but it's not in my control haha",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t003",
+  "messages": [
+   {
+    "message_id": "t003-m1",
+    "sender": "QuickPlate <orders@quickplate.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-02-07T17:58:29.825487+00:00",
+    "subject": "Your order is on its way!",
+    "body": "Your driver Marco is 8 minutes away with your order from Noodle Lab. Track your order in the app.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t004",
+  "messages": [
+   {
+    "message_id": "t004-m1",
+    "sender": "ExpressLine <notify@expressline.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-02-14T22:06:55.487825+00:00",
+    "subject": "ExpressLine: update on EL884120937CN",
+    "body": "Your parcel has arrived at the destination hub. Estimated delivery: 16 February.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t005",
+  "messages": [
+   {
+    "message_id": "t005-m1",
+    "sender": "Grand Meridian <reservations@grandmeridian.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-02-20T20:26:12.776514+00:00",
+    "subject": "Your stay: confirmation 88213",
+    "body": "Thank you for booking. Arrival 14 June, 2 nights, breakfast included. Free cancellation until 12 June.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t006",
+  "messages": [
+   {
+    "message_id": "t006-m1",
+    "sender": "ParcelPoint Tracking <tracking@parcelpoint.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-03-01T13:00:26.723131+00:00",
+    "subject": "Delivered: parcel signed for",
+    "body": "Parcel RF-77412-DE was delivered on 1 March and signed for by 'Reception'. Thank you for choosing ParcelPoint.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t007",
+  "messages": [
+   {
+    "message_id": "t007-m1",
+    "sender": "Min-jun Park <minjun@seoultech-supply.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-03-10T10:27:00.979482+00:00",
+    "subject": "Order confirmation - Seoul Tech",
+    "body": "Thank you for your new order #2231. We expect to ship within 5 working days. We'll email tracking when ready.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t008",
+  "messages": [
+   {
+    "message_id": "t008-m1",
+    "sender": "Cloudlane <hello@cloudlane.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-03-16T06:28:31.528907+00:00",
+    "subject": "What's new in Cloudlane - March release notes",
+    "body": "Hi there, this month we shipped faster dashboards, SSO for all plans and a refreshed mobile app. See the full changelog on our blog. You are receiving this because you signed up for product updates.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t009",
+  "messages": [
+   {
+    "message_id": "t009-m1",
+    "sender": "ExpressLine <notify@expressline.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-03-24T02:23:23.819653+00:00",
+    "subject": "Out for delivery today",
+    "body": "Parcel EL990217733CN is out for delivery today. Please ensure someone is available to sign.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t010",
+  "messages": [
+   {
+    "message_id": "t010-m1",
+    "sender": "Wes Tanner <wes@tanner-repairs.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-03-30T19:33:24.213707+00:00",
+    "subject": "Re: connectors",
+    "body": "OK thanks Akiko. Will watch the mailbox.",
+    "attachments": []
+   },
+   {
+    "message_id": "t010-m2",
+    "sender": "Akiko Mori <akiko@morimicro.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-03-30T22:11:24.213707+00:00",
+    "subject": "Re: connectors",
+    "body": "Please tell me when it arrives.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t011",
+  "messages": [
+   {
+    "message_id": "t011-m1",
+    "sender": "Wes Tanner <wes@tanner-repairs.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-04-09T07:37:40.557483+00:00",
+    "subject": "Is it still coming??",
+    "body": "Hi Jürgen, tracking RF-77412-DE shows 'exception - address problem'. Did you use the right street?",
+    "attachments": []
+   },
+   {
+    "message_id": "t011-m2",
+    "sender": "Jürgen Falk <j.falk@falk-elektronik.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-04-11T00:59:40.557483+00:00",
+    "subject": "Re: Is it still coming??",
+    "body": "Oh no. I'll check with Rapid Freight. Perhaps my label printer cut off the postcode.",
+    "attachments": []
+   },
+   {
+    "message_id": "t011-m3",
+    "sender": "Jürgen Falk <j.falk@falk-elektronik.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-04-12T18:29:40.557483+00:00",
+    "subject": "Re: Is it still coming??",
+    "body": "They say they'll redeliver tomorrow.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t012",
+  "messages": [
+   {
+    "message_id": "t012-m1",
+    "sender": "Akiko Mori <akiko@morimicro.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-04-16T22:08:32.014141+00:00",
+    "subject": "Mori Micro - connectors",
+    "body": "Hi Wes, the 200 connectors are shipped by air mail. No tracking available with this service unfortunately, but it normally takes 10 days. Akiko",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t013",
+  "messages": [
+   {
+    "message_id": "t013-m1",
+    "sender": "Wes Tanner <wes@tanner-repairs.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-04-23T21:19:21.940271+00:00",
+    "subject": "Where is my parcel? (Seoul)",
+    "body": "Hi Min-jun, the parts for order 2209 were meant to arrive last week. Any news?",
+    "attachments": []
+   },
+   {
+    "message_id": "t013-m2",
+    "sender": "Min-jun Park <minjun@seoultech-supply.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-04-25T07:20:21.940271+00:00",
+    "subject": "Re: Where is my parcel? (Seoul)",
+    "body": "Sorry! It's stuck at the airport in Incheon waiting for a flight. I'll chase the carrier.",
+    "attachments": []
+   },
+   {
+    "message_id": "t013-m3",
+    "sender": "Wes Tanner <wes@tanner-repairs.example>",
+    "to": [
+     "minjun@seoultech-supply.example"
+    ],
+    "date": "2026-04-27T07:14:21.940271+00:00",
+    "subject": "Re: Where is my parcel? (Seoul)",
+    "body": "Thanks, please keep me posted.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t014",
+  "messages": [
+   {
+    "message_id": "t014-m1",
+    "sender": "Lily Chen <lily@szparts-trading.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-05-01T14:56:33.025838+00:00",
+    "subject": "SZ-5588 second shipment",
+    "body": "Second shipment is out. Tracking EL990217801CN. ETA 11 May.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t015",
+  "messages": [
+   {
+    "message_id": "t015-m1",
+    "sender": "ParcelPoint Tracking <tracking@parcelpoint.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-05-09T05:31:20.020200+00:00",
+    "subject": "Parcel delayed",
+    "body": "Your parcel 9400 1118 9922 3305 4471 18 is delayed. We apologise for the inconvenience. New estimated delivery: 13 May.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t016",
+  "messages": [
+   {
+    "message_id": "t016-m1",
+    "sender": "Kasia Zielinska <kasia@pl-components.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-05-18T04:06:07.877544+00:00",
+    "subject": "PL Components - received?",
+    "body": "Hi, tracking says delivered yesterday. Can you confirm you received PLC-880?",
+    "attachments": []
+   },
+   {
+    "message_id": "t016-m2",
+    "sender": "Wes Tanner <wes@tanner-repairs.example>",
+    "to": [
+     "kasia@pl-components.example"
+    ],
+    "date": "2026-05-19T05:45:07.877544+00:00",
+    "subject": "Re: PL Components - received?",
+    "body": "Yes it's here, all good. Thanks Kasia.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t017",
+  "messages": [
+   {
+    "message_id": "t017-m1",
+    "sender": "Parcel Services <deliver@parcel-release-center.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-05-26T00:08:22.629974+00:00",
+    "subject": "Package held - pay fee to release",
+    "body": "Your package is on hold. A small fee of 2.99 is required. Pay now at http://parcel-release-center.example/pay to schedule redelivery.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t018",
+  "messages": [
+   {
+    "message_id": "t018-m1",
+    "sender": "Wes Tanner <wes@tanner-repairs.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-06-02T05:46:46.878107+00:00",
+    "subject": "Re: SZ-5501",
+    "body": "Got a notification that it reached the hub. Thanks Lily!",
+    "attachments": []
+   },
+   {
+    "message_id": "t018-m2",
+    "sender": "Lily Chen <lily@szparts-trading.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-06-05T01:08:46.878107+00:00",
+    "subject": "Re: SZ-5501",
+    "body": "Great! Please let me know once you have it.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t019",
+  "messages": [
+   {
+    "message_id": "t019-m1",
+    "sender": "Jürgen Falk <j.falk@falk-elektronik.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-06-10T04:50:30.715039+00:00",
+    "subject": "Falk: tracking number",
+    "body": "Tracking for your motherboards: RF-77412-DE. Estimated arrival 15 June.",
+    "attachments": []
+   },
+   {
+    "message_id": "t019-m2",
+    "sender": "Wes Tanner <wes@tanner-repairs.example>",
+    "to": [
+     "j.falk@falk-elektronik.example"
+    ],
+    "date": "2026-06-12T17:56:30.715039+00:00",
+    "subject": "Re: Falk: tracking number",
+    "body": "Thank you, got it.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t020",
+  "messages": [
+   {
+    "message_id": "t020-m1",
+    "sender": "ExpressLine <notify@expressline.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-06-16T23:52:46.665831+00:00",
+    "subject": "ExpressLine: your parcel is in transit",
+    "body": "Tracking EL884120937CN. Status: In transit - departed origin facility. Estimated delivery 23 June.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t021",
+  "messages": [
+   {
+    "message_id": "t021-m1",
+    "sender": "Min-jun Park <minjun@seoultech-supply.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-06-23T18:38:07.898897+00:00",
+    "subject": "Order 2209 update",
+    "body": "Good news, order 2209 is moving again. New ETA 29 June. Tracking: KR-5503-9921.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t022",
+  "messages": [
+   {
+    "message_id": "t022-m1",
+    "sender": "Kasia Zielinska <kasia@pl-components.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-07-01T06:39:38.895478+00:00",
+    "subject": "PL Components order PLC-880",
+    "body": "Hello Wes, your order PLC-880 (capacitors and resistors) was shipped today. Tracking https://track.pl-components.example/PLC880. ETA 4 days.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t023",
+  "messages": [
+   {
+    "message_id": "t023-m1",
+    "sender": "Lily Chen <lily@szparts-trading.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-07-09T03:12:32.526111+00:00",
+    "subject": "Order SZ-5501 shipped",
+    "body": "Hi Wes, your order SZ-5501 (screens x40, batteries x60) left our warehouse today via ExpressLine. Tracking: EL884120937CN. Should be with you in about 8-10 days, so around 18 July.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t024",
+  "messages": [
+   {
+    "message_id": "t024-m1",
+    "sender": "Amazing Books <orders@amazingbooks.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-07-16T18:25:55.316803+00:00",
+    "subject": "Your Amazing Books order has shipped",
+    "body": "Your order of 'Soldering for Beginners' has shipped. Arriving 18 July. Tracking: AB-120044.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t025",
+  "messages": [
+   {
+    "message_id": "t025-m1",
+    "sender": "Wes Tanner <wes@tanner-repairs.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-07-24T10:03:47.135734+00:00",
+    "subject": "Parcel arrived with damaged box",
+    "body": "Just letting you know the SZ-5501 box arrived dented, but the screens look fine. Will check all of them.",
+    "attachments": []
+   },
+   {
+    "message_id": "t025-m2",
+    "sender": "Lily Chen <lily@szparts-trading.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-07-25T10:54:47.135734+00:00",
+    "subject": "Re: Parcel arrived with damaged box",
+    "body": "Thanks for telling me. Let me know if any are broken and I'll replace.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t026",
+  "messages": [
+   {
+    "message_id": "t026-m1",
+    "sender": "DeliverMax Marketing <promo@delivermax.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-07-31T06:23:48.463392+00:00",
+    "subject": "DeliverMax: Ship smarter in 2026",
+    "body": "Save up to 40% on international shipping with DeliverMax Business. Track every parcel in one dashboard. Open an account today.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t027",
+  "messages": [
+   {
+    "message_id": "t027-m1",
+    "sender": "StyleBarn <offers@stylebarn.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-08-09T22:32:14.053041+00:00",
+    "subject": "48 hours only: 30% off everything",
+    "body": "Our biggest sale of the season ends Sunday midnight. Use code SPRING30 at checkout. Free returns.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t028",
+  "messages": [
+   {
+    "message_id": "t028-m1",
+    "sender": "Min-jun Park <minjun@seoultech-supply.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-08-17T10:58:57.390068+00:00",
+    "subject": "Order 2231 shipped",
+    "body": "Order 2231 left the warehouse this morning. Tracking KR-5601-0034.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t029",
+  "messages": [
+   {
+    "message_id": "t029-m1",
+    "sender": "SkyBridge Airlines <booking@skybridge.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-08-24T17:41:51.168161+00:00",
+    "subject": "Check-in opens soon for your flight",
+    "body": "Your flight to Porto departs in 48 hours. Online check-in opens 24 hours before departure.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t030",
+  "messages": [
+   {
+    "message_id": "t030-m1",
+    "sender": "Dale Whitaker <dale@vintageparts-usa.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-08-31T15:27:17.647719+00:00",
+    "subject": "Your order from Vintage Parts USA has shipped",
+    "body": "Hey Wes, your order of 6 vintage amplifier boards is on its way. Tracking number 9400 1118 9922 3305 4471 18. Shipping method: priority international, 6-10 business days.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t031",
+  "messages": [
+   {
+    "message_id": "t031-m1",
+    "sender": "Kasia Zielinska <kasia@pl-components.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-09-09T23:55:35.796658+00:00",
+    "subject": "Inquiry: bulk discount?",
+    "body": "Hi Wes, we're offering 10% off orders above 500 EUR in April. Let me know if you'd like a quote.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t032",
+  "messages": [
+   {
+    "message_id": "t032-m1",
+    "sender": "Lily Chen <lily@szparts-trading.example>",
+    "to": [
+     "wes@tanner-repairs.example"
+    ],
+    "date": "2026-09-16T03:49:59.487471+00:00",
+    "subject": "Shipment SZ-5588 - partially shipped",
+    "body": "Hi Wes, part of your order SZ-5588 was shipped (tracking EL990217733CN, 2 of 4 boxes). The other 2 boxes will follow next week, I'll send a separate number.",
+    "attachments": []
+   },
+   {
+    "message_id": "t032-m2",
+    "sender": "Wes Tanner <wes@tanner-repairs.example>",
+    "to": [
+     "lily@szparts-trading.example"
+    ],
+    "date": "2026-09-16T10:40:59.487471+00:00",
+    "subject": "Re: Shipment SZ-5588 - partially shipped",
+    "body": "OK, send me the tracking when you have it.",
+    "attachments": []
+   }
+  ]
+ }
+]

@@ -1,0 +1,7 @@
+id: tenant-repair-requests
+prompt: "I look after a few rental flats and my tenants email me whenever something breaks. Show me each repair issue and where it's at - new, someone's coming, sorted, that kind of thing."
+paraphrases:
+  - "Lay out the maintenance problems my tenants have reported as a board by how far along the fix is."
+  - "I want to see every repair request from tenants, which flat it's for, and whether it's been fixed yet."
+domain: real_estate
+holdout: false

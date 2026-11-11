@@ -1,0 +1,772 @@
+[
+ {
+  "thread_id": "t001",
+  "messages": [
+   {
+    "message_id": "t001-m1",
+    "sender": "Marco Silva <marco@silvadigital.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-01-23T04:59:41.717853+00:00",
+    "subject": "Lund Bakery - invoice reminder",
+    "body": "Hi Rebecca, friendly reminder that invoice 0021 for the first milestone is due next week.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t002",
+  "messages": [
+   {
+    "message_id": "t002-m1",
+    "sender": "LinkedIn Updates <updates@linknet.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-01-29T16:35:10.777428+00:00",
+    "subject": "5 people viewed your profile this week",
+    "body": "See who is looking at your profile. Upgrade to Premium to see all viewers. Unsubscribe from these emails.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t003",
+  "messages": [
+   {
+    "message_id": "t003-m1",
+    "sender": "Docsy <share@docsy.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-02-08T00:26:40.601444+00:00",
+    "subject": "Lena shared a document with you",
+    "body": "Lena Fischer shared 'Q3 reading list' with you. Open in Docsy.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t004",
+  "messages": [
+   {
+    "message_id": "t004-m1",
+    "sender": "DevSummit <team@devsummit.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-02-14T09:49:52.180372+00:00",
+    "subject": "Early bird tickets end Friday",
+    "body": "Join 2,000 builders in Lisbon this autumn. Early bird pricing ends Friday. Speakers announced: see the full lineup on our site.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t005",
+  "messages": [
+   {
+    "message_id": "t005-m1",
+    "sender": "CodeHost <notifications@codehost.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-02-22T05:19:56.548777+00:00",
+    "subject": "[side-project] Dependabot: bump lodash from 4.17.20",
+    "body": "Bumps lodash from 4.17.20 to 4.17.21. Release notes and commits linked below. Merge when ready.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t006",
+  "messages": [
+   {
+    "message_id": "t006-m1",
+    "sender": "Marco Silva <marco@silvadigital.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-03-03T10:31:53.405931+00:00",
+    "subject": "Staging link for Qureshi",
+    "body": "Hi Hassan, first build of the site is on staging. Take a look and approve the homepage when you can.",
+    "attachments": []
+   },
+   {
+    "message_id": "t006-m2",
+    "sender": "Hassan Qureshi <hassan@qureshi-dental.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-03-05T16:34:53.405931+00:00",
+    "subject": "Re: Staging link for Qureshi",
+    "body": "Will do soon, busy week with patients.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t007",
+  "messages": [
+   {
+    "message_id": "t007-m1",
+    "sender": "Cloudlane <hello@cloudlane.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-03-12T03:52:25.621651+00:00",
+    "subject": "What's new in Cloudlane - March release notes",
+    "body": "Hi there, this month we shipped faster dashboards, SSO for all plans and a refreshed mobile app. See the full changelog on our blog. You are receiving this because you signed up for product updates.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t008",
+  "messages": [
+   {
+    "message_id": "t008-m1",
+    "sender": "Hassan Qureshi <hassan@qureshi-dental.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-03-17T10:23:36.512212+00:00",
+    "subject": "Qureshi Dental - new site kickoff",
+    "body": "Hi Marco, great to meet you yesterday. Attached the brief and our logo files. Launch target is the first week of June.",
+    "attachments": []
+   },
+   {
+    "message_id": "t008-m2",
+    "sender": "Marco Silva <marco@silvadigital.example>",
+    "to": [
+     "hassan@qureshi-dental.example"
+    ],
+    "date": "2026-03-18T03:01:36.512212+00:00",
+    "subject": "Re: Qureshi Dental - new site kickoff",
+    "body": "Thanks Hassan. The project is fixed at 4,800 EUR as per the quote. I'll send the sitemap on Friday.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t009",
+  "messages": [
+   {
+    "message_id": "t009-m1",
+    "sender": "Marco Silva <marco@silvadigital.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-03-25T09:04:32.689427+00:00",
+    "subject": "Okoye Builders - gallery draft",
+    "body": "Draft of the gallery is on the staging link. Can you and Chidi take a look and approve?",
+    "attachments": []
+   },
+   {
+    "message_id": "t009-m2",
+    "sender": "Chidi Okoye <chidi@okoye-builders.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-03-26T12:25:32.689427+00:00",
+    "subject": "Re: Okoye Builders - gallery draft",
+    "body": "Chidi here. I'm not sure about the grid. Can we try bigger images? Changes please.",
+    "attachments": []
+   },
+   {
+    "message_id": "t009-m3",
+    "sender": "Dan Okoye <dan@okoye-builders.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-03-26T16:22:32.689427+00:00",
+    "subject": "Re: Okoye Builders - gallery draft",
+    "body": "agree with Chidi, bigger images",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t010",
+  "messages": [
+   {
+    "message_id": "t010-m1",
+    "sender": "Tessa Whitmore <tessa@whitmore-yoga.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-04-02T12:15:11.229240+00:00",
+    "subject": "Changes to Whitmore home hero",
+    "body": "Can we swap the hero photo for the one with the sunrise? Is that a quick change?",
+    "attachments": []
+   },
+   {
+    "message_id": "t010-m2",
+    "sender": "Marco Silva <marco@silvadigital.example>",
+    "to": [
+     "tessa@whitmore-yoga.example"
+    ],
+    "date": "2026-04-02T16:47:11.229240+00:00",
+    "subject": "Re: Changes to Whitmore home hero",
+    "body": "Quick! Swapping now. Please approve the new version once done.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t011",
+  "messages": [
+   {
+    "message_id": "t011-m1",
+    "sender": "Tessa Whitmore <tessa@whitmore-yoga.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-04-10T08:37:35.443264+00:00",
+    "subject": "Whitmore Yoga - booking widget",
+    "body": "Hi Marco, the booking widget is live on staging, and it works! One question though, can the class times be in a different colour? 👍 otherwise",
+    "attachments": []
+   },
+   {
+    "message_id": "t011-m2",
+    "sender": "Marco Silva <marco@silvadigital.example>",
+    "to": [
+     "tessa@whitmore-yoga.example"
+    ],
+    "date": "2026-04-11T12:03:35.443264+00:00",
+    "subject": "Re: Whitmore Yoga - booking widget",
+    "body": "Sure, I'll change the colours. Once done, can you approve the staging site so I can go live?",
+    "attachments": []
+   },
+   {
+    "message_id": "t011-m3",
+    "sender": "Tessa Whitmore <tessa@whitmore-yoga.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-04-11T22:28:35.443264+00:00",
+    "subject": "Re: Whitmore Yoga - booking widget",
+    "body": "yes will do this weekend",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t012",
+  "messages": [
+   {
+    "message_id": "t012-m1",
+    "sender": "Zoe Platt <zoe@plattandco.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-04-18T08:11:53.552688+00:00",
+    "subject": "Plattand Co - blog redesign",
+    "body": "Hi Marco, we want to redesign our blog. Could you give me a rough timeframe? No rush to start yet.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t013",
+  "messages": [
+   {
+    "message_id": "t013-m1",
+    "sender": "Marco Silva <marco@silvadigital.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-04-27T10:41:07.425301+00:00",
+    "subject": "Whitmore Yoga - go live approval",
+    "body": "Hi Tessa, everything's ready on staging. Please confirm that I can go live on Monday.",
+    "attachments": []
+   },
+   {
+    "message_id": "t013-m2",
+    "sender": "Tessa Whitmore <tessa@whitmore-yoga.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-04-27T17:44:07.425301+00:00",
+    "subject": "Re: Whitmore Yoga - go live approval",
+    "body": "Go for it!!",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t014",
+  "messages": [
+   {
+    "message_id": "t014-m1",
+    "sender": "ProofPilot <hello@proofpilot.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-05-04T17:19:24.512187+00:00",
+    "subject": "Client approvals made easy - ProofPilot",
+    "body": "Stop chasing clients for sign-off. ProofPilot lets freelancers collect approvals with one click. Try it free for 30 days.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t015",
+  "messages": [
+   {
+    "message_id": "t015-m1",
+    "sender": "Chidi Okoye <chidi@okoye-builders.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-05-12T01:11:40.365719+00:00",
+    "subject": "Footer changes?",
+    "body": "Can you add our licence number to the footer please? It's BL-4471-X.",
+    "attachments": []
+   },
+   {
+    "message_id": "t015-m2",
+    "sender": "Marco Silva <marco@silvadigital.example>",
+    "to": [
+     "chidi@okoye-builders.example"
+    ],
+    "date": "2026-05-12T07:18:40.365719+00:00",
+    "subject": "Re: Footer changes?",
+    "body": "Done, let me know if it looks fine.",
+    "attachments": []
+   },
+   {
+    "message_id": "t015-m3",
+    "sender": "Chidi Okoye <chidi@okoye-builders.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-05-14T13:15:40.365719+00:00",
+    "subject": "Re: Footer changes?",
+    "body": "Fine",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t016",
+  "messages": [
+   {
+    "message_id": "t016-m1",
+    "sender": "Mireille Aubert <mireille@aubert-vins.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-05-20T09:55:14.311568+00:00",
+    "subject": "Aubert - payments setup",
+    "body": "Marco, our bank needs a few days to set up the payment gateway. We'll tell you when it's ready.",
+    "attachments": []
+   },
+   {
+    "message_id": "t016-m2",
+    "sender": "Marco Silva <marco@silvadigital.example>",
+    "to": [
+     "mireille@aubert-vins.example"
+    ],
+    "date": "2026-05-20T17:42:14.311568+00:00",
+    "subject": "Re: Aubert - payments setup",
+    "body": "No problem, I'll proceed with catalogue in the meantime.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t017",
+  "messages": [
+   {
+    "message_id": "t017-m1",
+    "sender": "Marco Silva <marco@silvadigital.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-05-28T15:58:51.490102+00:00",
+    "subject": "Lund Bakery - online ordering page",
+    "body": "Hi Rebecca and Ola, next up is the online ordering page. Wireframe attached. Need your OK on the flow before I build.",
+    "attachments": [
+     "lund-order-wireframe.pdf"
+    ]
+   },
+   {
+    "message_id": "t017-m2",
+    "sender": "Ola Lund <ola@lundbakery.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-05-29T05:53:51.490102+00:00",
+    "subject": "Re: Lund Bakery - online ordering page",
+    "body": "Hi Marco, I'll review with the team and let you know.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t018",
+  "messages": [
+   {
+    "message_id": "t018-m1",
+    "sender": "Dr. Amira Qureshi <amira@qureshi-dental.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-06-05T13:04:30.535159+00:00",
+    "subject": "Re: Qureshi contact form",
+    "body": "Looks fine to me, but please add our opening hours. Then I'm ok.",
+    "attachments": []
+   },
+   {
+    "message_id": "t018-m2",
+    "sender": "Marco Silva <marco@silvadigital.example>",
+    "to": [
+     "amira@qureshi-dental.example"
+    ],
+    "date": "2026-06-08T00:17:30.535159+00:00",
+    "subject": "Re: Qureshi contact form",
+    "body": "Added, new version attached.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t019",
+  "messages": [
+   {
+    "message_id": "t019-m1",
+    "sender": "Marco Silva <marco@silvadigital.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-06-13T15:06:38.026140+00:00",
+    "subject": "Re: Lund ordering page",
+    "body": "Hi Ola, any feedback on the ordering wireframe? I'm ready to start but need your sign-off.",
+    "attachments": []
+   },
+   {
+    "message_id": "t019-m2",
+    "sender": "Ola Lund <ola@lundbakery.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-06-13T19:30:38.026140+00:00",
+    "subject": "Re: Lund ordering page",
+    "body": "Sorry for the delay, can we change the delivery options step? I'll send details tomorrow.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t020",
+  "messages": [
+   {
+    "message_id": "t020-m1",
+    "sender": "NameHarbor <billing@nameharbor.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-06-22T12:36:10.859651+00:00",
+    "subject": "Invoice from Namecheap-like registrar",
+    "body": "Thank you for your order: domain silvadigital.example renewal, 17.99 EUR.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t021",
+  "messages": [
+   {
+    "message_id": "t021-m1",
+    "sender": "Marta Kowalski <marta@kowalski-bookkeeping.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-06-29T06:10:34.893755+00:00",
+    "subject": "Accountant: Q1 numbers",
+    "body": "Hi Marco, your Q1 summary is ready, nothing needed from you this month.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t022",
+  "messages": [
+   {
+    "message_id": "t022-m1",
+    "sender": "Rebecca Lund <rebecca@lundbakery.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-07-07T07:14:20.163348+00:00",
+    "subject": "Logo bigger",
+    "body": "Marco, the bigger logo looks great, thank you!",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t023",
+  "messages": [
+   {
+    "message_id": "t023-m1",
+    "sender": "Mireille Aubert <mireille@aubert-vins.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-07-14T01:34:31.575734+00:00",
+    "subject": "Aubert Vins - e-shop",
+    "body": "Hello Marco, we'd like to start the wine e-shop in September. We are expecting about 30 products at launch, can you build the catalogue pages?",
+    "attachments": []
+   },
+   {
+    "message_id": "t023-m2",
+    "sender": "Marco Silva <marco@silvadigital.example>",
+    "to": [
+     "mireille@aubert-vins.example"
+    ],
+    "date": "2026-07-16T22:24:31.575734+00:00",
+    "subject": "Re: Aubert Vins - e-shop",
+    "body": "Hi Mireille, happy to. Quote is 9,500 EUR and takes around 6 weeks. Shall I send a contract?",
+    "attachments": []
+   },
+   {
+    "message_id": "t023-m3",
+    "sender": "Mireille Aubert <mireille@aubert-vins.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-07-17T07:25:31.575734+00:00",
+    "subject": "Re: Aubert Vins - e-shop",
+    "body": "Please do.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t024",
+  "messages": [
+   {
+    "message_id": "t024-m1",
+    "sender": "Marco Silva <marco@silvadigital.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-07-23T01:04:03.200774+00:00",
+    "subject": "Lund Bakery website - homepage design",
+    "body": "Hi Rebecca, homepage mockup attached for your review. Please let me know if you approve the layout so I can start building.",
+    "attachments": [
+     "lund-home-v1.png"
+    ]
+   },
+   {
+    "message_id": "t024-m2",
+    "sender": "Rebecca Lund <rebecca@lundbakery.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-07-25T09:35:03.200774+00:00",
+    "subject": "Re: Lund Bakery website - homepage design",
+    "body": "Love it! Approved, go ahead. Can we make the logo a bit bigger? Otherwise perfect.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t025",
+  "messages": [
+   {
+    "message_id": "t025-m1",
+    "sender": "Marco Silva <marco@silvadigital.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-07-30T14:57:11.331100+00:00",
+    "subject": "Qureshi Dental - contact form approval",
+    "body": "Contact form wording and privacy notice, attached. Needs Dr. Qureshi's sign-off for legal reasons.",
+    "attachments": [
+     "qureshi-contact-form.docx"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t026",
+  "messages": [
+   {
+    "message_id": "t026-m1",
+    "sender": "Dr. Amira Qureshi <amira@qureshi-dental.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-08-08T19:54:16.714655+00:00",
+    "subject": "Qureshi Dental - treatment pages copy",
+    "body": "Hi Marco, Amira here. I wrote the copy for the treatment pages. Please check it fits and tell me what to change.",
+    "attachments": []
+   },
+   {
+    "message_id": "t026-m2",
+    "sender": "Marco Silva <marco@silvadigital.example>",
+    "to": [
+     "amira@qureshi-dental.example"
+    ],
+    "date": "2026-08-10T03:00:16.714655+00:00",
+    "subject": "Re: Qureshi Dental - treatment pages copy",
+    "body": "Thanks Amira, will do. I need your final approval of the text before I publish it.",
+    "attachments": []
+   },
+   {
+    "message_id": "t026-m3",
+    "sender": "Dr. Amira Qureshi <amira@qureshi-dental.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-08-12T08:32:16.714655+00:00",
+    "subject": "Re: Qureshi Dental - treatment pages copy",
+    "body": "I'll read it tonight and approve.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t027",
+  "messages": [
+   {
+    "message_id": "t027-m1",
+    "sender": "Marco Silva <marco@silvadigital.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-08-15T17:01:38.840342+00:00",
+    "subject": "Qureshi sitemap approval",
+    "body": "Hassan, sitemap attached. Please confirm you're happy with the page structure.",
+    "attachments": [
+     "qureshi-sitemap.pdf"
+    ]
+   },
+   {
+    "message_id": "t027-m2",
+    "sender": "Hassan Qureshi <hassan@qureshi-dental.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-08-16T12:43:38.840342+00:00",
+    "subject": "Re: Qureshi sitemap approval",
+    "body": "Looks good to me!",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t028",
+  "messages": [
+   {
+    "message_id": "t028-m1",
+    "sender": "Dan Okoye <dan@okoye-builders.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-08-23T04:23:08.966122+00:00",
+    "subject": "Okoye Builders - gallery page",
+    "body": "Marco, I've sent the photos via a shared link. Can you build the gallery page for our projects section?",
+    "attachments": []
+   },
+   {
+    "message_id": "t028-m2",
+    "sender": "Marco Silva <marco@silvadigital.example>",
+    "to": [
+     "dan@okoye-builders.example"
+    ],
+    "date": "2026-08-23T13:14:08.966122+00:00",
+    "subject": "Re: Okoye Builders - gallery page",
+    "body": "Got them, thanks. I'll have a draft in a week.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t029",
+  "messages": [
+   {
+    "message_id": "t029-m1",
+    "sender": "Marco Silva <marco@silvadigital.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-08-30T15:42:00.975328+00:00",
+    "subject": "Aubert Vins - product page template",
+    "body": "Mireille, here's the product page template. Does this match your idea? I need your sign-off before I clone it for all 30 products.",
+    "attachments": [
+     "aubert-product-template.png"
+    ]
+   },
+   {
+    "message_id": "t029-m2",
+    "sender": "Mireille Aubert <mireille@aubert-vins.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-08-31T11:42:00.975328+00:00",
+    "subject": "Re: Aubert Vins - product page template",
+    "body": "J'adore! Approved.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t030",
+  "messages": [
+   {
+    "message_id": "t030-m1",
+    "sender": "Tessa Whitmore <tessa@whitmore-yoga.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-09-07T09:33:17.084679+00:00",
+    "subject": "Quick question about domain",
+    "body": "hey, who owns the domain for whitmore yoga? i think i bought it in 2019 but not sure with who",
+    "attachments": []
+   },
+   {
+    "message_id": "t030-m2",
+    "sender": "Marco Silva <marco@silvadigital.example>",
+    "to": [
+     "tessa@whitmore-yoga.example"
+    ],
+    "date": "2026-09-09T12:51:17.084679+00:00",
+    "subject": "Re: Quick question about domain",
+    "body": "It's registered with NameHarbor under your email, I'll send you the details.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t031",
+  "messages": [
+   {
+    "message_id": "t031-m1",
+    "sender": "Marco Silva <marco@silvadigital.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-09-16T21:49:53.417129+00:00",
+    "subject": "Re: blog redesign",
+    "body": "Hi Zoe, I could start in 3 weeks and it would take about 2 weeks. Let me know and I'll put it in my calendar.",
+    "attachments": []
+   },
+   {
+    "message_id": "t031-m2",
+    "sender": "Zoe Platt <zoe@plattandco.example>",
+    "to": [
+     "marco@silvadigital.example"
+    ],
+    "date": "2026-09-17T18:19:53.417129+00:00",
+    "subject": "Re: blog redesign",
+    "body": "Thanks, will confirm after our board meeting.",
+    "attachments": []
+   }
+  ]
+ }
+]

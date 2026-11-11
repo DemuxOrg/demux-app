@@ -1,0 +1,7 @@
+id: frontend-hiring-pipeline
+prompt: "We're hiring a front-end developer. Who has applied, how far along is each person, and what interviews do we have coming up? It'd also help to see what pay they're hoping for."
+paraphrases:
+  - "Give me a rundown of the candidates for the front-end role, where they are in our process, the upcoming interviews, and their expected pay."
+  - "Who are the applicants for the developer job, what stage are they at, and when are their interviews? Include what they're asking for money-wise."
+domain: hiring
+holdout: false

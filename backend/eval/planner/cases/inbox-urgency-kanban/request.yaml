@@ -1,0 +1,7 @@
+id: inbox-urgency-kanban
+prompt: "Can you lay my inbox out like a kanban for me? I want to see what's on fire, what can wait a few days, and what's just there for information, and who is asking me for it."
+paraphrases:
+  - "Sort my emails into columns by how urgent they are - burning, this week, whenever, or just FYI - and tell me who each one is from."
+  - "I'd like a board view of my inbox ranked by urgency, with the sender and any deadline that's mentioned."
+domain: other
+holdout: false

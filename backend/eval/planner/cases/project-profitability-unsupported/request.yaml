@@ -1,0 +1,7 @@
+id: project-profitability-unsupported
+prompt: "Show me how profitable each of my projects is - what I earn on them after all my costs."
+paraphrases:
+  - "Which of my jobs make me the most money once everything is paid for? I want profit per project."
+  - "Break down my margin on every project, revenue minus what it costs me."
+domain: finance
+holdout: false

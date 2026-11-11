@@ -1,0 +1,567 @@
+[
+ {
+  "thread_id": "t001",
+  "messages": [
+   {
+    "message_id": "t001-m1",
+    "sender": "StoreBox <payments@storebox.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-01-20T13:17:08.095485+00:00",
+    "subject": "StoreBox: payment failed",
+    "body": "We couldn't charge your card for StoreBox Team 2TB (14.99 USD per month). We'll retry in 3 days. Update your card to avoid service interruption.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t002",
+  "messages": [
+   {
+    "message_id": "t002-m1",
+    "sender": "Mara Quinn <mara@barnes-creative.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-01-29T11:14:36.632454+00:00",
+    "subject": "Fwd: Notice of price increase - StoreBox",
+    "body": "Seen this? StoreBox going up in June.\n\n--- Forwarded ---\nFrom: StoreBox\nFrom 1 June StoreBox Team 2TB will cost 17.99 USD per month.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t003",
+  "messages": [
+   {
+    "message_id": "t003-m1",
+    "sender": "Cloudlane <hello@cloudlane.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-02-05T17:20:24.476457+00:00",
+    "subject": "What's new in Cloudlane - March release notes",
+    "body": "Hi there, this month we shipped faster dashboards, SSO for all plans and a refreshed mobile app. See the full changelog on our blog. You are receiving this because you signed up for product updates.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t004",
+  "messages": [
+   {
+    "message_id": "t004-m1",
+    "sender": "StreamBox <billing@streambox.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-02-13T15:11:59.010175+00:00",
+    "subject": "Your monthly Netflix-style entertainment bill",
+    "body": "Your StreamBox Family subscription has been charged 14.99 GBP. Next billing date 15 March.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t005",
+  "messages": [
+   {
+    "message_id": "t005-m1",
+    "sender": "Ledgerly <invoices@ledgerly.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-02-21T02:07:47.825755+00:00",
+    "subject": "Ledgerly invoice 2026-0412",
+    "body": "Your Ledgerly subscription (Small Business plan, 29 GBP per month) has been charged. Next charge on 23 March.",
+    "attachments": [
+     "Ledgerly-0412.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t006",
+  "messages": [
+   {
+    "message_id": "t006-m1",
+    "sender": "Mailrocket <team@mailrocket.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-02-28T06:06:03.450981+00:00",
+    "subject": "Mailrocket - invoice",
+    "body": "Invoice for Mailrocket Standard, 35 USD, paid. Billing period monthly.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t007",
+  "messages": [
+   {
+    "message_id": "t007-m1",
+    "sender": "ShieldVPN <support@shieldvpn.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-03-06T04:23:15.823480+00:00",
+    "subject": "ShieldVPN: renewal notice",
+    "body": "Your ShieldVPN 1-year plan will renew in 7 days for 89.99 USD. If you don't want to renew, turn off auto-renew in your account.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t008",
+  "messages": [
+   {
+    "message_id": "t008-m1",
+    "sender": "Plotline Analytics <hello@plotline.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-03-13T13:45:44.986892+00:00",
+    "subject": "Plotline - your free plan",
+    "body": "You're on the free Plotline plan. Upgrade any time for 25 USD per month to unlock more sites.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t009",
+  "messages": [
+   {
+    "message_id": "t009-m1",
+    "sender": "Mailhub Security <security@mailhub.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-03-22T23:56:30.582140+00:00",
+    "subject": "New sign-in from Chrome on Windows",
+    "body": "We noticed a new sign-in to your account. If this was you, no action is needed. If not, reset your password.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t010",
+  "messages": [
+   {
+    "message_id": "t010-m1",
+    "sender": "Chatterbox <billing@chatterbox.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-03-29T10:55:12.401107+00:00",
+    "subject": "Your Chatterbox receipt",
+    "body": "Thanks for your payment. Chatterbox Business, 6 seats, 48.00 USD billed monthly. Your next payment is on 28 April.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t011",
+  "messages": [
+   {
+    "message_id": "t011-m1",
+    "sender": "Mara Quinn <mara@barnes-creative.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-04-06T01:22:45.390355+00:00",
+    "subject": "Fwd: expense - office coffee machine",
+    "body": "Receipt for the new coffee machine, 349 GBP. One-off, please reimburse.",
+    "attachments": [
+     "coffee-machine.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t012",
+  "messages": [
+   {
+    "message_id": "t012-m1",
+    "sender": "StoreBox <payments@storebox.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-04-14T10:57:37.707065+00:00",
+    "subject": "StoreBox payment successful",
+    "body": "Your payment of 14.99 USD went through. Next billing date: 14 May.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t013",
+  "messages": [
+   {
+    "message_id": "t013-m1",
+    "sender": "NameHarbor <renewals@nameharbor.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-04-21T10:44:19.716608+00:00",
+    "subject": "Domain renewal - barnes-creative.example",
+    "body": "Your domain barnes-creative.example will expire on 11 May. Renew now for 18.99 USD per year. Auto-renew is OFF.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t014",
+  "messages": [
+   {
+    "message_id": "t014-m1",
+    "sender": "Pixelforge <receipts@pixelforge.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-04-29T17:21:19.275216+00:00",
+    "subject": "Pixelforge: seats reduced",
+    "body": "You've reduced your Pixelforge Teams plan to 4 seats. Your new annual price is 329.94 USD, effective at your next renewal.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t015",
+  "messages": [
+   {
+    "message_id": "t015-m1",
+    "sender": "Ledgerly <digest@ledgerly.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-05-06T02:11:20.359552+00:00",
+    "subject": "Weekly receipt digest",
+    "body": "This week you had 2 transactions: Chatterbox 48.00 USD, StoreBox 14.99 USD. Categorise them in your dashboard.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t016",
+  "messages": [
+   {
+    "message_id": "t016-m1",
+    "sender": "Northgate Bank <alerts@northgate-bank.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-05-13T07:04:05.716977+00:00",
+    "subject": "Your statement is ready",
+    "body": "Your monthly statement for the account ending 4471 is now available. Log in to online banking to view it. We will never ask for your password by email.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t017",
+  "messages": [
+   {
+    "message_id": "t017-m1",
+    "sender": "FrameStock <accounts@framestock.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-05-20T09:39:08.137684+00:00",
+    "subject": "FrameStock - your invoice",
+    "body": "Invoice FS-9912 for your FrameStock image pack: 199 USD. Annual membership.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t018",
+  "messages": [
+   {
+    "message_id": "t018-m1",
+    "sender": "CodeHost <notifications@codehost.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-05-26T16:23:44.339209+00:00",
+    "subject": "[side-project] Dependabot: bump lodash from 4.17.20",
+    "body": "Bumps lodash from 4.17.20 to 4.17.21. Release notes and commits linked below. Merge when ready.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t019",
+  "messages": [
+   {
+    "message_id": "t019-m1",
+    "sender": "Plotline Analytics <hello@plotline.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-06-04T19:29:09.598724+00:00",
+    "subject": "Plotline Analytics - 50% off annual",
+    "body": "Special offer for you: get 50% off Plotline's annual plan if you upgrade by Friday. Prices from 150 USD per year.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t020",
+  "messages": [
+   {
+    "message_id": "t020-m1",
+    "sender": "Theo Barnes <theo@barnes-creative.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-06-12T19:42:51.468029+00:00",
+    "subject": "Cancelling ShieldVPN",
+    "body": "Hi, I'd like to cancel my ShieldVPN renewal please.",
+    "attachments": []
+   },
+   {
+    "message_id": "t020-m2",
+    "sender": "ShieldVPN <support@shieldvpn.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-06-15T07:46:51.468029+00:00",
+    "subject": "Re: Cancelling ShieldVPN",
+    "body": "Hi Theo, done. Your plan stays active until 19 June and won't renew after that. Sorry to see you go!",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t021",
+  "messages": [
+   {
+    "message_id": "t021-m1",
+    "sender": "Mara Quinn <mara@barnes-creative.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-06-20T11:17:45.103254+00:00",
+    "subject": "Re: Pixelforge seats",
+    "body": "Theo, are we still paying for 8 Pixelforge seats? I think only Jonas and I use it.",
+    "attachments": []
+   },
+   {
+    "message_id": "t021-m2",
+    "sender": "Theo Barnes <theo@barnes-creative.example>",
+    "to": [
+     "mara@barnes-creative.example"
+    ],
+    "date": "2026-06-20T21:20:45.103254+00:00",
+    "subject": "Re: Pixelforge seats",
+    "body": "Good catch, let's check at renewal.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t022",
+  "messages": [
+   {
+    "message_id": "t022-m1",
+    "sender": "The Long Game <pod@longgame.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-06-27T13:49:36.499539+00:00",
+    "subject": "New episode: why small teams win",
+    "body": "This week we talk to a founder about staying small on purpose. Listen now on your favourite app.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t023",
+  "messages": [
+   {
+    "message_id": "t023-m1",
+    "sender": "QuickMart <receipts@quickmart.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-07-04T15:35:38.208457+00:00",
+    "subject": "Your receipt from QuickMart",
+    "body": "Thank you for shopping. Total 23.17 GBP. Card ending 4471.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t024",
+  "messages": [
+   {
+    "message_id": "t024-m1",
+    "sender": "Meetly Billing <billing@meetly.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-07-12T09:28:39.015217+00:00",
+    "subject": "Meetly - plan renewal",
+    "body": "Your Meetly Pro plan (annual, 1 host) renews on 21 August. Amount: 159.90 USD.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t025",
+  "messages": [
+   {
+    "message_id": "t025-m1",
+    "sender": "Taskwise Billing <no-reply@taskwise.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-07-20T11:56:19.744838+00:00",
+    "subject": "Taskwise payment received",
+    "body": "Thanks! You've upgraded to Taskwise Pro: 5 users x 12 USD = 60 USD monthly. Next invoice 19 August.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t026",
+  "messages": [
+   {
+    "message_id": "t026-m1",
+    "sender": "Jonas Weber <jonas@barnes-creative.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-07-27T00:15:48.527489+00:00",
+    "subject": "Do we need Taskwise?",
+    "body": "I haven't opened Taskwise in weeks, everyone seems to use the shared spreadsheet. Can we drop it?",
+    "attachments": []
+   },
+   {
+    "message_id": "t026-m2",
+    "sender": "Theo Barnes <theo@barnes-creative.example>",
+    "to": [
+     "jonas@barnes-creative.example"
+    ],
+    "date": "2026-07-28T06:04:48.527489+00:00",
+    "subject": "Re: Do we need Taskwise?",
+    "body": "Probably. Let me see when the next payment is.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t027",
+  "messages": [
+   {
+    "message_id": "t027-m1",
+    "sender": "StyleBarn <offers@stylebarn.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-08-02T07:31:15.082621+00:00",
+    "subject": "48 hours only: 30% off everything",
+    "body": "Our biggest sale of the season ends Sunday midnight. Use code SPRING30 at checkout. Free returns.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t028",
+  "messages": [
+   {
+    "message_id": "t028-m1",
+    "sender": "Taskwise Billing <no-reply@taskwise.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-08-10T04:49:21.435779+00:00",
+    "subject": "Taskwise: your trial ends in 3 days",
+    "body": "Hi Theo, your 14-day trial of Taskwise Pro ends in 3 days. Add a payment method to keep your projects. After the trial it's 12 USD per user per month.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t029",
+  "messages": [
+   {
+    "message_id": "t029-m1",
+    "sender": "Pixelforge <receipts@pixelforge.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-08-16T22:20:03.958599+00:00",
+    "subject": "Pixelforge annual plan - receipt",
+    "body": "Receipt: Pixelforge Teams annual subscription, 659.88 USD. Renews automatically on 16 August. Manage your subscription in settings.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t030",
+  "messages": [
+   {
+    "message_id": "t030-m1",
+    "sender": "FitHub <billing@fithub.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-08-24T12:49:32.266336+00:00",
+    "subject": "Gym membership renewal",
+    "body": "Your FitHub membership renews on 5 September for 39.00 GBP per month.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t031",
+  "messages": [
+   {
+    "message_id": "t031-m1",
+    "sender": "Meetly Billing <billing@meetly.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-09-01T15:25:02.121053+00:00",
+    "subject": "Meetly: your subscription was cancelled",
+    "body": "As requested, your Meetly Pro subscription is cancelled. You'll keep access until the end of your billing period.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t032",
+  "messages": [
+   {
+    "message_id": "t032-m1",
+    "sender": "Mailrocket <team@mailrocket.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-09-09T18:53:43.481647+00:00",
+    "subject": "Mailrocket price change",
+    "body": "Hi Theo, from next month your Mailrocket Standard plan goes from 35 to 42 USD per month. No action needed to stay on the plan.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t033",
+  "messages": [
+   {
+    "message_id": "t033-m1",
+    "sender": "Chatterbox <billing@chatterbox.example>",
+    "to": [
+     "theo@barnes-creative.example"
+    ],
+    "date": "2026-09-17T15:18:42.780810+00:00",
+    "subject": "Chatterbox seat change",
+    "body": "You added 2 seats. New total 8 seats. Your monthly charge is now 64.00 USD. Effective 17 September.",
+    "attachments": []
+   }
+  ]
+ }
+]

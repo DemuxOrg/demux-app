@@ -1,0 +1,830 @@
+[
+ {
+  "thread_id": "t001",
+  "messages": [
+   {
+    "message_id": "t001-m1",
+    "sender": "Grace Mwangi <grace@sagegreen.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-01-22T02:54:59.963313+00:00",
+    "subject": "Sage Green - workshop branding",
+    "body": "Hi Nadia, can you do a brand for our community workshop series? Nothing fancy, we're a non-profit.",
+    "attachments": []
+   },
+   {
+    "message_id": "t001-m2",
+    "sender": "Nadia Okafor <nadia@okafordesign.example>",
+    "to": [
+     "grace@sagegreen.example"
+    ],
+    "date": "2026-01-23T03:09:59.963313+00:00",
+    "subject": "Re: Sage Green - workshop branding",
+    "body": "Hi Grace, I'd be happy to. I do a reduced non-profit rate: 1,800 EUR for logo and basic guidelines.",
+    "attachments": []
+   },
+   {
+    "message_id": "t001-m3",
+    "sender": "Grace Mwangi <grace@sagegreen.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-01-24T10:10:59.963313+00:00",
+    "subject": "Re: Sage Green - workshop branding",
+    "body": "Amazing, that's within our grant. Please go ahead! Send the agreement when you can.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t002",
+  "messages": [
+   {
+    "message_id": "t002-m1",
+    "sender": "LinkedIn Updates <updates@linknet.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-01-28T18:51:25.819043+00:00",
+    "subject": "5 people viewed your profile this week",
+    "body": "See who is looking at your profile. Upgrade to Premium to see all viewers. Unsubscribe from these emails.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t003",
+  "messages": [
+   {
+    "message_id": "t003-m1",
+    "sender": "Nadia Okafor <nadia@okafordesign.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-02-06T14:00:55.206969+00:00",
+    "subject": "Pitch deck",
+    "body": "Hi Ravi, Jonas passed on your details. I can take the pitch deck on. Let's have a call to scope it.",
+    "attachments": []
+   },
+   {
+    "message_id": "t003-m2",
+    "sender": "Ravi Menon <ravi@kiteanalytics.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-02-07T15:57:55.206969+00:00",
+    "subject": "Re: Pitch deck",
+    "body": "Great. Free tomorrow afternoon?",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t004",
+  "messages": [
+   {
+    "message_id": "t004-m1",
+    "sender": "Typeface Weekly <editor@typefaceweekly.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-02-14T02:22:09.269036+00:00",
+    "subject": "Typeface Weekly: 10 new fonts for logos",
+    "body": "This week's picks: 10 new display fonts perfect for logo work. Plus: a client-proposal template giveaway. Unsubscribe anytime.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t005",
+  "messages": [
+   {
+    "message_id": "t005-m1",
+    "sender": "The Long Game <pod@longgame.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-02-21T22:54:34.793850+00:00",
+    "subject": "New episode: why small teams win",
+    "body": "This week we talk to a founder about staying small on purpose. Listen now on your favourite app.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t006",
+  "messages": [
+   {
+    "message_id": "t006-m1",
+    "sender": "Daniel Kerr <dkerr@kerr-plumbing.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-03-01T19:37:51.456939+00:00",
+    "subject": "Out of the blue - website freelancer?",
+    "body": "Hi, do you also build websites? Need a simple 5-page one for my plumbing business.",
+    "attachments": []
+   },
+   {
+    "message_id": "t006-m2",
+    "sender": "Nadia Okafor <nadia@okafordesign.example>",
+    "to": [
+     "dkerr@kerr-plumbing.example"
+    ],
+    "date": "2026-03-04T06:47:51.456939+00:00",
+    "subject": "Re: Out of the blue - website freelancer?",
+    "body": "Hi Daniel, I'm a brand designer rather than a developer, but I can recommend a few people. Sorry I can't take this one.",
+    "attachments": []
+   },
+   {
+    "message_id": "t006-m3",
+    "sender": "Daniel Kerr <dkerr@kerr-plumbing.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-03-06T12:32:51.456939+00:00",
+    "subject": "Re: Out of the blue - website freelancer?",
+    "body": "No worries, a recommendation would be great.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t007",
+  "messages": [
+   {
+    "message_id": "t007-m1",
+    "sender": "Oliver Grant <ogrant@northpier-cafe.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-03-10T00:10:42.585430+00:00",
+    "subject": "Logo for new restaurant?",
+    "body": "Hi Nadia, we're opening a small cafe on the pier in May and need a logo and menu design. Saw your work for Harbour Bakery. Are you free for a chat this week?",
+    "attachments": []
+   },
+   {
+    "message_id": "t007-m2",
+    "sender": "Nadia Okafor <nadia@okafordesign.example>",
+    "to": [
+     "ogrant@northpier-cafe.example"
+    ],
+    "date": "2026-03-12T16:27:42.585430+00:00",
+    "subject": "Re: Logo for new restaurant?",
+    "body": "Hi Oliver, congrats! Yes, free Thursday 10am. I'll send a call link.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t008",
+  "messages": [
+   {
+    "message_id": "t008-m1",
+    "sender": "Farid Haddad <farid@haddad-legal.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-03-18T05:37:16.473087+00:00",
+    "subject": "Haddad Legal - website graphics",
+    "body": "Hello. A colleague recommended you. We need some icons and a header illustration for our new site. Budget not decided yet. What's your rate?",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t009",
+  "messages": [
+   {
+    "message_id": "t009-m1",
+    "sender": "Priya Shah <priya@bloomandbranch.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-03-25T11:49:11.147754+00:00",
+    "subject": "Bloom & Branch - brand guidelines",
+    "body": "Hi Nadia, following up on the call. We'd like to proceed, but could you send the revised quote with the extra social templates?",
+    "attachments": []
+   },
+   {
+    "message_id": "t009-m2",
+    "sender": "Nadia Okafor <nadia@okafordesign.example>",
+    "to": [
+     "priya@bloomandbranch.example"
+    ],
+    "date": "2026-03-28T00:46:11.147754+00:00",
+    "subject": "Re: Bloom & Branch - brand guidelines",
+    "body": "Sure, revised: 4,250 EUR. Updated proposal attached.",
+    "attachments": [
+     "BloomBranch-v2.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t010",
+  "messages": [
+   {
+    "message_id": "t010-m1",
+    "sender": "Sofia Marini <sofia@marinifoods.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-04-02T08:37:43.388675+00:00",
+    "subject": "Marini Foods label project",
+    "body": "Sofia here. We'd like to go ahead with the label redesign, the quote of 6,400 EUR is approved by finance. When can we kick off?",
+    "attachments": []
+   },
+   {
+    "message_id": "t010-m2",
+    "sender": "Nadia Okafor <nadia@okafordesign.example>",
+    "to": [
+     "sofia@marinifoods.example"
+    ],
+    "date": "2026-04-04T21:08:43.388675+00:00",
+    "subject": "Re: Marini Foods label project",
+    "body": "Fantastic news! I can start on the 12th. I'll send over the kickoff questionnaire.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t011",
+  "messages": [
+   {
+    "message_id": "t011-m1",
+    "sender": "Hugo Lindqvist <hugo@lindqvist-brewing.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-04-09T07:03:23.070230+00:00",
+    "subject": "Brewery labels",
+    "body": "Dear Nadia, thank you for the proposal. Unfortunately we've decided to go with another studio that was cheaper. Wishing you all the best.",
+    "attachments": []
+   },
+   {
+    "message_id": "t011-m2",
+    "sender": "Nadia Okafor <nadia@okafordesign.example>",
+    "to": [
+     "hugo@lindqvist-brewing.example"
+    ],
+    "date": "2026-04-10T06:59:23.070230+00:00",
+    "subject": "Re: Brewery labels",
+    "body": "Thanks for letting me know Hugo, best of luck with the launch.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t012",
+  "messages": [
+   {
+    "message_id": "t012-m1",
+    "sender": "Jonas Weber <jonas@weber-consulting.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-04-17T15:41:18.176725+00:00",
+    "subject": "Fwd: Intro - Ravi from Kite Analytics",
+    "body": "Nadia, meet Ravi. He's looking for a designer for his startup's pitch deck. I'll let you two take it from here.\n\n-------- Forwarded --------\nFrom: Ravi Menon <ravi@kiteanalytics.example>\nHi Jonas, do you know a good designer for a pitch deck? Need it in 3 weeks.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t013",
+  "messages": [
+   {
+    "message_id": "t013-m1",
+    "sender": "Isla Brennan <isla@wildthistle.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-04-25T07:11:09.135057+00:00",
+    "subject": "Thank you!",
+    "body": "The packaging samples arrived and they look incredible. Thank you!!",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t014",
+  "messages": [
+   {
+    "message_id": "t014-m1",
+    "sender": "Calendar <calendar-noreply@mailhub.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-05-03T06:30:48.155635+00:00",
+    "subject": "Reminder: Dentist appointment",
+    "body": "Reminder: Dentist appointment tomorrow at 09:00. Reply to this message to reschedule.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t015",
+  "messages": [
+   {
+    "message_id": "t015-m1",
+    "sender": "Nadia Okafor <nadia@okafordesign.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-05-09T15:38:40.218394+00:00",
+    "subject": "Lindqvist Brewing - follow up",
+    "body": "Hi Hugo, I sent over the label proposal (4,900 EUR) 10 days ago, wanted to check you received it?",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t016",
+  "messages": [
+   {
+    "message_id": "t016-m1",
+    "sender": "Ana Pereira <ana@pereira-architects.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-05-16T17:17:49.000856+00:00",
+    "subject": "Pereira Architects intro",
+    "body": "Hello Nadia, I got your portfolio from Isla. We're in need of new identity and a portfolio site look. Can we talk next week?",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t017",
+  "messages": [
+   {
+    "message_id": "t017-m1",
+    "sender": "Nadia Okafor <nadia@okafordesign.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-05-24T23:02:22.317846+00:00",
+    "subject": "Re: Pereira Architects intro",
+    "body": "Hi Ana, yes! How about Tuesday at 2pm?",
+    "attachments": []
+   },
+   {
+    "message_id": "t017-m2",
+    "sender": "Ana Pereira <ana@pereira-architects.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-05-25T10:52:22.317846+00:00",
+    "subject": "Re: Pereira Architects intro",
+    "body": "Tuesday works.",
+    "attachments": []
+   },
+   {
+    "message_id": "t017-m3",
+    "sender": "Nadia Okafor <nadia@okafordesign.example>",
+    "to": [
+     "ana@pereira-architects.example"
+    ],
+    "date": "2026-05-27T08:38:22.317846+00:00",
+    "subject": "Re: Pereira Architects intro",
+    "body": "Perfect, invite sent.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t018",
+  "messages": [
+   {
+    "message_id": "t018-m1",
+    "sender": "StyleBarn <offers@stylebarn.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-05-30T20:23:22.936442+00:00",
+    "subject": "48 hours only: 30% off everything",
+    "body": "Our biggest sale of the season ends Sunday midnight. Use code SPRING30 at checkout. Free returns.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t019",
+  "messages": [
+   {
+    "message_id": "t019-m1",
+    "sender": "Callum Reed <callum@reedandsons.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-06-08T01:04:35.874523+00:00",
+    "subject": "Brand refresh quote - Reed & Sons",
+    "body": "We need a refreshed identity, logo plus stationery. Can you quote?",
+    "attachments": []
+   },
+   {
+    "message_id": "t019-m2",
+    "sender": "Nadia Okafor <nadia@okafordesign.example>",
+    "to": [
+     "callum@reedandsons.example"
+    ],
+    "date": "2026-06-08T09:21:35.874523+00:00",
+    "subject": "Re: Brand refresh quote - Reed & Sons",
+    "body": "Of course. Based on our call, I'd propose 3,800 EUR for logo, colour palette, stationery and a short guideline PDF. Proposal attached.",
+    "attachments": [
+     "Reed-proposal-v1.pdf"
+    ]
+   },
+   {
+    "message_id": "t019-m3",
+    "sender": "Callum Reed <callum@reedandsons.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-06-09T17:04:35.874523+00:00",
+    "subject": "Re: Brand refresh quote - Reed & Sons",
+    "body": "Thanks, looks reasonable. Let me run it past my brother and get back to you.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t020",
+  "messages": [
+   {
+    "message_id": "t020-m1",
+    "sender": "Cloudlane <hello@cloudlane.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-06-17T16:20:07.311639+00:00",
+    "subject": "What's new in Cloudlane - March release notes",
+    "body": "Hi there, this month we shipped faster dashboards, SSO for all plans and a refreshed mobile app. See the full changelog on our blog. You are receiving this because you signed up for product updates.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t021",
+  "messages": [
+   {
+    "message_id": "t021-m1",
+    "sender": "Mei Tanaka <mei@tanaka-ceramics.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-06-24T09:06:36.402861+00:00",
+    "subject": "Ceramics shop rebrand",
+    "body": "Hi, I'm Mei. I run a small ceramics studio and I'd like to rebrand. I don't have a big budget though, maybe under 1500?",
+    "attachments": []
+   },
+   {
+    "message_id": "t021-m2",
+    "sender": "Nadia Okafor <nadia@okafordesign.example>",
+    "to": [
+     "mei@tanaka-ceramics.example"
+    ],
+    "date": "2026-06-25T14:02:36.402861+00:00",
+    "subject": "Re: Ceramics shop rebrand",
+    "body": "Hi Mei, thanks! I could do a lighter package: logo + 2 label designs for 1,300 EUR. Does that suit?",
+    "attachments": []
+   },
+   {
+    "message_id": "t021-m3",
+    "sender": "Mei Tanaka <mei@tanaka-ceramics.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-06-25T23:29:36.402861+00:00",
+    "subject": "Re: Ceramics shop rebrand",
+    "body": "Hmm, that's a bit over what I can do right now. Maybe next year, I'll keep in touch!",
+    "attachments": []
+   },
+   {
+    "message_id": "t021-m4",
+    "sender": "Nadia Okafor <nadia@okafordesign.example>",
+    "to": [
+     "mei@tanaka-ceramics.example"
+    ],
+    "date": "2026-06-26T05:32:36.402861+00:00",
+    "subject": "Re: Ceramics shop rebrand",
+    "body": "Totally understand. Door's open anytime.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t022",
+  "messages": [
+   {
+    "message_id": "t022-m1",
+    "sender": "Sofia Marini <sofia@marinifoods.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-07-01T11:20:22.911410+00:00",
+    "subject": "Re: Marini Foods label project",
+    "body": "Quick update: we're expecting the product photos on Friday, will send then.",
+    "attachments": []
+   },
+   {
+    "message_id": "t022-m2",
+    "sender": "Nadia Okafor <nadia@okafordesign.example>",
+    "to": [
+     "sofia@marinifoods.example"
+    ],
+    "date": "2026-07-01T16:25:22.911410+00:00",
+    "subject": "Re: Marini Foods label project",
+    "body": "Perfect, thanks Sofia.",
+    "attachments": []
+   },
+   {
+    "message_id": "t022-m3",
+    "sender": "Sofia Marini <sofia@marinifoods.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-07-02T08:29:22.911410+00:00",
+    "subject": "Re: Marini Foods label project",
+    "body": "ok!",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t023",
+  "messages": [
+   {
+    "message_id": "t023-m1",
+    "sender": "Ben Achterberg <ben@achterberg.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-07-08T00:57:29.350083+00:00",
+    "subject": "Quick q about pricing",
+    "body": "hey nadia, how much for a poster for a gig? ben",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t024",
+  "messages": [
+   {
+    "message_id": "t024-m1",
+    "sender": "Nadia Okafor <nadia@okafordesign.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-07-16T11:41:34.862012+00:00",
+    "subject": "poster",
+    "body": "Hi Ben, for a single A2 poster, 350 EUR including 2 revision rounds.",
+    "attachments": []
+   },
+   {
+    "message_id": "t024-m2",
+    "sender": "Ben Achterberg <ben@achterberg.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-07-17T13:14:34.862012+00:00",
+    "subject": "Re: poster",
+    "body": "ok cool will think abt it",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t025",
+  "messages": [
+   {
+    "message_id": "t025-m1",
+    "sender": "Leon Wright <leon@wrightfit.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-07-25T14:39:15.614423+00:00",
+    "subject": "Revised proposal for Wright Fit",
+    "body": "Can you also add gym signage to the scope? Ok to quote it separately.",
+    "attachments": []
+   },
+   {
+    "message_id": "t025-m2",
+    "sender": "Nadia Okafor <nadia@okafordesign.example>",
+    "to": [
+     "leon@wrightfit.example"
+    ],
+    "date": "2026-07-25T22:29:15.614423+00:00",
+    "subject": "Re: Revised proposal for Wright Fit",
+    "body": "Sure, I'll put together a separate quote and send it Monday.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t026",
+  "messages": [
+   {
+    "message_id": "t026-m1",
+    "sender": "Mei Tanaka <mei@tanaka-ceramics.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-08-02T23:18:48.400776+00:00",
+    "subject": "proposal question",
+    "body": "One more thought, if I only did the logo for 600 would that work?",
+    "attachments": []
+   },
+   {
+    "message_id": "t026-m2",
+    "sender": "Nadia Okafor <nadia@okafordesign.example>",
+    "to": [
+     "mei@tanaka-ceramics.example"
+    ],
+    "date": "2026-08-03T01:40:48.400776+00:00",
+    "subject": "Re: proposal question",
+    "body": "Yes! Logo only, 600 EUR, 2 concepts. Shall I get started?",
+    "attachments": []
+   },
+   {
+    "message_id": "t026-m3",
+    "sender": "Mei Tanaka <mei@tanaka-ceramics.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-08-03T17:58:48.400776+00:00",
+    "subject": "Re: proposal question",
+    "body": "Yes please, I'll pay up front today.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t027",
+  "messages": [
+   {
+    "message_id": "t027-m1",
+    "sender": "Nadia Okafor <nadia@okafordesign.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-08-08T14:20:45.810013+00:00",
+    "subject": "RE: Haddad Legal - website graphics",
+    "body": "Hi Farid, thanks for getting in touch. My day rate is 420 EUR; for 12 icons and a header I'd estimate 2.5 days, so around 1,050 EUR.",
+    "attachments": []
+   },
+   {
+    "message_id": "t027-m2",
+    "sender": "Farid Haddad <farid@haddad-legal.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-08-11T01:55:45.810013+00:00",
+    "subject": "Re: RE: Haddad Legal - website graphics",
+    "body": "Understood, I'll discuss with the partners.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t028",
+  "messages": [
+   {
+    "message_id": "t028-m1",
+    "sender": "DevSummit <team@devsummit.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-08-17T13:35:59.407564+00:00",
+    "subject": "Early bird tickets end Friday",
+    "body": "Join 2,000 builders in Lisbon this autumn. Early bird pricing ends Friday. Speakers announced: see the full lineup on our site.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t029",
+  "messages": [
+   {
+    "message_id": "t029-m1",
+    "sender": "Leon Wright <leon@wrightfit.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-08-23T23:10:13.813119+00:00",
+    "subject": "Wright Fit - invoice for deposit?",
+    "body": "Nadia, we've got the all clear from the board. Please send the deposit invoice and we'll get things moving.",
+    "attachments": []
+   },
+   {
+    "message_id": "t029-m2",
+    "sender": "Nadia Okafor <nadia@okafordesign.example>",
+    "to": [
+     "leon@wrightfit.example"
+    ],
+    "date": "2026-08-24T20:40:13.813119+00:00",
+    "subject": "Re: Wright Fit - invoice for deposit?",
+    "body": "Great! Deposit invoice (50% of 7,000 EUR) attached.",
+    "attachments": [
+     "inv-wrightfit-deposit.pdf"
+    ]
+   },
+   {
+    "message_id": "t029-m3",
+    "sender": "Leon Wright <leon@wrightfit.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-08-26T02:45:13.813119+00:00",
+    "subject": "Re: Wright Fit - invoice for deposit?",
+    "body": "Paid. Let's go!",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t030",
+  "messages": [
+   {
+    "message_id": "t030-m1",
+    "sender": "Mailhub Security <security@mailhub.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-09-01T18:27:46.746852+00:00",
+    "subject": "New sign-in from Chrome on Windows",
+    "body": "We noticed a new sign-in to your account. If this was you, no action is needed. If not, reset your password.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t031",
+  "messages": [
+   {
+    "message_id": "t031-m1",
+    "sender": "Nadia Okafor <nadia@okafordesign.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-09-07T19:55:51.128029+00:00",
+    "subject": "Re: Reed & Sons proposal",
+    "body": "Hi Callum, just checking in on the proposal I sent last week. Happy to answer questions.",
+    "attachments": []
+   },
+   {
+    "message_id": "t031-m2",
+    "sender": "Callum Reed <callum@reedandsons.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-09-08T14:28:51.128029+00:00",
+    "subject": "Re: Reed & Sons proposal",
+    "body": "Sorry for the silence, been swamped. Will reply properly by Friday.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t032",
+  "messages": [
+   {
+    "message_id": "t032-m1",
+    "sender": "Isla Brennan <isla@wildthistle.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-09-16T21:08:00.516950+00:00",
+    "subject": "Wild Thistle packaging",
+    "body": "Hi Nadia! We loved the concepts. Where do I sign? Also can you start 1 April?",
+    "attachments": []
+   },
+   {
+    "message_id": "t032-m2",
+    "sender": "Nadia Okafor <nadia@okafordesign.example>",
+    "to": [
+     "isla@wildthistle.example"
+    ],
+    "date": "2026-09-19T16:28:00.516950+00:00",
+    "subject": "Re: Wild Thistle packaging",
+    "body": "Wonderful! Contract attached, 5,200 EUR in two instalments. Sign and return and I'll book April 1st.",
+    "attachments": [
+     "WildThistle-contract.pdf"
+    ]
+   },
+   {
+    "message_id": "t032-m3",
+    "sender": "Isla Brennan <isla@wildthistle.example>",
+    "to": [
+     "nadia@okafordesign.example"
+    ],
+    "date": "2026-09-20T13:23:00.516950+00:00",
+    "subject": "Re: Wild Thistle packaging",
+    "body": "Signed and sent back. Super excited!",
+    "attachments": []
+   }
+  ]
+ }
+]

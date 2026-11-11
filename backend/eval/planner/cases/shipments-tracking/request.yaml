@@ -1,0 +1,7 @@
+id: shipments-tracking
+prompt: "I order a lot of parts from overseas suppliers for my repair workshop. Keep track of what's still on its way: who it's coming from, when it should land, the tracking number, and what duty I'll have to pay on it."
+paraphrases:
+  - "Which of my parcels haven't arrived yet? I need to see the supplier, expected arrival, tracking number and any import duty owed."
+  - "Make me a list of incoming shipments for the workshop with the sender, ETA, tracking reference and duty charges."
+domain: logistics
+holdout: true

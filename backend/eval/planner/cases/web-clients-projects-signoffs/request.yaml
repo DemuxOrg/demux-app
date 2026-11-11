@@ -1,0 +1,7 @@
+id: web-clients-projects-signoffs
+prompt: "I do web work for a handful of clients. Give me each client, what I'm currently building for them and what each job is worth, and anything I'm still waiting on them to sign off."
+paraphrases:
+  - "For each of my clients, show the projects in progress, the value of each job, and any approvals I'm waiting for from them."
+  - "I need a view of my clients, the websites I'm working on for them, how much each is worth, and what's pending their OK."
+domain: clients
+holdout: false

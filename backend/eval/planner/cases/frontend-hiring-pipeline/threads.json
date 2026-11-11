@@ -1,0 +1,742 @@
+[
+ {
+  "thread_id": "t001",
+  "messages": [
+   {
+    "message_id": "t001-m1",
+    "sender": "Lucas Ferreira <lucas.f@webmail.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-01-22T12:47:16.297092+00:00",
+    "subject": "Application - Marketing Manager",
+    "body": "Dear team, I'm applying for the Marketing Manager role. CV attached.",
+    "attachments": [
+     "LF_CV.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t002",
+  "messages": [
+   {
+    "message_id": "t002-m1",
+    "sender": "LinkedIn Updates <updates@linknet.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-01-29T18:40:40.057380+00:00",
+    "subject": "5 people viewed your profile this week",
+    "body": "See who is looking at your profile. Upgrade to Premium to see all viewers. Unsubscribe from these emails.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t003",
+  "messages": [
+   {
+    "message_id": "t003-m1",
+    "sender": "Karen Liu <karen@nimbusworks.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-02-07T09:29:39.518939+00:00",
+    "subject": "Offer discussion - Kwame",
+    "body": "Hi Kwame, we'd love to make you an offer. I'll send the details by tomorrow.",
+    "attachments": []
+   },
+   {
+    "message_id": "t003-m2",
+    "sender": "Kwame Mensah <kwame.m@mailbox.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-02-08T13:21:39.518939+00:00",
+    "subject": "Re: Offer discussion - Kwame",
+    "body": "Wonderful news, thank you so much. I'll wait for the paperwork.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t004",
+  "messages": [
+   {
+    "message_id": "t004-m1",
+    "sender": "Karen Liu <karen@nimbusworks.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-02-13T17:55:58.896901+00:00",
+    "subject": "Re: Sven L.",
+    "body": "Hi Sven, thanks. Can we do a quick video call Friday 16:00 your time?",
+    "attachments": []
+   },
+   {
+    "message_id": "t004-m2",
+    "sender": "Sven Larsson <sven@larsson.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-02-14T20:27:58.896901+00:00",
+    "subject": "Re: Sven L.",
+    "body": "Sure! Friday 16:00 CET.",
+    "attachments": []
+   },
+   {
+    "message_id": "t004-m3",
+    "sender": "Karen Liu <karen@nimbusworks.example>",
+    "to": [
+     "sven@larsson.example"
+    ],
+    "date": "2026-02-17T15:25:58.896901+00:00",
+    "subject": "Re: Sven L.",
+    "body": "Great.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t005",
+  "messages": [
+   {
+    "message_id": "t005-m1",
+    "sender": "Karen Liu <karen@nimbusworks.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-02-19T06:42:19.704590+00:00",
+    "subject": "Re: candidate from TalentBridge",
+    "body": "Beth, the CV has no name on it, just 'Candidate 0412'. Can you tell me who she is?",
+    "attachments": []
+   },
+   {
+    "message_id": "t005-m2",
+    "sender": "Beth from TalentBridge <beth@talentbridge-agency.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-02-21T16:01:19.704590+00:00",
+    "subject": "Re: candidate from TalentBridge",
+    "body": "Sorry, agency policy until you commit to an interview. Shall I set one up?",
+    "attachments": []
+   },
+   {
+    "message_id": "t005-m3",
+    "sender": "Karen Liu <karen@nimbusworks.example>",
+    "to": [
+     "beth@talentbridge-agency.example"
+    ],
+    "date": "2026-02-23T15:38:19.704590+00:00",
+    "subject": "Re: candidate from TalentBridge",
+    "body": "Yes please, next Tuesday afternoon.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t006",
+  "messages": [
+   {
+    "message_id": "t006-m1",
+    "sender": "People Ops <people@nimbusworks.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-02-27T03:08:03.619923+00:00",
+    "subject": "Candidate reject template",
+    "body": "Karen, reminder that rejections should go out within 5 working days. Template in the shared drive.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t007",
+  "messages": [
+   {
+    "message_id": "t007-m1",
+    "sender": "Hannah Fuchs <hannah.fuchs@mailbox.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-03-07T23:44:59.191251+00:00",
+    "subject": "Front-end role - Hannah Fuchs",
+    "body": "Dear hiring team, please find my application and portfolio. I'm especially interested in design systems. Hannah",
+    "attachments": [
+     "HFuchs-CV.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t008",
+  "messages": [
+   {
+    "message_id": "t008-m1",
+    "sender": "Karen Liu <karen@nimbusworks.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-03-15T06:03:43.979109+00:00",
+    "subject": "Mina Park interview",
+    "body": "Hi Mina, we'd like to meet you for a first interview on 19 March at 15:00, 45 min on video.",
+    "attachments": []
+   },
+   {
+    "message_id": "t008-m2",
+    "sender": "Mina Park <mina.park@webmail.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-03-16T09:27:43.979109+00:00",
+    "subject": "Re: Mina Park interview",
+    "body": "Thanks, I'll be there.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t009",
+  "messages": [
+   {
+    "message_id": "t009-m1",
+    "sender": "DevSummit <team@devsummit.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-03-22T05:35:57.426521+00:00",
+    "subject": "Early bird tickets end Friday",
+    "body": "Join 2,000 builders in Lisbon this autumn. Early bird pricing ends Friday. Speakers announced: see the full lineup on our site.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t010",
+  "messages": [
+   {
+    "message_id": "t010-m1",
+    "sender": "Mina Park <mina.park@webmail.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-03-29T01:25:47.717985+00:00",
+    "subject": "Mina Park - withdrawing application",
+    "body": "Hi Karen, thank you for the interview invitation, but I've accepted another offer so I'd like to withdraw. Sorry for the trouble. Mina",
+    "attachments": []
+   },
+   {
+    "message_id": "t010-m2",
+    "sender": "Karen Liu <karen@nimbusworks.example>",
+    "to": [
+     "mina.park@webmail.example"
+    ],
+    "date": "2026-03-30T04:14:47.717985+00:00",
+    "subject": "Re: Mina Park - withdrawing application",
+    "body": "No problem Mina, thanks for letting us know and good luck!",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t011",
+  "messages": [
+   {
+    "message_id": "t011-m1",
+    "sender": "The Weekly Brief <digest@morningbrief.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-04-05T06:15:41.813168+00:00",
+    "subject": "Your Tuesday brief: 7 stories worth your time",
+    "body": "Good morning. Today: rate decisions, a new EU rule on data portability, and why everyone is talking about four-day weeks. Read online | Unsubscribe | Manage preferences",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t012",
+  "messages": [
+   {
+    "message_id": "t012-m1",
+    "sender": "Olivia Brandt <olivia.brandt@webmail.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-04-15T01:27:04.836806+00:00",
+    "subject": "Olivia Brandt - update",
+    "body": "Hi Karen, just checking whether you've had a chance to look at my application. I'm still very interested!",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t013",
+  "messages": [
+   {
+    "message_id": "t013-m1",
+    "sender": "Jonas Weber <jonas@nimbusworks.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-04-20T13:27:16.568067+00:00",
+    "subject": "Diego technical interview scheduling",
+    "body": "Hi Diego, Jonas here. Technical interview slot: 1 May, 13:00 for 90 minutes. Let me know if this works.",
+    "attachments": []
+   },
+   {
+    "message_id": "t013-m2",
+    "sender": "Diego Ramos <diego.ramos@webmail.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-04-22T16:45:16.568067+00:00",
+    "subject": "Re: Diego technical interview scheduling",
+    "body": "Works for me. Thanks Jonas.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t014",
+  "messages": [
+   {
+    "message_id": "t014-m1",
+    "sender": "Karen Liu <karen@nimbusworks.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-04-27T11:13:39.197195+00:00",
+    "subject": "Re: Application for front end dev",
+    "body": "Hi Olivia, thank you, we'll review and get back to you in a week.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t015",
+  "messages": [
+   {
+    "message_id": "t015-m1",
+    "sender": "HireSnap <sales@hiresnap.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-05-05T04:21:20.626697+00:00",
+    "subject": "Hire faster with HireSnap ATS",
+    "body": "Tired of tracking candidates in spreadsheets? HireSnap's applicant tracking system makes hiring painless. Start a free trial.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t016",
+  "messages": [
+   {
+    "message_id": "t016-m1",
+    "sender": "Jonas Weber <jonas@nimbusworks.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-05-14T16:45:19.227918+00:00",
+    "subject": "Hannah Fuchs - technical interview",
+    "body": "Karen, Hannah did great in the screening. Let's do the technical round on 20 May at 14:00, 90 min. I can run it. Jonas",
+    "attachments": []
+   },
+   {
+    "message_id": "t016-m2",
+    "sender": "Karen Liu <karen@nimbusworks.example>",
+    "to": [
+     "jonas@nimbusworks.example"
+    ],
+    "date": "2026-05-16T02:36:19.227918+00:00",
+    "subject": "Re: Hannah Fuchs - technical interview",
+    "body": "Perfect, I'll invite her.",
+    "attachments": []
+   },
+   {
+    "message_id": "t016-m3",
+    "sender": "Hannah Fuchs <hannah.fuchs@mailbox.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-05-16T16:33:19.227918+00:00",
+    "subject": "Re: Hannah Fuchs - technical interview",
+    "body": "Confirmed, see you on 20 May at 14:00.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t017",
+  "messages": [
+   {
+    "message_id": "t017-m1",
+    "sender": "Sven Larsson <sven@larsson.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-05-21T04:29:11.902403+00:00",
+    "subject": "Sven L. - front-end application",
+    "body": "Hi, attached is my resume. I'm currently in Sweden but happy to relocate. Sven",
+    "attachments": [
+     "Sven_Larsson_resume.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t018",
+  "messages": [
+   {
+    "message_id": "t018-m1",
+    "sender": "Beth from TalentBridge <beth@talentbridge-agency.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-05-29T03:02:50.837655+00:00",
+    "subject": "Fwd: candidate from TalentBridge",
+    "body": "Hi Karen, attaching a strong candidate for your front-end opening. I'd recommend a conversation soon as she has other interviews lined up. Her details are in the CV.",
+    "attachments": [
+     "candidate_profile_0412.pdf"
+    ]
+   },
+   {
+    "message_id": "t018-m2",
+    "sender": "Karen Liu <karen@nimbusworks.example>",
+    "to": [
+     "beth@talentbridge-agency.example"
+    ],
+    "date": "2026-05-29T14:35:50.837655+00:00",
+    "subject": "Re: candidate from TalentBridge",
+    "body": "Thanks Beth, will look today.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t019",
+  "messages": [
+   {
+    "message_id": "t019-m1",
+    "sender": "Karen Liu <karen@nimbusworks.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-06-04T09:24:24.630213+00:00",
+    "subject": "Re: Olivia Brandt",
+    "body": "Hi Olivia, apologies for the delay. We'd like to invite you for a first interview on 12 June at 11:00.",
+    "attachments": []
+   },
+   {
+    "message_id": "t019-m2",
+    "sender": "Olivia Brandt <olivia.brandt@webmail.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-06-06T15:29:24.630213+00:00",
+    "subject": "Re: Olivia Brandt",
+    "body": "Thank you so much! See you then.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t020",
+  "messages": [
+   {
+    "message_id": "t020-m1",
+    "sender": "TalentBridge Marketing <marketing@talentbridge-agency.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-06-11T02:26:14.992354+00:00",
+    "subject": "Top 10 developers available now - TalentBridge Weekly",
+    "body": "This week's top talent: 10 senior developers actively looking. Access profiles with a premium membership. Unsubscribe.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t021",
+  "messages": [
+   {
+    "message_id": "t021-m1",
+    "sender": "Calendar <calendar-noreply@mailhub.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-06-19T07:26:47.962602+00:00",
+    "subject": "Reminder: Dentist appointment",
+    "body": "Reminder: Dentist appointment tomorrow at 09:00. Reply to this message to reschedule.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t022",
+  "messages": [
+   {
+    "message_id": "t022-m1",
+    "sender": "Fiona McAllister <fiona@nimbusworks.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-06-25T07:20:29.574632+00:00",
+    "subject": "Kwame Mensah interview feedback",
+    "body": "Interview with Kwame went really well. Strong on accessibility, a bit light on testing. I'd like to move him to the final round. Fiona",
+    "attachments": []
+   },
+   {
+    "message_id": "t022-m2",
+    "sender": "Karen Liu <karen@nimbusworks.example>",
+    "to": [
+     "fiona@nimbusworks.example"
+    ],
+    "date": "2026-06-27T07:32:29.574632+00:00",
+    "subject": "Re: Kwame Mensah interview feedback",
+    "body": "Great, let's do it. I'll arrange the final with Jonas and Graham.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t023",
+  "messages": [
+   {
+    "message_id": "t023-m1",
+    "sender": "Karen Liu <karen@nimbusworks.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-07-03T16:29:10.670321+00:00",
+    "subject": "Final interview - Kwame",
+    "body": "Hi Kwame, we'd like to invite you to a final interview with our CTO on 12 July at 10:00 (video).",
+    "attachments": []
+   },
+   {
+    "message_id": "t023-m2",
+    "sender": "Kwame Mensah <kwame.m@mailbox.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-07-06T12:45:10.670321+00:00",
+    "subject": "Re: Final interview - Kwame",
+    "body": "That would be great! I'll be there.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t024",
+  "messages": [
+   {
+    "message_id": "t024-m1",
+    "sender": "Karen Liu <karen@nimbusworks.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-07-13T06:11:09.762164+00:00",
+    "subject": "Sven - after call",
+    "body": "Notes from the Friday call: good communicator, solid Vue background, less React. Parking him for now - will revisit if the pool is thin.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t025",
+  "messages": [
+   {
+    "message_id": "t025-m1",
+    "sender": "Karen Liu <karen@nimbusworks.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-07-19T07:29:40.504233+00:00",
+    "subject": "Re: Diego - intro call notes",
+    "body": "Intro call with Diego went fine, he's keen and technically sound. Passing him to Jonas for a technical interview.",
+    "attachments": []
+   },
+   {
+    "message_id": "t025-m2",
+    "sender": "Jonas Weber <jonas@nimbusworks.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-07-21T23:00:40.504233+00:00",
+    "subject": "Re: Diego - intro call notes",
+    "body": "OK, I'll schedule the technical round with him next week.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t026",
+  "messages": [
+   {
+    "message_id": "t026-m1",
+    "sender": "People Ops <people@nimbusworks.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-07-25T13:58:52.537807+00:00",
+    "subject": "Job posting stats",
+    "body": "The front-end posting has had 47 views this week and 11 applications so far. Do you want to extend it?",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t027",
+  "messages": [
+   {
+    "message_id": "t027-m1",
+    "sender": "Tariq Aziz <tariq@aziz-dev.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-08-02T12:45:03.306110+00:00",
+    "subject": "Application - tariq",
+    "body": "hi i saw the job on your site. cv attached. available to start asap",
+    "attachments": [
+     "cv.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t028",
+  "messages": [
+   {
+    "message_id": "t028-m1",
+    "sender": "Diego Ramos <diego.ramos@webmail.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-08-09T22:56:38.117606+00:00",
+    "subject": "Application: Front-end Developer",
+    "body": "Hello, I'd like to apply for the front-end developer position. 5 years React/TypeScript experience. CV attached. Best, Diego Ramos",
+    "attachments": [
+     "Diego_Ramos_CV.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t029",
+  "messages": [
+   {
+    "message_id": "t029-m1",
+    "sender": "Karen Liu <karen@nimbusworks.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-08-19T04:58:03.733679+00:00",
+    "subject": "Re: Application: Front-end Developer",
+    "body": "Hi Diego, thanks for applying. We'd like to arrange a 30 minute intro call. Are you free Wednesday at 11:00?",
+    "attachments": []
+   },
+   {
+    "message_id": "t029-m2",
+    "sender": "Diego Ramos <diego.ramos@webmail.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-08-20T17:18:03.733679+00:00",
+    "subject": "Re: Application: Front-end Developer",
+    "body": "Wednesday 11 works great.",
+    "attachments": []
+   },
+   {
+    "message_id": "t029-m3",
+    "sender": "Karen Liu <karen@nimbusworks.example>",
+    "to": [
+     "diego.ramos@webmail.example"
+    ],
+    "date": "2026-08-22T21:49:03.733679+00:00",
+    "subject": "Re: Application: Front-end Developer",
+    "body": "Booked. Link coming shortly.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t030",
+  "messages": [
+   {
+    "message_id": "t030-m1",
+    "sender": "Olivia Brandt <olivia.brandt@webmail.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-08-25T21:26:52.385090+00:00",
+    "subject": "Application for front end dev",
+    "body": "Dear Karen, I'm a graduate with a bootcamp background and a couple of internships. I'd love to join your team. Olivia Brandt",
+    "attachments": [
+     "OB_CV.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "t031",
+  "messages": [
+   {
+    "message_id": "t031-m1",
+    "sender": "Priya Desai <priya@oldemployer.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-09-02T19:43:48.189926+00:00",
+    "subject": "Reference check - Kwame Mensah",
+    "body": "Hi Karen, I'm happy to confirm Kwame worked with us for three years and was a reliable and thoughtful engineer. Would hire again.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t032",
+  "messages": [
+   {
+    "message_id": "t032-m1",
+    "sender": "JobBoard Alerts <alerts@jobboard.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-09-09T07:24:50.263882+00:00",
+    "subject": "Job alert: 12 new front-end jobs near you",
+    "body": "Here are 12 new front-end jobs matching your search, including roles at Pixel & Co, Orbit Labs and more.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "t033",
+  "messages": [
+   {
+    "message_id": "t033-m1",
+    "sender": "Karen Liu <karen@nimbusworks.example>",
+    "to": [
+     "contact@example.com"
+    ],
+    "date": "2026-09-15T07:47:05.201087+00:00",
+    "subject": "Re: Application - tariq",
+    "body": "Hi Tariq, thank you. Unfortunately we're looking for someone with more React experience, so we won't be taking it forward. Good luck!",
+    "attachments": []
+   },
+   {
+    "message_id": "t033-m2",
+    "sender": "Tariq Aziz <tariq@aziz-dev.example>",
+    "to": [
+     "karen@nimbusworks.example"
+    ],
+    "date": "2026-09-17T09:10:05.201087+00:00",
+    "subject": "Re: Application - tariq",
+    "body": "ok thanks",
+    "attachments": []
+   }
+  ]
+ }
+]
