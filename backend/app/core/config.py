@@ -35,7 +35,7 @@ class Settings(BaseSettings):
     # after running scripts/probe_planner_model.py.
     HF_TOKEN: str = ""
     PLANNER_MODEL: str = "Qwen/Qwen3.6-35B-A3B"
-    PLANNER_PROVIDER: str = ""
+    PLANNER_PROVIDER: str = "deepinfra"
     PLANNER_THINKING: bool = False
     PLANNER_TEMPERATURE: float = 0.2
     PLANNER_MAX_TOKENS: int = 4000

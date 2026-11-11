@@ -9,3 +9,10 @@ node_modules/
 .next/
 *.tsbuildinfo
 next-env.d.ts
+
+# planner eval (costs money; see backend/eval/planner)
+backend/eval/planner/runs/*
+!backend/eval/planner/runs/BASELINE
+!backend/eval/planner/runs/BASELINE_report.md
+backend/eval/planner/real/
+backend/.secrets/
