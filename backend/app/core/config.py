@@ -31,6 +31,15 @@ class Settings(BaseSettings):
     ENV: Env = Env.DEV
     LOG_LEVEL: str = "INFO"
 
+    # Planner LLM (Hugging Face Inference Providers router). PLANNER_PROVIDER is pinned
+    # after running scripts/probe_planner_model.py.
+    HF_TOKEN: str = ""
+    PLANNER_MODEL: str = "Qwen/Qwen3.6-35B-A3B"
+    PLANNER_PROVIDER: str = ""
+    PLANNER_THINKING: bool = False
+    PLANNER_TEMPERATURE: float = 0.2
+    PLANNER_MAX_TOKENS: int = 4000
+
     # Used by the test suite only (see tests/conftest.py).
     TEST_DATABASE_URL: str = "postgresql+asyncpg://demux:demux@localhost:5432/demux_test"
 
