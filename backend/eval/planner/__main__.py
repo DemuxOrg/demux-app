@@ -26,6 +26,7 @@ from app.pipeline.planner.models import Schema, Thread
 from app.pipeline.planner.plan import plan
 from app.pipeline.planner.prompts import SYSTEM_PROMPT, render_user_prompt
 from app.pipeline.sampling import sample_threads
+from eval.planner.normalize import normalize_schema
 from eval.planner.scoring import aggregate, load_expected, score_case, stability
 
 ROOT = Path(__file__).parent
@@ -82,21 +83,44 @@ def load_record(path: Path) -> tuple[Schema | None, SimpleNamespace]:
     return schema, result
 
 
-def score_run(run_dir: Path, case_dirs: list[Path], with_stability: bool, prices: dict) -> dict:
-    scores, stabs, per_case = [], [], {}
+def score_run(
+    run_dir: Path,
+    case_dirs: list[Path],
+    with_stability: bool,
+    prices: dict,
+    config: LLMConfig,
+    normalize: bool = True,
+) -> dict:
+    scores, stabs, per_case, renames = [], [], {}, {}
+    cache = run_dir / "normalization.json"
+
+    def norm(schema, expected, key):
+        if not normalize:
+            return schema
+        out, applied = normalize_schema(schema, expected, key, cache, config)
+        if applied:
+            renames[key] = applied
+        return out
+
     for d in case_dirs:
         main = run_dir / "responses" / f"{d.name}.json"
         if not main.exists():
             continue
         expected = load_expected(str(d / "expected.yaml"))
         schema, result = load_record(main)
+        schema = norm(schema, expected, d.name)
         cs = score_case(schema, expected, result, d.name)
         scores.append(cs)
         per_case[d.name] = dataclasses.asdict(cs)
         variants = [run_dir / "responses" / f"{d.name}__p{i}.json" for i in (1, 2)]
         if with_stability and all(v.exists() for v in variants):
-            stabs.append(stability([schema] + [load_record(v)[0] for v in variants], expected))
-    return {"aggregate": aggregate(scores, stabs or None, prices), "cases": per_case}
+            others = [norm(load_record(v)[0], expected, v.stem) for v in variants]
+            stabs.append(stability([schema] + others, expected))
+    return {
+        "aggregate": aggregate(scores, stabs or None, prices),
+        "cases": per_case,
+        "normalization": renames,
+    }
 
 
 def outcomes(run_dir: Path, case_dirs: list[Path]) -> dict[str, str]:
@@ -155,6 +179,10 @@ def render_md(report: dict, baseline: dict | None) -> str:
         )
         diffs = [f"- {k}: {cs[k]}" for k in keys if cs.get(k)]
         lines += diffs or ["- no differences"]
+    if report.get("normalization"):
+        lines += ["", "## Name normalisation applied (planner -> label)"]
+        for key, items in report["normalization"].items():
+            lines.append(f"- {key}: " + "; ".join(items))
     return "\n".join(lines) + "\n"
 
 
@@ -167,6 +195,7 @@ def main() -> None:
     p.add_argument("--thinking", choices=["on", "off"])
     p.add_argument("--provider")
     p.add_argument("--rescore", type=Path)
+    p.add_argument("--no-normalize", action="store_true", help="strict name matching only")
     args = p.parse_args()
 
     config = LLMConfig.from_settings()
@@ -206,7 +235,9 @@ def main() -> None:
             "prompt_hash": hashlib.sha256(SYSTEM_PROMPT.encode()).hexdigest()[:10],
         }
 
-    scored = score_run(run_dir, case_dirs, with_stability, prices)
+    scored = score_run(
+        run_dir, case_dirs, with_stability, prices, config, normalize=not args.no_normalize
+    )
     report = {"config": config_dict, **scored, "outcomes": outcomes(run_dir, case_dirs)}
     baseline = None
     pointer = RUNS / "BASELINE"

@@ -45,3 +45,10 @@ Result (non-holdout, 1 run): ALL thresholds pass. outcome 1.00, record type reca
 source 1.00, required-field recall 0.92, over-generation 0.50, type 0.96, support 0.96, valid first try 1.00.
 Remaining diffs are naming/synonym mismatches (`pending_signoff` vs label `approval`) and two
 single-field slips. Stop: thresholds met; next is the final `--all --stability` run.
+
+## Eval change (not a prompt change) — LLM name normaliser
+Why: harmless renames (`deposit_info` vs `deposit`) were scored as a miss plus an extra. Decided with
+Jihad instead of growing synonym lists or hardcoding names into the prompt. `normalize.py` maps only
+unmatched planner names to unmatched label names (thinking on, temp 0, no thread content), caches verdicts
+in `<run>/normalization.json`, and lists every applied rename in `report.md`. `--no-normalize` = strict.
+Rescore of run 20261111T144452Z: required-field recall 0.72 -> 0.90, over-generation 0.85 -> 0.08.
