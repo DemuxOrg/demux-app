@@ -1,5 +1,9 @@
-# Local infrastructure: Postgres only. Backend and frontend run natively (see Makefile).
-# Credentials come from .env (copy .env.example). Data persists in the `pgdata` volume.
+# Local dev stack: Postgres + backend + frontend, all in Docker.
+#   make up   → build and start everything (hot reload, source is bind-mounted)
+#   make down → stop (Postgres data persists in the `pgdata` volume)
+# For native dev instead: `make db` + `make backend` + `make frontend`.
+# Credentials come from .env (copy .env.example). Note the DB host is `postgres` (the
+# compose service name), while browser-facing URLs stay `localhost` (published ports).
 services:
   postgres:
     image: postgres:17
@@ -18,6 +22,54 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+
+  backend:
+    build: ./backend
+    # Apply migrations (idempotent), then serve with hot reload. The image's CMD
+    # (plain uvicorn, no reload) is the production-ish default.
+    command: >
+      sh -c "/opt/.venv/bin/alembic upgrade head &&
+      exec /opt/.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    environment:
+      # Root .env points at localhost for native dev; inside the compose network the
+      # Postgres host is `postgres`.
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-demux}:${POSTGRES_PASSWORD:-demux}@postgres:5432/${POSTGRES_DB:-demux}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      ENV: dev
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "/opt/.venv/bin/python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health', timeout=3)",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  frontend:
+    build: ./frontend
+    environment:
+      # Browser-facing URL: the published port on the host.
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      # Keep the image's node_modules; the bind mount above would shadow it.
+      - /app/node_modules
+    depends_on:
+      - backend
 
 volumes:
   pgdata:
