@@ -20,9 +20,9 @@ record_types:
     synonyms: [signoff, sign_off, pending_approval, approval_request, pending_item]
     source: extracted
     required_fields:
-      - {name: client, synonyms: [client_name, customer, approver], type: string, support: found}
+      - {name: project, synonyms: [project_name, job, website, work], type: string, support: found}
       - {name: item, synonyms: [description, what, deliverable, approval_item, subject, request, awaiting], type: string, support: found}
-    optional_fields: [project, status, requested_date, asked_date, approver_name, state]
+    optional_fields: [client, status, requested_date, asked_date, approver_name, state]
     forbidden_fields: []
 forbidden_record_types: [invoice, domain, newsletter, task]
 notes: "Value is only stated for Qureshi (4,800 EUR) and Aubert (9,500 EUR); others (Lund, Okoye, Whitmore, Platt) have no stated value, but the field stays required with support found. Approvals: some are already given (Lund homepage, Whitmore go-live, Qureshi sitemap, Aubert template), some pending (Lund ordering wireframe -> asked to change delivery step, Qureshi contact form conditional ok, treatment pages copy, Whitmore staging) so status is useful (optional). Okoye: two contacts, 'changes please' is not approval. Zoe Platt blog redesign is only a prospect. Noise: invoices to Marco, accountant, domain, newsletters, ProofPilot ad. Genuinely unsure: approval might be modelled as a field on project instead of a separate type."
