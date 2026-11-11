@@ -17,37 +17,72 @@ a record type. A thread is an email conversation made of messages.
 
 Follow these rules in order.
 
-1. Decide the outcome first.
-   - "needs_clarification": no concrete record type can be named from the prompt.
-   - "unsupported": the information cannot come from email (for example it needs accounting, \
-analytics or other external data).
-   - Both carry a one-sentence user_message addressed to the user, and no record types.
-   - Otherwise the outcome is "ok".
-2. Model as many record types as the prompt needs, and no more.
-3. Choose source "thread" when one thread is one item the user wants to see (identity is the \
-thread; identity must be null). Choose "extracted" when the item is assembled from facts \
-across messages or threads; then identity is one sentence saying how to tell that two \
-mentions are the same record.
-4. The prompt decides the record types and the explicit fields. The threads never remove an \
-explicit field: if the information appears in none of the threads, keep the field with \
-support "not_found".
-5. The threads supply enum allowed_values (2 to 6 snake_case values, taken from the wording \
-actually used in the threads, grouping messy phrasings into clean values), sharper field \
-descriptions, and "observed" fields. Add an observed field only when the threads show it and \
-it serves the prompt, with a one-line justification saying how.
-6. Drop "inferred" fields (your own guesses from the prompt) that the threads do not show.
-7. Ignore threads unrelated to the prompt; they never change the record types.
+1. Decide the outcome first, before looking at the threads.
+   - "needs_clarification": the prompt names no concrete kind of item and no concrete \
+information to show (for example it only asks what is important, urgent or new in general). \
+Do not guess a schema from whatever the threads happen to contain.
+   - "unsupported": what the prompt asks for is a figure or judgement that cannot be read \
+off emails, because it needs data kept elsewhere (accounting, analytics, time tracking) or \
+needs all of something that emails only show in part (for example a total or a margin \
+computed from every cost).
+   - Both carry a one-sentence user_message addressed to the user, an empty record_types \
+list, and nothing else of substance. Otherwise the outcome is "ok".
+2. Model as many record types as the prompt needs, and no more. Every kind of thing the \
+prompt asks to see as its own list or group (for example "X, and their Y") is its own record \
+type, even when the threads mix them together. Do not merge them into one record type, and do \
+not add record types the prompt did not ask for. When the prompt asks about something that one \
+parent item can have several of (like an author with several books, or a team with several \
+members), that something is its own record type linked to its parent by rule 8; do not squeeze \
+it into fields of the parent. Each record type is a list with one row per item. Ask "what is one \
+row?": if the honest answer is a compound (a parent together with its children and the things \
+pending on them), split it into one record type per kind of row. \
+When the prompt gives a noun its own attribute (such as "what each \
+job is worth", "when each one is due"), that noun is a record type, not a field of its parent. \
+Test: if a field of one record would have to hold several values, \
+or a list, for a single parent (several books, several members, several pending items), make it \
+its own record type instead. Likewise something the user wants to wait on or track separately \
+(a pending decision, a booking) is its own record type. A parent never carries fields like \
+"current X" or "pending Y" that summarise its children.
+3. Choose the source of each record type.
+   - "thread": each thread is, by nature, a separate item (an inbox, a queue of requests, a \
+conversation board) and nothing in the prompt suggests the same item can come back in \
+another thread. Identity must be null.
+   - "extracted": the item is a real-world thing (a person, company, order, issue, \
+subscription, appointment, document) that can be mentioned in several messages or threads \
+and must be combined into one record. Prefer "extracted" whenever the same item could \
+plausibly appear in more than one thread. Then identity is one sentence saying how to tell \
+that two mentions are the same record.
+4. The prompt decides the record types and the explicit fields. Every piece of information the \
+prompt asks for, in its own words, becomes a field, even if no thread shows it: then keep it \
+with support "not_found". The threads never remove an explicit field. Name each field with the \
+plain word the user used (for example "due date" -> due_date), without extra suffixes or \
+prefixes.
+5. A record type also needs the fields that make it a record: a name or title that identifies \
+it, and a link to its parent when record types relate. When the prompt asks to see items grouped \
+by a state, stage or urgency, include that as an enum field.
+6. Be sparing with everything else. Add an "observed" field only when the threads clearly show \
+it, the prompt's purpose needs it, and you can say why in the justification; add at most one \
+per record type. Do not add fields for convenience, completeness or metadata. Drop "inferred" \
+fields that the threads do not show.
+7. Threads supply enum allowed_values (2 to 6 snake_case values, taken from the wording actually \
+used in the threads, grouping messy phrasings into clean values) and sharper field \
+descriptions. Ignore threads unrelated to the prompt; they never change the record types.
 8. When record types relate, the child record type carries a plain string field whose values \
 match the parent's naming field (same wording). Do not use references or ids.
 
 Field rules:
 - name: snake_case, unique within its record type; label: short UI name.
 - description: one sentence that works as the extraction instruction.
-- type: string, number, money, date, boolean or enum. allowed_values only for enum, else null.
+- type: string, number, money, date, boolean or enum. allowed_values only for enum, else null. \
+Use money for any amount of money (a price, fee, rate, cost, salary, budget or balance), date \
+for any day or time, number for plain counts and quantities, string for names and free text.
 - origin: "explicit" when asked for in the prompt or required by what the prompt asks to see \
 (for example a status or stage for a board); "inferred"; or "observed".
-- support: "found" if the information appears in the threads, else "not_found". An "inferred" \
-field is never "not_found", and an "observed" field is always "found".
+- support: "found" if some thread contains that information, stated or clearly shown by the \
+wording (a state, stage or urgency can be read from how messages are phrased); related but \
+different information does not count (an invoice number is not a purchase order number). \
+"not_found" only when no thread contains that kind of information at all, even sparsely. \
+An "inferred" field is never "not_found", and an "observed" field is always "found".
 - justification: required for "observed" fields, otherwise null.
 - Each record type has 1 to 12 fields; at most 5 record types.
 

@@ -99,6 +99,16 @@ def score_run(run_dir: Path, case_dirs: list[Path], with_stability: bool, prices
     return {"aggregate": aggregate(scores, stabs or None, prices), "cases": per_case}
 
 
+def outcomes(run_dir: Path, case_dirs: list[Path]) -> dict[str, str]:
+    out = {}
+    for d in case_dirs:
+        f = run_dir / "responses" / f"{d.name}.json"
+        if f.exists():
+            schema = json.loads(f.read_text())["schema"]
+            out[d.name] = schema["outcome"] if schema else "none (invalid)"
+    return out
+
+
 def render_md(report: dict, baseline: dict | None) -> str:
     cfg = report["config"]
     lines = [
@@ -113,7 +123,7 @@ def render_md(report: dict, baseline: dict | None) -> str:
     for name, m in report["aggregate"]["metrics"].items():
         v = m["value"]
         mark = "—" if m["passed"] is None else ("✅" if m["passed"] else "❌")
-        sign = "≥" if m["direction"] == "min" else "≤"
+        sign = m["direction"].replace(">=", "≥").replace("<=", "≤")
         delta = ""
         if v is not None and base_metrics.get(name, {}).get("value") is not None:
             delta = f"{v - base_metrics[name]['value']:+.3f}"
@@ -139,7 +149,10 @@ def render_md(report: dict, baseline: dict | None) -> str:
         "forbidden_fields_hit",
     ]
     for case, cs in report["cases"].items():
-        lines.append(f"\n### {case} — outcome {'✅' if cs['outcome_correct'] else '❌'}")
+        got = report.get("outcomes", {}).get(case, "none (invalid)")
+        lines.append(
+            f"\n### {case} — outcome {'✅' if cs['outcome_correct'] else f'❌ (got {got})'}"
+        )
         diffs = [f"- {k}: {cs[k]}" for k in keys if cs.get(k)]
         lines += diffs or ["- no differences"]
     return "\n".join(lines) + "\n"
@@ -194,7 +207,7 @@ def main() -> None:
         }
 
     scored = score_run(run_dir, case_dirs, with_stability, prices)
-    report = {"config": config_dict, **scored}
+    report = {"config": config_dict, **scored, "outcomes": outcomes(run_dir, case_dirs)}
     baseline = None
     pointer = RUNS / "BASELINE"
     if pointer.exists():
