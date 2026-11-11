@@ -67,7 +67,7 @@ def strict_json_schema(model: type[Schema] = Schema) -> dict[str, Any]:
 
 
 def _client() -> OpenAI:
-    return OpenAI(base_url=ROUTER_URL, api_key=settings.HF_TOKEN)
+    return OpenAI(base_url=ROUTER_URL, api_key=settings.HF_TOKEN, timeout=900, max_retries=4)
 
 
 def complete(messages: list[dict[str, str]], config: LLMConfig) -> LLMResponse:

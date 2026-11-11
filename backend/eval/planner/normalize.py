@@ -136,7 +136,7 @@ def _syn(lab: dict, entry: dict) -> dict:
     return {}
 
 
-def _ask(payload: dict[str, Any], config: LLMConfig, tries: int = 2) -> tuple[dict, dict]:
+def _ask(payload: dict[str, Any], config: LLMConfig, tries: int = 3) -> tuple[dict, dict]:
     resp = _client().chat.completions.create(
         model=f"{config.model}:{config.provider}",
         temperature=0,
@@ -159,7 +159,7 @@ def _ask(payload: dict[str, Any], config: LLMConfig, tries: int = 2) -> tuple[di
         return json.loads(resp.choices[0].message.content or ""), usage
     except json.JSONDecodeError:
         if tries <= 1:
-            raise
+            return {}, {"error": "unparseable verdict"}
         return _ask(payload, config, tries - 1)
 
 
@@ -173,6 +173,8 @@ def _cached_ask(
     entry = cache.get(key)
     if not entry or entry["input_hash"] != digest:
         verdict, usage = _ask(payload, config)
+        if "error" in usage:  # fail soft: score this schema strictly; retry on the next rescore
+            return {"failed": True}
         entry = {"input_hash": digest, "verdict": verdict, "usage": usage}
         cache[key] = entry
         cache_path.write_text(json.dumps(cache, indent=2))
@@ -196,6 +198,8 @@ def normalize_schema(
         verdict = _cached_ask(
             {**payload, "field_groups": []}, f"{key}:record_types", cache_path, config
         )
+        if verdict.get("failed"):
+            applied.append("NORMALISER FAILED (record types): scored strictly")
         valid, used = set(payload["unmatched_label_record_types"]), set()
         for m in verdict.get("record_types", []):
             rt = next((r for r in renamed.record_types if r.name == m["produced"]), None)
@@ -216,6 +220,8 @@ def normalize_schema(
             cache_path,
             config,
         )
+        if verdict.get("failed"):
+            applied.append("NORMALISER FAILED (fields): scored strictly")
         for group in payload["field_groups"]:
             valid = {e["name"] for e in group["unmatched_label_fields"]}
             rt = next(

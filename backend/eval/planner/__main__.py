@@ -13,6 +13,7 @@ import hashlib
 import json
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
 from pathlib import Path
 from types import SimpleNamespace
@@ -195,6 +196,9 @@ def main() -> None:
     p.add_argument("--thinking", choices=["on", "off"])
     p.add_argument("--provider")
     p.add_argument("--rescore", type=Path)
+    p.add_argument("--resume", type=Path, help="continue a run: skip responses already saved")
+    p.add_argument("--workers", type=int, default=4, help="parallel LLM calls")
+    p.add_argument("--max-tokens", type=int, help="output budget (default 12000 with thinking)")
     p.add_argument("--no-normalize", action="store_true", help="strict name matching only")
     args = p.parse_args()
 
@@ -203,6 +207,10 @@ def main() -> None:
         config.thinking = args.thinking == "on"
     if args.provider:
         config.provider = args.provider
+    if args.max_tokens:
+        config.max_tokens = args.max_tokens
+    elif config.thinking:
+        config.max_tokens = max(config.max_tokens, 12000)  # thinking tokens share the budget
     prices_all = yaml.safe_load((ROOT / "prices.yaml").read_text())
     prices = prices_all.get(config.provider, prices_all["default"])
     case_dirs = load_cases(args)
@@ -213,17 +221,31 @@ def main() -> None:
         with_stability = args.stability or base_cfg.get("stability", False)
         config_dict = base_cfg
     else:
-        stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
-        model = config.model.replace("/", "-")
-        run_dir = RUNS / f"{stamp}_{model}_{config.provider}"
-        (run_dir / "responses").mkdir(parents=True)
+        if args.resume:
+            run_dir = args.resume if args.resume.is_absolute() else ROOT / args.resume
+        else:
+            stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+            model = config.model.replace("/", "-")
+            run_dir = RUNS / f"{stamp}_{model}_{config.provider}"
+        (run_dir / "responses").mkdir(parents=True, exist_ok=True)
+        jobs = []
         for d in case_dirs:
             req = yaml.safe_load((d / "request.yaml").read_text())
-            print(f"running {d.name} ...", file=sys.stderr)
-            run_one(d, req["prompt"], config, run_dir, "")
+            jobs.append((d, req["prompt"], ""))
             if args.stability:
-                for i, para in enumerate(req["paraphrases"], 1):
-                    run_one(d, para, config, run_dir, f"__p{i}")
+                jobs += [(d, para, f"__p{i}") for i, para in enumerate(req["paraphrases"], 1)]
+        jobs = [j for j in jobs if not (run_dir / "responses" / f"{j[0].name}{j[2]}.json").exists()]
+
+        def work(job):
+            d, prompt, suffix = job
+            try:
+                run_one(d, prompt, config, run_dir, suffix)
+                print(f"done {d.name}{suffix}", file=sys.stderr, flush=True)
+            except Exception as exc:  # noqa: BLE001 - one failed call must not lose the run
+                print(f"FAILED {d.name}{suffix}: {type(exc).__name__}", file=sys.stderr, flush=True)
+
+        with ThreadPoolExecutor(max_workers=args.workers) as pool:
+            list(pool.map(work, jobs))
         with_stability = args.stability
         config_dict = {
             "model": config.model,

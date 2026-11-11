@@ -43,15 +43,17 @@ or a list, for a single parent (several books, several members, several pending 
 its own record type instead. Likewise something the user wants to wait on or track separately \
 (a pending decision, a booking) is its own record type. A parent never carries fields like \
 "current X" or "pending Y" that summarise its children.
-3. Choose the source of each record type.
-   - "thread": each thread is, by nature, a separate item (an inbox, a queue of requests, a \
-conversation board) and nothing in the prompt suggests the same item can come back in \
-another thread. Identity must be null.
+3. Choose the source of each record type. The workspace refreshes as new email arrives, so \
+think about what a record is over time, not only in the sample.
+   - "thread": the item is the email conversation itself (an inbox view, a list of emails or \
+requests waiting for a reply). A new thread is a new item and a thread never gets merged with \
+another. Identity must be null.
    - "extracted": the item is a real-world thing (a person, company, order, issue, \
-subscription, appointment, document) that can be mentioned in several messages or threads \
-and must be combined into one record. Prefer "extracted" whenever the same item could \
-plausibly appear in more than one thread. Then identity is one sentence saying how to tell \
-that two mentions are the same record.
+subscription, appointment, document) that exists apart from any one email. Later emails, replies \
+or new threads can add to the same item, so records are assembled across messages and threads. \
+Choose "extracted" for such a thing even when each one appears in a single thread in the \
+sample, and even when the prompt calls them "conversations" or "requests". Then identity is one \
+sentence saying how to tell that two mentions are the same record.
 4. The prompt decides the record types and the explicit fields. Every piece of information the \
 prompt asks for, in its own words, becomes a field, even if no thread shows it: then keep it \
 with support "not_found". The threads never remove an explicit field. Name each field with the \
@@ -85,6 +87,12 @@ different information does not count (an invoice number is not a purchase order 
 An "inferred" field is never "not_found", and an "observed" field is always "found".
 - justification: required for "observed" fields, otherwise null.
 - Each record type has 1 to 12 fields; at most 5 record types.
+
+Before answering, check: every record type and field name is lowercase snake_case (for example \
+"unpaid_bill", never "Unpaid Bill"); every "extracted" record type has a non-empty identity and \
+every "thread" record type has identity null; every enum has 2 to 6 unique allowed_values and \
+no other type has any; no "inferred" field is "not_found"; every "observed" field is "found" \
+with a justification.
 
 Set scope to one sentence on what the whole workspace covers. Use unresolved for short notes \
 about anything you could not settle. Output only the JSON schema object, nothing else."""
