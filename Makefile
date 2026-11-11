@@ -1,5 +1,5 @@
 # Single entry point for dev commands. Run from the repo root.
-.PHONY: setup db migrate migration backend frontend gen-api lint test
+.PHONY: setup db migrate migration backend frontend gen-api lint test bench-planner
 
 setup:  ## install deps and create env files if missing
 	cd backend && uv sync
@@ -31,3 +31,6 @@ lint:
 
 test:
 	cd backend && uv run pytest
+
+bench-planner:  ## planner benchmark (costs money): make bench-planner ARGS="--all --stability"
+	cd backend && uv run python -m eval.planner $(ARGS)

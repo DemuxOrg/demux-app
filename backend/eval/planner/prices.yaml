@@ -1,0 +1,7 @@
+# USD per million tokens, keyed by provider. Update when prices change.
+deepinfra:
+  input_per_mtok: 0.10
+  output_per_mtok: 0.95
+default:
+  input_per_mtok: 0.10
+  output_per_mtok: 0.95
