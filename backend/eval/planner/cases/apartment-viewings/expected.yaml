@@ -5,8 +5,10 @@ record_types:
     source: extracted
     required_fields:
       - {name: name, synonyms: [address, title, property, flat], type: string, support: found}
-      - {name: deposit, synonyms: [deposit_amount, security_deposit], type: string, support: found}
-    optional_fields: [rent, agent, agent_name, status, available_from, bedrooms, holding_deposit, pets_allowed]
+      - {name: monthly_rent, synonyms: [rent, rent_amount, price, monthly_price], type: money, support: found}
+      - {name: status, synonyms: [stage, state, enquiry_status], type: enum, support: found}
+      - {name: deposit, synonyms: [deposit_amount, security_deposit], type: money, support: found}
+    optional_fields: [agent, agent_name, available_from, bedrooms, holding_deposit, pets_allowed]
     forbidden_fields: [mortgage_rate, flight_time, sale_discount]
   - name: viewing
     synonyms: [appointment, viewing_appointment, visit]
@@ -14,7 +16,8 @@ record_types:
     required_fields:
       - {name: property, synonyms: [flat, address, listing], type: string, support: found}
       - {name: viewing_date, synonyms: [date, datetime, date_time, time, scheduled_at], type: date, support: found}
-    optional_fields: [status, agent, agent_name, notes]
+      - {name: status, synonyms: [state, viewing_status], type: enum, support: found}
+    optional_fields: [agent, agent_name, notes]
     forbidden_fields: [gym_class, flight]
 forbidden_record_types: [agent, moving_quote, mortgage, flight, promotion, newsletter]
 notes: "Deposit is stated in prose with differing forms (1 month, 5 weeks, 1,557 GBP, 1,707, one week's rent holding) so it is a string-ish field. Viewings get rescheduled/cancelled (Marlow Road cancelled, studio moved, Elm St 5 Jun vs 2 Aug); some enquiries have no viewing (Riverside pending, flat share declined). Noise: newsletter, gym, flights, movers, mortgage promo, mum, lease end, sale, HomeFinder alerts. Properties span several threads (Elm Street) so extracted; Highfield Rise comes from the landlord not an agent."
