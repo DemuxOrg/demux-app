@@ -29,6 +29,8 @@ export function ChatPanel({
     try {
       await onSend(text.trim());
       setText("");
+    } catch {
+      /* not sent: keep the text; the page shows why */
     } finally {
       setSending(false);
     }

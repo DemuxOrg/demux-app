@@ -39,7 +39,8 @@ export function WorkspaceDetail({ id }: { id: string }) {
   const [changes, setChanges] = useState<ChangeRead[]>([]);
   const [runs, setRuns] = useState<RunRead[]>([]);
   const [tab, setTab] = useState<"activity" | "chat">("activity");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); // loading errors
+  const [actionError, setActionError] = useState<string | null>(null); // until next action
   const [appError, setAppError] = useState<string | null>(null);
   const [menu, setMenu] = useState(false);
   const [details, setDetails] = useState(false);
@@ -99,19 +100,25 @@ export function WorkspaceDetail({ id }: { id: string }) {
 
   const onAppError = useCallback((m: string | null) => setAppError(m), []);
 
-  async function act(fn: () => Promise<unknown>) {
+  async function act(fn: () => Promise<unknown>): Promise<boolean> {
+    setActionError(null);
     try {
       await fn();
       await refresh();
+      return true;
     } catch (e) {
-      if (handleAuthError(e)) return;
-      setError(e instanceof ApiError ? e.message : "Something went wrong");
+      if (handleAuthError(e)) return false;
+      setActionError(e instanceof ApiError ? e.message : "Something went wrong");
+      await refresh();
+      return false;
     }
   }
 
   async function sendMessage(text: string) {
-    await act(() => api.sendMessage(id, text));
     setTab("chat");
+    if (!(await act(() => api.sendMessage(id, text)))) {
+      throw new Error("not sent"); // keeps the text in the box
+    }
   }
 
   if (error && !ws)
@@ -223,7 +230,7 @@ export function WorkspaceDetail({ id }: { id: string }) {
                       await api.deleteWorkspace(id);
                       router.push("/workspaces");
                     } catch (e) {
-                      setError(e instanceof ApiError ? e.message : "Delete failed");
+                      setActionError(e instanceof ApiError ? e.message : "Delete failed");
                     }
                   }}
                 >
@@ -234,9 +241,14 @@ export function WorkspaceDetail({ id }: { id: string }) {
           </div>
         </div>
       </div>
-      {error && (
-        <p className="border-b border-red-200 bg-red-50 px-4 py-1.5 text-sm text-red-700">
-          {error}
+      {(actionError || error) && (
+        <p className="flex border-b border-red-200 bg-red-50 px-4 py-1.5 text-sm text-red-700">
+          <span className="flex-1">{actionError || error}</span>
+          {actionError && (
+            <button onClick={() => setActionError(null)} aria-label="Dismiss">
+              ✕
+            </button>
+          )}
         </p>
       )}
 

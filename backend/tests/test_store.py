@@ -142,3 +142,17 @@ async def test_processed_messages_dedupe(session, dev_user):
     await store.mark_processed(session, ws.id, None, [("m1", "t1")])
     assert await store.processed_message_ids(session, ws.id) == {"m1", "m2"}
     assert await store.processed_thread_ids(session, ws.id) == ["t1"]
+
+
+async def test_undo_never_restores_the_pre_build_snapshot(session, dev_user):
+    from app.core.errors import ConflictError
+    from app.models import Run, RunKind, RunStatus
+
+    ws = await _workspace(session, dev_user, data={"t": {"a": {"x": 1}}})
+    build = Run(workspace_id=ws.id, kind=RunKind.BUILD, status=RunStatus.DONE)
+    session.add(build)
+    await session.flush()
+    session.add(Snapshot(workspace_id=ws.id, run_id=build.id, data={}, guide="", config={}))
+    await session.flush()
+    with pytest.raises(ConflictError, match="Nothing to undo"):
+        await store.undo(session, dev_user.id, ws.id)

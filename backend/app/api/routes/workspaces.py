@@ -12,7 +12,7 @@ from sqlalchemy import exists, select
 
 from app.agent.shell import shell_head
 from app.api.deps import CurrentUser, SessionDep
-from app.models.run import Change, Run, RunKind, Snapshot
+from app.models.run import Change, Run, RunKind
 from app.models.workspace import Workspace
 from app.schemas.workspace import (
     ActiveRun,
@@ -105,7 +105,9 @@ async def create_workspace(body: WorkspaceCreate, session: SessionDep, user: Cur
 async def get_workspace(workspace_id: uuid.UUID, session: SessionDep, user: CurrentUser):
     w = await service.get_workspace(session, user.id, workspace_id)
     active = await runs_service.active_run(session, w.id)
-    has_snapshot = await session.scalar(select(exists().where(Snapshot.workspace_id == w.id)))
+    has_snapshot = await session.scalar(
+        select(exists(store.undoable_snapshots(w.id).subquery().select()))
+    )
     return WorkspaceDetail(
         id=w.id,
         name=w.name,

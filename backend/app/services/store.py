@@ -20,7 +20,7 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.errors import ConflictError, NotFoundError
-from app.models.run import Change, ProcessedMessage, Run, RunStatus, Snapshot
+from app.models.run import Change, ProcessedMessage, Run, RunKind, RunStatus, Snapshot
 from app.models.workspace import Workspace
 
 MAX_TYPES = 5
@@ -279,6 +279,20 @@ async def restore_run_snapshot(
     return True
 
 
+def undoable_snapshots(workspace_id: uuid.UUID):
+    """Snapshots Undo may restore, newest first. A build's snapshot is the empty
+    pre-build state: undoing to it would wipe the workspace, so it is excluded."""
+    build_runs = select(Run.id).where(Run.workspace_id == workspace_id, Run.kind == RunKind.BUILD)
+    return (
+        select(Snapshot)
+        .where(
+            Snapshot.workspace_id == workspace_id,
+            (Snapshot.run_id.is_(None)) | (Snapshot.run_id.not_in(build_runs)),
+        )
+        .order_by(Snapshot.created_at.desc())
+    )
+
+
 async def undo(session: AsyncSession, user_id: uuid.UUID, workspace_id: uuid.UUID) -> Workspace:
     ws = await session.scalar(
         select(Workspace)
@@ -295,12 +309,7 @@ async def undo(session: AsyncSession, user_id: uuid.UUID, workspace_id: uuid.UUI
     )
     if active is not None:
         raise ConflictError("Wait for the current run to finish before undoing.")
-    snap = await session.scalar(
-        select(Snapshot)
-        .where(Snapshot.workspace_id == workspace_id)
-        .order_by(Snapshot.created_at.desc())
-        .limit(1)
-    )
+    snap = await session.scalar(undoable_snapshots(workspace_id).limit(1))
     if snap is None:
         raise ConflictError("Nothing to undo.")
     await _restore(session, ws, snap)
