@@ -1,0 +1,45 @@
+id: 04-client-board-stages
+prompt: "I'm a freelance brand designer. I'd love to see my client conversations laid out like a board, so I can tell at a glance who has just enquired, who I've sent a quote to, who's gone quiet and who has said yes."
+steps:
+- name: build
+  now: 2026-10-16T09:00:00Z
+  expect:
+    - {kind: unique, all_of: ["Tanaka"]}
+    - {kind: value, find: ["Wright"], any_of: ["won", "signed", "accepted", "agreed", "booked", "confirmed", "active", "in progress", "go ahead", "approved", "hired", "paid"]}
+    - {kind: value, find: ["Tanaka"], any_of: ["won", "signed", "accepted", "agreed", "booked", "confirmed", "active", "in progress", "go ahead", "approved", "hired", "paid"]}
+    - {kind: value, find: ["Wild Thistle"], any_of: ["won", "signed", "accepted", "agreed", "booked", "confirmed", "active", "in progress", "go ahead", "approved", "hired", "paid"]}
+    - {kind: value, find: ["Lindqvist"], any_of: ["lost", "declined", "rejected", "closed", "another studio", "not proceeding", "dead", "no go", "passed", "went elsewhere"]}
+    - {kind: value, find: ["Reed", "Sons"], any_of: ["quote", "proposal", "sent", "waiting", "pending", "quiet", "negotiat", "follow", "awaiting", "considering", "deciding"]}
+    - {kind: value, find: ["Haddad"], any_of: ["quote", "proposal", "sent", "waiting", "pending", "quiet", "negotiat", "follow", "awaiting", "considering", "deciding"]}
+    - {kind: value, find: ["Pereira"], any_of: ["enquir", "inquir", "lead", "new", "call", "contact", "meeting", "discovery", "intro", "first"]}
+    - {kind: unique, all_of: ["Reed", "Sons"]}
+    - {kind: unique, all_of: ["Marini"]}
+    - {kind: absent, any_of: ["StyleBarn", "Typeface Weekly", "DevSummit", "Cloudlane", "Dentist"]}
+    - {kind: count, min: 12, max: 16}
+    - {kind: app_shows, any_of: ["Wright Fit", "Wright"]}
+- name: sync-1
+  now: 2026-10-23T09:00:00Z
+  expect:
+    - {kind: unique, all_of: ["Reed", "Sons"]}
+    - {kind: value, find: ["Reed", "Sons"], any_of: ["won", "signed", "accepted", "agreed", "booked", "confirmed", "active", "in progress", "go ahead", "approved", "hired", "paid"]}
+    - {kind: unique, all_of: ["Haddad"]}
+    - {kind: value, find: ["Haddad"], any_of: ["won", "signed", "accepted", "agreed", "booked", "confirmed", "active", "in progress", "go ahead", "approved", "hired", "paid"]}
+    - {kind: unchanged_except, find: [["Reed", "Sons"], ["Haddad"]]}
+    - {kind: count, min: 12, max: 16}
+- name: sync-2
+  now: 2026-10-30T09:00:00Z
+  expect:
+    - {kind: unique, all_of: ["Osei"]}
+    - {kind: value, find: ["Osei"], any_of: ["enquir", "inquir", "lead", "new", "call", "contact", "meeting", "discovery", "intro", "first"]}
+    - {kind: unchanged_except, find: [["Osei"]]}
+    - {kind: absent, any_of: ["Typeface Weekly", "variable fonts"]}
+    - {kind: count, min: 13, max: 17}
+    - {kind: app_shows, any_of: ["Osei"]}
+- name: edit-1
+  message: "Show how much I quoted each client on their card"
+  expect:
+    - {kind: app_ok}
+    - {kind: app_shows, any_of: ["3,800", "3800", "3.800"]}
+    - {kind: value, find: ["Wright"], any_of: ["7,000", "7000", "7.000"]}
+    - {kind: unique, all_of: ["Osei"]}
+    - {kind: count, min: 13, max: 17}

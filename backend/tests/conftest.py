@@ -17,6 +17,11 @@ os.environ.setdefault(
     "TEST_DATABASE_URL", "postgresql+asyncpg://demux:demux@localhost:5432/demux_test"
 )
 os.environ["ENV"] = "test"
+os.environ.setdefault("SECRET_KEY", "test-secret-key-not-for-production")
+os.environ.setdefault("TOKEN_ENCRYPTION_KEY", "kPzK0H3cT0f3sX3r3l0mJQ0wqk0sYc5m2b3Zt1Vq3eE=")
+os.environ.setdefault("GOOGLE_CLIENT_ID", "test-client")
+os.environ.setdefault("GOOGLE_CLIENT_SECRET", "test-secret")
+os.environ["AGENT_DEBUG_TRANSCRIPTS"] = "false"
 os.environ["DATABASE_URL"] = os.environ["TEST_DATABASE_URL"]
 
 from collections.abc import AsyncIterator  # noqa: E402
@@ -102,3 +107,30 @@ async def other_client(session) -> AsyncIterator[AsyncClient]:
 
         c.request = request  # type: ignore[method-assign]
         yield c
+
+
+class SessionFactory:
+    """Mimics async_sessionmaker for code that opens its own sessions (worker, persister):
+    every `async with factory()` yields the test's transactional session."""
+
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    def __call__(self):
+        return self
+
+    async def __aenter__(self) -> AsyncSession:
+        return self.session
+
+    async def __aexit__(self, *exc) -> None:
+        return None
+
+
+@pytest.fixture
+def session_factory(session) -> SessionFactory:
+    return SessionFactory(session)
+
+
+@pytest_asyncio.fixture
+async def dev_user(session) -> User:
+    return await _make_user(session, "dev@demux.local")

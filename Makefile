@@ -3,8 +3,10 @@
 
 setup:  ## install deps and create env files if missing
 	cd backend && uv sync
+	cd backend && uv run playwright install chromium
 	cd frontend && pnpm install
 	[ -f .env ] || cp .env.example .env
+	cd backend && uv run python scripts/ensure_keys.py ../.env
 	[ -f frontend/.env.local ] || cp frontend/.env.local.example frontend/.env.local
 
 db:  ## start Postgres (also creates demux_test on first run)
@@ -18,6 +20,9 @@ migration:  ## create a migration: make migration m="message"
 
 backend:  ## API on :8000
 	cd backend && uv run uvicorn app.main:app --reload --port 8000
+
+worker:  ## agent worker: runs builds/edits/syncs, schedules syncs
+	cd backend && uv run python -m app.worker
 
 frontend:  ## web app on :3000
 	cd frontend && pnpm dev --port 3000

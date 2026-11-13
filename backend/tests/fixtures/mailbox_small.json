@@ -1,0 +1,127 @@
+[
+ {
+  "thread_id": "25c33903b16c1718",
+  "messages": [
+   {
+    "message_id": "6c9b8f6a7c5c453e",
+    "sender": "Shop A <orders@shopa.example>",
+    "to": [
+     "me@home.example"
+    ],
+    "date": "2026-10-01T10:00:00Z",
+    "subject": "Order #A-1001 confirmed",
+    "body": "Thanks for your order #A-1001.\nItem: Desk lamp\nTotal: 39.90 EUR\nEstimated delivery: 2026-10-05",
+    "attachments": []
+   },
+   {
+    "message_id": "e7424d3ea267ca39",
+    "sender": "Shop A <orders@shopa.example>",
+    "to": [
+     "me@home.example"
+    ],
+    "date": "2026-10-04T08:00:00Z",
+    "subject": "Order #A-1001 shipped",
+    "body": "Your order #A-1001 has shipped with ParcelCo, tracking PC123456.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "f81bc33bca062e4a",
+  "messages": [
+   {
+    "message_id": "2efd73152d7e6cf6",
+    "sender": "Gadget Hub <noreply@gadgethub.example>",
+    "to": [
+     "me@home.example"
+    ],
+    "date": "2026-10-08T12:00:00Z",
+    "subject": "Your Gadget Hub order 77-552",
+    "body": "Order 77-552\n1x USB-C charger 65W\nTotal paid: 24.00 EUR\nStatus: processing",
+    "attachments": [
+     "invoice-77-552.pdf"
+    ]
+   }
+  ]
+ },
+ {
+  "thread_id": "96a3f27d70f5614b",
+  "messages": [
+   {
+    "message_id": "3ce22db051691bcf",
+    "sender": "Shop A <orders@shopa.example>",
+    "to": [
+     "me@home.example"
+    ],
+    "date": "2026-10-12T09:00:00Z",
+    "subject": "Order #A-1042 confirmed",
+    "body": "Thanks for your order #A-1042.\nItem: Office chair\nTotal: 189.00 EUR\nEstimated delivery: 2026-10-20",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "160321ec4049075f",
+  "messages": [
+   {
+    "message_id": "466eb8b5043274e2",
+    "sender": "Shop A <news@shopa.example>",
+    "to": [
+     "me@home.example"
+    ],
+    "date": "2026-10-10T07:00:00Z",
+    "subject": "Autumn sale: 30% off lamps",
+    "body": "Our autumn sale is on. Order now and save 30% on all lamps!",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "0a689bb6c04d6e85",
+  "messages": [
+   {
+    "message_id": "19475d6040315920",
+    "sender": "Gadget Hub <news@gadgethub.example>",
+    "to": [
+     "me@home.example"
+    ],
+    "date": "2026-10-15T07:00:00Z",
+    "subject": "Weekly digest: new gadgets",
+    "body": "This week's new gadgets. Don't miss our order deals.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "35a448b5c9018c4b",
+  "messages": [
+   {
+    "message_id": "61a71ecc05107313",
+    "sender": "Sam <sam@friends.example>",
+    "to": [
+     "me@home.example"
+    ],
+    "date": "2026-10-11T19:00:00Z",
+    "subject": "dinner saturday?",
+    "body": "Hey, are you free for dinner on Saturday? I can order pizza.",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "81544975cc160ddf",
+  "messages": [
+   {
+    "message_id": "665051d441ca4a96",
+    "sender": "Shop A <orders@shopa.example>",
+    "to": [
+     "me@home.example"
+    ],
+    "date": "2026-10-21T09:00:00Z",
+    "subject": "Order #A-1042 delivered",
+    "body": "Your order #A-1042 was delivered today.",
+    "attachments": []
+   }
+  ]
+ }
+]

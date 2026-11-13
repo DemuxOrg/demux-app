@@ -1,0 +1,734 @@
+[
+  {
+    "thread_id": "089110c4647fce86",
+    "messages": [
+      {
+        "message_id": "2bf81ff3ccb4a3cc",
+        "sender": "Ana Romero <ana.romero@postbox.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-07-30T07:50:00Z",
+        "subject": "Smoke alarm beeping",
+        "body": "Hello Helen,\n\nThe smoke alarm in the hallway is beeping every minute. It kept us up most of the night!\n\nAna",
+        "attachments": []
+      },
+      {
+        "message_id": "2c173322cd82c372",
+        "sender": "Helen Mercer <helen@mercerlets.example>",
+        "to": [
+          "ana.romero@postbox.example"
+        ],
+        "date": "2026-07-30T08:20:00Z",
+        "subject": "Re: Smoke alarm beeping",
+        "body": "Hi Ana,\n\nSorry! That's the low battery warning. It takes a 9V battery - could you swap it and I'll take it off the rent?\n\nHelen\n-- \nHelen Mercer\nMercer Lets | 07700 900123",
+        "attachments": []
+      },
+      {
+        "message_id": "6ac7649e5cd899a7",
+        "sender": "Ana Romero <ana.romero@postbox.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-07-31T19:00:00Z",
+        "subject": "Re: Smoke alarm beeping",
+        "body": "Replaced it, all quiet now. Receipt attached (GBP 4.50).\n\nAna",
+        "attachments": [
+          "receipt.jpg"
+        ]
+      }
+    ]
+  },
+  {
+    "thread_id": "d2f57c708d6c0fa8",
+    "messages": [
+      {
+        "message_id": "5ec81bb9ef8892be",
+        "sender": "Helen Mercer <helen@mercerlets.example>",
+        "to": [
+          "omar.siddiqui@postbox.example"
+        ],
+        "date": "2026-08-05T09:00:00Z",
+        "subject": "Annual inspection - 14 Larch Road",
+        "body": "Hi Omar,\n\nI'd like to do the annual inspection at the flat on Tuesday 18 August at 10am. Does that suit?\n\nHelen\n-- \nHelen Mercer\nMercer Lets | 07700 900123",
+        "attachments": []
+      },
+      {
+        "message_id": "1eac3fe13ce0cb59",
+        "sender": "Omar Siddiqui <omar.siddiqui@postbox.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-08-05T12:30:00Z",
+        "subject": "Re: Annual inspection - 14 Larch Road",
+        "body": "Hi Helen,\n\nThat's fine, I'll be working from home.\n\nOmar",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "4ee8cd255e9ef5ad",
+    "messages": [
+      {
+        "message_id": "946610f3154b7abf",
+        "sender": "Kelvin Heating <kelvin@kelvinheating.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-08-12T14:00:00Z",
+        "subject": "Gas safety certificate - 7 Quayside Mews",
+        "body": "Hi Helen,\n\nAnnual gas safety check at 7 Quayside Mews done today, all appliances passed.\nCertificate CP12-48812 attached, valid until August 2027.\n\nKelvin",
+        "attachments": [
+          "CP12-48812.pdf"
+        ]
+      }
+    ]
+  },
+  {
+    "thread_id": "dbf93c119b6deae4",
+    "messages": [
+      {
+        "message_id": "1852c2465f83b11c",
+        "sender": "Jess Whitfield <jess.whitfield@postbox.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-08-20T10:00:00Z",
+        "subject": "Dripping kitchen tap",
+        "body": "Hi Helen,\n\nThe kitchen tap at 7 Quayside Mews has been dripping for a week and it's getting worse.\nIt won't fully shut off any more.\n\nThanks,\nJess",
+        "attachments": []
+      },
+      {
+        "message_id": "5192ffdcb37f85e1",
+        "sender": "Helen Mercer <helen@mercerlets.example>",
+        "to": [
+          "jess.whitfield@postbox.example"
+        ],
+        "date": "2026-08-20T11:45:00Z",
+        "subject": "Re: Dripping kitchen tap",
+        "body": "Hi Jess,\n\nThanks - I've asked Bill (my handyman) to pop round, he'll text you.\n\nHelen\n-- \nHelen Mercer\nMercer Lets | 07700 900123",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "de7b10bdc02ed3bb",
+    "messages": [
+      {
+        "message_id": "b53b0b45ed150116",
+        "sender": "Helen Mercer <helen@mercerlets.example>",
+        "to": [
+          "bill@carterhandyman.example"
+        ],
+        "date": "2026-08-20T11:40:00Z",
+        "subject": "Quayside Mews - tap",
+        "body": "Hi Bill,\n\nCould you look at a dripping kitchen tap at 7 Quayside Mews? Tenant Jess Whitfield, 07700 900789.\n\nHelen\n-- \nHelen Mercer\nMercer Lets | 07700 900123",
+        "attachments": []
+      },
+      {
+        "message_id": "cc989e2e67191351",
+        "sender": "Bill Carter <bill@carterhandyman.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-08-25T16:00:00Z",
+        "subject": "Re: Quayside Mews - tap",
+        "body": "Hi Helen,\n\nReplaced the tap cartridge at Quayside today, no more drip. GBP 65 including the part.\n\nBill",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "674d37219abb41f6",
+    "messages": [
+      {
+        "message_id": "a3094089ab4aa71e",
+        "sender": "Harbourside Building Society <statements@harbourside.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-08-28T06:00:00Z",
+        "subject": "Your annual mortgage statement",
+        "body": "Dear Ms Mercer,\n\nYour annual mortgage statement for account ending 7720 is available in online banking.\n\nHarbourside Building Society",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "72459d99efabfeb9",
+    "messages": [
+      {
+        "message_id": "a45c36f88ed10bd1",
+        "sender": "Helen Mercer <helen@mercerlets.example>",
+        "to": [
+          "peter.novak@postbox.example"
+        ],
+        "date": "2026-09-01T10:00:00Z",
+        "subject": "Tenancy renewal - 3 Orchard Close",
+        "body": "Hi Peter,\n\nYour tenancy at 3 Orchard Close ends on 30 September. Happy to renew for another 12 months at the same rent.\nRenewal agreement attached.\n\nHelen\n-- \nHelen Mercer\nMercer Lets | 07700 900123",
+        "attachments": [
+          "renewal-orchard.pdf"
+        ]
+      },
+      {
+        "message_id": "41c6c2e9f2550959",
+        "sender": "Peter Novak <peter.novak@postbox.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-09-03T18:00:00Z",
+        "subject": "Re: Tenancy renewal - 3 Orchard Close",
+        "body": "Hi Helen,\n\nSigned and attached. Thanks for keeping the rent the same!\n\nPeter",
+        "attachments": [
+          "renewal-orchard-signed.pdf"
+        ]
+      }
+    ]
+  },
+  {
+    "thread_id": "b3bc78ae353c030a",
+    "messages": [
+      {
+        "message_id": "9ab1be0e5869ff4c",
+        "sender": "Omar Siddiqui <omar.siddiqui@postbox.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-09-02T07:45:00Z",
+        "subject": "Boiler keeps losing pressure",
+        "body": "Hi Helen,\n\nThe boiler at the flat (Flat 2, 14 Larch Road) keeps dropping to almost 0 bar overnight.\nI've topped it up twice this week but the heating cuts out by morning.\n\nOmar",
+        "attachments": []
+      },
+      {
+        "message_id": "c2b97445a392ad03",
+        "sender": "Helen Mercer <helen@mercerlets.example>",
+        "to": [
+          "omar.siddiqui@postbox.example"
+        ],
+        "date": "2026-09-02T09:10:00Z",
+        "subject": "Re: Boiler keeps losing pressure",
+        "body": "Hi Omar,\n\nThanks for letting me know. I've asked Kelvin Heating to come and look, they'll contact you directly.\n\nHelen\n-- \nHelen Mercer\nMercer Lets | 07700 900123",
+        "attachments": []
+      },
+      {
+        "message_id": "c850b86ef8c56c1a",
+        "sender": "Omar Siddiqui <omar.siddiqui@postbox.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-09-10T18:30:00Z",
+        "subject": "Re: Boiler keeps losing pressure",
+        "body": "Hi Helen,\n\nKelvin came yesterday and the boiler has held pressure since. Thanks for sorting it so quickly!\n\nOmar",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "8b6d763ec0237ed8",
+    "messages": [
+      {
+        "message_id": "8454df85028f8ffc",
+        "sender": "Helen Mercer <helen@mercerlets.example>",
+        "to": [
+          "kelvin@kelvinheating.example"
+        ],
+        "date": "2026-09-02T09:05:00Z",
+        "subject": "14 Larch Road - boiler pressure",
+        "body": "Hi Kelvin,\n\nMy tenant at Flat 2, 14 Larch Road says the boiler is losing pressure overnight.\nCould you book a visit? Tenant is Omar Siddiqui, 07700 900456.\n\nHelen\n-- \nHelen Mercer\nMercer Lets | 07700 900123",
+        "attachments": []
+      },
+      {
+        "message_id": "23483bf8ed76292f",
+        "sender": "Kelvin Heating <kelvin@kelvinheating.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-09-03T12:00:00Z",
+        "subject": "Re: 14 Larch Road - boiler pressure",
+        "body": "Hi Helen,\n\nBooked in for Wednesday 9 September, morning. I'll text Omar.\n\nKelvin",
+        "attachments": []
+      },
+      {
+        "message_id": "6eb22264de3d5aa4",
+        "sender": "Kelvin Heating <kelvin@kelvinheating.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-09-09T13:20:00Z",
+        "subject": "Re: 14 Larch Road - boiler pressure",
+        "body": "Hi Helen,\n\nDone at Larch Road. The expansion vessel had lost its charge and the pressure relief valve was weeping.\nRecharged the vessel and replaced the valve. Holding at 1.5 bar. Invoice to follow, GBP 180.\n\nKelvin",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "295aaae03acb9a16",
+    "messages": [
+      {
+        "message_id": "119b9618d1c6f4fc",
+        "sender": "Kelvin Heating <kelvin@kelvinheating.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-09-11T08:00:00Z",
+        "subject": "Invoice KH-2291 - 14 Larch Road",
+        "body": "Hi Helen,\n\nInvoice KH-2291 attached for the work at Flat 2, 14 Larch Road on 9 September.\nTotal GBP 180.00, payment within 14 days please.\n\nKelvin Heating",
+        "attachments": [
+          "KH-2291.pdf"
+        ]
+      }
+    ]
+  },
+  {
+    "thread_id": "b24bd3cc728d0c76",
+    "messages": [
+      {
+        "message_id": "359d86e49293912a",
+        "sender": "Ana Romero <ana.romero@postbox.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-09-14T08:30:00Z",
+        "subject": "Damp patch in bedroom",
+        "body": "Hello Helen,\n\nThere's a damp patch on the bedroom ceiling at Flat B, 22 Beacon Street.\nIt's about the size of a plate and has grown since last week's rain. Photos attached.\n\nAna",
+        "attachments": [
+          "ceiling1.jpg",
+          "ceiling2.jpg"
+        ]
+      },
+      {
+        "message_id": "6f69e64c4304de82",
+        "sender": "Helen Mercer <helen@mercerlets.example>",
+        "to": [
+          "ana.romero@postbox.example"
+        ],
+        "date": "2026-09-14T10:05:00Z",
+        "subject": "Re: Damp patch in bedroom",
+        "body": "Hi Ana,\n\nThanks for the photos. It looks like it could be the roof, I'll get a roofer to inspect.\n\nHelen\n-- \nHelen Mercer\nMercer Lets | 07700 900123",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "d84ed15fc1b0c69e",
+    "messages": [
+      {
+        "message_id": "5173b813eac76c7d",
+        "sender": "Helen Mercer <helen@mercerlets.example>",
+        "to": [
+          "dale@roofright.example"
+        ],
+        "date": "2026-09-15T09:00:00Z",
+        "subject": "Roof inspection - 22 Beacon Street",
+        "body": "Hi Dale,\n\nCould you inspect the roof above Flat B, 22 Beacon Street? Tenant reports a damp patch on the bedroom ceiling.\n\nHelen\n-- \nHelen Mercer\nMercer Lets | 07700 900123",
+        "attachments": []
+      },
+      {
+        "message_id": "7eebac3374f41b41",
+        "sender": "Dale Hughes <dale@roofright.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-09-22T15:40:00Z",
+        "subject": "Re: Roof inspection - 22 Beacon Street",
+        "body": "Hi Helen,\n\nInspected on the 20th. Several slipped tiles and cracked lead flashing by the chimney.\nQuote to replace tiles and flashing: GBP 640.\n\nDale\n-- \nRoofRight Ltd",
+        "attachments": []
+      },
+      {
+        "message_id": "b331e4d7d3950e4c",
+        "sender": "Helen Mercer <helen@mercerlets.example>",
+        "to": [
+          "dale@roofright.example"
+        ],
+        "date": "2026-09-23T08:00:00Z",
+        "subject": "Re: Roof inspection - 22 Beacon Street",
+        "body": "Hi Dale,\n\nApproved, please go ahead.\n\nHelen\n-- \nHelen Mercer\nMercer Lets | 07700 900123",
+        "attachments": []
+      },
+      {
+        "message_id": "ef7d4807842201f0",
+        "sender": "Dale Hughes <dale@roofright.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-09-25T12:30:00Z",
+        "subject": "Re: Roof inspection - 22 Beacon Street",
+        "body": "Hi Helen,\n\nScheduled for Monday 19 October, weather permitting. I'll let the tenant know.\n\nDale",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "efa6ef86ffe888ab",
+    "messages": [
+      {
+        "message_id": "d6d9a7c31c60d200",
+        "sender": "Landlord Today <newsletter@landlordtoday.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-09-18T07:00:00Z",
+        "subject": "Landlord Today: what the new regulations mean for you",
+        "body": "Landlord Today - weekly briefing\n\n- New minimum energy efficiency rules: what changes in 2027\n- Ask the expert: who pays for blocked drains?\n- Survey: average repair costs rose 9% this year\n\nUnsubscribe",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "b4ed30ad364a14f3",
+    "messages": [
+      {
+        "message_id": "415931106b43977d",
+        "sender": "Shieldwell Insurance <renewals@shieldwell.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-09-20T09:00:00Z",
+        "subject": "Your landlord insurance renewal - policy LP-55210",
+        "body": "Dear Ms Mercer,\n\nYour landlord insurance policy LP-55210 (14 Larch Road) renews on 1 November.\nYour new premium is GBP 312.40. No action needed if you wish to renew.\n\nShieldwell Insurance",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "4250072c41e046c2",
+    "messages": [
+      {
+        "message_id": "6423c5cfcba53f2d",
+        "sender": "Peter Novak <peter.novak@postbox.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-09-28T09:10:00Z",
+        "subject": "Fence down after the storm",
+        "body": "Morning Helen,\n\nLast night's storm knocked down one of the fence panels at the back of 3 Orchard Close.\nThe neighbour's dog keeps wandering in.\n\nPeter",
+        "attachments": []
+      },
+      {
+        "message_id": "4d595197f41908b5",
+        "sender": "Helen Mercer <helen@mercerlets.example>",
+        "to": [
+          "peter.novak@postbox.example"
+        ],
+        "date": "2026-09-28T10:00:00Z",
+        "subject": "Re: Fence down after the storm",
+        "body": "Hi Peter,\n\nOh no. I'll send Bill this week.\n\nHelen\n-- \nHelen Mercer\nMercer Lets | 07700 900123",
+        "attachments": []
+      },
+      {
+        "message_id": "56200ab28115e2f3",
+        "sender": "Bill Carter <bill@carterhandyman.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-10-03T15:30:00Z",
+        "subject": "Orchard Close fence - done",
+        "body": "Hi Helen,\n\nNew fence panel and post up at Orchard Close. GBP 140 for materials and labour.\n\nBill",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "29e584f7364d20e8",
+    "messages": [
+      {
+        "message_id": "6bb886b4579dc21a",
+        "sender": "Kelvin Heating <offers@kelvinheating.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-09-30T10:00:00Z",
+        "subject": "Book your annual boiler service - 15% off",
+        "body": "Winter is coming!\n\nBook your annual boiler service before 31 October and get 15% off.\nReply to this email or call us to book.\n\nKelvin Heating",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "a8a37543fec1ed93",
+    "messages": [
+      {
+        "message_id": "0575348d0400b092",
+        "sender": "Ana Romero <ana.romero@postbox.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-10-01T08:00:00Z",
+        "subject": "Rent this month",
+        "body": "Hello Helen,\n\nJust to let you know the rent for October went out today, minus the GBP 4.50 for the smoke alarm battery.\n\nAna",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "88a1da179ef5c180",
+    "messages": [
+      {
+        "message_id": "1ea42ad84f3084c5",
+        "sender": "Omar Siddiqui <omar.siddiqui@postbox.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-10-01T21:15:00Z",
+        "subject": "Bathroom fan",
+        "body": "Hi Helen,\n\nSorry, another one. The bathroom extractor fan has started rattling really loudly\nand sometimes it doesn't stop when the light goes off.\n\nOmar",
+        "attachments": []
+      },
+      {
+        "message_id": "e109b727fad2f818",
+        "sender": "Helen Mercer <helen@mercerlets.example>",
+        "to": [
+          "omar.siddiqui@postbox.example"
+        ],
+        "date": "2026-10-02T08:30:00Z",
+        "subject": "Re: Bathroom fan",
+        "body": "Hi Omar,\n\nNo need to apologise! I'll get an electrician booked and let you know the date.\n\nHelen\n-- \nHelen Mercer\nMercer Lets | 07700 900123",
+        "attachments": []
+      },
+      {
+        "message_id": "ef22723110fd1b3b",
+        "sender": "Helen Mercer <helen@mercerlets.example>",
+        "to": [
+          "omar.siddiqui@postbox.example"
+        ],
+        "date": "2026-10-05T17:00:00Z",
+        "subject": "Re: Bathroom fan",
+        "body": "Hi Omar,\n\nSparks & Co will come on Thursday 15 October between 8 and 10am to replace the fan.\n\nHelen\n-- \nHelen Mercer\nMercer Lets | 07700 900123",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "d0e3eff6eb0649d8",
+    "messages": [
+      {
+        "message_id": "2b6fb1b83820b1d3",
+        "sender": "Helen Mercer <helen@mercerlets.example>",
+        "to": [
+          "bookings@sparksco.example"
+        ],
+        "date": "2026-10-02T08:40:00Z",
+        "subject": "Job request: extractor fan, 14 Larch Road",
+        "body": "Hello,\n\nCould you replace a noisy bathroom extractor fan at Flat 2, 14 Larch Road?\nTenant: Omar Siddiqui, 07700 900456. Any weekday morning works.\n\nHelen\n-- \nHelen Mercer\nMercer Lets | 07700 900123",
+        "attachments": []
+      },
+      {
+        "message_id": "55847d9aa86457c8",
+        "sender": "Sparks & Co Electrical <bookings@sparksco.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-10-05T11:10:00Z",
+        "subject": "Re: Job request: extractor fan, 14 Larch Road",
+        "body": "Hi Helen,\n\nWe've booked you in for Thursday 15 October, 8-10am. Estimated cost GBP 120 including a new fan unit.\n\nSparks & Co Electrical",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "23cb328364f9fdaa",
+    "messages": [
+      {
+        "message_id": "0cc393e05c5d6c00",
+        "sender": "Jess Whitfield <jess.whitfield@postbox.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-10-05T19:20:00Z",
+        "subject": "Front door lock sticking",
+        "body": "Hi Helen,\n\nThe front door lock at Quayside Mews is getting really stiff, the key barely turns.\nI'm worried we'll get locked out.\n\nJess",
+        "attachments": []
+      },
+      {
+        "message_id": "f9e7863636960ffe",
+        "sender": "Helen Mercer <helen@mercerlets.example>",
+        "to": [
+          "jess.whitfield@postbox.example"
+        ],
+        "date": "2026-10-06T08:15:00Z",
+        "subject": "Re: Front door lock sticking",
+        "body": "Hi Jess,\n\nThanks for flagging. Bill is away until the 19th, so I'll get him round as soon as he's back.\nIn the meantime a little graphite powder in the lock might help.\n\nHelen\n-- \nHelen Mercer\nMercer Lets | 07700 900123",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "2d6447e33b3152b4",
+    "messages": [
+      {
+        "message_id": "95d84c8015d5bc11",
+        "sender": "PropertyPulse <alerts@propertypulse.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-10-06T07:30:00Z",
+        "subject": "PropertyPulse: 6 new homes near you",
+        "body": "6 new properties match your saved search:\n\n2 bed flat, Harbour View - GBP 210,000\n3 bed semi, Mill Road - GBP 285,000\n\nView all on PropertyPulse. Unsubscribe from alerts.",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "e1a8c8af71d6165b",
+    "messages": [
+      {
+        "message_id": "f5c0c47937e398d4",
+        "sender": "Clare Dunn <clare.dunn@postbox.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-10-07T12:00:00Z",
+        "subject": "Dinner Friday?",
+        "body": "Hi Hels,\n\nWe're doing a curry night on Friday, 7.30 at ours. Bring Mike!\n\nClare x",
+        "attachments": []
+      },
+      {
+        "message_id": "94daf01b921f03ad",
+        "sender": "Helen Mercer <helen@mercerlets.example>",
+        "to": [
+          "clare.dunn@postbox.example"
+        ],
+        "date": "2026-10-07T13:10:00Z",
+        "subject": "Re: Dinner Friday?",
+        "body": "Lovely, we'll be there. I'll bring dessert.\n\nH x",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "fc99d577e0d91d76",
+    "messages": [
+      {
+        "message_id": "1b194e2f24d31dbe",
+        "sender": "Peter Novak <peter.novak@postbox.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-10-08T20:05:00Z",
+        "subject": "Dishwasher not draining",
+        "body": "Hi Helen,\n\nThe dishwasher at Orchard Close has stopped draining, it shows error E24 and there's water left in the bottom.\nI've cleaned the filter but no change.\n\nPeter",
+        "attachments": []
+      },
+      {
+        "message_id": "abc1e5bbc3696307",
+        "sender": "Helen Mercer <helen@mercerlets.example>",
+        "to": [
+          "peter.novak@postbox.example"
+        ],
+        "date": "2026-10-08T21:00:00Z",
+        "subject": "Re: Dishwasher not draining",
+        "body": "Hi Peter,\n\nThanks for trying the filter. I'll book an appliance engineer.\n\nHelen\n-- \nHelen Mercer\nMercer Lets | 07700 900123",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "9fb451fdbabae398",
+    "messages": [
+      {
+        "message_id": "a437664a5649f0fc",
+        "sender": "TrueBuild DIY <offers@truebuild.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-10-09T08:00:00Z",
+        "subject": "20% off paint and decorating this weekend",
+        "body": "Hi Helen,\n\nThis weekend only: 20% off paint, brushes and decorating supplies in store and online.\nTrade card holders get an extra 5%.\n\nTrueBuild DIY",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "0806ef95d57a06d7",
+    "messages": [
+      {
+        "message_id": "d249e89de2478144",
+        "sender": "ApplianceFix <jobs@appliancefix.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-10-09T10:00:00Z",
+        "subject": "Booking confirmation - job AF-60318",
+        "body": "Dear Helen,\n\nYour booking is confirmed.\nJob AF-60318: dishwasher fault (error E24), 3 Orchard Close\nEngineer visit: Tuesday 13 October, 12:00-16:00\n\nApplianceFix",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "3b8952e892f174d9",
+    "messages": [
+      {
+        "message_id": "deffb21811536325",
+        "sender": "StreamBox <hello@streambox.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-10-10T17:00:00Z",
+        "subject": "New this week on StreamBox",
+        "body": "New this week: three new crime dramas and the final season of Harbour Lights.\nStart watching now.\n\nStreamBox",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "517031e62eaf337d",
+    "messages": [
+      {
+        "message_id": "ebfed2caf3cdca3c",
+        "sender": "Peter Novak <peter.novak@postbox.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-10-14T18:40:00Z",
+        "subject": "Bathroom window won't close",
+        "body": "Hi Helen,\n\nSorry to bother you again so soon. The handle on the bathroom window snapped off this evening\nand now the window won't close properly. I've taped it shut for now.\n\nPeter",
+        "attachments": []
+      },
+      {
+        "message_id": "89def3231fcb0783",
+        "sender": "Helen Mercer <helen@mercerlets.example>",
+        "to": [
+          "peter.novak@postbox.example"
+        ],
+        "date": "2026-10-14T19:30:00Z",
+        "subject": "Re: Bathroom window won't close",
+        "body": "Hi Peter,\n\nThanks for letting me know. Bill is back next week, I'll ask him to fit a new handle as soon as he can.\n\nHelen\n-- \nHelen Mercer\nMercer Lets | 07700 900123",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "30483ce3a95330d0",
+    "messages": [
+      {
+        "message_id": "d6365941db515490",
+        "sender": "Dale Hughes <dale@roofright.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-10-19T16:10:00Z",
+        "subject": "22 Beacon Street - roof repair completed",
+        "body": "Hi Helen,\n\nAll done at Beacon Street today: slipped tiles replaced and new lead flashing round the chimney.\nInvoice RR-0457 for GBP 640 attached. Leave the ceiling a couple of weeks to dry before repainting.\n\nDale\n-- \nRoofRight Ltd",
+        "attachments": [
+          "RR-0457.pdf"
+        ]
+      }
+    ]
+  },
+  {
+    "thread_id": "56362e63b271b8b1",
+    "messages": [
+      {
+        "message_id": "fd795a7317c551f2",
+        "sender": "Ana Romero <ana.romero@postbox.example>",
+        "to": [
+          "helen@mercerlets.example"
+        ],
+        "date": "2026-10-20T20:15:00Z",
+        "subject": "Ceiling update",
+        "body": "Hello Helen,\n\nThe roofers came yesterday and the damp patch is already drying out, no new leaks after today's rain.\nThank you!\n\nAna",
+        "attachments": []
+      }
+    ]
+  }
+]

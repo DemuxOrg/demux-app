@@ -1,0 +1,9 @@
+id: 08-cannot-build-fitness-data
+prompt: "Make me a chart of my daily step count and how many hours I slept each night over the last month, from my fitness watch."
+steps:
+- name: build
+  now: 2026-09-20T09:00:00Z
+  expect:
+    - {kind: build_fails}
+    - {kind: count, min: 0, max: 0}
+    - {kind: absent, any_of: ["StyleBarn", "Marchetti"]}
