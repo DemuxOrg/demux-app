@@ -20,7 +20,7 @@ from app.agent.context import BudgetExceeded, RunContext, WorkspaceState
 from app.agent.llm import ChatModel, LLMError, OpenAICompatibleLLM
 from app.agent.loop import PhaseFailed
 from app.auth.google import UserTokenProvider
-from app.core.config import settings
+from app.core.config import Env, settings
 from app.core.logging import setup_logging
 from app.db.session import SessionLocal
 from app.mail.base import Mailbox, MailboxError, ReconnectRequired
@@ -34,6 +34,10 @@ logger = logging.getLogger("app.worker")
 
 
 def gmail_for(user_id: uuid.UUID) -> Mailbox:
+    if settings.DEV_FAKE_MAILBOX and settings.ENV == Env.DEV:
+        from app.mail.fake import FakeMailbox
+
+        return FakeMailbox.from_file(settings.DEV_FAKE_MAILBOX)
     return GmailMailbox(UserTokenProvider(SessionLocal, user_id))
 
 

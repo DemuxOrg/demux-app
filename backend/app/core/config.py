@@ -62,6 +62,8 @@ class Settings(BaseSettings):
     DATA_INLINE_MAX_CHARS: int = 120_000
     AGENT_DEBUG_TRANSCRIPTS: bool = False
     WORKER_CONCURRENCY: int = 3
+    # Dev only (ENV=dev): the worker reads this fake mailbox JSON instead of Gmail.
+    DEV_FAKE_MAILBOX: str = ""
 
     @property
     def llm_api_key(self) -> str:

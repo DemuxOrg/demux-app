@@ -40,7 +40,11 @@ class ScriptedLLM:
             "role": "assistant",
             "content": "",
             "tool_calls": [
-                {"id": c.id, "type": "function", "function": {"name": c.name, "arguments": c.arguments}}
+                {
+                    "id": c.id,
+                    "type": "function",
+                    "function": {"name": c.name, "arguments": c.arguments},
+                }
                 for c in calls
             ],
         }

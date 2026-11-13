@@ -188,6 +188,19 @@ async def smoke_problems(html: str, data: dict[str, Any]) -> list[str]:
     return problems
 
 
+async def render_text(html: str, data: dict[str, Any]) -> tuple[str, list[str]]:
+    """Render an app once in the headless shell; return (visible text, errors). Eval use."""
+    from playwright.async_api import async_playwright
+
+    async with async_playwright() as p:
+        browser = await p.chromium.launch()
+        try:
+            out = await _run_page(browser, html, data, twice=False)
+        finally:
+            await browser.close()
+    return out["text1"], out["errors"]
+
+
 _lock = asyncio.Semaphore(2)
 
 

@@ -110,7 +110,9 @@ async def test_persist_bumps_version_and_writes_changes(session, dev_user):
     data, _, changes = save({}, [rec()])
     v = await store.persist_data(session, ws.id, None, data, changes)
     assert v == 1
-    n = await session.scalar(select(func.count()).select_from(Change).where(Change.workspace_id == ws.id))
+    n = await session.scalar(
+        select(func.count()).select_from(Change).where(Change.workspace_id == ws.id)
+    )
     assert n == 1
 
 

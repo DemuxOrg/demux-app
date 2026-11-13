@@ -25,7 +25,13 @@ def make_ctx(max_usd=1e9, phase="process"):
 
 async def run(ctx, llm, phase="edit", max_steps=10):
     return await run_agent(
-        llm=llm, model="m", system="s", user="u", tools=tools_for(phase), ctx=ctx, max_steps=max_steps
+        llm=llm,
+        model="m",
+        system="s",
+        user="u",
+        tools=tools_for(phase),
+        ctx=ctx,
+        max_steps=max_steps,
     )
 
 
@@ -69,7 +75,10 @@ async def test_multi_tool_turn_then_finish():
 
 async def test_tool_error_is_fed_back_and_unknown_source_rejected():
     ctx, _, _ = make_ctx()
-    bad = {"record_type": "order", "records": [{"id": "x", "fields": {}, "source_message_ids": ["zz"]}]}
+    bad = {
+        "record_type": "order",
+        "records": [{"id": "x", "fields": {}, "source_message_ids": ["zz"]}],
+    }
     llm = ScriptedLLM([[("save_records", bad)], [("finish", {"summary": "ok"})]])
     await run(ctx, llm)
     feedback = tool_results(llm.calls[1])[0]

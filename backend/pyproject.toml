@@ -39,3 +39,4 @@ asyncio_default_test_loop_scope = "session"
 
 [tool.ruff.lint.per-file-ignores]
 "alembic/versions/*" = ["E501", "I001", "UP"]
+"tests/*" = ["E501"]

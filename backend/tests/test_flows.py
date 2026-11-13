@@ -33,10 +33,15 @@ def save_all_new(messages):
     for tid, block in re.findall(r'<thread id="(\w+)">(.*?)</thread>', user, re.S):
         mids = re.findall(r'<message id="(\w+)"[^>]*new="true"', block)
         if mids and "Order" in block and "digest" not in block:
-            records.append({"id": f"o-{tid}", "fields": {"seen": len(mids)}, "source_message_ids": mids})
+            records.append(
+                {"id": f"o-{tid}", "fields": {"seen": len(mids)}, "source_message_ids": mids}
+            )
     if not records:
         return [("finish", {"summary": "No changes"})]
-    return [("save_records", {"record_type": "order", "records": records}), ("finish", {"summary": f"{len(records)} orders"})]
+    return [
+        ("save_records", {"record_type": "order", "records": records}),
+        ("finish", {"summary": f"{len(records)} orders"}),
+    ]
 
 
 DESIGN_TURNS = [
@@ -48,7 +53,10 @@ DESIGN_TURNS = [
 
 async def test_build_happy_path():
     ctx, _, p = make()
-    llm = ScriptedLLM(DESIGN_TURNS + [save_all_new, [("write_app", {"html": GOOD_APP})], [("finish", {"summary": "table"})]])
+    llm = ScriptedLLM(
+        DESIGN_TURNS
+        + [save_all_new, [("write_app", {"html": GOOD_APP})], [("finish", {"summary": "table"})]]
+    )
     summary = await flows.build(ctx, cfg(llm))
     assert "Built from 6 threads" in summary
     assert len(ctx.state.data["order"]) >= 3
@@ -61,7 +69,9 @@ async def test_build_happy_path():
 
 async def test_build_cannot_build():
     ctx, _, _ = make()
-    llm = ScriptedLLM([[("finish", {"summary": "CANNOT_BUILD: your step counts are not in email."})]])
+    llm = ScriptedLLM(
+        [[("finish", {"summary": "CANNOT_BUILD: your step counts are not in email."})]]
+    )
     with pytest.raises(flows.CannotBuild, match="step counts"):
         await flows.build(ctx, cfg(llm))
 
@@ -97,7 +107,10 @@ async def test_app_phase_failure_falls_back_to_default_app():
 
 async def _built():
     ctx, box, p = make()
-    llm = ScriptedLLM(DESIGN_TURNS + [save_all_new, [("write_app", {"html": GOOD_APP})], [("finish", {"summary": "ok"})]])
+    llm = ScriptedLLM(
+        DESIGN_TURNS
+        + [save_all_new, [("write_app", {"html": GOOD_APP})], [("finish", {"summary": "ok"})]]
+    )
     await flows.build(ctx, cfg(llm))
     return ctx.state, p
 
@@ -153,7 +166,11 @@ async def test_edit_with_backfill_rereads_known_threads():
         return [("finish", {"summary": "No changes"})]
 
     llm = ScriptedLLM(
-        [[("write_guide", {"text": GUIDE + "- new field"}), ("request_backfill", {})], [("finish", {"summary": "Added a field."})], reread]
+        [
+            [("write_guide", {"text": GUIDE + "- new field"}), ("request_backfill", {})],
+            [("finish", {"summary": "Added a field."})],
+            reread,
+        ]
     )
     assert await flows.edit(ctx, cfg(llm), "add a field", []) == "Added a field."
     assert "re-read" in inputs[0] and inputs[0].count("<thread ") == 6

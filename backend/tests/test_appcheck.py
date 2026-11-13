@@ -6,7 +6,15 @@ from app.agent.appcheck import check_app, static_problems
 from app.agent.default_app import DEFAULT_APP
 from tests.helpers import GOOD_APP
 
-DATA = {"loan": {"dune-1": {"title": "Dune", "status": "borrowed", "_sources": [{"message_id": "a", "thread_id": "18c0aa00bb11cc22"}]}}}
+DATA = {
+    "loan": {
+        "dune-1": {
+            "title": "Dune",
+            "status": "borrowed",
+            "_sources": [{"message_id": "a", "thread_id": "18c0aa00bb11cc22"}],
+        }
+    }
+}
 
 
 @pytest.mark.parametrize(
@@ -37,7 +45,10 @@ def test_static_rules(snippet, problem):
 
 
 def test_static_allows_svg_namespace_and_field_names():
-    html = GOOD_APP + "<script>document.createElementNS('http://www.w3.org/2000/svg','svg'); var x = rec.location.trim(); r.parent;</script>"
+    html = (
+        GOOD_APP
+        + "<script>document.createElementNS('http://www.w3.org/2000/svg','svg'); var x = rec.location.trim(); r.parent;</script>"
+    )
     assert static_problems(html) == []
 
 

@@ -33,6 +33,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
       - run: uv sync
+      - run: uv run playwright install --with-deps chromium  # app checks + sandbox test
       - run: uv run ruff check .
       - run: uv run ruff format --check .
       - run: uv run pytest
