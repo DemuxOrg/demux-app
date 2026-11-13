@@ -75,10 +75,16 @@ def parse_message(raw: dict[str, Any]) -> Message:
 
 
 class GmailMailbox:
-    def __init__(self, tokens: TokenProvider, *, concurrency: int = 8):
+    def __init__(
+        self,
+        tokens: TokenProvider,
+        *,
+        concurrency: int = 8,
+        transport: httpx.AsyncBaseTransport | None = None,
+    ):
         self._tokens = tokens
         self._sem = asyncio.Semaphore(concurrency)
-        self._client = httpx.AsyncClient(timeout=30)
+        self._client = httpx.AsyncClient(timeout=30, transport=transport)
 
     async def aclose(self) -> None:
         await self._client.aclose()
@@ -106,6 +112,9 @@ class GmailMailbox:
                     await asyncio.sleep(2 * (attempt + 1))
                     continue
                 if resp.status_code == 403:
+                    if "ratelimit" in resp.text.lower().replace("_", ""):
+                        await asyncio.sleep(2 * (attempt + 1))
+                        continue
                     raise ReconnectRequired("gmail access denied (scope missing?)")
                 resp.raise_for_status()
                 return resp.json()
