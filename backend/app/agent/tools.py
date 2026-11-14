@@ -288,6 +288,20 @@ async def _finish(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
     summary = str(args.get("summary", "")).strip()
     if not summary:
         raise ToolError("summary is required")
+    if ctx.phase == "design" and not summary.upper().startswith("CANNOT_BUILD"):
+        missing = [
+            n
+            for n, ok in (
+                ("write_guide", ctx.state.guide.strip()),
+                ("set_queries", ctx.state.queries),
+            )
+            if not ok
+        ]
+        if missing:
+            raise ToolError(
+                f"not done yet: call {' and '.join(missing)} before finish "
+                "(or finish with 'CANNOT_BUILD: <reason>' if the request cannot be served)"
+            )
     ctx.finish_summary = summary[:MAX_SUMMARY_CHARS]
     return ToolOutput({"ok": True}, None)
 

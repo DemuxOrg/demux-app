@@ -8,7 +8,7 @@ from app.agent import flows
 from app.agent.context import MemoryPersister, RunContext, WorkspaceState
 from app.agent.loop import PhaseFailed
 from app.mail.fake import FakeMailbox
-from tests.helpers import GOOD_APP, SMALL_MAILBOX, ScriptedLLM, dt
+from tests.helpers import GOOD_APP, SMALL_MAILBOX, ScriptedLLM, dt, tool_results
 
 GUIDE = "# Purpose\nOrders.\n\n# Record types\n## order\n\n# What to ignore\n\n# Learned\n"
 
@@ -76,11 +76,12 @@ async def test_build_cannot_build():
         await flows.build(ctx, cfg(llm))
 
 
-async def test_build_without_guide_fails():
+async def test_design_finish_without_guide_is_rejected_then_fails():
     ctx, _, _ = make()
-    llm = ScriptedLLM([[("finish", {"summary": "done"})]])
-    with pytest.raises(PhaseFailed, match="guide"):
+    llm = ScriptedLLM([[("finish", {"summary": "done"})]] * 3)
+    with pytest.raises(PhaseFailed, match="3 times"):
         await flows.build(ctx, cfg(llm))
+    assert "write_guide" in tool_results(llm.calls[1])[0]["error"]
 
 
 async def test_failed_batch_is_skipped_and_build_continues():
