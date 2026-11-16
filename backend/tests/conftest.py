@@ -114,16 +114,20 @@ class SessionFactory:
     every `async with factory()` yields the test's transactional session."""
 
     def __init__(self, session: AsyncSession):
+        import asyncio
+
         self.session = session
+        self.lock = asyncio.Lock()  # one shared session: concurrent phases take turns
 
     def __call__(self):
         return self
 
     async def __aenter__(self) -> AsyncSession:
+        await self.lock.acquire()
         return self.session
 
     async def __aexit__(self, *exc) -> None:
-        return None
+        self.lock.release()
 
 
 @pytest.fixture

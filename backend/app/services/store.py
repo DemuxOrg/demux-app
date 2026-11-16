@@ -80,11 +80,18 @@ def apply_save(
     *,
     seen_messages: dict[str, str],
     now: datetime | None = None,
+    message_dates: dict[str, datetime] | None = None,
+    older_fill_only: bool = False,
 ) -> tuple[dict[str, Any], list[dict[str, Any]], list[ChangeRow]]:
     """Validate and merge `records` into a copy of `data`.
 
     `seen_messages` maps every message id the agent received in this run to its thread
-    id. Returns (new_data, per-record results, change rows). Raises DataError (nothing
+    id. `message_dates` (message id -> date) lets the record remember its newest source
+    (`_latest`). With `older_fill_only`, a save whose sources are all older than the
+    record's newest source may only fill empty fields: this enforces "newer messages win"
+    in code when batches are processed in parallel and can finish out of order.
+
+    Returns (new_data, per-record results, change rows). Raises DataError (nothing
     applied) if any record breaks a rule.
     """
     if not isinstance(record_type, str) or not TYPE_RE.match(record_type):
@@ -128,8 +135,21 @@ def apply_save(
 
             existing = bucket.get(rid)
             before = public_fields(existing) if existing else None
+            dates = [message_dates[s] for s in sources if s in (message_dates or {})]
+            incoming_latest = max(dates).strftime("%Y-%m-%dT%H:%M:%SZ") if dates else None
+            prev_latest = (existing or {}).get("_latest")
+            if (
+                older_fill_only
+                and existing is not None
+                and incoming_latest
+                and prev_latest
+                and incoming_latest < prev_latest
+            ):
+                fields = {k: v for k, v in fields.items() if existing.get(k) is None}
             merged = dict(existing or {})
             merged.update(fields)
+            if incoming_latest and (not prev_latest or incoming_latest > prev_latest):
+                merged["_latest"] = incoming_latest
             after = public_fields(merged)
             if len(after) > MAX_FIELDS:
                 raise DataError(f"at most {MAX_FIELDS} fields per record")

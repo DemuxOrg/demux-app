@@ -77,6 +77,28 @@ class RunContext:
     lookback_days: int = 90
     max_build_threads: int = 150
     inline_max_chars: int = 120_000
+    # message id -> date, for the newest-wins guard during parallel backfill
+    message_dates: dict[str, datetime] = field(default_factory=dict)
+    # When true (parallel backfill), older emails may only fill empty fields.
+    older_fill_only: bool = False
+    # Design-phase budget: keeps the first phase short and its context small.
+    design_reads: int = 0
+    design_searches: int = 0
+
+    def child(self, phase: str, **overrides: Any) -> "RunContext":
+        """A context for one concurrent phase: shares state, mailbox, persister and the
+        seen-message maps, but has its own phase and per-phase flags."""
+        from dataclasses import replace
+
+        return replace(
+            self,
+            phase=phase,
+            finish_summary=None,
+            app_written=False,
+            guide_changed=False,
+            data_changed=False,
+            **overrides,
+        )
 
     @property
     def window_start(self) -> datetime:

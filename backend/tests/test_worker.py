@@ -7,7 +7,7 @@ from app.services import runs
 from app.services.workspaces import create_workspace
 from app.worker import execute_run
 from tests.helpers import GOOD_APP, SMALL_MAILBOX, ScriptedLLM, dt
-from tests.test_flows import DESIGN_TURNS, save_all_new
+from tests.test_flows import build_llm
 
 
 async def test_claim_one_run_per_workspace(session, dev_user):
@@ -29,10 +29,7 @@ async def test_execute_build_then_sync(session, session_factory, dev_user):
     box = FakeMailbox.from_file(SMALL_MAILBOX, now=dt("2026-10-16T00:00:00Z"))
     ws = await create_workspace(session, dev_user.id, "track orders")
     run = await runs.claim_next(session)
-    llm = ScriptedLLM(
-        DESIGN_TURNS
-        + [save_all_new, [("write_app", {"html": GOOD_APP})], [("finish", {"summary": "ok"})]]
-    )
+    llm = build_llm()
     await execute_run(
         run.id,
         llm=llm,

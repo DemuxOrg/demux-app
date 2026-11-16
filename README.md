@@ -24,10 +24,18 @@ While the app is in *Testing*, Google expires the Gmail grant after about 7 days
 Set `LLM_BASE_URL` and `LLM_API_KEY` in `.env`. The default is the Hugging Face router, and `LLM_API_KEY` falls back to `HF_TOKEN`. Pick the models with `BUILD_MODEL` and `SYNC_MODEL`. Check that a model can drive the agent with:
 
 ```bash
-cd backend && PYTHONPATH=. uv run python scripts/probe_agent_model.py "zai-org/GLM-5.3:deepinfra" "moonshotai/Kimi-K3.1-Pro:deepinfra"
+cd backend && PYTHONPATH=. uv run python scripts/probe_agent_model.py "openai/gpt-oss-120b:cerebras" "openai/gpt-oss-120b:groq"
 ```
 
 Prices for cost tracking and budgets live in `backend/app/agent/prices.yaml`.
+
+**Speed.** The defaults aim for a build in about a minute:
+- a fast model (`openai/gpt-oss-120b` on Cerebras, with Groq as `LLM_FALLBACK_MODEL` when the main one keeps failing) and `LLM_REASONING_EFFORT=low`;
+- a design phase limited to 8 searches and 10 sampled threads;
+- email batches read in parallel (`PROCESS_CONCURRENCY`), with the app written at the same time;
+- the newest `BUILD_MAX_THREADS=80` matching threads.
+
+A stronger, slower model (for example `zai-org/GLM-5.3:deepinfra`) gives better records but takes minutes.
 
 ### 3. Start
 ```bash
@@ -54,8 +62,8 @@ Gmail **queries** chosen at build time define which mail belongs to the workspac
 
 - **Build:**
   1. *Design.* The agent explores your mail with `search_mail` and `read_thread`, then writes the guide and the queries.
-  2. *Backfill.* Matching threads are fed oldest-first in batches of 8, and the agent saves records.
-  3. *App.* The agent writes the app. Each version is checked statically and then rendered in headless Chromium with the network blocked. A failed check goes back to the agent to fix.
+  2. *Backfill.* Matching threads are read in parallel batches, and the agent saves records. Stable record ids make saves to the same record merge, and the store lets older emails only fill empty fields, so newer emails always win.
+  3. *App.* At the same time, the agent writes the app from the guide. Each version is checked statically and then rendered in headless Chromium with the network blocked. A failed check goes back to the agent to fix.
 - **Sync** runs every `SYNC_INTERVAL_MIN`. It only looks at messages not processed yet; if there are none, it makes no LLM call. The app is never touched.
 - **Edit** happens by chat and makes the smallest change. It can rewrite the app, change the guide, fix records, change the queries, or request a re-read of all mail.
 

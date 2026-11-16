@@ -96,13 +96,7 @@ async def main() -> None:
         max_build_threads=settings.BUILD_MAX_THREADS,
         inline_max_chars=settings.DATA_INLINE_MAX_CHARS,
     )
-    cfg = flows.FlowConfig(
-        llm=OpenAICompatibleLLM(),
-        build_model=settings.BUILD_MODEL,
-        sync_model=settings.SYNC_MODEL,
-        batch_threads=settings.BATCH_THREADS,
-        inline_max_chars=settings.DATA_INLINE_MAX_CHARS,
-    )
+    cfg = flows.FlowConfig.from_settings(OpenAICompatibleLLM())
     status = "done"
     try:
         if args.command == "build":

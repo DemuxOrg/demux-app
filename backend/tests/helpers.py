@@ -52,7 +52,11 @@ class ScriptedLLM:
 
 
 def tool_results(messages: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    return [json.loads(m["content"]) for m in messages if m["role"] == "tool"]
+    out = []
+    for m in messages:
+        if m["role"] == "tool" and m["content"].startswith(("{", "[{")):
+            out.append(json.loads(m["content"]))
+    return out
 
 
 def dt(s: str) -> datetime:
@@ -79,3 +83,57 @@ function render(data) {
 }
 </script>
 """
+
+
+class PhaseLLM:
+    """Scripted LLM for concurrent flows: one queue of turns per phase, chosen from the
+    system prompt. A phase's last turn repeats when `repeat_last` is set for it."""
+
+    MARKS = {
+        "You design": "design",
+        "You keep": "process",
+        "You build the interface": "app",
+        "You change": "edit",
+    }
+
+    def __init__(self, repeat_last: tuple[str, ...] = ("process",), **turns: list[Step]):
+        self.turns = {k: list(v) for k, v in turns.items()}
+        self.repeat_last = repeat_last
+        self.calls: list[list[dict[str, Any]]] = []
+        self.phases: list[str] = []
+        self._n = 0
+
+    def calls_for(self, phase: str) -> list[list[dict[str, Any]]]:
+        return [c for c, p in zip(self.calls, self.phases, strict=True) if p == phase]
+
+    async def chat(self, model, messages, tools) -> LLMReply:
+        system = messages[0]["content"]
+        phase = next(v for k, v in self.MARKS.items() if system.startswith(k))
+        self.calls.append(json.loads(json.dumps(messages)))
+        self.phases.append(phase)
+        queue = self.turns.get(phase) or []
+        if not queue:
+            raise AssertionError(f"PhaseLLM has no turn left for phase {phase}")
+        turn = queue[0] if (len(queue) == 1 and phase in self.repeat_last) else queue.pop(0)
+        if callable(turn):
+            turn = turn(messages)
+        if isinstance(turn, str):
+            return LLMReply(turn, [], 100, 10, 1, {"role": "assistant", "content": turn})
+        self._n += 1
+        calls = [
+            ToolCall(id=f"c{self._n}-{i}", name=name, arguments=json.dumps(args))
+            for i, (name, args) in enumerate(turn)
+        ]
+        raw = {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+                {
+                    "id": c.id,
+                    "type": "function",
+                    "function": {"name": c.name, "arguments": c.arguments},
+                }
+                for c in calls
+            ],
+        }
+        return LLMReply(None, calls, 100, 10, 1, raw)

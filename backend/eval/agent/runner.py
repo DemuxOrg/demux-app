@@ -51,13 +51,7 @@ async def run_scenario(
     persister = MemoryPersister(max_usd=settings.MAX_USD_PER_RUN * 10)
     state = WorkspaceState(prompt=scenario["prompt"])
     persister.state = state
-    cfg = flows.FlowConfig(
-        llm=llm,
-        build_model=settings.BUILD_MODEL,
-        sync_model=settings.SYNC_MODEL,
-        batch_threads=settings.BATCH_THREADS,
-        inline_max_chars=settings.DATA_INLINE_MAX_CHARS,
-    )
+    cfg = flows.FlowConfig.from_settings(llm)
     checks: list[Check] = []
     steps_out: list[dict[str, Any]] = []
     prev_data: dict[str, Any] | None = None

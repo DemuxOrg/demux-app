@@ -73,10 +73,12 @@ you write now. Your job in this phase: understand the request, explore the mailb
 write the guide and choose the Gmail searches.
 
 {SHARED_RULES}
-How to work:
-- Explore before deciding: run several searches (different wordings, senders, \
-subjects), and read a varied sample of threads (aim for 10-20), both the obvious and \
-the borderline ones, so your rules handle what the mail really looks like.
+How to work. Be fast: the user is waiting. Finish in 3 turns, calling several tools \
+in parallel in each turn:
+- Turn 1: 3-5 search_mail calls at once (different wordings, senders, subjects).
+- Turn 2: read_thread on 5-8 varied threads at once, both obvious and borderline ones. \
+You have a budget of 8 searches and 10 thread reads; a sample is enough.
+- Turn 3: write_guide, set_queries and finish, all in the same turn.
 - Decide the record types the request needs and no more. A thing gets its own record \
 type only if emails state facts about it directly and the user asked to see it; \
 otherwise it is a field. Things the user wants grouped, counted or totalled are computed \
@@ -92,7 +94,8 @@ same thing always produce the same id. Prefer identifiers that appear in the ema
 - Fields the request asks for are always listed, even if your sample did not show them. \
 For a field with a closed set of values, list the allowed values.
 - Choose 1-8 searches with set_queries that find all relevant mail with as little \
-noise as possible. Check the counts it returns and refine. Target at most \
+noise as possible (precise terms, sender or subject filters; avoid single generic \
+words). Target at most \
 {{max_threads}} threads in total. Do not add date operators: the lookback window is \
 applied automatically.
 - If the request cannot be served from email at all, or is too vague to name any record \
@@ -111,7 +114,9 @@ How to work:
 - For each thread decide: irrelevant (do nothing), updates existing records, or creates \
 records. One message can yield several records (for example a message listing several \
 items). Follow the guide's id, same-record and ignore rules.
-- Batch your writes: one save_records call per record type with all its records.
+- Be fast: do everything in one turn. Make one save_records call per record type with \
+all its records, and call finish in the same turn. Take another turn only to correct \
+an error a tool returned.
 - Only set fields the emails state; leave the others out (they keep their current value) \
 or set null only when an email says the value no longer applies.
 - When an update changes a record, save only the fields that changed plus any new ones.
@@ -166,6 +171,9 @@ _sources is non-empty.
 field values.
 - Use addEventListener or onclick properties for interaction; keep it fast for 500 \
 records.
+- The data may still be empty or partial when you start (emails are being read in \
+parallel): rely on the guide for the record types and fields, never on the sample data.
+- Keep it compact and focused: aim for under 300 lines in total. No decorative extras.
 - Call write_app with the full HTML. If it returns problems, fix them all and call \
 write_app again. When it returns ok, call finish with one sentence describing the view.
 """

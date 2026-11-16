@@ -5,6 +5,7 @@ User-facing functions take `user_id` and scope through `workspaces.user_id`. Wor
 functions operate on ids the worker claimed itself.
 """
 
+import asyncio
 import uuid
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
@@ -193,6 +194,8 @@ class DbPersister:
         self.run_id = run_id
         self.user_id = user_id
         self.cost = 0.0
+        # Parallel batches save concurrently: serialize so the last write has all records.
+        self._data_lock = asyncio.Lock()
 
     async def _ws_update(self, **values: Any) -> None:
         async with self.sf() as s:
@@ -202,7 +205,7 @@ class DbPersister:
             await s.commit()
 
     async def save_data(self, state: WorkspaceState, changes: list[ChangeRow]) -> None:
-        async with self.sf() as s:
+        async with self._data_lock, self.sf() as s:
             state.data_version = await store.persist_data(
                 s, self.workspace_id, self.run_id, state.data, changes
             )

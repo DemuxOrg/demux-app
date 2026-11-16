@@ -87,13 +87,7 @@ async def execute_run(
         max_build_threads=settings.BUILD_MAX_THREADS,
         inline_max_chars=settings.DATA_INLINE_MAX_CHARS,
     )
-    cfg = flows.FlowConfig(
-        llm=llm or OpenAICompatibleLLM(),
-        build_model=settings.BUILD_MODEL,
-        sync_model=settings.SYNC_MODEL,
-        batch_threads=settings.BATCH_THREADS,
-        inline_max_chars=settings.DATA_INLINE_MAX_CHARS,
-    )
+    cfg = flows.FlowConfig.from_settings(llm or OpenAICompatibleLLM())
 
     status, summary, error, ws_status = RunStatus.DONE, None, None, None
     try:
@@ -118,8 +112,15 @@ async def execute_run(
             await s.commit()
     except BudgetExceeded as e:
         status, error = RunStatus.FAILED, f"budget_exceeded: {e}"
-    except (PhaseFailed, LLMError, MailboxError) as e:
-        status, error = RunStatus.FAILED, f"{type(e).__name__}: {e}"
+    except LLMError as e:
+        status, error = RunStatus.FAILED, f"llm_error: {e}"
+    except PhaseFailed:
+        status, error = (
+            RunStatus.FAILED,
+            "agent_stuck: The agent could not finish this step. Try again, or rephrase.",
+        )
+    except MailboxError as e:
+        status, error = RunStatus.FAILED, f"mail_error: Gmail could not be read ({e})."
     except Exception as e:  # noqa: BLE001 - the worker must survive any run
         logger.exception("run %s crashed", run_id)
         status, error = RunStatus.FAILED, f"internal_error: {type(e).__name__}"

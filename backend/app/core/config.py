@@ -46,9 +46,12 @@ class Settings(BaseSettings):
     LLM_BASE_URL: str = "https://router.huggingface.co/v1"
     LLM_API_KEY: str = ""  # falls back to HF_TOKEN when empty
     HF_TOKEN: str = ""
-    BUILD_MODEL: str = "zai-org/GLM-5.3:deepinfra"
-    SYNC_MODEL: str = "zai-org/GLM-5.3:deepinfra"
-    LLM_CALL_TIMEOUT_S: float = 180
+    # Defaults favour speed: a build should take about a minute.
+    BUILD_MODEL: str = "openai/gpt-oss-120b:cerebras"
+    SYNC_MODEL: str = "openai/gpt-oss-120b:cerebras"
+    LLM_FALLBACK_MODEL: str = "openai/gpt-oss-120b:groq"  # used when the main one keeps failing
+    LLM_REASONING_EFFORT: str = "low"  # "", low, medium, high (dropped if a model rejects it)
+    LLM_CALL_TIMEOUT_S: float = 60
     LLM_MAX_TOKENS: int = 16000
     LLM_TEMPERATURE: float = 0.2
     MAX_USD_PER_RUN: float = 3.0
@@ -57,8 +60,10 @@ class Settings(BaseSettings):
     # --- Agent / flows ---
     SYNC_INTERVAL_MIN: int = 10
     LOOKBACK_DAYS: int = 90
-    BUILD_MAX_THREADS: int = 150
-    BATCH_THREADS: int = 8
+    BUILD_MAX_THREADS: int = 80
+    BATCH_THREADS: int = 6
+    BATCH_MAX_CHARS: int = 45_000  # a batch is also cut when its email text gets this big
+    PROCESS_CONCURRENCY: int = 8  # build backfill batches run in parallel
     DATA_INLINE_MAX_CHARS: int = 120_000
     AGENT_DEBUG_TRANSCRIPTS: bool = False
     WORKER_CONCURRENCY: int = 3

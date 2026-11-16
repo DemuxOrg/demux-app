@@ -156,3 +156,29 @@ async def test_undo_never_restores_the_pre_build_snapshot(session, dev_user):
     await session.flush()
     with pytest.raises(ConflictError, match="Nothing to undo"):
         await store.undo(session, dev_user.id, ws.id)
+
+
+def test_older_sources_only_fill_empty_fields_in_parallel_backfill():
+    from datetime import UTC, datetime
+
+    dates = {"m1": datetime(2026, 10, 1, tzinfo=UTC), "m2": datetime(2026, 10, 9, tzinfo=UTC)}
+
+    def go(data, fields, src):
+        return apply_save(
+            data,
+            "bill",
+            [rec(fields=fields, sources=[src])],
+            seen_messages=SEEN,
+            message_dates=dates,
+            older_fill_only=True,
+        )[0]
+
+    # The newer email (paid) is saved first, the older one (unpaid, amount) arrives later.
+    data = go({}, {"status": "paid", "amount": None}, "m2")
+    data = go(data, {"status": "unpaid", "amount": 40}, "m1")
+    r = data["bill"]["a-1"]
+    assert r["status"] == "paid" and r["amount"] == 40
+    assert r["_latest"] == "2026-10-09T00:00:00Z"
+    # In the normal order the newer email still wins.
+    data = go(go({}, {"status": "unpaid"}, "m1"), {"status": "paid"}, "m2")
+    assert data["bill"]["a-1"]["status"] == "paid"

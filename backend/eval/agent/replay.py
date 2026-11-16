@@ -36,13 +36,7 @@ once. Only pair when you are confident they are the same thing. Do not judge val
 
 
 def _cfg(llm) -> flows.FlowConfig:
-    return flows.FlowConfig(
-        llm=llm,
-        build_model=settings.BUILD_MODEL,
-        sync_model=settings.SYNC_MODEL,
-        batch_threads=settings.BATCH_THREADS,
-        inline_max_chars=settings.DATA_INLINE_MAX_CHARS,
-    )
+    return flows.FlowConfig.from_settings(llm)
 
 
 def _ctx(state, mailbox, persister, now) -> RunContext:

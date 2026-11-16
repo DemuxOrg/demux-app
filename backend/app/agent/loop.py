@@ -91,7 +91,7 @@ async def run_agent(
             messages.append({"role": "user", "content": "You are out of steps. Call finish now."})
         step += 1
         reply = await llm.chat(model, _wire(messages), schemas)
-        cost = cost_usd(model, reply.input_tokens, reply.output_tokens)
+        cost = cost_usd(reply.model or model, reply.input_tokens, reply.output_tokens)
         logger.info(
             "llm call run=%s phase=%s step=%s in=%s out=%s calls=%s ms=%s",
             ctx.run_id,

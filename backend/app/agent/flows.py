@@ -11,9 +11,10 @@ from dataclasses import dataclass
 from datetime import timedelta
 
 from app.agent import prompts
+from app.agent.appcheck import check_app
 from app.agent.context import RunContext
 from app.agent.default_app import DEFAULT_APP
-from app.agent.llm import ChatModel
+from app.agent.llm import ChatModel, LLMError
 from app.agent.loop import PhaseFailed, run_agent
 from app.agent.tools import tools_for
 from app.mail.base import MailboxError, ReconnectRequired, Thread
@@ -21,8 +22,9 @@ from app.mail.clean import clean_message
 
 logger = logging.getLogger(__name__)
 
-NEW_BODY_CHARS = 4000
-OLD_BODY_CHARS = 500
+NEW_BODY_CHARS = 3000
+OLD_BODY_CHARS = 400
+THREAD_MAX_MESSAGES = 10
 
 
 class CannotBuild(Exception):
@@ -34,8 +36,24 @@ class FlowConfig:
     llm: ChatModel
     build_model: str
     sync_model: str
-    batch_threads: int = 8
+    batch_threads: int = 6
     inline_max_chars: int = 120_000
+    batch_max_chars: int = 45_000
+    process_concurrency: int = 8
+
+    @classmethod
+    def from_settings(cls, llm: ChatModel) -> "FlowConfig":
+        from app.core.config import settings
+
+        return cls(
+            llm=llm,
+            build_model=settings.BUILD_MODEL,
+            sync_model=settings.SYNC_MODEL,
+            batch_threads=settings.BATCH_THREADS,
+            inline_max_chars=settings.DATA_INLINE_MAX_CHARS,
+            batch_max_chars=settings.BATCH_MAX_CHARS,
+            process_concurrency=settings.PROCESS_CONCURRENCY,
+        )
 
 
 async def _event(ctx: RunContext, phase: str, label: str) -> None:
@@ -60,11 +78,8 @@ async def _thread_ids(ctx: RunContext, query: str, after, limit: int) -> list[st
 
 
 async def collect_threads(ctx: RunContext, queries: list[str], after, limit: int) -> list[Thread]:
-    ids: list[str] = []
-    for q in queries:
-        for tid in await _thread_ids(ctx, q, after, limit):
-            if tid not in ids:
-                ids.append(tid)
+    found = await asyncio.gather(*(_thread_ids(ctx, q, after, limit) for q in queries))
+    ids = list(dict.fromkeys(tid for group in found for tid in group))
 
     async def get(tid: str) -> Thread | None:
         try:
@@ -78,8 +93,30 @@ async def collect_threads(ctx: RunContext, queries: list[str], after, limit: int
     return threads
 
 
-def _batch_input(ctx: RunContext, threads: list[Thread], new_ids: set[str], note: str = "") -> str:
-    block, compacted = prompts.data_block(ctx.state.data, ctx_inline_max(ctx))
+def _thread_block(ctx: RunContext, t: Thread, new_ids: set[str]) -> str:
+    """One <thread> element. Registers its messages as seen (citable) by the agent."""
+    ctx.known_threads.add(t.thread_id)
+    shown = t.messages
+    if len(shown) > THREAD_MAX_MESSAGES:  # very long threads: first + most recent
+        shown = [shown[0], *shown[-(THREAD_MAX_MESSAGES - 1) :]]
+    lines = [f'  <thread id="{t.thread_id}">']
+    for m in shown:
+        ctx.seen_messages[m.message_id] = t.thread_id
+        ctx.message_dates[m.message_id] = m.date
+        is_new = m.message_id in new_ids
+        body = clean_message(m).body[: NEW_BODY_CHARS if is_new else OLD_BODY_CHARS]
+        att = f" attachments: {', '.join(m.attachments)}" if m.attachments else ""
+        lines.append(
+            f'    <message id="{m.message_id}" date="{m.date:%Y-%m-%dT%H:%M:%SZ}" '
+            f'from="{html.escape(m.sender, quote=True)}" new="{str(is_new).lower()}">'
+            f"Subject: {m.subject}\n{body}{att}</message>"
+        )
+    lines.append("  </thread>")
+    return "\n".join(lines)
+
+
+def _batch_input(ctx: RunContext, blocks: list[str], note: str = "") -> str:
+    block, compacted = prompts.data_block(ctx.state.data, ctx.inline_max_chars)
     parts = [f"<guide>\n{ctx.state.guide}\n</guide>"]
     data_note = (
         "\n(The data was compacted to ids + first 4 fields; use read_records for details.)"
@@ -87,30 +124,33 @@ def _batch_input(ctx: RunContext, threads: list[Thread], new_ids: set[str], note
         else ""
     )
     parts.append(f"<data>\n{block}\n</data>{data_note}")
-    lines = ["<threads>"]
-    for t in threads:
-        ctx.known_threads.add(t.thread_id)
-        lines.append(f'  <thread id="{t.thread_id}">')
-        for m in t.messages:
-            ctx.seen_messages[m.message_id] = t.thread_id
-            is_new = m.message_id in new_ids
-            body = clean_message(m).body[: NEW_BODY_CHARS if is_new else OLD_BODY_CHARS]
-            att = f" attachments: {', '.join(m.attachments)}" if m.attachments else ""
-            lines.append(
-                f'    <message id="{m.message_id}" date="{m.date:%Y-%m-%dT%H:%M:%SZ}" '
-                f'from="{html.escape(m.sender, quote=True)}" new="{str(is_new).lower()}">'
-                f"Subject: {m.subject}\n{body}{att}</message>"
-            )
-        lines.append("  </thread>")
-    lines.append("</threads>")
-    parts.append("\n".join(lines))
+    parts.append("<threads>\n" + "\n".join(blocks) + "\n</threads>")
     if note:
         parts.append(note)
     return "\n\n".join(parts)
 
 
-def ctx_inline_max(ctx: RunContext) -> int:
-    return ctx.inline_max_chars
+def _make_batches(
+    ctx: RunContext, cfg: FlowConfig, threads: list[Thread], new_ids: set[str]
+) -> list[tuple[list[Thread], list[str]]]:
+    """Split into batches bounded by thread count and by text size (context safety)."""
+    batches: list[tuple[list[Thread], list[str]]] = []
+    cur_threads: list[Thread] = []
+    cur_blocks: list[str] = []
+    size = 0
+    for t in threads:
+        block = _thread_block(ctx, t, new_ids)
+        if cur_threads and (
+            len(cur_threads) >= max(1, cfg.batch_threads) or size + len(block) > cfg.batch_max_chars
+        ):
+            batches.append((cur_threads, cur_blocks))
+            cur_threads, cur_blocks, size = [], [], 0
+        cur_threads.append(t)
+        cur_blocks.append(block)
+        size += len(block)
+    if cur_threads:
+        batches.append((cur_threads, cur_blocks))
+    return batches
 
 
 async def process_threads(
@@ -121,38 +161,64 @@ async def process_threads(
     *,
     phase_label: str,
     note: str = "",
+    concurrency: int = 1,
 ) -> list[str]:
-    """Run the process-batch phase over `threads` (sorted oldest → newest), sequentially."""
+    """Run the process-batch phase over `threads`, oldest → newest.
+
+    `concurrency=1` (sync): batches run in order, each seeing the data left by the
+    previous one. `concurrency>1` (build backfill): batches run in parallel for speed;
+    stable record ids make saves to the same record merge, and the store's
+    older-fill-only guard keeps "newer messages win" true whatever the finishing order.
+    """
     threads = sorted(threads, key=lambda t: t.messages[-1].date)
-    size = max(1, cfg.batch_threads)
-    batches = [threads[i : i + size] for i in range(0, len(threads), size)]
-    summaries: list[str] = []
-    for i, batch in enumerate(batches, 1):
-        await _event(ctx, "process", f"{phase_label} (batch {i} of {len(batches)})")
-        ok = False
-        for attempt in range(2):
-            ctx.phase = "process"
-            try:
-                result = await run_agent(
-                    llm=cfg.llm,
-                    model=cfg.sync_model,
-                    system=prompts.PROCESS,
-                    user=_batch_input(ctx, batch, new_ids, note),
-                    tools=tools_for("process"),
-                    ctx=ctx,
-                    max_steps=15,
-                )
-                if result.summary and result.summary.strip().lower() != "no changes":
-                    summaries.append(result.summary)
-                ok = True
-                break
-            except PhaseFailed as e:
-                logger.warning("batch %s failed (attempt %s): %s", i, attempt + 1, e)
-        if not ok:
-            await _event(ctx, "process", f"Skipped batch {i} after two failures")
-        pairs = [(m.message_id, t.thread_id) for t in batch for m in t.messages]
-        await ctx.persister.mark_processed(pairs)
-    return summaries
+    batches = _make_batches(ctx, cfg, threads, new_ids)
+    parallel = concurrency > 1 and len(batches) > 1
+    gate = asyncio.Semaphore(max(1, concurrency))
+    done = 0
+
+    async def one(i: int, batch: list[Thread], blocks: list[str]) -> str | None:
+        nonlocal done
+        summary = None
+        async with gate:
+            ok = False
+            for attempt in range(2):
+                child = ctx.child("process", older_fill_only=parallel)
+                try:
+                    result = await run_agent(
+                        llm=cfg.llm,
+                        model=cfg.sync_model,
+                        system=prompts.PROCESS,
+                        user=_batch_input(ctx, blocks, note),
+                        tools=tools_for("process"),
+                        ctx=child,
+                        max_steps=8,
+                    )
+                    if result.summary and result.summary.strip().lower() != "no changes":
+                        summary = result.summary
+                    ok = True
+                    break
+                except PhaseFailed as e:
+                    logger.warning("batch %s failed (attempt %s): %s", i, attempt + 1, e)
+            if not ok:
+                await _event(ctx, "process", f"Skipped batch {i} after two failures")
+            pairs = [(m.message_id, t.thread_id) for t in batch for m in t.messages]
+            await ctx.persister.mark_processed(pairs)
+            done += 1
+            await _event(ctx, "process", f"{phase_label} ({done} of {len(batches)} batches)")
+        return summary
+
+    if not batches:
+        return []
+    await _event(ctx, "process", f"{phase_label} ({len(threads)} threads)")
+    tasks = [asyncio.create_task(one(i, b, blocks)) for i, (b, blocks) in enumerate(batches, 1)]
+    try:
+        results = await asyncio.gather(*tasks)
+    except BaseException:
+        for t in tasks:
+            t.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+        raise
+    return [r for r in results if r]
 
 
 # ------------------------------------------------------------------ build
@@ -161,7 +227,7 @@ async def process_threads(
 async def build(ctx: RunContext, cfg: FlowConfig) -> str:
     await ctx.persister.snapshot()
 
-    # 1. design
+    # 1. design: a few turns, small sample (budgets enforced in the tools)
     ctx.phase = "design"
     await _event(ctx, "design", "Understanding your request")
     system = prompts.DESIGN.replace("{max_threads}", str(ctx.max_build_threads))
@@ -172,7 +238,7 @@ async def build(ctx: RunContext, cfg: FlowConfig) -> str:
         user=prompts.design_input(ctx.state.prompt, ctx.now, ctx.lookback_days),
         tools=tools_for("design"),
         ctx=ctx,
-        max_steps=30,
+        max_steps=8,
     )
     summary = (result.summary or "").strip()
     if summary.upper().startswith("CANNOT_BUILD"):
@@ -182,22 +248,41 @@ async def build(ctx: RunContext, cfg: FlowConfig) -> str:
     if not ctx.state.queries:
         raise PhaseFailed("design ended without searches")
 
-    # 2. backfill
-    await _event(ctx, "process", "Collecting matching emails")
-    threads = await collect_threads(ctx, ctx.state.queries, ctx.window_start, ctx.max_build_threads)
-    threads.sort(key=lambda t: t.messages[-1].date, reverse=True)
-    dropped = max(0, len(threads) - ctx.max_build_threads)
-    threads = threads[: ctx.max_build_threads]
-    if dropped:
-        await _event(
-            ctx, "process", f"Kept the newest {len(threads)} threads, {dropped} older dropped"
+    # 2. the app is written from the guide while the emails are being read
+    app_task = asyncio.create_task(build_app(ctx, cfg))
+    try:
+        await _event(ctx, "process", "Collecting matching emails")
+        threads = await collect_threads(
+            ctx, ctx.state.queries, ctx.window_start, ctx.max_build_threads
         )
-    await _event(ctx, "process", f"Found {len(threads)} matching threads")
-    new_ids = {m.message_id for t in threads for m in t.messages}
-    await process_threads(ctx, cfg, threads, new_ids, phase_label="Reading your emails")
+        threads.sort(key=lambda t: t.messages[-1].date, reverse=True)
+        dropped = max(0, len(threads) - ctx.max_build_threads)
+        threads = threads[: ctx.max_build_threads]
+        if dropped:
+            await _event(
+                ctx, "process", f"Kept the newest {len(threads)} threads, {dropped} older dropped"
+            )
+        new_ids = {m.message_id for t in threads for m in t.messages}
+        await process_threads(
+            ctx,
+            cfg,
+            threads,
+            new_ids,
+            phase_label="Reading your emails",
+            concurrency=cfg.process_concurrency,
+        )
+    except BaseException:
+        app_task.cancel()
+        await asyncio.gather(app_task, return_exceptions=True)
+        raise
+    await app_task
 
-    # 3. app
-    await build_app(ctx, cfg)
+    # 3. the app was checked before the data existed: check it against the real records
+    if ctx.state.data and ctx.state.app_html and ctx.state.app_html != DEFAULT_APP:
+        problems = await check_app(ctx.state.app_html, ctx.state.data)
+        if problems:
+            await _event(ctx, "app", "Adjusting the interface to your data")
+            await build_app(ctx, cfg, problems=problems)
 
     ctx.state.last_synced_at = ctx.now
     await ctx.persister.save_synced(ctx.state)
@@ -205,28 +290,35 @@ async def build(ctx: RunContext, cfg: FlowConfig) -> str:
     return f"{counts} {summary}"[:300]
 
 
-async def build_app(ctx: RunContext, cfg: FlowConfig) -> None:
-    ctx.phase = "app"
-    ctx.app_written = False
+async def build_app(ctx: RunContext, cfg: FlowConfig, problems: list[str] | None = None) -> None:
+    child = ctx.child("app")
     await _event(ctx, "app", "Building the interface")
+    user = prompts.app_input(
+        ctx.state.prompt, ctx.state.guide, ctx.state.data, ctx.inline_max_chars
+    )
+    if problems:
+        user += (
+            "\n\n<current_app>\n" + (ctx.state.app_html or "") + "\n</current_app>\n\n"
+            "The current app fails these checks with the data above. Fix it:\n- "
+            + "\n- ".join(problems)
+        )
     try:
         await run_agent(
             llm=cfg.llm,
             model=cfg.build_model,
             system=prompts.APP,
-            user=prompts.app_input(
-                ctx.state.prompt, ctx.state.guide, ctx.state.data, ctx_inline_max(ctx)
-            ),
+            user=user,
             tools=tools_for("app"),
-            ctx=ctx,
-            max_steps=12,
+            ctx=child,
+            max_steps=6,
         )
-    except PhaseFailed as e:
-        logger.warning("app phase failed: %s", e)
-    if not ctx.app_written:
+    except (PhaseFailed, LLMError) as e:
+        logger.warning("app phase failed: %s", type(e).__name__)
+    if not child.app_written and (problems or not ctx.state.app_html):
         ctx.state.app_html = DEFAULT_APP
         await ctx.persister.save_app(ctx.state)
         await _event(ctx, "app", "Used the default table view (ask in chat to change it)")
+    ctx.app_written = ctx.app_written or child.app_written
 
 
 # ------------------------------------------------------------------ sync
@@ -288,7 +380,7 @@ async def edit(ctx: RunContext, cfg: FlowConfig, message: str, recent: list[str]
                 _with_thread_ids(ctx.state.data),
                 ctx.state.app_html,
                 recent,
-                ctx_inline_max(ctx),
+                ctx.inline_max_chars,
             ),
             tools=tools_for("edit"),
             ctx=ctx,
@@ -298,12 +390,17 @@ async def edit(ctx: RunContext, cfg: FlowConfig, message: str, recent: list[str]
         if ctx.backfill_requested:
             thread_ids = await ctx.persister.processed_thread_ids()
             await _event(ctx, "process", f"Re-reading {len(thread_ids)} threads")
-            threads = []
-            for tid in thread_ids:
+
+            async def get(tid: str) -> Thread | None:
                 try:
-                    threads.append(await ctx.mailbox.get_thread(tid))
+                    return await ctx.mailbox.get_thread(tid)
+                except ReconnectRequired:
+                    raise
                 except MailboxError:
-                    continue
+                    return None
+
+            fetched = await asyncio.gather(*(get(t) for t in thread_ids))
+            threads = [t for t in fetched if t and t.messages]
             # New queries may match threads not processed yet: include them too.
             extra = await collect_threads(
                 ctx, ctx.state.queries, ctx.window_start, ctx.max_build_threads
@@ -312,7 +409,13 @@ async def edit(ctx: RunContext, cfg: FlowConfig, message: str, recent: list[str]
             threads += [t for t in extra if t.thread_id not in known]
             all_ids = {m.message_id for t in threads for m in t.messages}
             await process_threads(
-                ctx, cfg, threads, all_ids, phase_label="Re-reading emails", note=BACKFILL_NOTE
+                ctx,
+                cfg,
+                threads,
+                all_ids,
+                phase_label="Re-reading emails",
+                note=BACKFILL_NOTE,
+                concurrency=cfg.process_concurrency,
             )
         return summary
     except Exception:

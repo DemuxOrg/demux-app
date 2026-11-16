@@ -5,6 +5,7 @@ event label (counts and record type names only, never email content or values).
 `ToolError` is reported to the model as `{"error": ...}` so it can correct itself.
 """
 
+import asyncio
 import json
 import re
 from collections.abc import Awaitable, Callable
@@ -20,6 +21,12 @@ from app.services.store import DataError, apply_delete, apply_save, public_field
 
 MAX_GUIDE_CHARS = 6000
 MAX_BODY_CHARS = 4000
+# Design phase: a sample is enough. Small bodies and a hard cap keep it fast and cheap.
+DESIGN_BODY_CHARS = 1200
+DESIGN_MAX_MESSAGES = 4
+DESIGN_MAX_READS = 10
+DESIGN_MAX_SEARCHES = 8
+EDIT_MAX_MESSAGES = 12
 MAX_SUMMARY_CHARS = 300
 
 
@@ -72,6 +79,11 @@ async def _search_mail(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
     if not query:
         raise ToolError("query is required")
     max_results = max(1, min(int(args.get("max_results", 25) or 25), 50))
+    if ctx.phase == "design":
+        ctx.design_searches += 1
+        if ctx.design_searches > DESIGN_MAX_SEARCHES:
+            raise ToolError("search budget used up: now call write_guide, set_queries and finish")
+        max_results = min(max_results, 15)
     try:
         hits = await ctx.mailbox.search(
             query, max_results=max_results, after=ctx.window_start, before=None
@@ -111,10 +123,24 @@ async def _read_thread(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
         raise
     except MailboxError as e:
         raise ToolError(f"could not read thread: {e}") from e
+    design = ctx.phase == "design"
+    if design:
+        ctx.design_reads += 1
+        if ctx.design_reads > DESIGN_MAX_READS:
+            raise ToolError(
+                "read budget used up: you have a sample; now call write_guide, set_queries "
+                "and finish"
+            )
+    body_cap = DESIGN_BODY_CHARS if design else MAX_BODY_CHARS
+    shown = thread.messages
+    limit = DESIGN_MAX_MESSAGES if design else EDIT_MAX_MESSAGES
+    if len(shown) > limit:  # first message + the most recent ones
+        shown = [shown[0], *shown[-(limit - 1) :]]
     messages = []
-    for m in thread.messages:
+    for m in shown:
         c = clean_message(m)
         ctx.seen_messages[m.message_id] = thread_id
+        ctx.message_dates[m.message_id] = m.date
         messages.append(
             {
                 "message_id": m.message_id,
@@ -122,11 +148,14 @@ async def _read_thread(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
                 "from": m.sender,
                 "to": m.to[:5],
                 "subject": m.subject,
-                "body": c.body[:MAX_BODY_CHARS],
+                "body": c.body[:body_cap],
                 "attachments": m.attachments,
             }
         )
-    return ToolOutput({"thread_id": thread_id, "messages": messages}, "Reading a thread")
+    result: dict[str, Any] = {"thread_id": thread_id, "messages": messages}
+    if len(shown) < len(thread.messages):
+        result["omitted_messages"] = len(thread.messages) - len(shown)
+    return ToolOutput(result, "Reading a thread")
 
 
 # ------------------------------------------------------------------ data
@@ -164,6 +193,8 @@ async def _save_records(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
             records,
             seen_messages=ctx.seen_messages,
             now=ctx.now,  # type: ignore[arg-type]
+            message_dates=ctx.message_dates,
+            older_fill_only=ctx.older_fill_only,
         )
     except DataError as e:
         raise ToolError(str(e)) from e
@@ -240,15 +271,16 @@ async def _set_queries(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
     if not queries:
         raise ToolError("queries must not be empty")
     limit = ctx.max_build_threads + 1
-    counts = []
-    for q in queries:
-        try:
-            n = await _count(ctx, q, limit)
-        except ReconnectRequired:
-            raise
-        except MailboxError as e:
-            raise ToolError(f"query '{q}' failed: {e}") from e
-        counts.append({"query": q, "threads": n if n < limit else f">{limit - 1}"})
+    try:
+        numbers = await asyncio.gather(*(_count(ctx, q, limit) for q in queries))
+    except ReconnectRequired:
+        raise
+    except MailboxError as e:
+        raise ToolError(f"a query failed: {e}") from e
+    counts = [
+        {"query": q, "threads": n if n < limit else f">{limit - 1}"}
+        for q, n in zip(queries, numbers, strict=True)
+    ]
     ctx.state.config = {**ctx.state.config, "queries": queries}
     await ctx.persister.save_config(ctx.state)
     total = sum(c["threads"] if isinstance(c["threads"], int) else limit for c in counts)
@@ -302,6 +334,8 @@ async def _finish(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
                 f"not done yet: call {' and '.join(missing)} before finish "
                 "(or finish with 'CANNOT_BUILD: <reason>' if the request cannot be served)"
             )
+    if ctx.phase == "app" and not ctx.app_written:
+        raise ToolError("the app is not saved yet: call write_app until it returns ok")
     ctx.finish_summary = summary[:MAX_SUMMARY_CHARS]
     return ToolOutput({"ok": True}, None)
 
