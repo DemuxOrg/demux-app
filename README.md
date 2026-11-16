@@ -111,6 +111,7 @@ Reports with email-derived values are git-ignored. To score a real-world trial, 
 | `make gen-api` | regenerate frontend API types (backend must be running) |
 
 ## Learn the repo
+- [`docs/report/Demux_Simple_Agent_Report.pdf`](docs/report/Demux_Simple_Agent_Report.pdf): how this version works (architecture, sequence diagrams, tools), what it costs and how fast it builds. Sources and the benchmark behind it are in `docs/report/` and `backend/eval/agent/bench/`.
 - [`docs/REPO_GUIDE.md`](docs/REPO_GUIDE.md): Phase 0 tour.
 - [`docs/project_instructions/Demux_Simple_Agent_MVP_Build_Spec.md`](docs/project_instructions/Demux_Simple_Agent_MVP_Build_Spec.md): this build.
 - [`CLAUDE.md`](CLAUDE.md): conventions.
