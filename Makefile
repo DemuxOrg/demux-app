@@ -30,6 +30,9 @@ frontend:  ## web app on :3000
 gen-api:  ## regenerate frontend API types (backend must be running)
 	cd frontend && pnpm gen:api
 
+eval-agent:  ## run the agent eval scenarios (costs money): make eval-agent ARGS="--scenario 01"
+	cd backend && uv run python -m eval.agent $(ARGS)
+
 lint:
 	cd backend && uv run ruff check . && uv run ruff format --check .
 	cd frontend && pnpm lint && pnpm exec tsc --noEmit

@@ -38,7 +38,16 @@ _STATIC_RULES: list[tuple[re.Pattern[str], str]] = [
         "navigation (location) is forbidden",
     ),
     (re.compile(r"(?<![\w.$])location\s*(\.|=|\[)"), "navigation (location) is forbidden"),
-    (re.compile(r"(?<![\w.$])(top|parent)\s*\."), "access to parent/top is forbidden"),
+    # `window.parent`/`self.top`, or bare `parent.`/`top.` reaching for a window member.
+    # A plain local variable named `top` (`top.appendChild(...)`) is fine.
+    (
+        re.compile(
+            r"\b(window|self|globalThis)\s*\.\s*(top|parent)\b"
+            r"|(?<![\w.$])(top|parent)\s*\.\s*"
+            r"(postMessage|document|window|frames|opener|parent|top|eval|open)\b"
+        ),
+        "access to the parent page (window.parent / window.top) is forbidden",
+    ),
     (re.compile(r"<\s*form\b", re.I), "<form> is forbidden (use buttons and JS handlers)"),
     (re.compile(r"<\s*iframe\b", re.I), "<iframe> is forbidden"),
     (re.compile(r"\bimport\s*\("), "dynamic import() is forbidden"),
@@ -59,7 +68,7 @@ def static_problems(html: str) -> list[str]:
     problems: list[str] = []
     if len(html) > MAX_APP_CHARS:
         problems.append(f"app is {len(html)} chars; the limit is {MAX_APP_CHARS}")
-    if not re.search(r"function\s+render\s*\(", html):
+    if not re.search(r"function\s+render\s*\(|\b(window|globalThis|self)\s*\.\s*render\s*=", html):
         problems.append("the app must define a global `function render(data)`")
     for m in _HTTP.finditer(html):
         if not m.group(0).startswith(_ALLOWED_URLS):

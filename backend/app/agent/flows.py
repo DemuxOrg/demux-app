@@ -192,6 +192,7 @@ async def process_threads(
                         tools=tools_for("process"),
                         ctx=child,
                         max_steps=8,
+                        text_ends_after=1,
                     )
                     if result.summary and result.summary.strip().lower() != "no changes":
                         summary = result.summary
@@ -238,7 +239,8 @@ async def build(ctx: RunContext, cfg: FlowConfig) -> str:
         user=prompts.design_input(ctx.state.prompt, ctx.now, ctx.lookback_days),
         tools=tools_for("design"),
         ctx=ctx,
-        max_steps=8,
+        max_steps=14,
+        done_when=lambda c: bool(c.state.guide.strip() and c.state.queries),
     )
     summary = (result.summary or "").strip()
     if summary.upper().startswith("CANNOT_BUILD"):
@@ -311,6 +313,7 @@ async def build_app(ctx: RunContext, cfg: FlowConfig, problems: list[str] | None
             tools=tools_for("app"),
             ctx=child,
             max_steps=6,
+            done_when=lambda c: c.app_written,
         )
     except (PhaseFailed, LLMError) as e:
         logger.warning("app phase failed: %s", type(e).__name__)

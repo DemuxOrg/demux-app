@@ -47,12 +47,12 @@ class Settings(BaseSettings):
     LLM_API_KEY: str = ""  # falls back to HF_TOKEN when empty
     HF_TOKEN: str = ""
     # Defaults favour speed: a build should take about a minute.
-    BUILD_MODEL: str = "openai/gpt-oss-120b:cerebras"
-    SYNC_MODEL: str = "openai/gpt-oss-120b:cerebras"
-    LLM_FALLBACK_MODEL: str = "openai/gpt-oss-120b:groq"  # used when the main one keeps failing
-    LLM_REASONING_EFFORT: str = "low"  # "", low, medium, high (dropped if a model rejects it)
+    BUILD_MODEL: str = "Qwen/Qwen3.8-27B:nebius"
+    SYNC_MODEL: str = "Qwen/Qwen3.8-27B:nebius"
+    LLM_FALLBACK_MODEL: str = "Qwen/Qwen3.8-27B:nscale"  # used when the main one keeps failing
+    LLM_REASONING_EFFORT: str = "none"  # "", none, low, medium, high (dropped if rejected)
     LLM_CALL_TIMEOUT_S: float = 60
-    LLM_MAX_TOKENS: int = 16000
+    LLM_MAX_TOKENS: int = 8000
     LLM_TEMPERATURE: float = 0.2
     MAX_USD_PER_RUN: float = 3.0
     MAX_USD_PER_DAY: float = 15.0

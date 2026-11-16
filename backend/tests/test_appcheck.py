@@ -30,6 +30,7 @@ DATA = {
         ("location.href='x'", "location"),
         ("window.location='x'", "location"),
         ("parent.document", "parent"),
+        ("window.top.postMessage(1,'*')", "parent"),
         ("<form></form>", "<form>"),
         ("<iframe></iframe>", "<iframe>"),
         ("import('x')", "import"),
@@ -47,13 +48,16 @@ def test_static_rules(snippet, problem):
 def test_static_allows_svg_namespace_and_field_names():
     html = (
         GOOD_APP
-        + "<script>document.createElementNS('http://www.w3.org/2000/svg','svg'); var x = rec.location.trim(); r.parent;</script>"
+        + "<script>document.createElementNS('http://www.w3.org/2000/svg','svg'); var x = rec.location.trim(); r.parent;"
+        + "const top = document.createElement('div'); top.appendChild(x);</script>"
     )
     assert static_problems(html) == []
 
 
 def test_render_required():
     assert any("function render" in p for p in static_problems("<p>hi</p>"))
+    assigned = GOOD_APP.replace("function render(", "window.render = function (")
+    assert assigned != GOOD_APP and static_problems(assigned) == []
 
 
 async def test_good_app_and_default_app_pass():

@@ -10,6 +10,7 @@ after every call (the persister enforces budgets). One event per tool call.
 import json
 import logging
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -47,6 +48,19 @@ def _trim_threads(messages: list[dict[str, Any]], thread_msg_idx: list[int]) -> 
             msg["_trimmed"] = True
 
 
+def _text_summary(content: str | None) -> str | None:
+    """A text-only final answer; some models write the finish arguments as JSON text."""
+    text = (content or "").strip()
+    if text.startswith("{"):
+        try:
+            value = json.loads(text).get("summary")
+            if isinstance(value, str):
+                return value
+        except (ValueError, AttributeError):
+            pass
+    return text or None
+
+
 def _wire(messages: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return [{k: v for k, v in m.items() if not k.startswith("_")} for m in messages]
 
@@ -68,7 +82,16 @@ async def run_agent(
     tools: list[Tool],
     ctx: RunContext,
     max_steps: int,
+    done_when: Callable[[RunContext], bool] | None = None,
+    text_ends_after: int | None = None,
 ) -> AgentResult:
+    """Some models answer in plain text instead of calling `finish`.
+
+    `done_when`: the phase's real goal. If it holds when the model stops calling tools
+    or runs out of steps, the phase counts as finished.
+    `text_ends_after`: after this many "call tools" reminders, another text-only reply
+    ends the phase (for phases where doing nothing is a valid outcome).
+    """
     by_name = {t.name: t for t in tools}
     schemas = [t.schema() for t in tools]
     messages: list[dict[str, Any]] = [
@@ -81,10 +104,13 @@ async def run_agent(
     error_streak = 0
     ctx.finish_summary = None
     out_of_steps_sent = False
+    reminders = 0
     step = 0
 
     while True:
         if step >= max_steps:
+            if done_when is not None and done_when(ctx):
+                return AgentResult(finished=True, summary=ctx.finish_summary, steps=step)
             if out_of_steps_sent:
                 raise PhaseFailed(f"{ctx.phase}: ran out of steps without calling finish")
             out_of_steps_sent = True
@@ -107,6 +133,11 @@ async def run_agent(
         _transcript(ctx, {"step": step, "assistant": reply.raw_message})
 
         if not reply.tool_calls:
+            if done_when is not None and done_when(ctx):
+                return AgentResult(finished=True, summary=_text_summary(reply.content), steps=step)
+            if text_ends_after is not None and reminders >= text_ends_after:
+                return AgentResult(finished=True, summary=ctx.finish_summary, steps=step)
+            reminders += 1
             messages.append(
                 {
                     "role": "user",

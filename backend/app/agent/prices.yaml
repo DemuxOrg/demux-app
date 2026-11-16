@@ -1,5 +1,5 @@
 # USD per million tokens (input, output). Source: Hugging Face router model listing
-# (https://router.huggingface.co/v1/models, provider pricing), read 2026-11-13.
+# (https://router.huggingface.co/v1/models, provider pricing), read 2026-11-16.
 # Key = model string as sent to the router ("<repo>:<provider>"). Unknown models are
 # costed at `default` so budgets still apply.
 default: {input: 3.0, output: 15.0}
@@ -13,7 +13,9 @@ models:
   "deepseek-ai/DeepSeek-V4.1-Flash:deepinfra": {input: 0.2, output: 0.6}
   "moonshotai/Kimi-K3.1-Pro:deepinfra": {input: 2.0, output: 10.0}
   "moonshotai/Kimi-K2.6:deepinfra": {input: 0.75, output: 3.5}
-  "Qwen/Qwen3.8-27B:deepinfra": {input: 0.2, output: 2.5}
+  "Qwen/Qwen3.8-27B:deepinfra": {input: 0.15, output: 1.875}
+  "Qwen/Qwen3.8-27B:nebius": {input: 0.45, output: 3.0}
+  "Qwen/Qwen3.8-27B:nscale": {input: 0.2, output: 2.5}
   "Qwen/Qwen3.6-35B-A3B:deepinfra": {input: 0.1, output: 0.95}
   "Qwen/Qwen3.5-397B-A17B:deepinfra": {input: 0.45, output: 3.0}
   "MiniMaxAI/MiniMax-M3:deepinfra": {input: 0.28, output: 1.1}

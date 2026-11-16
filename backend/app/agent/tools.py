@@ -281,15 +281,27 @@ async def _set_queries(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
         {"query": q, "threads": n if n < limit else f">{limit - 1}"}
         for q, n in zip(queries, numbers, strict=True)
     ]
+    total = sum(c["threads"] if isinstance(c["threads"], int) else limit for c in counts)
+    if total == 0 and ctx.phase == "design":
+        raise ToolError(
+            "these queries match no email, so nothing was saved. Reuse the terms of a "
+            "search_mail query that returned threads; keep each query simple "
+            "(a few words joined with OR, or from:<sender domain>)."
+        )
     ctx.state.config = {**ctx.state.config, "queries": queries}
     await ctx.persister.save_config(ctx.state)
-    total = sum(c["threads"] if isinstance(c["threads"], int) else limit for c in counts)
     return ToolOutput(
         {
             "saved": True,
             "counts": counts,
             "note": f"threads per query in the last {ctx.lookback_days} days "
-            f"(overlaps not removed); target ≤ {ctx.max_build_threads} in total",
+            f"(overlaps not removed); target ≤ {ctx.max_build_threads} in total"
+            + (
+                ". Very few threads match: if the user probably has more relevant mail, "
+                "call set_queries again with broader queries (plain words joined with OR)."
+                if total < 5 and ctx.phase == "design"
+                else ""
+            ),
         },
         f"Watching {_plural(len(queries), 'search')} ({total} threads)",
     )

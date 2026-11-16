@@ -24,13 +24,13 @@ While the app is in *Testing*, Google expires the Gmail grant after about 7 days
 Set `LLM_BASE_URL` and `LLM_API_KEY` in `.env`. The default is the Hugging Face router, and `LLM_API_KEY` falls back to `HF_TOKEN`. Pick the models with `BUILD_MODEL` and `SYNC_MODEL`. Check that a model can drive the agent with:
 
 ```bash
-cd backend && PYTHONPATH=. uv run python scripts/probe_agent_model.py "openai/gpt-oss-120b:cerebras" "openai/gpt-oss-120b:groq"
+cd backend && PYTHONPATH=. uv run python scripts/probe_agent_model.py "Qwen/Qwen3.8-27B:nebius" "Qwen/Qwen3.8-27B:nscale"
 ```
 
 Prices for cost tracking and budgets live in `backend/app/agent/prices.yaml`.
 
 **Speed.** The defaults aim for a build in about a minute:
-- a fast model (`openai/gpt-oss-120b` on Cerebras, with Groq as `LLM_FALLBACK_MODEL` when the main one keeps failing) and `LLM_REASONING_EFFORT=low`;
+- a fast model (`Qwen/Qwen3.8-27B` on Nebius, with nScale as `LLM_FALLBACK_MODEL` when the main one keeps failing) and `LLM_REASONING_EFFORT=none` (the model answers without a thinking pass; `low` is better but several times slower);
 - a design phase limited to 8 searches and 10 sampled threads;
 - email batches read in parallel (`PROCESS_CONCURRENCY`), with the app written at the same time;
 - the newest `BUILD_MAX_THREADS=80` matching threads.

@@ -73,12 +73,13 @@ you write now. Your job in this phase: understand the request, explore the mailb
 write the guide and choose the Gmail searches.
 
 {SHARED_RULES}
-How to work. Be fast: the user is waiting. Finish in 3 turns, calling several tools \
-in parallel in each turn:
-- Turn 1: 3-5 search_mail calls at once (different wordings, senders, subjects).
-- Turn 2: read_thread on 5-8 varied threads at once, both obvious and borderline ones. \
+How to work. Be fast: the user is waiting. Aim for about 8 tool calls in total:
+- First make 3-4 search_mail calls with different simple wordings (plain words joined \
+with OR). Note which ones return relevant threads.
+- Then read_thread on 3-5 varied threads, both obvious and borderline ones. \
 You have a budget of 8 searches and 10 thread reads; a sample is enough.
-- Turn 3: write_guide, set_queries and finish, all in the same turn.
+- Then write_guide, then set_queries, then finish. Always use the tools: never put the \
+guide or the summary in a plain text answer.
 - Decide the record types the request needs and no more. A thing gets its own record \
 type only if emails state facts about it directly and the user asked to see it; \
 otherwise it is a field. Things the user wants grouped, counted or totalled are computed \
@@ -93,11 +94,15 @@ same thing always produce the same id. Prefer identifiers that appear in the ema
 (reference numbers, order numbers) and fall back to names + dates.
 - Fields the request asks for are always listed, even if your sample did not show them. \
 For a field with a closed set of values, list the allowed values.
-- Choose 1-8 searches with set_queries that find all relevant mail with as little \
-noise as possible (precise terms, sender or subject filters; avoid single generic \
-words). Target at most \
-{{max_threads}} threads in total. Do not add date operators: the lookback window is \
-applied automatically.
+- Choose 1-8 searches with set_queries. They must be BROAD: missing relevant mail is \
+the worst outcome, and the reading step discards mail that does not belong. Start from \
+the search_mail queries that returned relevant threads. Prefer plain words joined with \
+OR (for example: quote OR proposal OR invoice) or from:<sender domain>. Do not combine \
+from:/to:/subject: with other terms, do not use from:me or to:me, and do not use exact \
+phrases unless a single word would match half the mailbox. Target at most \
+{{max_threads}} threads in total; set_queries tells you how many each query matches, \
+so call it again with broader queries if they match fewer threads than your searches \
+found. Do not add date operators: the lookback window is applied automatically.
 - If the request cannot be served from email at all, or is too vague to name any record \
 type, do not write a guide: call finish with one sentence starting with "CANNOT_BUILD:" \
 explaining why, in plain language for the user.
