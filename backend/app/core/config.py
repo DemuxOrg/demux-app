@@ -34,5 +34,49 @@ class Settings(BaseSettings):
     # Used by the test suite only (see tests/conftest.py).
     TEST_DATABASE_URL: str = "postgresql+asyncpg://demux:demux@localhost:5432/demux_test"
 
+    # --- Auth (backend owns Google OAuth) ---
+    BACKEND_URL: str = "http://localhost:8000"
+    GOOGLE_CLIENT_ID: str = ""
+    GOOGLE_CLIENT_SECRET: str = ""
+    SECRET_KEY: str = ""  # signs the session cookie and OAuth state
+    TOKEN_ENCRYPTION_KEY: str = ""  # Fernet key for Google tokens at rest
+    SESSION_MAX_AGE_DAYS: int = 30
+
+    # --- LLM (any OpenAI-compatible endpoint with tool calling) ---
+    LLM_BASE_URL: str = "https://router.huggingface.co/v1"
+    LLM_API_KEY: str = ""  # falls back to HF_TOKEN when empty
+    HF_TOKEN: str = ""
+    # Defaults favour speed: a build should take about a minute.
+    BUILD_MODEL: str = "Qwen/Qwen3.8-27B:nebius"
+    SYNC_MODEL: str = "Qwen/Qwen3.8-27B:nebius"
+    LLM_FALLBACK_MODEL: str = "Qwen/Qwen3.8-27B:nscale"  # used when the main one keeps failing
+    LLM_REASONING_EFFORT: str = "none"  # "", none, low, medium, high (dropped if rejected)
+    LLM_CALL_TIMEOUT_S: float = 60
+    LLM_MAX_TOKENS: int = 8000
+    LLM_TEMPERATURE: float = 0.2
+    MAX_USD_PER_RUN: float = 3.0
+    MAX_USD_PER_DAY: float = 15.0
+
+    # --- Agent / flows ---
+    SYNC_INTERVAL_MIN: int = 10
+    LOOKBACK_DAYS: int = 90
+    BUILD_MAX_THREADS: int = 80
+    BATCH_THREADS: int = 6
+    BATCH_MAX_CHARS: int = 45_000  # a batch is also cut when its email text gets this big
+    PROCESS_CONCURRENCY: int = 8  # build backfill batches run in parallel
+    DATA_INLINE_MAX_CHARS: int = 120_000
+    AGENT_DEBUG_TRANSCRIPTS: bool = False
+    WORKER_CONCURRENCY: int = 3
+    # Dev only (ENV=dev): the worker reads this fake mailbox JSON instead of Gmail.
+    DEV_FAKE_MAILBOX: str = ""
+
+    @property
+    def llm_api_key(self) -> str:
+        return self.LLM_API_KEY or self.HF_TOKEN
+
+    @property
+    def google_redirect_uri(self) -> str:
+        return f"{self.BACKEND_URL}/api/v1/auth/google/callback"
+
 
 settings = Settings()  # type: ignore[call-arg]

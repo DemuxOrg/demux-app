@@ -1,0 +1,32 @@
+id: 01-supplier-bills-paid-later
+prompt: "Keep track of the bills my suppliers send me - who it's from, how much, when it's due and whether I've paid it yet."
+steps:
+- name: build
+  now: 2026-10-20T09:00:00Z
+  expect:
+    - {kind: exists, all_of: ["ACME", "1042"]}
+    - {kind: unique, all_of: ["1042"]}
+    - {kind: value, find: ["1042"], any_of: ["unpaid", "due", "open", "outstanding", "pending", "not paid"]}
+    - {kind: unique, all_of: ["GP-2291"]}
+    - {kind: value, find: ["KES-0817"], any_of: ["overdue", "unpaid", "outstanding", "open", "late", "not paid"]}
+    - {kind: value, find: ["HBI-76902"], any_of: ["paid", "settled"]}
+    - {kind: value, find: ["AD-3241"], any_of: ["paid", "settled"]}
+    - {kind: absent, any_of: ["Weekly digest", "Roast Magazine", "Guji"]}
+    - {kind: count, min: 11, max: 21}
+    - {kind: app_shows, any_of: ["ACME"]}
+- name: sync-1
+  now: 2026-10-22T09:00:00Z
+  expect:
+    - {kind: unique, all_of: ["1042"]}
+    - {kind: value, find: ["1042"], any_of: ["paid", "settled"]}
+    - {kind: unchanged_except, find: [["1042"]]}
+    - {kind: absent, any_of: ["Weekly digest", "Managed databases"]}
+    - {kind: count, min: 11, max: 21}
+- name: edit-1
+  message: "Also show the payment method"
+  expect:
+    - {kind: app_ok}
+    - {kind: app_shows, any_of: ["payment method", "method", "paid by", "paid with"]}
+    - {kind: value, find: ["1042"], any_of: ["visa", "card", "4417"]}
+    - {kind: value, find: ["5583"], any_of: ["direct debit", "debit"]}
+    - {kind: unique, all_of: ["1042"]}

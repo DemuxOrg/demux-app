@@ -61,6 +61,9 @@ def setup_logging(env: Env, level: str) -> None:
     root = logging.getLogger()
     root.handlers = [handler]
     root.setLevel(level.upper())
+    # httpx logs full URLs, and Gmail search URLs contain the query: keep them quiet.
+    for noisy in ("httpx", "httpx2", "httpcore", "openai"):
+        logging.getLogger(noisy).setLevel(logging.WARNING)
 
 
 class RequestIdMiddleware(BaseHTTPMiddleware):

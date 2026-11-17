@@ -1,0 +1,39 @@
+id: 05-rentals-properties-and-repairs
+prompt: "I manage a few rental flats. Show each property and the repair requests for it, with who reported it and whether it's been fixed yet."
+steps:
+- name: build
+  now: 2026-10-12T09:00:00Z
+  expect:
+    - {kind: exists, all_of: ["Larch"]}
+    - {kind: exists, all_of: ["Quayside"]}
+    - {kind: exists, all_of: ["Beacon"]}
+    - {kind: exists, all_of: ["Orchard"]}
+    - {kind: unique, all_of: ["dishwasher"]}
+    - {kind: unique, all_of: ["damp"]}
+    - {kind: unique, all_of: ["extractor"]}
+    - {kind: unique, all_of: ["fence"]}
+    - {kind: value, find: ["boiler"], any_of: ["fixed", "resolved", "done", "complete", "closed", "repaired", "sorted"]}
+    - {kind: value, find: ["fence"], any_of: ["fixed", "resolved", "done", "complete", "closed", "repaired", "sorted"]}
+    - {kind: value, find: ["dishwasher"], any_of: ["open", "reported", "pending", "scheduled", "booked", "in progress", "awaiting", "new", "outstanding", "to do", "todo", "approved"]}
+    - {kind: value, find: ["dishwasher"], any_of: ["Novak", "Peter"]}
+    - {kind: value, find: ["damp"], any_of: ["open", "reported", "pending", "scheduled", "booked", "in progress", "awaiting", "new", "outstanding", "to do", "todo", "approved"]}
+    - {kind: absent, any_of: ["Landlord Today", "LP-55210", "TrueBuild", "PropertyPulse", "15% off"]}
+    - {kind: count, min: 11, max: 16}
+    - {kind: app_shows, any_of: ["Orchard"]}
+- name: sync-1
+  now: 2026-10-16T09:00:00Z
+  expect:
+    - {kind: unique, all_of: ["window"]}
+    - {kind: value, find: ["window"], any_of: ["Novak", "Peter", "Orchard"]}
+    - {kind: value, find: ["window"], any_of: ["open", "reported", "pending", "scheduled", "booked", "in progress", "awaiting", "new", "outstanding", "to do", "todo", "approved"]}
+    - {kind: unique, all_of: ["dishwasher"]}
+    - {kind: unchanged_except, find: [["window"], ["Orchard"]]}
+    - {kind: count, min: 12, max: 17}
+    - {kind: app_shows, any_of: ["window", "Window"]}
+- name: sync-2
+  now: 2026-10-22T09:00:00Z
+  expect:
+    - {kind: unique, all_of: ["damp"]}
+    - {kind: value, find: ["damp"], any_of: ["fixed", "resolved", "done", "complete", "closed", "repaired", "sorted"]}
+    - {kind: unchanged_except, find: [["damp"], ["Beacon"]]}
+    - {kind: count, min: 12, max: 17}

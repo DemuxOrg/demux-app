@@ -9,3 +9,8 @@ node_modules/
 .next/
 *.tsbuildinfo
 next-env.d.ts
+
+# agent dev transcripts, CLI output, eval runs (contain email-derived content)
+backend/.runs/
+backend/eval/agent/runs/
+backend/eval/planner/

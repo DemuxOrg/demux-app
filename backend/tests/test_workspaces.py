@@ -1,22 +1,28 @@
-"""Tests for the workspaces API: CRUD, the 2-workspace limit, and user isolation."""
+"""Workspaces API: CRUD, the 2-workspace limit, active-run 409, undo, and user isolation."""
+
+from app.models import Run, RunStatus, Snapshot, Workspace
 
 URL = "/api/v1/workspaces"
-BODY = {"name": "Invoices", "prompt": "Track invoices from my email"}
+BODY = {"prompt": "Track invoices from my email"}
 
 
-async def test_create_list_get_delete(client):
+async def test_create_list_get_rename_delete(client):
     created = await client.post(URL, json=BODY)
     assert created.status_code == 201
     workspace = created.json()
-    assert workspace["name"] == "Invoices"
-    assert workspace["status"] == "draft"
+    assert workspace["name"] == BODY["prompt"][:60]
+    assert workspace["status"] == "building"
 
     listed = await client.get(URL)
     assert [w["id"] for w in listed.json()] == [workspace["id"]]
 
-    fetched = await client.get(f"{URL}/{workspace['id']}")
-    assert fetched.status_code == 200
-    assert fetched.json()["prompt"] == BODY["prompt"]
+    fetched = (await client.get(f"{URL}/{workspace['id']}")).json()
+    assert fetched["prompt"] == BODY["prompt"]
+    assert fetched["active_run"]["kind"] == "build"
+    assert fetched["active_run"]["status"] == "queued"
+
+    renamed = await client.patch(f"{URL}/{workspace['id']}", json={"name": "Bills"})
+    assert renamed.json()["name"] == "Bills"
 
     deleted = await client.delete(f"{URL}/{workspace['id']}")
     assert deleted.status_code == 204
@@ -32,16 +38,47 @@ async def test_workspace_limit_returns_409(client):
     assert "limit" in third.json()["error"]["message"].lower()
 
 
-async def test_user_cannot_read_other_users_workspace(client, other_client):
-    created = await client.post(URL, json=BODY)
-    workspace_id = created.json()["id"]
+async def test_message_409_while_run_active_and_sync_is_noop(client):
+    ws = (await client.post(URL, json=BODY)).json()
+    resp = await client.post(f"{URL}/{ws['id']}/messages", json={"text": "make it blue"})
+    assert resp.status_code == 409
+    first = await client.post(f"{URL}/{ws['id']}/sync")
+    runs = (await client.get(f"{URL}/{ws['id']}/runs")).json()
+    assert first.status_code == 202 and len(runs) == 1  # the queued build, no new sync
 
-    assert (await other_client.get(f"{URL}/{workspace_id}")).status_code == 404
-    assert (await other_client.delete(f"{URL}/{workspace_id}")).status_code == 404
+
+async def test_undo_restores_snapshot(client, session):
+    ws = (await client.post(URL, json=BODY)).json()
+    w = await session.get(Workspace, ws["id"])
+    await session.execute(Run.__table__.update().values(status=RunStatus.DONE.value))
+    session.add(Snapshot(workspace_id=w.id, data={"a": {"x": {"v": 1}}}, guide="g", config={}))
+    w.data = {"a": {"x": {"v": 2}}}
+    await session.flush()
+    resp = await client.post(f"{URL}/{ws['id']}/undo")
+    assert resp.status_code == 200
+    assert resp.json()["data"] == {"a": {"x": {"v": 1}}}
+    assert (await client.post(f"{URL}/{ws['id']}/undo")).status_code == 409
+
+
+async def test_user_isolation_everywhere(client, other_client):
+    ws_id = (await client.post(URL, json=BODY)).json()["id"]
+    for path in ["", "/app", "/data", "/runs", "/changes", "/guide"]:
+        assert (await other_client.get(f"{URL}/{ws_id}{path}")).status_code == 404, path
+    for path in ["/sync", "/undo", "/rebuild"]:
+        assert (await other_client.post(f"{URL}/{ws_id}{path}")).status_code == 404, path
+    msg = await other_client.post(f"{URL}/{ws_id}/messages", json={"text": "x"})
+    assert msg.status_code == 404
+    assert (await other_client.patch(f"{URL}/{ws_id}", json={"name": "x"})).status_code == 404
+    assert (await other_client.delete(f"{URL}/{ws_id}")).status_code == 404
     assert (await other_client.get(URL)).json() == []
 
 
 async def test_validation_error_uses_error_format(client):
-    response = await client.post(URL, json={"name": ""})
+    response = await client.post(URL, json={"prompt": ""})
     assert response.status_code == 422
     assert response.json()["error"]["code"] == "validation_error"
+
+
+async def test_app_shell_has_csp(client):
+    head = (await client.get("/api/v1/app-shell")).json()["head"]
+    assert "Content-Security-Policy" in head and "default-src 'none'" in head

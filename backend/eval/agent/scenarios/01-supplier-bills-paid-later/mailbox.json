@@ -1,0 +1,638 @@
+[
+  {
+    "thread_id": "81161aeb89e7990b",
+    "messages": [
+      {
+        "message_id": "f3ad8228d9b85590",
+        "sender": "Greenleaf Packaging Accounts <accounts@greenleaf-packaging.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-08-01T09:15:00Z",
+        "subject": "Invoice GP-2187 - Northside Roasters",
+        "body": "Dear Tom,\n\nPlease find attached invoice GP-2187 for your July order.\n\n2,000 x kraft coffee bags 250g with degassing valve\nTotal: EUR 980.00 (incl. VAT)\nPayment terms: 30 days, due 31 August 2026\nBank: IBAN DE00 1234 5678 9012 3456 78, reference GP-2187\n\nKind regards,\nGreenleaf Packaging Accounts",
+        "attachments": [
+          "GP-2187.pdf"
+        ]
+      },
+      {
+        "message_id": "a0cfd8dcfe6d2229",
+        "sender": "Tom Becker <tom@northsideroasters.example>",
+        "to": [
+          "ines@greenleaf-packaging.example"
+        ],
+        "date": "2026-08-28T16:05:00Z",
+        "subject": "Re: Invoice GP-2187 - Northside Roasters",
+        "body": "Hi Ines,\n\nPaid GP-2187 today by bank transfer, reference GP-2187. Should land in a day or two.\n\nCheers,\nTom\n-- \nTom Becker\nNorthside Roasters | 12 Canal Street",
+        "attachments": []
+      },
+      {
+        "message_id": "1c82d2cab792329b",
+        "sender": "Ines Moreau <ines@greenleaf-packaging.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-08-29T08:47:00Z",
+        "subject": "Re: Invoice GP-2187 - Northside Roasters",
+        "body": "Hi Tom,\n\nReceived this morning, thank you!\n\nInes",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "593b47ad2b90e7c0",
+    "messages": [
+      {
+        "message_id": "a85f384e2cfc8b95",
+        "sender": "Harbor Bean Importers <invoices@harborbean.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-08-13T13:00:00Z",
+        "subject": "Invoice HBI-76902",
+        "body": "Hello Tom,\n\nInvoice HBI-76902 for your green coffee order is attached.\n\n15 x 60kg bags Brazil Cerrado natural, lot BR-2611\nTotal due: EUR 4,115.00\nDue date: 12 September 2026\n\nHarbor Bean Importers - Accounts",
+        "attachments": [
+          "HBI-76902.pdf"
+        ]
+      }
+    ]
+  },
+  {
+    "thread_id": "0e246fc8cb57fe53",
+    "messages": [
+      {
+        "message_id": "6e34697ce867813b",
+        "sender": "Roast Magazine <newsletter@roastmag.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-08-20T07:00:00Z",
+        "subject": "Roast Magazine: 5 trends in specialty coffee",
+        "body": "This week in Roast Magazine:\n\n1. Why anaerobic naturals are everywhere\n2. Energy prices and the small roaster\n3. Interview: running a roastery with three people\n\nRead online. Unsubscribe.",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "54863a0321841a86",
+    "messages": [
+      {
+        "message_id": "e1da721f6602330f",
+        "sender": "Speedy Courier <noreply@speedycourier.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-08-26T15:00:00Z",
+        "subject": "How did we do? Rate your delivery",
+        "body": "Your parcel was delivered today.\n\nHow did we do? Rate your delivery from 1 to 5 stars.\nIt only takes 10 seconds.\n\nSpeedy Courier",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "3d0b2cb2770aa29b",
+    "messages": [
+      {
+        "message_id": "520950d960254a3f",
+        "sender": "Alpine Dairy Co-op <billing@alpinedairy.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-08-31T06:00:00Z",
+        "subject": "Alpine Dairy invoice AD-3241",
+        "body": "Hello,\n\nInvoice AD-3241 for milk deliveries in August 2026.\nTotal: EUR 497.10\nDue: 28 September 2026\n\nAlpine Dairy Co-op",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "d619ed7f736ca1e7",
+    "messages": [
+      {
+        "message_id": "31efb54eda479424",
+        "sender": "Harbor Bean Importers <news@harborbean.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-09-02T12:00:00Z",
+        "subject": "New crop arrivals: Ethiopia Guji pre-order",
+        "body": "Fresh crop Ethiopia Guji natural is landing in November.\n\nPre-order now to secure your bags at last season's price.\nSamples available on request.\n\nHarbor Bean Importers",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "4a23d79ce64bab97",
+    "messages": [
+      {
+        "message_id": "ec9b0620aef23d01",
+        "sender": "Greenleaf Packaging <hello@greenleaf-packaging.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-09-05T08:00:00Z",
+        "subject": "Autumn catalogue: new compostable cups",
+        "body": "Our autumn catalogue is here!\n\nNew: fully compostable double-wall cups in 8oz and 12oz.\nPlus: custom-printed bags from 1,000 units.\n\nBrowse the catalogue on our website. Unsubscribe from marketing emails here.",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "2ec766613ea39551",
+    "messages": [
+      {
+        "message_id": "c947c2429f1cb4b5",
+        "sender": "Brightline Energy <bills@brightline-energy.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-09-08T05:00:00Z",
+        "subject": "Your September bill is ready",
+        "body": "Hello Northside Roasters,\n\nYour business electricity bill is ready.\n\nBill number: 5583\nAccount: 2201-889\nAmount: EUR 412.50\nThis amount will be collected by Direct Debit on or after 30 September 2026.\n\nBrightline Energy",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "f6250258c76044db",
+    "messages": [
+      {
+        "message_id": "217594b468e908dd",
+        "sender": "Jan Kessler <jan@kessler-service.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-09-08T15:20:00Z",
+        "subject": "Roaster service visit",
+        "body": "Hi Tom,\n\nI can come and service the roaster on Saturday 12 Sept, early so you can roast after.\nPlan is burner check, new thermocouple and a chaff collector clean.\n\nJan",
+        "attachments": []
+      },
+      {
+        "message_id": "91248ca1fd85d811",
+        "sender": "Tom Becker <tom@northsideroasters.example>",
+        "to": [
+          "jan@kessler-service.example"
+        ],
+        "date": "2026-09-08T17:02:00Z",
+        "subject": "Re: Roaster service visit",
+        "body": "Perfect, see you at 7.\n\nTom\n-- \nTom Becker\nNorthside Roasters | 12 Canal Street",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "45684dc13593edfc",
+    "messages": [
+      {
+        "message_id": "34023bd6d62bf0d4",
+        "sender": "ACME Hosting Billing <billing@acme-hosting.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-09-10T07:02:00Z",
+        "subject": "Invoice 0987 from ACME Hosting",
+        "body": "Hello Northside Roasters,\n\nYour invoice #0987 is now available in your client area.\n\nInvoice number: 0987\nService: VPS Standard (monthly) + daily backups\nPeriod: 10 Sep 2026 - 9 Oct 2026\nAmount due: EUR 189.00\nDue date: 25 September 2026\n\nThanks,\nACME Hosting Billing",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "83854896f191e905",
+    "messages": [
+      {
+        "message_id": "67e72f41e5bdebe3",
+        "sender": "Harbor Bean Importers <invoices@harborbean.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-09-15T08:00:00Z",
+        "subject": "Overdue: invoice HBI-76902",
+        "body": "Hello Tom,\n\nOur records show invoice HBI-76902 (EUR 4,115.00, due 12 September) is still unpaid.\nPlease arrange payment at your earliest convenience.\n\nHarbor Bean Importers - Accounts",
+        "attachments": []
+      },
+      {
+        "message_id": "f4e6e2306afa5bc5",
+        "sender": "Tom Becker <tom@northsideroasters.example>",
+        "to": [
+          "invoices@harborbean.example"
+        ],
+        "date": "2026-09-16T09:41:00Z",
+        "subject": "Re: Overdue: invoice HBI-76902",
+        "body": "Hi,\n\nSorry, that one slipped through. Paid in full by bank transfer this morning.\n\nTom\n-- \nTom Becker\nNorthside Roasters | 12 Canal Street",
+        "attachments": []
+      },
+      {
+        "message_id": "f71c7f093810551a",
+        "sender": "Kofi Mensah <kofi@harborbean.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-09-17T10:05:00Z",
+        "subject": "Re: Overdue: invoice HBI-76902",
+        "body": "Hi Tom,\n\nPayment for HBI-76902 received, all settled. Thanks!\n\nKofi\n-- \nKofi Mensah | Harbor Bean Importers",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "d0ac936bd0891ebe",
+    "messages": [
+      {
+        "message_id": "00efdef65a2b1af3",
+        "sender": "Kessler Equipment Service <office@kessler-service.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-09-15T10:00:00Z",
+        "subject": "Invoice KES-0817",
+        "body": "Dear Mr Becker,\n\nThank you for your business. Invoice KES-0817 for the service visit on 12 September:\n\nBurner service and calibration, thermocouple replacement, chaff collector clean\nTotal: EUR 650.00\nPayment due: 15 October 2026\n\nKessler Equipment Service",
+        "attachments": [
+          "KES-0817.pdf"
+        ]
+      }
+    ]
+  },
+  {
+    "thread_id": "7617dd81f313d529",
+    "messages": [
+      {
+        "message_id": "734c727e50fdcc4d",
+        "sender": "ACME Hosting Billing <billing@acme-hosting.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-09-19T11:40:00Z",
+        "subject": "Receipt for invoice #0987",
+        "body": "Thank you! We've received your payment for invoice #0987.\n\nAmount paid: EUR 189.00\nPaid on: 19 September 2026\nPayment method: Visa ending 4417\nStatus: PAID\n\nACME Hosting Billing",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "a9fd02af84e40806",
+    "messages": [
+      {
+        "message_id": "f5d711e5697d6a4a",
+        "sender": "CityWaste Services <accounts@citywaste.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-09-20T09:00:00Z",
+        "subject": "Invoice CW-40912 - Q3 waste collection",
+        "body": "Dear customer,\n\nInvoice CW-40912 for commercial waste collection, July-September 2026.\nAmount: EUR 96.00\nDue: 15 October 2026\n\nPay online at our customer portal or by bank transfer.\nCityWaste Services",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "00e3245d2018ea59",
+    "messages": [
+      {
+        "message_id": "f7fd42f3d4db1d8b",
+        "sender": "ACME Hosting <news@acme-hosting.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-09-24T10:00:00Z",
+        "subject": "Upgrade to the Business plan and save 20%",
+        "body": "Hi Tom,\n\nGrowing fast? Move to the Business plan this month and save 20% for the first year.\nMore RAM, priority support, and free SSL for all domains.\n\nUpgrade in two clicks from your client area.\nThe ACME Hosting team",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "637fdb651cad0d57",
+    "messages": [
+      {
+        "message_id": "316854c7dcec5d8d",
+        "sender": "Alpine Dairy Co-op <billing@alpinedairy.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-09-30T06:00:00Z",
+        "subject": "Alpine Dairy invoice AD-3307",
+        "body": "Hello,\n\nInvoice AD-3307 for milk deliveries in September 2026.\nTotal: EUR 528.40\nDue: 28 October 2026\n\nAlpine Dairy Co-op",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "8a50f99d72af3ffa",
+    "messages": [
+      {
+        "message_id": "8d5d3d6c27d0cdcf",
+        "sender": "Brightline Energy <bills@brightline-energy.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-10-01T05:00:00Z",
+        "subject": "Payment confirmation - bill 5583",
+        "body": "Hello Northside Roasters,\n\nWe have collected EUR 412.50 by Direct Debit for bill 5583.\nYour account balance is now EUR 0.00.\n\nBrightline Energy",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "7405f17bad3f3d17",
+    "messages": [
+      {
+        "message_id": "2f89c4c83657e5aa",
+        "sender": "Greenleaf Packaging Accounts <accounts@greenleaf-packaging.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-10-01T09:20:00Z",
+        "subject": "Invoice GP-2291 - Northside Roasters",
+        "body": "Dear Tom,\n\nPlease find attached invoice GP-2291 for your September order.\n\n3,000 x kraft coffee bags 250g with degassing valve\n500 x compostable cup lids\nTotal: EUR 1,240.00 (incl. VAT)\nPayment terms: 30 days, due 31 October 2026\n\nKind regards,\nGreenleaf Packaging Accounts",
+        "attachments": [
+          "GP-2291.pdf"
+        ]
+      },
+      {
+        "message_id": "8c309c7211f687fe",
+        "sender": "Tom Becker <tom@northsideroasters.example>",
+        "to": [
+          "ines@greenleaf-packaging.example"
+        ],
+        "date": "2026-10-02T10:12:00Z",
+        "subject": "Re: Invoice GP-2291 - Northside Roasters",
+        "body": "Hi Ines,\n\nThanks for this. The bags arrived but the lids weren't in the delivery.\nCan you check before I pay the invoice?\n\nTom\n-- \nTom Becker\nNorthside Roasters | 12 Canal Street",
+        "attachments": []
+      },
+      {
+        "message_id": "1c48aa628080266d",
+        "sender": "Ines Moreau <ines@greenleaf-packaging.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-10-03T08:30:00Z",
+        "subject": "Re: Invoice GP-2291 - Northside Roasters",
+        "body": "Hi Tom,\n\nSo sorry about that, the lids were left off the pallet. They ship Monday.\nThe invoice stays as it is, still due 31 October.\n\nBest,\nInes\n\n> Can you check before I pay the invoice?",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "9369cd304cd3e2fa",
+    "messages": [
+      {
+        "message_id": "e6497b10a7d4d7b4",
+        "sender": "Northbank <alerts@northbank.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-10-02T04:00:00Z",
+        "subject": "Your September statement is ready",
+        "body": "Hello Tom,\n\nYour September statement for business account ending 3381 is ready to view in online banking.\nFor your security we never include account details in emails.\n\nNorthbank",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "ca6ab74339d59699",
+    "messages": [
+      {
+        "message_id": "312a16cb3bd7b779",
+        "sender": "Lucia Rivera <lucia@riveraprint.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-10-02T11:00:00Z",
+        "subject": "Menu card proof",
+        "body": "Hi Tom,\n\nProof for the new menu cards is attached, A5 on 350gsm uncoated.\nLet me know if it's good to print and how many.\n\nLucia",
+        "attachments": [
+          "menu-proof-v2.pdf"
+        ]
+      },
+      {
+        "message_id": "a5c935cf882561ef",
+        "sender": "Tom Becker <tom@northsideroasters.example>",
+        "to": [
+          "lucia@riveraprint.example"
+        ],
+        "date": "2026-10-03T08:15:00Z",
+        "subject": "Re: Menu card proof",
+        "body": "Looks great Lucia, please print 300.\n\nTom\n-- \nTom Becker\nNorthside Roasters | 12 Canal Street",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "74a6b7b1169d5c80",
+    "messages": [
+      {
+        "message_id": "a7f81c23f4a75682",
+        "sender": "CityWaste Services <accounts@citywaste.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-10-03T12:22:00Z",
+        "subject": "Payment received - CW-40912",
+        "body": "Dear customer,\n\nThank you for your card payment of EUR 96.00 made online for invoice CW-40912.\nNo further action is needed.\n\nCityWaste Services",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "9d99fb0fafc7b14e",
+    "messages": [
+      {
+        "message_id": "4dfe8b03b89016f2",
+        "sender": "Harbor Bean Importers <invoices@harborbean.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-10-06T13:10:00Z",
+        "subject": "Invoice HBI-77310",
+        "body": "Hello Tom,\n\nInvoice HBI-77310 for your green coffee order is attached.\n\n20 x 60kg bags Colombia Huila washed, lot CO-3390\nTotal due: EUR 3,860.00\nDue date: 5 November 2026\n\nHarbor Bean Importers - Accounts",
+        "attachments": [
+          "HBI-77310.pdf"
+        ]
+      }
+    ]
+  },
+  {
+    "thread_id": "eb20740eb878bc5b",
+    "messages": [
+      {
+        "message_id": "b4bdd232a34fe530",
+        "sender": "Kofi Mensah <kofi@harborbean.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-10-08T07:30:00Z",
+        "subject": "Your Harbor Bean delivery is on its way",
+        "body": "Hi Tom,\n\nThe Huila lot left our warehouse this morning, delivery note DN-5521, 20 bags.\nDriver should be with you Friday between 8 and 11.\n\nKofi\n-- \nKofi Mensah | Harbor Bean Importers",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "980e7e0c8008d86f",
+    "messages": [
+      {
+        "message_id": "cb0a99d7105a6ff3",
+        "sender": "ACME Hosting Billing <billing@acme-hosting.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-10-10T07:02:00Z",
+        "subject": "Invoice 1042 from ACME Hosting",
+        "body": "Hello Northside Roasters,\n\nYour invoice #1042 is now available in your client area.\n\nInvoice number: 1042\nService: VPS Standard (monthly) + daily backups\nPeriod: 10 Oct 2026 - 9 Nov 2026\nAmount due: EUR 189.00\nDue date: 25 October 2026\n\nCard autopay is switched off on your account, so please pay by the due date to avoid interruption.\n\nThanks,\nACME Hosting Billing",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "0989ea9e55861bd4",
+    "messages": [
+      {
+        "message_id": "bd6487fa30bf2780",
+        "sender": "Anna Becker <anna.becker@postbox.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-10-11T18:20:00Z",
+        "subject": "Sunday lunch?",
+        "body": "Hey Tom,\n\nMum wants everyone over for lunch next Sunday. Can you bring some of that Huila coffee?\n\nAnna x",
+        "attachments": []
+      },
+      {
+        "message_id": "4886b466efd2f455",
+        "sender": "Tom Becker <tom@northsideroasters.example>",
+        "to": [
+          "anna.becker@postbox.example"
+        ],
+        "date": "2026-10-11T19:02:00Z",
+        "subject": "Re: Sunday lunch?",
+        "body": "Count me in, I'll bring a bag.\n\nT",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "3f5a529da6b412cc",
+    "messages": [
+      {
+        "message_id": "54e0d3237ad2a7e1",
+        "sender": "Lucia Rivera <lucia@riveraprint.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-10-12T14:00:00Z",
+        "subject": "Invoice RPS-118 - menu cards",
+        "body": "Hi Tom,\n\nMenu cards are ready for pickup. Invoice RPS-118 attached:\n300 x A5 menu cards, 350gsm - EUR 275.00\nDue 2 November 2026, bank transfer or the card link on the invoice.\n\nLucia\n-- \nRivera Print Studio",
+        "attachments": [
+          "RPS-118.pdf"
+        ]
+      }
+    ]
+  },
+  {
+    "thread_id": "eafc0689c9309cc4",
+    "messages": [
+      {
+        "message_id": "1313aa5e81dfc5f8",
+        "sender": "ACME Hosting <news@acme-hosting.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-10-13T06:00:00Z",
+        "subject": "ACME Hosting Weekly digest",
+        "body": "ACME Hosting Weekly digest\n\n- New data centre in Frankfurt now open\n- How to harden your SSH config in 5 minutes\n- Community pick: self-hosting your shop analytics\n\nYou receive this newsletter because you are an ACME Hosting customer. Unsubscribe anytime.",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "ccfda54c0fb9be3c",
+    "messages": [
+      {
+        "message_id": "b84ff36e8b46b4a2",
+        "sender": "Marta Kowalski <marta@kowalski-books.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-10-14T09:30:00Z",
+        "subject": "Q3 VAT - a couple of invoices",
+        "body": "Hi Tom,\n\nFor the Q3 VAT return could you forward me the Kessler and Harbor Bean invoices?\nAlso, is the Kessler one paid yet?\n\nThanks,\nMarta",
+        "attachments": []
+      },
+      {
+        "message_id": "70bbdd319abbcbf3",
+        "sender": "Tom Becker <tom@northsideroasters.example>",
+        "to": [
+          "marta@kowalski-books.example"
+        ],
+        "date": "2026-10-14T12:10:00Z",
+        "subject": "Re: Q3 VAT - a couple of invoices",
+        "body": "Hi Marta,\n\nNot yet, I'll pay Kessler next week. Forwarding both now.\n\nTom\n-- \nTom Becker\nNorthside Roasters | 12 Canal Street\n\nOn Wed, 14 Oct 2026, Marta Kowalski wrote:\n> Also, is the Kessler one paid yet?",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "faa8088d70b5961a",
+    "messages": [
+      {
+        "message_id": "1353fe1185ead294",
+        "sender": "Alpine Dairy Co-op <billing@alpinedairy.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-10-15T06:00:00Z",
+        "subject": "Your account statement - October",
+        "body": "Hello,\n\nStatement for Northside Roasters as of 15 October 2026:\n\nAD-3241  EUR 497.10  paid 26 September (bank transfer)\nAD-3307  EUR 528.40  open, due 28 October\n\nBalance outstanding: EUR 528.40\nAlpine Dairy Co-op",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "a6ec29b7c01b8ee0",
+    "messages": [
+      {
+        "message_id": "d2b3dd8050852f66",
+        "sender": "Kessler Equipment Service <office@kessler-service.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-10-17T08:00:00Z",
+        "subject": "Reminder: invoice KES-0817 is overdue",
+        "body": "Dear Mr Becker,\n\nInvoice KES-0817 (EUR 650.00) was due on 15 October 2026 and remains outstanding.\nPlease make payment within 7 days.\n\nKessler Equipment Service",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "e8afceff284db0b5",
+    "messages": [
+      {
+        "message_id": "9c9a6fbd50627c19",
+        "sender": "ACME Hosting <news@acme-hosting.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-10-20T13:00:00Z",
+        "subject": "ACME Hosting Weekly digest",
+        "body": "ACME Hosting Weekly digest\n\n- Managed databases now in beta\n- Status report: September uptime 99.98%\n- Tutorial: zero-downtime deploys\n\nYou receive this newsletter because you are an ACME Hosting customer. Unsubscribe anytime.",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "b1f7de7b9304c28c",
+    "messages": [
+      {
+        "message_id": "bec9969ff7278b43",
+        "sender": "ACME Hosting Billing <billing@acme-hosting.example>",
+        "to": [
+          "tom@northsideroasters.example"
+        ],
+        "date": "2026-10-21T14:31:00Z",
+        "subject": "Receipt for invoice #1042",
+        "body": "Thank you! We've received your payment for invoice #1042.\n\nAmount paid: EUR 189.00\nPaid on: 21 October 2026\nPayment method: Visa ending 4417\nStatus: PAID\n\nACME Hosting Billing",
+        "attachments": []
+      }
+    ]
+  }
+]

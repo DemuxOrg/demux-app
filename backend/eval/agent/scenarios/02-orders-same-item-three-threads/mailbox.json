@@ -1,0 +1,595 @@
+[
+  {
+    "thread_id": "e2926639f15e9e8f",
+    "messages": [
+      {
+        "message_id": "a60fb1c3fc6813e1",
+        "sender": "Breezo <orders@breezo.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-08-12T13:00:00Z",
+        "subject": "Breezo order BZ-5530",
+        "body": "Hi Jonas,\n\nOrder BZ-5530 confirmed: Breezo Tower 90 fan - EUR 69.00.\nNext-day delivery selected.\n\nStay cool,\nBreezo",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "90e9f98f23433ca1",
+    "messages": [
+      {
+        "message_id": "0655ad3a9772fe99",
+        "sender": "Breezo <orders@breezo.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-08-13T16:00:00Z",
+        "subject": "Delivered: Breezo Tower 90",
+        "body": "Hi Jonas,\n\nYour Breezo Tower 90 (order BZ-5530) was delivered today and left with a neighbour at no. 14.\nEnjoy!\n\nBreezo",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "a2f7369aee835830",
+    "messages": [
+      {
+        "message_id": "922c6c5feeb286eb",
+        "sender": "Peak Outdoors <shop@peakoutdoors.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-09-08T10:00:00Z",
+        "subject": "Order PO-66120 confirmed",
+        "body": "Hi Jonas,\n\nThanks for your order PO-66120:\nStormline 3L rain jacket, men's L, blue - EUR 159.00\n\nShips within 1-2 working days.\nPeak Outdoors",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "49fb97a96979a7b5",
+    "messages": [
+      {
+        "message_id": "12e2d6f3954ea8f5",
+        "sender": "Peak Outdoors <shop@peakoutdoors.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-09-12T15:40:00Z",
+        "subject": "Your Peak Outdoors parcel was delivered",
+        "body": "Hi Jonas,\n\nYour order PO-66120 was delivered today.\nNot quite right? Returns are free within 30 days.\n\nPeak Outdoors",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "100dd42907043916",
+    "messages": [
+      {
+        "message_id": "02b5b46638d15841",
+        "sender": "ParcelPost <tracking@parcelpost.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-09-14T10:00:00Z",
+        "subject": "Update your delivery preferences",
+        "body": "Hello,\n\nNever miss a parcel: set a safe place or a favourite neighbour in the ParcelPost app.\nIt takes less than a minute.\n\nParcelPost",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "0299d596906b8e2f",
+    "messages": [
+      {
+        "message_id": "13cf43640b81e865",
+        "sender": "Lumen Lighting <orders@lumenlighting.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-09-25T17:00:00Z",
+        "subject": "Lumen Lighting order LL-30875",
+        "body": "Hi Jonas,\n\nOrder LL-30875 confirmed: Halden LED desk lamp, matte black - EUR 79.00.\nShipped with ParcelPost, tracking PP31187720.\n\nLumen Lighting",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "97917cea6782ff10",
+    "messages": [
+      {
+        "message_id": "960e2b30c9b40dad",
+        "sender": "Peak Outdoors <returns@peakoutdoors.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-09-28T09:00:00Z",
+        "subject": "Return received - refund issued for PO-66120",
+        "body": "Hi Jonas,\n\nWe've received your return (RMA-2231) for the Stormline 3L rain jacket.\nA refund of EUR 159.00 has been issued to your original payment method.\n\nPeak Outdoors Returns",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "9878e4d8ec2d096f",
+    "messages": [
+      {
+        "message_id": "6a7383bc74ab6d3b",
+        "sender": "ParcelPost <tracking@parcelpost.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-02T12:15:00Z",
+        "subject": "Delivered: your parcel PP31187720",
+        "body": "Hello,\n\nYour parcel PP31187720 from LUMEN LIGHTING was delivered at 12:09.\nIt was handed to you in person.\n\nParcelPost",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "f53b97d920cf90b7",
+    "messages": [
+      {
+        "message_id": "418e92e510aa858a",
+        "sender": "Northbank <alerts@northbank.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-05T04:00:00Z",
+        "subject": "Your credit card statement",
+        "body": "Hello Jonas,\n\nYour credit card statement for September is now available in online banking.\nMinimum payment due 25 October.\n\nNorthbank",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "406290bcd0da1453",
+    "messages": [
+      {
+        "message_id": "006765b01bf0df5d",
+        "sender": "CoffeeCraft <support@coffeecraft.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-05T08:30:00Z",
+        "subject": "CoffeeCraft order CC-118204",
+        "body": "Hi Jonas,\n\nThank you for your order CC-118204:\nBurr Grinder Mini, stainless - EUR 199.00\n\nYou'll get another email when it ships.\nCoffeeCraft",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "3882027b4eb9ac4b",
+    "messages": [
+      {
+        "message_id": "6355f36515ca723c",
+        "sender": "Shutterbay <news@shutterbay.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-08T09:00:00Z",
+        "subject": "Lens of the month: the Lumetra 56mm",
+        "body": "Lens of the month\n\nThis month we test the Lumetra 56mm f/1.4 for portraits.\nPlus: 5 tips for autumn landscapes.\n\nShutterbay newsletter - unsubscribe",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "bedd691cbba1da56",
+    "messages": [
+      {
+        "message_id": "dda476a069b051a2",
+        "sender": "CoffeeCraft <support@coffeecraft.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-09T11:00:00Z",
+        "subject": "Update on your CoffeeCraft order",
+        "body": "Hi Jonas,\n\nUnfortunately the Burr Grinder Mini on order CC-118204 is on backorder.\nWe now expect to ship it in the week of 23 November. You won't be charged until it ships.\nReply to this email if you'd like to cancel instead.\n\nCoffeeCraft",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "5d92879e83982129",
+    "messages": [
+      {
+        "message_id": "6d29fbb83c767766",
+        "sender": "Oakline Furniture <orders@oakline.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-12T19:44:00Z",
+        "subject": "Order confirmation OL-55817",
+        "body": "Hi Jonas,\n\nThank you for shopping with Oakline! Your order OL-55817 is confirmed.\n\n1 x Arden standing desk, walnut top 160x80 cm, black frame - EUR 749.00\nDelivery: free two-person delivery, estimated 28-30 October\n\nWe'll be in touch when your desk leaves our warehouse.\nOakline Furniture",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "e34d6787308f803e",
+    "messages": [
+      {
+        "message_id": "1fc47246e0a0f05e",
+        "sender": "Oakline Furniture <news@oakline.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-15T08:00:00Z",
+        "subject": "Autumn sale: 25% off all desks",
+        "body": "Autumn sale starts now!\n\n25% off all desks, including the bestselling Arden standing desk.\nPlus free delivery on orders over EUR 300. Ends Sunday.\n\nOakline Furniture - unsubscribe",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "afb9e8c593723b57",
+    "messages": [
+      {
+        "message_id": "d9dab7eb6bad1acd",
+        "sender": "TeleNova <billing@telenova.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-18T05:00:00Z",
+        "subject": "Your TeleNova bill for October",
+        "body": "Hi Jonas,\n\nYour mobile bill for October is EUR 24.99 and will be collected on 1 November.\nView your bill in the TeleNova app.\n\nTeleNova",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "a908856d28d41f9b",
+    "messages": [
+      {
+        "message_id": "08d596c3d461b365",
+        "sender": "Verdant Plants <hello@verdantplants.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-20T12:30:00Z",
+        "subject": "Your Verdant Plants order VP-2210",
+        "body": "Hi Jonas,\n\nYour order VP-2210 is confirmed:\n1 x Monstera deliciosa, 80 cm\n2 x terracotta pot, 24 cm\nTotal: EUR 94.50\n\nWe pack plants with care and ship Monday to Wednesday.\nVerdant Plants",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "ea63b30f9159063f",
+    "messages": [
+      {
+        "message_id": "168ef7ba7dfb8594",
+        "sender": "Ola Berg <ola.berg@postbox.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-21T17:40:00Z",
+        "subject": "Hike on Saturday?",
+        "body": "Hey Jonas,\n\nWeather looks good for Saturday. Ridge loop, start 9am at the car park?\n\nOla",
+        "attachments": []
+      },
+      {
+        "message_id": "0be6551cc9946c05",
+        "sender": "Jonas Lind <jonas.lind@postbox.example>",
+        "to": [
+          "ola.berg@postbox.example"
+        ],
+        "date": "2026-10-21T18:15:00Z",
+        "subject": "Re: Hike on Saturday?",
+        "body": "I'm in. My new trail shoes should arrive by then, fingers crossed.\n\nJonas",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "397a9263ecd7e75f",
+    "messages": [
+      {
+        "message_id": "38383159ec370a0f",
+        "sender": "MegaMart <recommendations@megamart.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-22T07:00:00Z",
+        "subject": "Recommended for you",
+        "body": "Hi Jonas,\n\nBased on your browsing: trail running socks, hydration vests and headlamps.\nDeals end at midnight.\n\nMegaMart",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "1f031b187a350c9c",
+    "messages": [
+      {
+        "message_id": "bf11fc2ffa33a132",
+        "sender": "Verdant Plants <hello@verdantplants.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-24T13:05:00Z",
+        "subject": "Your plants have arrived!",
+        "body": "Hi Jonas,\n\nOur courier tells us your Monstera and pots (order VP-2210) were delivered today.\nGive it a drink and keep it out of direct sun for a few days.\n\nVerdant Plants",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "96841495dd88d957",
+    "messages": [
+      {
+        "message_id": "0d8aefc04a6e5153",
+        "sender": "FastFreight <notifications@fastfreight.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-25T06:10:00Z",
+        "subject": "Delivery notification: consignment FF4471209",
+        "body": "Hello,\n\nA consignment from OAKLINE FURNITURE LTD is on its way to you.\n\nConsignment: FF4471209\nContents: 1 item, 38 kg\nPlanned delivery: Thursday 29 October, 08:00-18:00\n\nManage your delivery at fastfreight.example/track",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "169d9fcc6eb3374b",
+    "messages": [
+      {
+        "message_id": "61c0f8d251272df8",
+        "sender": "MegaMart <auto-confirm@megamart.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-26T18:02:00Z",
+        "subject": "Your MegaMart order 700-1182934",
+        "body": "Hello Jonas,\n\nThanks for your order 700-1182934.\n\nTrailblaze GTX trail running shoes, size 44 - EUR 129.99\nEstimated delivery: 2-4 November\n\nMegaMart",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "4bff23cf232b2c03",
+    "messages": [
+      {
+        "message_id": "41037af75ee37548",
+        "sender": "Shutterbay <orders@shutterbay.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-27T21:15:00Z",
+        "subject": "Thanks for your order SB-90314",
+        "body": "Hi Jonas,\n\nThanks for your order SB-90314!\n\nLumetra 35mm f/1.8 prime lens (X-mount) - EUR 389.00\nShipping: ParcelPost standard (2-4 working days)\n\nShutterbay",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "67e7d69c671d97e9",
+    "messages": [
+      {
+        "message_id": "0867513689b2457c",
+        "sender": "Canvasly <hello@canvasly.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-28T19:00:00Z",
+        "subject": "Canvasly order CV-7712",
+        "body": "Hi Jonas,\n\nYour canvas is in production! Order CV-7712:\nCanvas print 60x40 cm, \"Lofoten sunset\" - EUR 64.00\n\nCanvasly",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "92e4ea0bf283fa68",
+    "messages": [
+      {
+        "message_id": "37c4c3050f8a53a7",
+        "sender": "MegaMart <shipment-tracking@megamart.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-29T09:15:00Z",
+        "subject": "Shipped: Trailblaze GTX trail running shoes",
+        "body": "Hello Jonas,\n\nYour package with Trailblaze GTX trail running shoes has shipped.\nOrder 700-1182934, arriving Tuesday 3 November.\n\nTrack your package in your MegaMart account.",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "c52c3ba352e0a134",
+    "messages": [
+      {
+        "message_id": "3ba7ac1b34ae52b4",
+        "sender": "Shutterbay <orders@shutterbay.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-29T14:00:00Z",
+        "subject": "Your Shutterbay order is on its way",
+        "body": "Good news, Jonas!\n\nYour Lumetra 35mm lens has left our warehouse.\nCarrier: ParcelPost, tracking number PP33057781\n\nHappy shooting,\nShutterbay",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "12ad4d7fc6da6902",
+    "messages": [
+      {
+        "message_id": "c6a43a4eaa41e894",
+        "sender": "ParcelPost <tracking@parcelpost.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-30T07:30:00Z",
+        "subject": "A parcel is on its way to you",
+        "body": "Hello,\n\nWe've got a parcel for you from SHUTTERBAY LTD.\n\nTracking: PP33057781\nExpected: Wednesday 4 November\n\nParcelPost",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "c0784e54045dc99b",
+    "messages": [
+      {
+        "message_id": "36478eb468b83869",
+        "sender": "Jonas Lind <jonas.lind@postbox.example>",
+        "to": [
+          "care@oakline.example"
+        ],
+        "date": "2026-10-30T08:12:00Z",
+        "subject": "Where is my desk?",
+        "body": "Hi,\n\nMy desk was supposed to arrive yesterday but nobody showed up and the tracking hasn't moved.\nCan you tell me what's going on?\n\nThanks,\nJonas Lind",
+        "attachments": []
+      },
+      {
+        "message_id": "5ff31feba0f343b6",
+        "sender": "Oakline Customer Care <care@oakline.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-31T10:03:00Z",
+        "subject": "Re: Where is my desk?",
+        "body": "Hi Jonas,\n\nSorry for the wait. Your Arden desk is with our freight partner (tracking FF4471209).\nThe truck had a breakdown on Thursday; the new delivery date is Tuesday 3 November.\n\nBest regards,\nMira, Oakline Customer Care\n\n> My desk was supposed to arrive yesterday but nobody showed up",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "d19d4a38c06052a4",
+    "messages": [
+      {
+        "message_id": "edb9ea7881d5a767",
+        "sender": "Kitchenly <orders@kitchenly.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-30T20:40:00Z",
+        "subject": "Order KL-4418 received",
+        "body": "Hi Jonas,\n\nWe've received your order KL-4418:\nSantoku knife 18 cm - EUR 84.00\nCombination whetstone 1000/6000 - EUR 28.00\n\nWe'll email you as soon as it ships.\nKitchenly",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "d4f6afc7ab287d9b",
+    "messages": [
+      {
+        "message_id": "d220fc6fe7dd28b5",
+        "sender": "Kitchenly <news@kitchenly.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-31T08:00:00Z",
+        "subject": "5 knife skills every home cook needs",
+        "body": "The Kitchenly Journal\n\n5 knife skills every home cook needs, from the claw grip to the julienne.\nRecipe of the week: autumn squash risotto.\n\nUnsubscribe",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "4f88e7bfd7926d3c",
+    "messages": [
+      {
+        "message_id": "09da969c4268fd84",
+        "sender": "Canvasly <hello@canvasly.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-31T09:30:00Z",
+        "subject": "Your canvas has shipped",
+        "body": "Hi Jonas,\n\nYour canvas print (order CV-7712) is on its way with ParcelPost.\nTracking number: PP33102266. Expected in 3-5 working days.\n\nCanvasly",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "173a06a743db7fa8",
+    "messages": [
+      {
+        "message_id": "75645f9ffa436904",
+        "sender": "Jonas Lind <jonas.lind@postbox.example>",
+        "to": [
+          "elif.lind@postbox.example"
+        ],
+        "date": "2026-10-31T11:20:00Z",
+        "subject": "desk on Tuesday",
+        "body": "Hey,\n\nThe desk is now coming Tuesday instead. Any chance you can be home? I'm in the office all day.\n\nJ",
+        "attachments": []
+      },
+      {
+        "message_id": "b17618d293acc915",
+        "sender": "Elif Lind <elif.lind@postbox.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-10-31T12:01:00Z",
+        "subject": "Re: desk on Tuesday",
+        "body": "Yes I'm working from home Tuesday, no problem.\nTell them to ring the bell twice, it's quiet.\n\nE",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "aaf37bbefcd40152",
+    "messages": [
+      {
+        "message_id": "651e205cc4bddebb",
+        "sender": "FastFreight <notifications@fastfreight.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-11-03T16:20:00Z",
+        "subject": "Delivered: consignment FF4471209",
+        "body": "Hello,\n\nYour consignment FF4471209 was delivered on 03 Nov 2026 at 15:52.\nSigned by: E. LIND\n\nFastFreight",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "af894e11028a7635",
+    "messages": [
+      {
+        "message_id": "270c57ad0a1229e4",
+        "sender": "ParcelPost <tracking@parcelpost.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-11-04T11:48:00Z",
+        "subject": "Your parcel has been delivered",
+        "body": "Hello,\n\nYour parcel from SHUTTERBAY LTD was delivered at 11:41.\nTracking: PP33057781\nLeft in your safe place: porch.\n\nParcelPost",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "da80df65184c24d6",
+    "messages": [
+      {
+        "message_id": "196708fa45a74c04",
+        "sender": "Oakline Furniture <reviews@oakline.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-11-06T10:00:00Z",
+        "subject": "How are you finding your Arden desk?",
+        "body": "Hi Jonas,\n\nYour Arden standing desk (order OL-55817) arrived a few days ago. How is it working out?\nLeave a review and get 10% off your next order.\n\nOakline Furniture",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "01538a1113d767ca",
+    "messages": [
+      {
+        "message_id": "bf21de7574a6bf73",
+        "sender": "Kitchenly <orders@kitchenly.example>",
+        "to": [
+          "jonas.lind@postbox.example"
+        ],
+        "date": "2026-11-06T15:30:00Z",
+        "subject": "Order KL-4418 has shipped",
+        "body": "Hi Jonas,\n\nGood news: your order KL-4418 (Santoku knife and whetstone) has shipped.\nIt should be with you in 2-3 working days.\n\nKitchenly",
+        "attachments": []
+      }
+    ]
+  }
+]

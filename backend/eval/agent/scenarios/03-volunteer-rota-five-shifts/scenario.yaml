@@ -1,0 +1,25 @@
+id: 03-volunteer-rota-five-shifts
+prompt: "Keep a list of my volunteer shifts at the food bank - the date, time, what I'm doing and where."
+steps:
+- name: build
+  now: 2026-10-30T09:00:00Z
+  expect:
+    - {kind: unique, all_of: ["intake"]}
+    - {kind: unique, all_of: ["Eastgate"]}
+    - {kind: unique, all_of: ["Riverside"]}
+    - {kind: unique, all_of: ["Hollins"]}
+    - {kind: unique, all_of: ["hamper"]}
+    - {kind: value, find: ["Eastgate"], any_of: ["17:30", "5:30"]}
+    - {kind: value, find: ["Hollins"], any_of: ["10:00", "10am", "10 am", "10:00 am"]}
+    - {kind: absent, any_of: ["Bean Counter", "Spin", "Harvest supper", "Yoga"]}
+    - {kind: count, min: 11, max: 13}
+    - {kind: app_shows, any_of: ["Eastgate"]}
+- name: sync-1
+  now: 2026-11-04T09:00:00Z
+  expect:
+    - {kind: unique, all_of: ["Market Square"]}
+    - {kind: value, find: ["Market Square"], any_of: ["11:00", "11am", "11 am"]}
+    - {kind: unique, all_of: ["Eastgate"]}
+    - {kind: unique, all_of: ["hamper"]}
+    - {kind: unchanged_except, find: [["Market Square"]]}
+    - {kind: count, min: 12, max: 14}
