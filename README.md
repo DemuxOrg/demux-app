@@ -105,6 +105,8 @@ Reports with email-derived values are git-ignored. To score a real-world trial, 
 
 | Command | What it does |
 |---|---|
+| `make up` / `make down` | start / stop the full stack in Docker (`down` keeps the DB volume) |
+| `make install` | install backend deps (uv) and frontend deps (pnpm) |
 | `make lint` | ruff + eslint + `tsc --noEmit` |
 | `make test` | backend tests, including app checks and the sandbox security test (needs `make db`) |
 | `make migration m="msg"` | autogenerate an Alembic migration |

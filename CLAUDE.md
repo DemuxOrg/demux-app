@@ -3,7 +3,7 @@
 Demux turns a user's Gmail into structured, refreshable workspaces using an LLM extraction pipeline. Phase 0 is only the skeleton. See `docs/REPO_GUIDE.md` for a full tour.
 
 ## Running things
-Everything goes through the `Makefile` at the repo root: `make setup`, `make db`, `make migrate`, `make backend`, `make frontend`, `make gen-api`, `make lint`, `make test`.
+Everything goes through the `Makefile` at the repo root: `make setup`, `make install`, `make up`, `make down`, `make db`, `make migrate`, `make backend`, `make frontend`, `make gen-api`, `make lint`, `make test`.
 
 ## Backend conventions
 - Layering: **routes → services → models**. Routes stay thin (parse input, call a service, return a schema). Business logic lives in `app/services/`.

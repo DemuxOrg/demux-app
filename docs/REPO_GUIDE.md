@@ -11,10 +11,18 @@ Browser (Next.js :3000)  ──HTTP/JSON──▶  FastAPI (:8000)  ──asyncp
    src/lib/api.ts                          /api/v1/...                    databases: demux, demux_test
 ```
 
-- Postgres runs in Docker. Backend and frontend run natively on your machine.
+- **Two ways to run it:** the whole stack in Docker (`make up`), or Postgres in Docker and backend/frontend natively (`make db` + `make backend` + `make frontend`).
 - The frontend only talks to the backend's REST API. Types for that API are **generated** from the backend's OpenAPI schema.
 
 ## 2. Getting running
+
+Everything in Docker (backend and frontend run with hot reload, source bind-mounted):
+
+```bash
+make setup && make up
+```
+
+Or natively on your machine:
 
 ```bash
 make setup && make db && make migrate
@@ -33,7 +41,9 @@ Open <http://localhost:3000> (backend status should say *ok*) and <http://localh
 ├── docker/init-test-db.sql
 ├── docs/REPO_GUIDE.md          ← you are here
 ├── backend/                    ← Python / FastAPI
+│   └── Dockerfile  .dockerignore
 └── frontend/                   ← TypeScript / Next.js
+    └── Dockerfile  .dockerignore
 ```
 
 ### Root files
@@ -43,8 +53,8 @@ Open <http://localhost:3000> (backend status should say *ok*) and <http://localh
 | `README.md` | 5-minute quick start. |
 | `SPEC.md` | The original Phase 0 spec this repo was built from. |
 | `CLAUDE.md` | Conventions for AI coding sessions (and good rules for humans too). |
-| `Makefile` | The single entry point for dev commands (`make setup`, `db`, `migrate`, `backend`, `frontend`, `lint`, `test`, `gen-api`, `migration m="..."`). |
-| `docker-compose.yml` | Runs Postgres 17 only, with a healthcheck and a persistent volume. |
+| `Makefile` | The single entry point for dev commands (`make setup`, `install`, `up`, `down`, `reset`, `db`, `migrate`, `backend`, `frontend`, `lint`, `test`, `gen-api`, `migration m="..."`). |
+| `docker-compose.yml` | Runs the full dev stack: Postgres 17 (healthcheck, persistent `pgdata` volume), backend (bind-mounted source, uvicorn `--reload`, migrations applied at start) and frontend (bind-mounted source, `next dev`). |
 | `docker/init-test-db.sql` | Runs on first DB start; creates the extra `demux_test` database used by tests. |
 | `.env.example` | Every environment variable with safe dev defaults. `make setup` copies it to `.env` (git-ignored). |
 | `.github/workflows/ci.yml` | CI: backend (ruff + pytest on a Postgres service) and frontend (eslint + tsc + `next build`). |
@@ -65,6 +75,7 @@ HTTP request
 | File | Responsible for |
 |---|---|
 | `pyproject.toml` | Dependencies (managed by `uv`), ruff and pytest settings. |
+| `Dockerfile`, `.dockerignore` | Dev image: Python 3.12 + uv, deps from `uv.lock` into `/opt/.venv` (kept outside `/app` so the compose bind mount never shadows it). |
 | `alembic.ini` | Alembic config. Does **not** hold the DB URL. |
 | `alembic/env.py` | Runs migrations (async). Takes the DB URL from settings and the tables from `app.models`. |
 | `alembic/versions/*.py` | One file per schema change. The initial one creates `users` and `workspaces`. |
@@ -128,6 +139,7 @@ curl -X POST localhost:8000/api/v1/workspaces \
 | File | Responsible for |
 |---|---|
 | `package.json` | Scripts: `dev`, `build`, `lint`, `gen:api`, `format`. |
+| `Dockerfile`, `.dockerignore` | Dev image: Node 22 + pnpm (corepack), deps from the lockfile; the compose anonymous volume at `/app/node_modules` keeps the image's copy alive under the bind mount. |
 | `.env.local.example` | `NEXT_PUBLIC_API_URL` (backend base URL). Copied to `.env.local` by `make setup`. |
 | `next.config.ts`, `tsconfig.json` (strict), `eslint.config.mjs`, `.prettierrc` | Tooling config. |
 | `src/app/layout.tsx` | Shared layout: nav bar, fonts, global CSS. |
@@ -171,4 +183,6 @@ Keep components server-side by default; add `"use client"` only where there is i
 
 - *Backend won't start, "field required"* → `.env` is missing; run `make setup`.
 - *Frontend shows backend "down"* → backend not running, or `NEXT_PUBLIC_API_URL` / `FRONTEND_URL` mismatch (CORS).
-- *Tests fail to connect* → run `make db`; the `demux_test` database is created only when the Postgres volume is first created (`docker compose down -v` then `make db` to recreate).
+- *`make up` container unhealthy* → `docker compose logs backend` (or `frontend`) for details; the backend waits for Postgres to be healthy before starting.
+- *Changed dependencies (pyproject/uv.lock or package.json)* → source hot-reloads, but deps are baked into the images: re-run `make up` to rebuild them.
+- *Tests fail to connect* → run `make db`; the `demux_test` database is created only when the Postgres volume is first created (`make reset` then `make db`/`make up` to recreate).
