@@ -54,7 +54,8 @@ Open <http://localhost:3000> (backend status should say *ok*) and <http://localh
 | `SPEC.md` | The original Phase 0 spec this repo was built from. |
 | `CLAUDE.md` | Conventions for AI coding sessions (and good rules for humans too). |
 | `Makefile` | The single entry point for dev commands (`make setup`, `install`, `up`, `down`, `reset`, `db`, `migrate`, `backend`, `frontend`, `lint`, `test`, `gen-api`, `migration m="..."`). |
-| `docker-compose.yml` | Runs the full dev stack: Postgres 17 (healthcheck, persistent `pgdata` volume), backend (bind-mounted source, uvicorn `--reload`, migrations applied at start) and frontend (bind-mounted source, `next dev`). |
+| `docker-compose.yml` | Runs the full dev stack: Postgres 17 (healthcheck, persistent `pgdata` volume), backend (bind-mounted source, uvicorn `--reload`, migrations applied at start), worker (same image, `python -m app.worker`) and frontend (bind-mounted source, `next dev`). All read the root `.env`. |
+| `docker-compose.prod.yml` | Production-like stack: the `prod` targets of both Dockerfiles, `ENV=prod`, no bind mounts, restart policies, Postgres not published. |
 | `docker/init-test-db.sql` | Runs on first DB start; creates the extra `demux_test` database used by tests. |
 | `.env.example` | Every environment variable with safe dev defaults. `make setup` copies it to `.env` (git-ignored). |
 | `.github/workflows/ci.yml` | CI: backend (ruff + pytest on a Postgres service) and frontend (eslint + tsc + `next build`). |
@@ -75,7 +76,7 @@ HTTP request
 | File | Responsible for |
 |---|---|
 | `pyproject.toml` | Dependencies (managed by `uv`), ruff and pytest settings. |
-| `Dockerfile`, `.dockerignore` | Dev image: Python 3.12 + uv, deps from `uv.lock` into `/opt/.venv` (kept outside `/app` so the compose bind mount never shadows it). |
+| `Dockerfile`, `.dockerignore` | One image for the API and the worker. Python 3.12 + uv, deps from `uv.lock` into `/opt/.venv`, headless Chromium in `/opt/pw-browsers` (both outside `/app` so the dev bind mount never shadows them). Targets: `dev` (+ dev deps) and `prod` (source baked in, non-root). |
 | `alembic.ini` | Alembic config. Does **not** hold the DB URL. |
 | `alembic/env.py` | Runs migrations (async). Takes the DB URL from settings and the tables from `app.models`. |
 | `alembic/versions/*.py` | One file per schema change. The initial one creates `users` and `workspaces`. |
@@ -139,7 +140,7 @@ curl -X POST localhost:8000/api/v1/workspaces \
 | File | Responsible for |
 |---|---|
 | `package.json` | Scripts: `dev`, `build`, `lint`, `gen:api`, `format`. |
-| `Dockerfile`, `.dockerignore` | Dev image: Node 22 + pnpm (corepack), deps from the lockfile; the compose anonymous volume at `/app/node_modules` keeps the image's copy alive under the bind mount. |
+| `Dockerfile`, `.dockerignore` | Node 22 + pnpm (corepack), deps from the lockfile. Targets: `dev` (`next dev`; the compose anonymous volume at `/app/node_modules` keeps the image's copy alive under the bind mount) and `prod` (`next build` + `next start`; `NEXT_PUBLIC_API_URL` is a build arg). |
 | `.env.local.example` | `NEXT_PUBLIC_API_URL` (backend base URL). Copied to `.env.local` by `make setup`. |
 | `next.config.ts`, `tsconfig.json` (strict), `eslint.config.mjs`, `.prettierrc` | Tooling config. |
 | `src/app/layout.tsx` | Shared layout: nav bar, fonts, global CSS. |
