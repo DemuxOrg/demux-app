@@ -19,8 +19,11 @@ setup: install  ## install deps and create env files if missing
 env:  ## create .env from .env.example if missing, then fill SECRET_KEY / TOKEN_ENCRYPTION_KEY
 	@[ -f .env ] || (cp .env.example .env && echo "created .env from .env.example")
 	@docker compose build -q backend
-	@docker compose run --rm --no-deps -T --user "$(shell id -u):$(shell id -g)" -v "$(CURDIR)/.env:/tmp/demux.env" backend \
-		python scripts/ensure_keys.py /tmp/demux.env
+	@# The container only reads .env on stdin and prints the updated file, so it never needs
+	@# write permission on your host file. .env is replaced only if everything succeeded.
+	@docker compose run --rm --no-deps -T backend sh -c \
+		'cat > /tmp/demux.env && python scripts/ensure_keys.py /tmp/demux.env >&2 && cat /tmp/demux.env' \
+		< .env > .env.new && mv .env.new .env || (rm -f .env.new; exit 1)
 
 up: env  ## build and start everything in Docker (postgres + backend + worker + frontend)
 	docker compose up -d --build --wait
