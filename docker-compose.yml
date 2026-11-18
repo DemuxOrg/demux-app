@@ -80,9 +80,14 @@ services:
       context: ./frontend
       target: dev
     image: demux-frontend:dev
+    env_file: .env
     environment:
       # Browser-facing URL: the published port on the host.
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+      # Login (better-auth) talks to Postgres directly; tables come from the backend's
+      # migrations, which is why it waits for a healthy backend.
+      AUTH_DATABASE_URL: postgresql://${POSTGRES_USER:-demux}:${POSTGRES_PASSWORD:-demux}@postgres:5432/${POSTGRES_DB:-demux}
+      BETTER_AUTH_URL: ${FRONTEND_URL:-http://localhost:3000}
     ports:
       - "3000:3000"
     volumes:
@@ -91,7 +96,8 @@ services:
       - /app/node_modules
       - /app/.next
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
 
 volumes:
   pgdata:

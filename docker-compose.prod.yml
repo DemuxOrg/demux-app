@@ -10,6 +10,8 @@
 #   BACKEND_URL=https://api.example.com       (+ add <BACKEND_URL>/api/v1/auth/google/callback
 #                                               as a redirect URI in Google Cloud)
 #   NEXT_PUBLIC_API_URL=https://api.example.com   (baked into the frontend at build time)
+#   AUTH_COOKIE_DOMAIN=example.com             (so the API receives the login cookie)
+#   SMTP_HOST / SMTP_USER / SMTP_PASSWORD      (sends sign-up codes from EMAIL_FROM)
 #   POSTGRES_PASSWORD=<strong password>
 # and put an HTTPS reverse proxy (Caddy, nginx, your platform's load balancer) in front of
 # ports 3000 and 8000. Frontend and backend must be on the same site (e.g. subdomains of
@@ -82,10 +84,18 @@ services:
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
     image: demux-frontend:prod
+    env_file: .env
+    environment:
+      # Login (better-auth) talks to Postgres directly; tables come from the backend's
+      # migrations, which is why it waits for a healthy backend. Set SMTP_* in .env:
+      # without them sign-up codes cannot be sent in production.
+      AUTH_DATABASE_URL: postgresql://${POSTGRES_USER:-demux}:${POSTGRES_PASSWORD:-demux}@postgres:5432/${POSTGRES_DB:-demux}
+      BETTER_AUTH_URL: ${FRONTEND_URL:-http://localhost:3000}
     ports:
       - "3000:3000"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:

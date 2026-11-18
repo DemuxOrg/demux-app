@@ -55,3 +55,6 @@ jobs:
       - run: pnpm lint
       - run: pnpm exec tsc --noEmit
       - run: pnpm build
+        env:
+          # Build-time only: the login route is imported while collecting page data.
+          BETTER_AUTH_SECRET: ci-build-only-not-a-real-secret

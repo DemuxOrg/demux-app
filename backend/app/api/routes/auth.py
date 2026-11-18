@@ -1,30 +1,29 @@
-"""Auth endpoints: Google sign-in (backend-owned OAuth), logout, `/me`.
+"""Gmail connection (backend-owned Google OAuth) and `/me`.
 
-The browser is redirected to Google and back to `/auth/google/callback`, which stores
-the tokens encrypted, sets the httpOnly session cookie and redirects to the frontend.
-The frontend never sees Google tokens.
+Login itself (email + password, emailed code) is better-auth in the Next.js app. Here a
+signed-in user connects Gmail: the browser goes to Google and back to
+`/auth/google/callback`, which stores the tokens encrypted on the user and redirects to
+the frontend. The frontend never sees Google tokens.
 """
 
 import logging
 from urllib.parse import urlencode
 
-from fastapi import APIRouter, Request, Response
+from fastapi import APIRouter, Request
 from fastapi.responses import RedirectResponse
 
-from app.api.deps import CurrentUser, SessionDep
+from app.api.deps import CurrentUser, SessionDep, get_current_user
 from app.auth import google
 from app.auth.session import (
-    SESSION_COOKIE,
     STATE_COOKIE,
     STATE_MAX_AGE_S,
     check_state,
     cookie_secure,
-    make_session_token,
     make_state,
-    session_max_age,
 )
 from app.core.config import settings
-from app.core.errors import AppError
+from app.core.errors import AppError, UnauthorizedError
+from app.models.user import User
 from app.schemas.workspace import Me
 
 logger = logging.getLogger(__name__)
@@ -44,11 +43,21 @@ def _frontend(path: str, **params: str) -> RedirectResponse:
     return RedirectResponse(f"{settings.FRONTEND_URL}{path}{query}", status_code=302)
 
 
+async def _signed_in(request: Request, session: SessionDep) -> User | None:
+    try:
+        return await get_current_user(request, session)
+    except UnauthorizedError:
+        return None
+
+
 @router.get("/auth/google/login")
-async def google_login() -> RedirectResponse:
+async def google_login(request: Request, session: SessionDep) -> RedirectResponse:
+    """Start connecting Gmail. Needs a signed-in Demux user."""
+    if await _signed_in(request, session) is None:
+        return _frontend("/login")
     if not settings.GOOGLE_CLIENT_ID or not settings.GOOGLE_CLIENT_SECRET:
         raise NotConfiguredError(
-            "Google sign-in is not configured: set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET."
+            "Gmail connection is not configured: set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET."
         )
     nonce, state = make_state()
     resp = RedirectResponse(google.authorization_url(state), status_code=302)
@@ -72,39 +81,32 @@ async def google_callback(
     state: str | None = None,
     error: str | None = None,
 ) -> RedirectResponse:
+    user = await _signed_in(request, session)
+    if user is None:
+        return _frontend("/login")
     if error or not code or not state:
-        return _frontend("/", error="google_denied")
+        return _frontend("/workspaces", error="google_denied")
     if not check_state(state, request.cookies.get(STATE_COOKIE)):
-        return _frontend("/", error="bad_state")
+        return _frontend("/workspaces", error="bad_state")
     try:
-        tokens, sub, email, scope = await google.exchange_code(code)
+        tokens, sub, gmail_email, scope = await google.exchange_code(code)
     except google.OAuthError:
-        return _frontend("/", error="google_failed")
+        return _frontend("/workspaces", error="google_failed")
     if GMAIL_SCOPE not in scope.split():
-        return _frontend("/", error="gmail_scope_missing")
-    user = await google.upsert_user(session, sub, email, tokens)
-    logger.info("user signed in: %s", user.id)
-    resp = _frontend("/workspaces")
-    resp.set_cookie(
-        SESSION_COOKIE,
-        make_session_token(user.id),
-        max_age=session_max_age(),
-        httponly=True,
-        samesite="lax",
-        secure=cookie_secure(),
-        path="/",
-    )
+        return _frontend("/workspaces", error="gmail_scope_missing")
+    await google.link_gmail(session, user, sub, gmail_email, tokens)
+    logger.info("gmail connected: user=%s", user.id)
+    resp = _frontend("/workspaces", gmail="connected")
     resp.delete_cookie(STATE_COOKIE, path="/api/v1/auth")
-    return resp
-
-
-@router.post("/auth/logout", status_code=204)
-async def logout() -> Response:
-    resp = Response(status_code=204)
-    resp.delete_cookie(SESSION_COOKIE, path="/")
     return resp
 
 
 @router.get("/me", response_model=Me)
 async def me(user: CurrentUser) -> Me:
-    return Me(email=user.email, needs_reconnect=user.needs_reconnect)
+    return Me(
+        email=user.email,
+        name=user.name,
+        gmail_email=user.gmail_email,
+        gmail_connected=google.gmail_connected(user),
+        needs_reconnect=user.needs_reconnect,
+    )

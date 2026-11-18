@@ -12,6 +12,7 @@
  *   confirm dialog owned by this (parent) page.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Button } from "@/components/ui/Button";
 
 const THREAD_ID = /^[0-9a-f]{8,32}$/;
 
@@ -94,31 +95,42 @@ export function AppFrame({
         sandbox="allow-scripts"
         srcDoc={srcDoc}
         referrerPolicy="no-referrer"
-        className="h-full w-full border-0 bg-white"
+        className="h-full w-full border-0 bg-surface"
       />
       {pendingLink && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-          <div className="max-w-md rounded-lg bg-white p-5 shadow-lg">
-            <p className="mb-2 font-medium">Open this link?</p>
-            <p className="mb-4 rounded bg-gray-100 p-2 font-mono text-xs break-all">
+        <div className="absolute inset-0 grid animate-[dmx-fade_200ms_var(--ease-dmx)_both] place-items-center bg-[rgb(12_26_46/0.18)] p-4 backdrop-blur-[2px]">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="open-link-title"
+            className="w-full max-w-md animate-dmx-rise rounded-lg bg-surface p-6 shadow-panel"
+          >
+            <p id="open-link-title" className="text-base font-semibold">
+              Open this link?
+            </p>
+            <p className="mt-1 text-sm text-ink-2">
+              It opens in a new tab, outside Demux.
+            </p>
+            <p className="mt-4 rounded-sm bg-surface-2 p-3 font-mono text-xs break-all text-ink-2">
               {pendingLink}
             </p>
-            <div className="flex justify-end gap-2">
-              <button
-                className="rounded border px-3 py-1.5 text-sm"
+            <div className="mt-5 flex justify-end gap-2">
+              <Button
+                variant="quiet"
                 onClick={() => setPendingLink(null)}
+                autoFocus
               >
                 Cancel
-              </button>
-              <button
-                className="rounded bg-gray-900 px-3 py-1.5 text-sm text-white"
+              </Button>
+              <Button
+                size="sm"
                 onClick={() => {
                   window.open(pendingLink, "_blank", "noopener,noreferrer");
                   setPendingLink(null);
                 }}
               >
-                Open
-              </button>
+                Open link
+              </Button>
             </div>
           </div>
         </div>

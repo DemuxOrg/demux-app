@@ -18,7 +18,12 @@ Everything goes through the `Makefile` at the repo root: `make up` / `make down`
 - Client components only where interaction is needed.
 
 ## Auth
-The **backend owns the Google OAuth flow and Gmail tokens**. The frontend never sees Google access/refresh tokens. Don't use NextAuth/Auth.js for Gmail tokens. Until Phase 1, `get_current_user` (`app/api/deps.py`) is a dev stub that 401s in `ENV=prod`.
+- **Login** is better-auth in the Next.js app (`frontend/src/lib/auth.ts`): email + password, verified by a 6-digit emailed code (10 minutes). Its tables (`auth_sessions`, `auth_accounts`, `auth_verifications`, login columns of `users`) are created by **Alembic**, not by better-auth (`backend/app/models/auth.py`); change both together. The backend resolves the `demux.session_token` cookie itself (`app/auth/session.py`).
+- **Gmail** is a separate connection: the **backend owns the Google OAuth flow and Gmail tokens**; the Gmail address may differ from the login email. The frontend never sees Google tokens. Don't use better-auth social providers for Gmail tokens.
+- In `ENV=test` with no cookie, `get_current_user` returns a dev user with Gmail connected.
+
+## UI
+`frontend/theme.md` is the design system and wins over code: read it before changing UI, change it first. Generated apps get the same tokens through `backend/app/agent/shell.py`.
 
 ## Keep it simple
 No new infra (queues, caches, vector DBs) without an explicit decision.

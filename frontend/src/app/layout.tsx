@@ -1,36 +1,31 @@
 /**
- * Root layout: global CSS, fonts, metadata and the top nav shared by all routes.
- * Pages control their own width (the workspace view is full width).
+ * Root layout: Instrument Sans, global tokens, and the sky backdrop with grain that
+ * stays put while pages transition on top of it (theme.md §4, §5).
  */
-import type { Metadata } from "next";
-import Link from "next/link";
-import { Geist } from "next/font/google";
-import { NavUser } from "@/components/NavUser";
+import type { Metadata, Viewport } from "next";
+import { Instrument_Sans } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+const instrumentSans = Instrument_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-instrument-sans",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "Demux",
-  description: "Turn your Gmail into structured, refreshable workspaces.",
+  title: { default: "Demux", template: "%s · Demux" },
+  description:
+    "Turn your inbox into workspaces that keep themselves up to date.",
 };
+
+export const viewport: Viewport = { themeColor: "#5EA7F4" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geistSans.variable} h-full antialiased`}>
-      <body className="min-h-full bg-white text-gray-900">
-        <header className="h-[49px] border-b border-gray-200">
-          <nav className="flex h-full items-center gap-6 px-4 text-sm">
-            <Link href="/" className="font-semibold">
-              Demux
-            </Link>
-            <Link href="/workspaces" className="text-gray-600 hover:text-gray-900">
-              Workspaces
-            </Link>
-            <NavUser />
-          </nav>
-        </header>
-        <main>{children}</main>
+    <html lang="en" className={instrumentSans.variable}>
+      <body className="bg-sky bg-grain min-h-dvh text-ink antialiased">
+        <div className="relative z-10 flex min-h-dvh flex-col">{children}</div>
       </body>
     </html>
   );

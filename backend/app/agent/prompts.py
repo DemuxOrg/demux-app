@@ -149,10 +149,22 @@ the network; no "http://", "https://" or "//host" anywhere, except the SVG names
 localStorage/sessionStorage/cookies, alert/confirm/prompt, window.open, any use of \
 location/parent/top, <form>, <iframe>, import(). Images only as inline SVG or data: \
 URIs. Vanilla JS only, no libraries.
-- Available base classes (optional): .table, .card, .cards (grid), .badge (.ok .warn \
-.bad), .btn (.primary), .link, .input, .toolbar, .board + .column (kanban), .stat, \
-.empty, .muted. CSS variables: --bg --fg --muted --border --card --accent --ok --warn \
---bad --radius. Light and dark mode are handled by the variables.
+- Style (Demux design system, already loaded: the Instrument Sans font, the variables \
+and the base classes). Base classes: .table, .card, .cards (grid), .badge (neutral; \
+.ok .warn .bad .info for status), .tag, .dot (6-7px category dot, always next to a \
+text label), .btn (.primary), .link, .input, .toolbar, .board + .column (kanban), \
+.stat (<b>value</b><span>label</span>), .updated (a just-changed record), .num \
+(tabular numbers), .empty, .muted. Colour only through CSS variables, never raw hex: \
+--dmx-ink, --dmx-ink-2, --dmx-ink-3 (text), --dmx-surface, --dmx-surface-2, \
+--dmx-line, --dmx-line-soft, --dmx-tag, --dmx-accent, --dmx-accent-soft, \
+--dmx-accent-ink, status pairs --dmx-success-bg/--dmx-success (also warning, danger, \
+info, neutral), category dots --dmx-cat-blue/-lavender/-pink/-green/-amber/-purple, \
+radii --dmx-r-tag (6px) --dmx-r-card (12px) --dmx-r-col (16px).
+- Look: calm white surfaces, generous spacing, left-aligned dense content. One accent \
+(--dmx-accent) only for the selected or updated state and the main control. Status \
+colours only for status, always as a soft background with dark text (.badge). \
+Sentence case everywhere: no uppercase labels. Large numbers use weight 500, never \
+bold 700. No gradients, glows, emoji, icons as decoration or heavy shadows.
 """
 
 APP = f"""\

@@ -2,8 +2,8 @@
  * Typed API client.
  *
  * Responsible for every HTTP call from the browser to the backend: a thin `fetch`
- * wrapper that prefixes NEXT_PUBLIC_API_URL, sends the session cookie
- * (`credentials: "include"`), and turns the backend's `{ error: { code, message } }`
+ * wrapper that prefixes NEXT_PUBLIC_API_URL, sends the better-auth session cookie
+ * (`credentials: "include"`; the backend resolves it), and turns the backend's `{ error: { code, message } }`
  * format into a thrown `ApiError`. Types come from `api-types.ts` (generated).
  */
 import type { components } from "./api-types";
@@ -20,8 +20,10 @@ export type AppDoc = S["AppDoc"];
 export type DataDoc = S["DataDoc"];
 export type GuideDoc = S["GuideDoc"];
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-export const LOGIN_URL = `${API_URL}/api/v1/auth/google/login`;
+export const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+/** Starts the backend-owned Gmail OAuth flow (a full-page navigation, not fetch). */
+export const CONNECT_GMAIL_URL = `${API_URL}/api/v1/auth/google/login`;
 
 export class ApiError extends Error {
   constructor(
@@ -60,7 +62,6 @@ const post = <T>(path: string, body?: unknown) =>
 export const api = {
   health: () => request<{ status: string; db: string }>("/health"),
   me: () => request<Me>("/me"),
-  logout: () => post<void>("/auth/logout"),
   appShell: () => request<{ head: string }>("/app-shell"),
   listWorkspaces: () => request<WorkspaceSummary[]>("/workspaces"),
   createWorkspace: (prompt: string) =>
@@ -87,17 +88,17 @@ export const api = {
   rebuild: (id: string) => post<WorkspaceSummary>(`/workspaces/${id}/rebuild`),
 };
 
-/** Redirect to the landing page when the session is missing or expired. */
+/** Send the user to sign in when the session is missing or expired. */
 export function handleAuthError(e: unknown): boolean {
   if (e instanceof ApiError && e.status === 401) {
-    window.location.href = "/";
+    window.location.href = "/login";
     return true;
   }
   return false;
 }
 
 export function timeAgo(iso: string | null | undefined): string {
-  if (!iso) return "never";
+  if (!iso) return "not yet";
   const s = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
   if (s < 60) return "just now";
   if (s < 3600) return `${Math.floor(s / 60)} min ago`;
@@ -106,8 +107,11 @@ export function timeAgo(iso: string | null | undefined): string {
 }
 
 export function countLabel(counts: Record<string, number>): string {
-  const parts = Object.entries(counts).map(
-    ([t, n]) => `${n} ${t.replace(/_/g, " ")}`,
-  );
+  const parts = Object.entries(counts)
+    .filter(([t]) => !t.startsWith("_"))
+    .map(([t, n]) => {
+      const noun = t.replace(/_/g, " ");
+      return `${n} ${n === 1 || noun.endsWith("s") ? noun : `${noun}s`}`;
+    });
   return parts.length ? parts.join(" · ") : "No records yet";
 }

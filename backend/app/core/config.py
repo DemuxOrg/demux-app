@@ -34,13 +34,12 @@ class Settings(BaseSettings):
     # Used by the test suite only (see tests/conftest.py).
     TEST_DATABASE_URL: str = "postgresql+asyncpg://demux:demux@localhost:5432/demux_test"
 
-    # --- Auth (backend owns Google OAuth) ---
+    # --- Gmail connection (backend owns Google OAuth; login is better-auth in the frontend) ---
     BACKEND_URL: str = "http://localhost:8000"
     GOOGLE_CLIENT_ID: str = ""
     GOOGLE_CLIENT_SECRET: str = ""
-    SECRET_KEY: str = ""  # signs the session cookie and OAuth state
+    SECRET_KEY: str = ""  # signs the Gmail OAuth state
     TOKEN_ENCRYPTION_KEY: str = ""  # Fernet key for Google tokens at rest
-    SESSION_MAX_AGE_DAYS: int = 30
 
     # --- LLM (any OpenAI-compatible endpoint with tool calling) ---
     LLM_BASE_URL: str = "https://router.huggingface.co/v1"
@@ -73,6 +72,10 @@ class Settings(BaseSettings):
     @property
     def llm_api_key(self) -> str:
         return self.LLM_API_KEY or self.HF_TOKEN
+
+    @property
+    def uses_fake_mailbox(self) -> bool:
+        return bool(self.DEV_FAKE_MAILBOX) and self.ENV == Env.DEV
 
     @property
     def google_redirect_uri(self) -> str:

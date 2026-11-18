@@ -1,26 +1,343 @@
+/*
+ * Demux design tokens and global styles. Source of truth: frontend/theme.md (§10.2).
+ * Change theme.md first, then this file.
+ */
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  /* Remove Tailwind's default palette: only brand colors exist. */
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-transparent: transparent;
+  --color-current: currentColor;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Primary — sky (backgrounds only) */
+  --color-sky-deep: #3f92f0;
+  --color-sky-500: #5ea7f4;
+  --color-sky-300: #8dbdee;
+  --color-sky-200: #a9cbf0;
+  --color-haze: #cad7e8;
+  --color-mist: #dfe2e7;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* Secondary — logo */
+  --color-violet: #6a3df0;
+  --color-violet-hover: #5a2fdc;
+  --color-violet-ink: #4b24c9;
+  --color-violet-soft: #eee9fe;
+  --color-violet-line: #c9bcfb;
+  --color-violet-tint: #fbfaff;
+  --color-magenta: #d63a7c;
+  --color-magenta-soft: #fce3ec;
+  --color-coral: #ee5a44;
+
+  /* Ink & surfaces */
+  --color-ink: #0c1a2e;
+  --color-ink-2: #33445c;
+  --color-ink-3: #5b6b80;
+  --color-ink-on-sky: #172741;
+  --color-line: #e6ebf2;
+  --color-line-soft: #edf1f6;
+  --color-surface: #ffffff;
+  --color-surface-2: #f4f7fb;
+  --color-surface-3: #f5f7fb;
+  --color-tag: #f1f4f8;
+  --color-chip-line: #e3e8f0;
+  --color-pending-line: #e1e6ee;
+  --color-track: #eef1f6;
+
+  /* Status */
+  --color-success-bg: #e4f5ea;
+  --color-success: #1d6b37;
+  --color-danger-bg: #fdecea;
+  --color-danger: #a8321f;
+  --color-warning-bg: #fff1e2;
+  --color-warning: #8f4405;
+  --color-info-bg: #e6f0fd;
+  --color-info: #1f5fb8;
+  --color-neutral-bg: #eef2f7;
+  --color-neutral: #33445c;
+  --color-live: #2fb36b;
+
+  /* Type */
+  --font-sans:
+    var(--font-instrument-sans), -apple-system, "Helvetica Neue", Arial,
+    sans-serif;
+
+  /* Radius */
+  --radius-tag: 6px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 26px;
+  --radius-2xl: 30px;
+
+  /* Shadows (always tinted blue) */
+  --shadow-float:
+    0 50px 90px -40px rgb(22 62 128 / 0.55), 0 2px 8px rgb(22 62 128 / 0.06);
+  --shadow-panel:
+    0 40px 80px -40px rgb(22 62 128 / 0.5), 0 2px 6px rgb(22 62 128 / 0.05);
+  --shadow-glass: 0 20px 40px -28px rgb(22 62 128 / 0.5);
+  --shadow-pill: 0 6px 14px -8px rgb(22 62 128 / 0.5);
+  --shadow-input: 0 10px 24px -16px rgb(22 62 128 / 0.45);
+
+  /* Motion */
+  --ease-dmx: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --animate-dmx-spin: dmx-spin 0.9s linear infinite;
+  --animate-dmx-pulse: dmx-pulse 1.6s ease-in-out infinite;
+  --animate-dmx-breathe: dmx-breathe 2.4s ease-in-out infinite;
+  --animate-dmx-flow: dmx-flow 1.8s linear infinite;
+  --animate-dmx-rise: dmx-rise 0.32s var(--ease-dmx) both;
+  @keyframes dmx-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes dmx-pulse {
+    50% {
+      opacity: 0.35;
+    }
+  }
+  @keyframes dmx-breathe {
+    50% {
+      transform: scale(1.045);
+    }
+  }
+  @keyframes dmx-flow {
+    from {
+      background-position: 0 0;
+    }
+    to {
+      background-position: 200px 0;
+    }
+  }
+  @keyframes dmx-fade {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes dmx-drawer {
+    from {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+  }
+  @keyframes dmx-rise {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  html {
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    font-family: var(--font-sans);
+  }
+  ::selection {
+    background: var(--color-violet-soft);
+    color: var(--color-violet-ink);
+  }
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(106 61 240 / 0.22);
+  }
+  button,
+  input,
+  textarea {
+    font: inherit;
+  }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+}
+
+/* Sky backdrop (§4.1). `bg-sky-mirror` flips it so pages don't look identical. */
+@utility bg-sky {
+  background-color: #8dbdee;
+  background-image:
+    radial-gradient(
+      70% 70% at 6% 0%,
+      rgb(86 162 244 / 0.95),
+      rgb(86 162 244 / 0) 70%
+    ),
+    radial-gradient(
+      55% 60% at 100% 4%,
+      rgb(112 178 247 / 0.9),
+      rgb(112 178 247 / 0) 70%
+    ),
+    radial-gradient(
+      50% 50% at 86% 78%,
+      rgb(208 220 234 / 0.95),
+      rgb(208 220 234 / 0) 70%
+    ),
+    radial-gradient(
+      45% 50% at 4% 100%,
+      rgb(226 230 236 / 0.95),
+      rgb(226 230 236 / 0) 70%
+    ),
+    radial-gradient(
+      40% 45% at 100% 100%,
+      rgb(72 152 242 / 0.85),
+      rgb(72 152 242 / 0) 70%
+    );
+  background-attachment: fixed;
+}
+@utility bg-sky-mirror {
+  background-color: #8dbdee;
+  background-image:
+    radial-gradient(
+      70% 70% at 94% 0%,
+      rgb(86 162 244 / 0.95),
+      rgb(86 162 244 / 0) 70%
+    ),
+    radial-gradient(
+      55% 60% at 0% 4%,
+      rgb(112 178 247 / 0.9),
+      rgb(112 178 247 / 0) 70%
+    ),
+    radial-gradient(
+      50% 50% at 14% 78%,
+      rgb(208 220 234 / 0.95),
+      rgb(208 220 234 / 0) 70%
+    ),
+    radial-gradient(
+      45% 50% at 96% 100%,
+      rgb(226 230 236 / 0.95),
+      rgb(226 230 236 / 0) 70%
+    ),
+    radial-gradient(
+      40% 45% at 0% 100%,
+      rgb(72 152 242 / 0.85),
+      rgb(72 152 242 / 0) 70%
+    );
+  background-attachment: fixed;
+}
+
+/* Grain (§4.2): on top of the sky, under content (content gets z-index 1). */
+@utility bg-grain {
+  position: relative;
+  isolation: isolate;
+  &::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+    background-size: 256px 256px;
+    mix-blend-mode: soft-light;
+    opacity: 0.6;
+  }
+}
+
+@utility bg-brand-gradient {
+  background-image: linear-gradient(
+    90deg,
+    #6a3df0 0%,
+    #d63a7c 60%,
+    #ee5a44 100%
+  );
+}
+/* The same logo colours as a seamless 200px loop, for the moving progress-bar fill. */
+@utility bg-brand-flow {
+  background-image: linear-gradient(
+    90deg,
+    #6a3df0 0%,
+    #d63a7c 35%,
+    #ee5a44 50%,
+    #d63a7c 65%,
+    #6a3df0 100%
+  );
+  background-size: 200px 100%;
+}
+@utility glass {
+  background: rgb(255 255 255 / 0.72);
+  border: 1px solid rgb(255 255 255 / 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Page transitions (React <ViewTransition>, see components/motion/PageTransition.tsx).
+ * Old content leaves quickly, new content rises in gently: calm, never flashy.
+ */
+::view-transition-old(.dmx-page) {
+  animation: 140ms var(--ease-dmx) both dmx-page-out;
+}
+::view-transition-new(.dmx-page) {
+  animation: 300ms var(--ease-dmx) 70ms both dmx-page-in;
+}
+::view-transition-group(.dmx-page) {
+  animation-duration: 300ms;
+  animation-timing-function: var(--ease-dmx);
+}
+/* Steps inside one page (sign in → code, connect → prompt) slide sideways a little. */
+::view-transition-old(.dmx-step) {
+  animation: 150ms var(--ease-dmx) both dmx-step-out;
+}
+::view-transition-new(.dmx-step) {
+  animation: 320ms var(--ease-dmx) 60ms both dmx-step-in;
+}
+::view-transition-group(.dmx-step) {
+  animation-duration: 320ms;
+  animation-timing-function: var(--ease-dmx);
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+@keyframes dmx-page-out {
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+@keyframes dmx-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+@keyframes dmx-step-out {
+  to {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+}
+@keyframes dmx-step-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }

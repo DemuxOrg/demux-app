@@ -1,43 +1,59 @@
-"""Signed session cookie and OAuth state.
+"""Login session (owned by better-auth) and the Gmail OAuth state.
 
-The session cookie holds only the user id, signed with SECRET_KEY (itsdangerous). It is
-httpOnly and SameSite=Lax; the frontend never reads it. OAuth `state` is a signed,
-short-lived nonce that is also set in a cookie so the callback can check that the same
-browser started the flow.
+Login is handled by better-auth in the Next.js app. It sets an httpOnly cookie named
+`demux.session_token` (`__Secure-demux.session_token` over HTTPS) whose value is
+`<token>.<signature>`. Frontend and backend share one site (localhost, or subdomains of
+one domain with AUTH_COOKIE_DOMAIN set in the frontend), so the browser sends the
+cookie to this API too. We resolve it by looking the token up in `auth_sessions`: the
+token is 32 random characters, unguessable, and the row is deleted on sign-out.
+
+OAuth `state` for the Gmail connection is a signed, short-lived nonce that is also set in
+a cookie so the callback can check that the same browser started the flow.
 """
 
 import secrets
-import uuid
+from datetime import UTC, datetime
 
 from itsdangerous import BadSignature, URLSafeTimedSerializer
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import Env, settings
+from app.models.auth import AuthSession
+from app.models.user import User
 
-SESSION_COOKIE = "demux_session"
+# Must match `advanced.cookiePrefix` in frontend/src/lib/auth.ts.
+SESSION_COOKIES = ("__Secure-demux.session_token", "demux.session_token")
 STATE_COOKIE = "demux_oauth_state"
 STATE_MAX_AGE_S = 600
+
+
+def session_token_from_cookies(cookies: dict[str, str]) -> str | None:
+    for name in SESSION_COOKIES:
+        value = cookies.get(name)
+        if value:
+            # "<token>.<signature>": the token never contains a dot.
+            return value.split(".", 1)[0] or None
+    return None
+
+
+async def user_for_session_token(session: AsyncSession, token: str) -> User | None:
+    """The verified user behind a live better-auth session, or None."""
+    return await session.scalar(
+        select(User)
+        .join(AuthSession, AuthSession.user_id == User.id)
+        .where(
+            AuthSession.token == token,
+            AuthSession.expires_at > datetime.now(UTC),
+            User.email_verified.is_(True),
+        )
+    )
 
 
 def _serializer(salt: str) -> URLSafeTimedSerializer:
     if not settings.SECRET_KEY:
         raise RuntimeError("SECRET_KEY is not set (run `make setup`).")
     return URLSafeTimedSerializer(settings.SECRET_KEY, salt=salt)
-
-
-def session_max_age() -> int:
-    return settings.SESSION_MAX_AGE_DAYS * 24 * 3600
-
-
-def make_session_token(user_id: uuid.UUID) -> str:
-    return _serializer("session").dumps({"uid": str(user_id)})
-
-
-def read_session_token(token: str) -> uuid.UUID | None:
-    try:
-        payload = _serializer("session").loads(token, max_age=session_max_age())
-        return uuid.UUID(payload["uid"])
-    except (BadSignature, KeyError, ValueError, TypeError):
-        return None
 
 
 def make_state() -> tuple[str, str]:
