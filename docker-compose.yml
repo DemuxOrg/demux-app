@@ -1,9 +1,27 @@
-# Local dev stack: Postgres + backend + frontend, all in Docker.
-#   make up   → build and start everything (hot reload, source is bind-mounted)
-#   make down → stop (Postgres data persists in the `pgdata` volume)
-# For native dev instead: `make db` + `make backend` + `make frontend`.
-# Credentials come from .env (copy .env.example). Note the DB host is `postgres` (the
-# compose service name), while browser-facing URLs stay `localhost` (published ports).
+# Local dev stack, all in Docker: Postgres + backend API + worker + frontend.
+#   make up    → build and start everything (hot reload, source is bind-mounted)
+#   make down  → stop everything (Postgres data persists in the `pgdata` volume)
+#   make logs  → follow the logs of every service
+# Production-like stack: docker-compose.prod.yml (`make prod-up`).
+#
+# Every service that needs config reads the repo-root .env (copy .env.example; `make up`
+# does it). The DB host inside the compose network is `postgres` (the service name), so
+# DATABASE_URL is overridden here; browser-facing URLs stay `localhost` (published ports).
+
+x-backend: &backend
+  build:
+    context: ./backend
+    target: dev
+  image: demux-backend:dev
+  env_file: .env
+  environment: &backend-env
+    DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-demux}:${POSTGRES_PASSWORD:-demux}@postgres:5432/${POSTGRES_DB:-demux}
+    TEST_DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-demux}:${POSTGRES_PASSWORD:-demux}@postgres:5432/demux_test
+    ENV: dev
+  volumes:
+    - ./backend:/app
+  init: true
+
 services:
   postgres:
     image: postgres:17
@@ -12,7 +30,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-demux}
       POSTGRES_DB: ${POSTGRES_DB:-demux}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       # Creates the `demux_test` database on first start.
@@ -24,23 +42,13 @@ services:
       retries: 10
 
   backend:
-    build: ./backend
-    # Apply migrations (idempotent), then serve with hot reload. The image's CMD
-    # (plain uvicorn, no reload) is the production-ish default.
+    <<: *backend
+    # Apply migrations (idempotent), then serve with hot reload.
     command: >
-      sh -c "/opt/.venv/bin/alembic upgrade head &&
-      exec /opt/.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
-    environment:
-      # Root .env points at localhost for native dev; inside the compose network the
-      # Postgres host is `postgres`.
-      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-demux}:${POSTGRES_PASSWORD:-demux}@postgres:5432/${POSTGRES_DB:-demux}
-      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
-      ENV: dev
-      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      sh -c "alembic upgrade head &&
+      exec python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     ports:
       - "8000:8000"
-    volumes:
-      - ./backend:/app
     depends_on:
       postgres:
         condition: service_healthy
@@ -48,17 +56,30 @@ services:
       test:
         [
           "CMD",
-          "/opt/.venv/bin/python",
+          "python",
           "-c",
           "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health', timeout=3)",
         ]
       interval: 5s
       timeout: 3s
-      retries: 10
-      start_period: 10s
+      retries: 20
+      start_period: 15s
+
+  worker:
+    <<: *backend
+    # No hot reload: restarting mid-run would fail the run. After changing agent code:
+    #   docker compose restart worker
+    command: ["python", "-m", "app.worker"]
+    depends_on:
+      # Waits for the backend so migrations have run.
+      backend:
+        condition: service_healthy
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      target: dev
+    image: demux-frontend:dev
     environment:
       # Browser-facing URL: the published port on the host.
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
@@ -66,8 +87,9 @@ services:
       - "3000:3000"
     volumes:
       - ./frontend:/app
-      # Keep the image's node_modules; the bind mount above would shadow it.
+      # Keep the image's node_modules and build cache; the bind mount would shadow them.
       - /app/node_modules
+      - /app/.next
     depends_on:
       - backend
 
