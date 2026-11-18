@@ -6,7 +6,7 @@ Stack: FastAPI + SQLAlchemy (async) + Postgres 17 · Next.js (App Router) + Tail
 
 ## Run it
 
-Prerequisites: Docker, [uv](https://docs.astral.sh/uv/), Node 22+, [pnpm](https://pnpm.io/), make.
+Prerequisites: Docker and make. (uv, Node 22+ and pnpm only for native dev, see below.)
 
 ### 1. Google Cloud (one-off, ~10 minutes)
 1. Go to [console.cloud.google.com](https://console.cloud.google.com/) and create a project. Then **APIs & Services → Library → Gmail API → Enable**.
@@ -37,7 +37,18 @@ Prices for cost tracking and budgets live in `backend/app/agent/prices.yaml`.
 
 A stronger, slower model (for example `zai-org/GLM-5.3:deepinfra`) gives better records but takes minutes.
 
-### 3. Start
+### 3. Start (Docker, recommended)
+```bash
+make up        # creates .env if missing, fills SECRET_KEY + TOKEN_ENCRYPTION_KEY, builds and starts everything
+make logs      # follow all logs (make logs s=worker for one service)
+make down      # stop everything (the database is kept; make reset deletes it)
+```
+
+`make up` runs four containers: `postgres`, `backend` (API on :8000, migrations applied at start, hot reload), `worker` (builds, edits and the 10-minute syncs) and `frontend` (http://localhost:3000, hot reload). After editing `.env` or agent code, run `make restart` (the worker has no hot reload, so a code change never kills a running build). `make docker-test` runs the backend tests inside the container.
+
+**Production-like stack:** `make prod-up` / `make prod-down` use `docker-compose.prod.yml`: prod images (`next build`, no reload, non-root users), `ENV=prod`, Postgres not published. See the header of that file for the variables to set when deploying.
+
+**Native dev** (without Docker for the app):
 ```bash
 make setup     # deps, Chromium for app checks, .env, SECRET_KEY + TOKEN_ENCRYPTION_KEY
 make db        # Postgres
@@ -106,6 +117,8 @@ Reports with email-derived values are git-ignored. To score a real-world trial, 
 | Command | What it does |
 |---|---|
 | `make up` / `make down` | start / stop the full stack in Docker (`down` keeps the DB volume) |
+| `make logs` / `make ps` / `make restart` | follow logs / show status / recreate backend + worker |
+| `make prod-up` / `make prod-down` | start / stop the production-like stack |
 | `make install` | install backend deps (uv) and frontend deps (pnpm) |
 | `make lint` | ruff + eslint + `tsc --noEmit` |
 | `make test` | backend tests, including app checks and the sandbox security test (needs `make db`) |

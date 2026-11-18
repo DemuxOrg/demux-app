@@ -5,3 +5,8 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .ruff_cache/
+.env
+# agent transcripts and eval output (contain email-derived content)
+.runs/
+eval/agent/runs/
+eval/planner/
