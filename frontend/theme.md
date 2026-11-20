@@ -23,7 +23,7 @@
 - **Mark:** a white circle with a violet → pink gradient ring and three blades fanning out from one point on the left (violet on top, magenta in the middle, coral at the bottom). One input, many outputs: demultiplexing.
 - **Wordmark:** "Demux" in Instrument Sans 600, letter-spacing −0.02em, ink `#0C1A2E`.
 - **Lockup:** mark + wordmark, gap = 0.35 × mark size (28px mark → 10px gap, 19px wordmark; 32px mark → 11px gap, 22px wordmark).
-- **Sizes:** 28px in the login header, 32px in the logged-in home header, 42–56px in prompt and build cards, 64px+ for hero or empty states. Minimum 20px.
+- **Sizes:** 28px in the login header and the app drawer, 42–56px in prompt and build cards, 64px+ for hero or empty states. Minimum 20px.
 - **Clear space:** at least ¼ of the mark's diameter on every side.
 - **Never:** recolor it, put it on a gradient other than its own, add glow or drop shadow, rotate it, or set the wordmark in another font.
 - **On sky:** use the mark as is (it has its own white disc). On dark: same.
@@ -304,7 +304,21 @@ Vertical list with dividers `line-on-glass`, padding 14px 0:
 - Phases (fixed copy): Understanding your request → Reading your emails → Building the interface.
 
 ### 7.11 Top bar (app)
-Padding 18–22px × 24–32px, sits on sky (no bar background). Left: back (icon button) + workspace name (title-sm) + rename (ghost icon) or status chip. Right: sync status, Sync now, Undo, More (⋯), avatar (44px circle, initial, 16/600). On the home page: logo lockup left, avatar right, nothing else.
+Padding 18px top, sits on sky (no bar background). Left padding is `var(--dmx-gutter)`: 80px while the sidebar is closed (room for its open button, §7.13), 24px while it is open beside the page; the padding eases with the sidebar (360ms `ease-dmx-out`). Workspace page: workspace name (title-sm) + rename (ghost icon) or status chip on the left; sync status, Sync now, Undo, Activity, More (⋯) on the right. No back button and no avatar: workspaces and the account live in the sidebar. The create and profile pages have no top bar.
+
+### 7.13 App sidebar (navigation)
+The only navigation in the signed-in app. Notion-like: from 768px it is a column beside the page and **pushes** it (the page shrinks while it is open and takes the full width when it closes); below 768px it floats over the page with a scrim. Open by default from 768px, closed below; the user's toggle then holds while they move between pages (not across reloads).
+- **Panel:** white, radius `xl` (26px), `shadow-panel`, 12px from the top, left and bottom edges, width `min(300px, 100vw − 24px)`, padding 12px. The column is 312px (margin + panel) and animates its width to 0 when closed.
+- **Close button:** on the **right** of the sidebar header, ghost icon (§7.1) on white: 44px circle, `panel-left-close` 20px `ink-3`, `surface-2` hover.
+- **Open button:** shown only while the sidebar is closed: icon button on sky, `panel-left-open` 20px, fixed top 18px / left 24px. Both toggles carry `aria-expanded` + `aria-controls`, and focus moves to whichever one appears.
+- **Below 768px:** scrim `rgb(12 26 46 / .18)` (no blur: the sidebar has its own view-transition name, which makes it a backdrop root); a click on it, Escape, or choosing a page closes the sidebar. From 768px choosing a page keeps it open.
+- **Contents, top to bottom:**
+  1. Header row (44px): lockup (28px mark, "Demux", links home) on the left, close button on the right.
+  2. **Create workspace** row (44px, radius full, `plus` in a 28px `violet-soft` circle, 15/500 ink). Hidden once both workspaces are used; the list then says "You're using both workspaces. Delete one to build another."
+  3. **Workspaces** disclosure: header button 13/500 `ink-3` with a `chevron-down` that turns −90° when collapsed, "1 of 2" on the right (tabular). Rows: 44px, radius full, 7px dot (live green when ready, pulsing violet while building, danger when failed) + name 14/500 truncated, "Building" / "Failed" 12px on the right. Selected row: `violet-soft` bg, `violet-ink` text. Empty: "No workspaces yet" 13px `ink-3`.
+  4. Footer, pinned to the bottom with a `line-soft` divider: **account row** and **Log out** row.
+- **Account row:** like Claude's: 36px avatar (initial on `violet-soft` / `violet-ink`), full name 14/600 and login email 13 `ink-3` (both truncated), `chevrons-up-down` 16px. Opens a card above it (`pop` from the bottom): "Signed in as" + login email, the Gmail line ("Reading from [gmail]" / "Gmail not connected" / "Gmail needs reconnecting"), "1 of 2 workspaces", and a **Profile** row (`user-round`, chevron that nudges).
+- Selection and focus inside the sidebar use violet, as everywhere else. No brand gradient besides the logo.
 
 ### 7.12 Avatars (people in emails)
 44px circle (40 on mobile), initials 14–15/600, soft background + dark text pairs: `#DCE9F9/#1F5FB8`, `#FCE3D6/#9A3B12`, `#E9E1FB/#5A33C8`, `#E4F5EA/#1D6B37`. Choose the pair from a hash of the sender's email so it stays stable.
@@ -315,14 +329,18 @@ Padding 18–22px × 24–32px, sits on sky (no bar background). Left: back (ico
 
 Desktop first (min 1280px). Mobile layout is out of MVP scope, but every page must still work at 390px: rows wrap, the side panel stacks under the app.
 
-0. **Login** (`/login`): sky + lockup top left. Centered white card (max 440, radius 30, `shadow-float`): mark 46px, title-lg "Sign in to Demux" / "Create your account", email + password fields (labels 13/500 `ink-2`, inputs 48px, radius 12), full-width primary, a text link to switch. Then **Check your email**: 6 code boxes (56px tall, radius 12, one real `<input autocomplete="one-time-code">`), primary "Verify", "Resend code" (30 s cooldown) and "Use a different email". Trust line under the card.
-0. **Connect Gmail** (`/workspaces` while the user has no workspace, or no Gmail): sky + top bar (logo, avatar). Centered card like the build card: breathing mark 56px, title-lg "Connect your Gmail", three numbered pending-style steps, trust line + primary "Connect Gmail →". Once connected: "Reading from <gmail>" row with a done check, "Use another account" link, primary "Continue →".
-1. **Prompt** (`/workspaces`): sky + top bar (logo, avatar). Centered: title-xl question → prompt card (max 760) → read-only line with a lock icon. Bottom, quiet: "Your workspaces" + "1 of 2", workspace cards in a grid (min 280px), empty slot.
-2. **Workspace, building** (`/workspaces/[id]`, status `building`): sky + top bar (back, name, Building chip, avatar). Centered build card (§7.10). Nothing else.
-3. **Result** (`/workspaces/[id]`, status `ready`): sky + top bar (§7.11). Body = row, gap 16, padding 0 16 16, full viewport height: **app panel** (white, radius 26, `shadow-panel`, flex 999 1 640px; the sandboxed iframe lives here) + **side panel** (glass, radius 26, flex 1 1 320px, max 380px) with Activity | Chat tabs, the activity list, and the ask input pinned to the bottom.
+Every signed-in page (`/workspaces…`, `/profile`) lives inside one shell: the sky and the sidebar (§7.13). Pages change beside it; the sidebar never re-mounts.
+
+0. **Login** (`/login`): sky + lockup top left. Centered white card (max 440, radius 30, `shadow-float`): mark 46px, title-lg "Sign in to Demux" / "Create your account", first name + last name side by side (sign-up only, both required; they become "Hello, [first name]"), email + password fields (labels 13/500 `ink-2`, inputs 48px, radius 12), full-width primary, a text link to switch. Then **Check your email**: 6 code boxes (56px tall, radius 12, one real `<input autocomplete="one-time-code">`), primary "Verify", "Resend code" (30 s cooldown) and "Use a different email". Trust line under the card.
+0. **Landing** (`/workspaces`): opens the workspace used last in this browser, else the newest one, else **Create**.
+1. **Create, connect** (`/workspaces/new` while no Gmail is connected or it needs a reconnect): centered white card (max 520, radius 30, `shadow-float`): breathing mark 56px, title-lg "Connect your Gmail", one sentence, primary "Connect with Google →", trust line. Google's errors show in the card.
+2. **Create, prompt** (`/workspaces/new` once Gmail is connected): centered, top third: title-xl "Hello, [first name]" (the first name from sign-up or the profile page; just "Hello" for older accounts without one), then "What do you want to track?" 22/500 `ink-on-sky`, the prompt card (max 760), the read-only line with a lock icon. With both workspaces used, the prompt is disabled and the limit line replaces the read-only line. Build opens the new workspace in the same area.
+3. **Workspace, building** (`/workspaces/[id]`, status `building`): sky + top bar (name, Building chip). Centered build card (§7.10). Nothing else.
+4. **Result** (`/workspaces/[id]`, status `ready`): sky + top bar (§7.11). Body = row, gap 16, padding 0 16 16, full viewport height: **app panel** (white, radius 26, `shadow-panel`, flex 999 1 640px; the sandboxed iframe lives here) + **side panel** (glass, radius 26, flex 1 1 320px, max 380px) with Activity | Chat tabs, the activity list, and the ask input pinned to the bottom.
    - Display error banner (inside the app panel, top): bg `#FDECEA`, text `#A8321F`, "This workspace hit a display error", violet "Fix it" button.
    - Reconnect banner (under the top bar): glass card, ink text, primary button "Reconnect Gmail".
    - The side panel is a **drawer**: a ghost button in its header slides it closed (width → 0 over 300ms, the app panel takes the space); a secondary "Activity" button appears in the top bar to reopen it. Open by default from 1024px (remembered per browser), closed below 1024px where it floats over the app (`bg-white/95`).
+5. **Profile** (`/profile`, from the account card): centered column (max 640), title-lg "Profile" + "Your name and the Gmail Demux reads." `ink-on-sky`, then two white cards (radius 26, `shadow-panel`, padding 24/28): **Your name** (first + last name fields side by side, both required, primary "Save" (small) on the right, "✓ Saved" `violet-ink` beside it after saving) and **Account** (sign-in email, read-only; "Gmail Demux reads" with a quiet button "Use another account" / "Connect Gmail" / "Reconnect Gmail" that goes through Google and comes back here; the read-only trust line).
 
 ---
 
@@ -345,6 +363,7 @@ entering the screen.
 | `reveal` | fade + 16px rise, 700ms `ease-dmx-out`, stagger 80ms | Blocks entering a screen in reading order: title → card → helper line → list (`<Reveal index>`) |
 | `reveal-text` | each word: fade + 0.4em rise + 8px blur → sharp, 800ms `ease-dmx-out`, stagger 45ms | Page titles only (title-xl / title-lg), at most one per screen (`<RevealText>`) |
 | `pop` | fade + scale .96 + 4px from the anchor, 200ms `ease-dmx-out`, origin at the trigger | Menus and popovers |
+| `drawer` | from 768px: the sidebar column's width and the panel's slide move together, 360ms `ease-dmx-out`, both ways, and the page reflows with them · below 768px: panel slides in 420ms `ease-dmx-out` (out 260ms `ease-dmx`), scrim fades 300ms · rows follow an opening panel with fade + 8px from the left, 30ms stagger; nothing animates on page load | App sidebar (§7.13). The sidebar keeps its own view-transition name so page changes never paint over it |
 | UI transitions | 150–200ms `ease-dmx` | Hover, focus, tab switch |
 | Hover lift | interactive cards rise 2px and their shadow deepens one step (`shadow-glass` → `shadow-panel`), 250ms; pressed: scale .99 | Workspace cards, example chips (1px) |
 | Arrow nudge | trailing arrow moves 3px in its direction on hover of its button, 200ms | Build →, Continue →, Connect Gmail → |
@@ -502,7 +521,7 @@ The iframe's CSP allows `font-src data:` only, so Google Fonts cannot load insid
 - Agent prompt rule: "Use the `--dmx-*` variables and base classes. One accent color (`--dmx-accent`). Status colors only for status."
 
 ### 10.4 Icons
-Inline stroke SVG or `lucide-react`. Stroke 2px (2.2–2.4 on filled buttons), round caps and joins, sizes 14/16/18/20, color `currentColor`. Icons in use: `chevron-left`, `chevron-right`, `pencil`, `refresh-cw`, `undo-2`, `more-horizontal`, `arrow-right`, `arrow-up`, `check`, `lock`, `mail`. No filled or duotone icons, no emoji, no sparkles/wand/stars icons.
+Inline stroke SVG or `lucide-react`. Stroke 2px (2.2–2.4 on filled buttons), round caps and joins, sizes 14/16/18/20, color `currentColor`. Icons in use: `panel-left-open`, `panel-left-close`, `user-round`, `plus`, `chevron-down`, `chevrons-up-down`, `log-out`, `chevron-left`, `chevron-right`, `pencil`, `refresh-cw`, `undo-2`, `more-horizontal`, `arrow-right`, `arrow-up`, `check`, `lock`, `mail`. No filled or duotone icons, no emoji, no sparkles/wand/stars icons.
 
 ---
 
@@ -515,12 +534,14 @@ Inline stroke SVG or `lucide-react`. Stroke 2px (2.2–2.4 on filled buttons), r
 | Context | Copy |
 |---|---|
 | Sign in | Sign in to Demux · Create your account · Check your email · We sent a 6-digit code to [email]. It expires in 10 minutes. |
-| Connect | Connect your Gmail · Your Gmail is connected · Reading from [gmail] |
-| Prompt page title | What do you want to see from your inbox? |
+| Connect | Connect your Gmail · Connect with Google · Reading from [gmail] · Use another account |
+| Sidebar | Create workspace · Workspaces · No workspaces yet · Signed in as · Profile · Log out · Open sidebar / Close sidebar (labels) |
+| Profile | Profile · Your name and the Gmail Demux reads. · Your name · Demux greets you by your first name. · Save · Saved · Sign-in email · Gmail Demux reads |
+| Prompt page title | Hello, [first name] · What do you want to track? |
 | Prompt placeholder | Describe what you want to keep track of… |
 | Primary action | Build |
 | Trust line | Read-only. Demux never sends or changes an email. |
-| Workspace list | Your workspaces · 1 of 2 · One more slot free |
+| Workspace list | Workspaces · 1 of 2 |
 | Limit reached | You're using both workspaces. Delete one to build another. |
 | Build title | Building your workspace |
 | Build phases | Understanding your request · Reading your emails · Building the interface |

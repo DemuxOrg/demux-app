@@ -7,9 +7,9 @@ these). They also define the OpenAPI schema from which the frontend types are ge
 
 import uuid
 from datetime import datetime
-from typing import Any
+from typing import Annotated, Any
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
 from app.models.run import RunKind, RunStatus
 from app.models.workspace import WorkspaceStatus
@@ -18,9 +18,19 @@ from app.models.workspace import WorkspaceStatus
 class Me(BaseModel):
     email: str  # login email (better-auth)
     name: str
+    first_name: str  # asked at sign-up; "" for accounts created before that
+    last_name: str
     gmail_email: str | None  # the connected Gmail, may differ from `email`
     gmail_connected: bool
     needs_reconnect: bool
+
+
+PersonName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
+
+
+class MeUpdate(BaseModel):
+    first_name: PersonName
+    last_name: PersonName
 
 
 class WorkspaceCreate(BaseModel):

@@ -10,6 +10,7 @@ import type { components } from "./api-types";
 
 type S = components["schemas"];
 export type Me = S["Me"];
+export type MeUpdate = S["MeUpdate"];
 export type WorkspaceSummary = S["WorkspaceSummary"];
 export type WorkspaceDetail = S["WorkspaceDetail"];
 export type WorkspaceStatus = WorkspaceSummary["status"];
@@ -62,6 +63,8 @@ const post = <T>(path: string, body?: unknown) =>
 export const api = {
   health: () => request<{ status: string; db: string }>("/health"),
   me: () => request<Me>("/me"),
+  updateMe: (body: MeUpdate) =>
+    request<Me>("/me", { method: "PATCH", body: JSON.stringify(body) }),
   appShell: () => request<{ head: string }>("/app-shell"),
   listWorkspaces: () => request<WorkspaceSummary[]>("/workspaces"),
   createWorkspace: (prompt: string) =>

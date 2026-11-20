@@ -1,8 +1,8 @@
 """Tables owned by better-auth (the Next.js login framework): sessions, accounts, codes.
 
 better-auth runs in the frontend (`frontend/src/lib/auth.ts`) and reads and writes these
-tables directly; it also writes the login columns of `users` (email, name,
-email_verified, image). They are declared here so that Alembic owns the schema and the
+tables directly; it also writes the login columns of `users` (email, name, first_name,
+last_name, email_verified, image). They are declared here so that Alembic owns the schema and the
 backend can resolve a session cookie to a user (`app/auth/session.py`).
 
 Column names are snake_case; `frontend/src/lib/auth.ts` maps better-auth's camelCase

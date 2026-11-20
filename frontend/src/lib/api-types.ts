@@ -72,7 +72,8 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
+        /** Update Me */
+        patch: operations["update_me_api_v1_me_patch"];
         trace?: never;
     };
     "/api/v1/workspaces": {
@@ -376,12 +377,23 @@ export interface components {
             email: string;
             /** Name */
             name: string;
+            /** First Name */
+            first_name: string;
+            /** Last Name */
+            last_name: string;
             /** Gmail Email */
             gmail_email: string | null;
             /** Gmail Connected */
             gmail_connected: boolean;
             /** Needs Reconnect */
             needs_reconnect: boolean;
+        };
+        /** MeUpdate */
+        MeUpdate: {
+            /** First Name */
+            first_name: string;
+            /** Last Name */
+            last_name: string;
         };
         /** MessageCreate */
         MessageCreate: {
@@ -574,7 +586,9 @@ export interface operations {
     };
     google_login_api_v1_auth_google_login_get: {
         parameters: {
-            query?: never;
+            query?: {
+                next?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -588,6 +602,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -641,6 +664,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Me"];
+                };
+            };
+        };
+    };
+    update_me_api_v1_me_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MeUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Me"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

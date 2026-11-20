@@ -2,7 +2,8 @@
 
 One row per person using Demux. Two independent identities live here:
 
-- **Login** (written by better-auth in the frontend): `email`, `name`, `email_verified`,
+- **Login** (written by better-auth in the frontend): `email`, `name`, `first_name`,
+  `last_name` (asked at sign-up, editable on the profile page), `email_verified`,
   `image`. The password hash is in `auth_accounts`, sessions in `auth_sessions`.
 - **Gmail connection** (written by the backend's Google OAuth flow): `gmail_email`,
   `google_sub` and the encrypted tokens (Fernet, see app/auth/crypto.py). The tokens
@@ -23,6 +24,8 @@ class User(IdMixin, TimestampMixin, Base):
     # Login (better-auth)
     email: Mapped[str] = mapped_column(Text, unique=True, nullable=False)
     name: Mapped[str] = mapped_column(Text, nullable=False, default="", server_default="")
+    first_name: Mapped[str] = mapped_column(Text, nullable=False, default="", server_default="")
+    last_name: Mapped[str] = mapped_column(Text, nullable=False, default="", server_default="")
     email_verified: Mapped[bool] = mapped_column(
         Boolean, nullable=False, default=False, server_default=false()
     )

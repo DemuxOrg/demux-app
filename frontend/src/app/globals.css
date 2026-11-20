@@ -86,6 +86,8 @@
   /* Long, soft settle for anything entering the screen (theme.md §9). */
   --ease-dmx-out: cubic-bezier(0.16, 1, 0.3, 1);
   --animate-dmx-pop: dmx-pop 0.2s var(--ease-dmx-out) both;
+  /* The same pop for popovers that open upward (the account card in the drawer). */
+  --animate-dmx-pop-up: dmx-pop-up 0.2s var(--ease-dmx-out) both;
   --animate-dmx-spin: dmx-spin 0.9s linear infinite;
   --animate-dmx-pulse: dmx-pulse 1.6s ease-in-out infinite;
   --animate-dmx-breathe: dmx-breathe 2.4s ease-in-out infinite;
@@ -135,6 +137,12 @@
     from {
       opacity: 0;
       transform: translateY(-4px) scale(0.96);
+    }
+  }
+  @keyframes dmx-pop-up {
+    from {
+      opacity: 0;
+      transform: translateY(4px) scale(0.96);
     }
   }
   @keyframes dmx-reveal {
@@ -378,6 +386,115 @@
   }
 }
 
+/*
+ * App sidebar (§7.13, §9 drawer). `.dmx-shell[data-drawer]` is "auto" (open from 768px,
+ * closed below) until the user toggles it, then "open" or "closed".
+ * - From 768px the sidebar is a column whose width opens and closes, so the page beside
+ *   it shrinks and grows (Notion-like); the white panel slides with it.
+ * - Below 768px it floats over the page with a scrim.
+ * Rows follow the panel in, 30ms apart (`--i` per row). Pages pad their top bar by
+ * `--dmx-gutter`: room for the open button while the sidebar is closed.
+ */
+@layer components {
+  .dmx-shell {
+    --dmx-gutter: 80px;
+  }
+  .dmx-sidebar-panel {
+    visibility: hidden;
+    transform: translateX(calc(-100% - 12px));
+    transition:
+      transform 260ms var(--ease-dmx),
+      visibility 0s linear 260ms;
+  }
+  .dmx-shell[data-drawer="open"] .dmx-sidebar-panel {
+    visibility: visible;
+    transform: none;
+    transition:
+      transform 420ms var(--ease-dmx-out),
+      visibility 0s;
+  }
+  .dmx-scrim {
+    visibility: hidden;
+    opacity: 0;
+    transition:
+      opacity 300ms var(--ease-dmx),
+      visibility 0s linear 300ms;
+  }
+  .dmx-shell[data-drawer="open"] .dmx-scrim {
+    visibility: visible;
+    opacity: 1;
+    transition:
+      opacity 300ms var(--ease-dmx),
+      visibility 0s;
+  }
+  .dmx-open-toggle {
+    transition:
+      opacity 200ms var(--ease-dmx) 120ms,
+      transform 200ms var(--ease-dmx),
+      background-color 200ms var(--ease-dmx),
+      visibility 0s;
+  }
+  .dmx-shell[data-drawer="open"] .dmx-open-toggle {
+    visibility: hidden;
+    opacity: 0;
+    transition:
+      opacity 120ms var(--ease-dmx),
+      visibility 0s linear 120ms;
+  }
+  .dmx-drawer-item {
+    opacity: 0;
+    transform: translateX(-8px);
+    transition:
+      opacity 160ms var(--ease-dmx),
+      transform 160ms var(--ease-dmx);
+  }
+  .dmx-shell[data-drawer="open"] .dmx-drawer-item {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 360ms var(--ease-dmx-out),
+      transform 420ms var(--ease-dmx-out);
+    transition-delay: calc(90ms + var(--i, 0) * 30ms);
+  }
+
+  @media (min-width: 768px) {
+    .dmx-shell:is([data-drawer="open"], [data-drawer="auto"]) {
+      --dmx-gutter: 24px;
+    }
+    .dmx-scrim {
+      display: none;
+    }
+    .dmx-sidebar {
+      width: 0;
+      transition: width 360ms var(--ease-dmx-out);
+    }
+    .dmx-shell:is([data-drawer="open"], [data-drawer="auto"]) .dmx-sidebar {
+      width: 312px; /* 12px margin + 300px panel */
+    }
+    /* The panel slides in step with the column, both ways. */
+    .dmx-sidebar-panel {
+      transition:
+        transform 360ms var(--ease-dmx-out),
+        visibility 0s linear 360ms;
+    }
+    .dmx-shell[data-drawer="open"] .dmx-sidebar-panel {
+      transition:
+        transform 360ms var(--ease-dmx-out),
+        visibility 0s;
+    }
+    .dmx-shell[data-drawer="auto"] .dmx-sidebar-panel,
+    .dmx-shell[data-drawer="auto"] .dmx-drawer-item {
+      visibility: visible;
+      opacity: 1;
+      transform: none;
+    }
+    .dmx-shell[data-drawer="auto"] .dmx-open-toggle {
+      visibility: hidden;
+      opacity: 0;
+    }
+  }
+}
+
 @utility tabular {
   font-variant-numeric: tabular-nums;
 }
@@ -410,6 +527,21 @@
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
+}
+/*
+ * The sidebar keeps its own name so it is painted above the page groups during a page
+ * transition, live and unanimated: a page change never covers it (it overlaps the page
+ * below 768px).
+ */
+.dmx-sidebar {
+  view-transition-name: dmx-sidebar;
+}
+::view-transition-group(dmx-sidebar),
+::view-transition-new(dmx-sidebar) {
+  animation: none;
+}
+::view-transition-old(dmx-sidebar) {
+  display: none;
 }
 @keyframes dmx-page-out {
   to {

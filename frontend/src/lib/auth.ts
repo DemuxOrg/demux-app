@@ -1,6 +1,9 @@
 /**
  * Login (server only): better-auth with email + password and a 6-digit emailed code.
  *
+ * - Sign up asks for first name, last name, email and password (`additionalFields`:
+ *   `firstName` / `lastName` → `first_name` / `last_name`, which greet the user and are
+ *   editable on the profile page through the backend's PATCH /me).
  * - Sign up creates an unverified user and emails a code (valid 10 minutes). Entering
  *   the code verifies the email and signs the user in. Unverified users cannot sign in:
  *   trying sends a fresh code.
@@ -33,6 +36,20 @@ export const auth = betterAuth({
   user: {
     modelName: "users",
     fields: { emailVerified: "email_verified", ...timestamps },
+    additionalFields: {
+      firstName: {
+        type: "string",
+        required: true,
+        input: true,
+        fieldName: "first_name",
+      },
+      lastName: {
+        type: "string",
+        required: true,
+        input: true,
+        fieldName: "last_name",
+      },
+    },
   },
   session: {
     modelName: "auth_sessions",
