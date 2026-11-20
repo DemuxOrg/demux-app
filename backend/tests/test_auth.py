@@ -87,9 +87,38 @@ async def test_gmail_login_redirects_to_google_with_offline_access(client):
     resp = await client.get("/api/v1/auth/google/login", follow_redirects=False)
     assert resp.status_code == 302
     q = parse_qs(urlparse(resp.headers["location"]).query)
-    assert q["access_type"] == ["offline"] and q["prompt"] == ["consent"]
+    assert q["access_type"] == ["offline"] and q["prompt"] == ["select_account consent"]
     assert "gmail.readonly" in q["scope"][0]
     assert STATE_COOKIE in resp.cookies
+
+
+async def test_gmail_connection_belongs_to_one_account(session):
+    tokens = google.TokenSet("access", "refresh", datetime.now(UTC) + timedelta(hours=1))
+    a, _ = await _signed_in_user(session, "a@x.example")
+    b, _ = await _signed_in_user(session, "b@x.example")
+    await google.link_gmail(session, a, "sub-1", "shared@gmail.com", tokens)
+    assert google.gmail_connected(a) and not google.gmail_connected(b)
+    assert b.gmail_email is None and b.refresh_token_enc is None
+    # A second account may connect the same Gmail; each keeps its own row.
+    await google.link_gmail(session, b, "sub-1", "shared@gmail.com", tokens)
+    assert a.id != b.id and a.gmail_email == b.gmail_email == "shared@gmail.com"
+
+
+async def test_disconnect_gmail_clears_only_this_account(client, session):
+    tokens = google.TokenSet("access", "refresh", datetime.now(UTC) + timedelta(hours=1))
+    a, cookie = await _signed_in_user(session, "a@x.example")
+    b, _ = await _signed_in_user(session, "b@x.example")
+    await google.link_gmail(session, a, "sub-1", "shared@gmail.com", tokens)
+    await google.link_gmail(session, b, "sub-1", "shared@gmail.com", tokens)
+    client.cookies.set(COOKIE, cookie)
+    me = (await client.delete("/api/v1/me/gmail")).json()
+    assert me["gmail_connected"] is False and me["gmail_email"] is None
+    await session.refresh(a)
+    await session.refresh(b)
+    assert a.refresh_token_enc is None and a.access_token_enc is None and a.google_sub is None
+    assert b.gmail_email == "shared@gmail.com" and google.gmail_connected(b)
+    resp = await client.post("/api/v1/workspaces", json={"prompt": "Track my invoices"})
+    assert resp.json()["error"]["code"] == "gmail_not_connected"
 
 
 async def test_callback_rejects_bad_state(client):

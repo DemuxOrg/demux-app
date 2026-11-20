@@ -11,7 +11,7 @@ from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from typing import Any
 
-from sqlalchemy import and_, delete, exists, func, select, text, update
+from sqlalchemy import and_, delete, exists, func, select, text, true, update
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.agent.context import BudgetExceeded, WorkspaceState
@@ -158,6 +158,8 @@ async def workspaces_due_for_sync(session: AsyncSession, interval_min: int) -> l
         .where(
             Workspace.status == WorkspaceStatus.READY,
             User.needs_reconnect.is_(False),
+            # Gmail disconnected: nothing to read (the dev fake mailbox needs no token).
+            true() if settings.uses_fake_mailbox else User.refresh_token_enc.is_not(None),
             (Workspace.last_synced_at.is_(None)) | (Workspace.last_synced_at < cutoff),
             ~exists().where(Run.workspace_id == Workspace.id, Run.status.in_(ACTIVE)),
         )

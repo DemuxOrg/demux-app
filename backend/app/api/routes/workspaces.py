@@ -194,8 +194,7 @@ async def post_message(
     workspace_id: uuid.UUID, body: MessageCreate, session: SessionDep, user: CurrentUser
 ):
     w = await service.get_workspace(session, user.id, workspace_id)
-    if user.needs_reconnect:
-        raise service.ReconnectRequiredError("Reconnect Gmail first.")
+    service.require_gmail(user, "first")
     run = await runs_service.enqueue(session, w.id, RunKind.EDIT, {"text": body.text.strip()})
     return RunCreated(run_id=run.id)
 
@@ -203,8 +202,7 @@ async def post_message(
 @router.post("/{workspace_id}/sync", response_model=RunCreated, status_code=202)
 async def sync_now(workspace_id: uuid.UUID, session: SessionDep, user: CurrentUser):
     w = await service.get_workspace(session, user.id, workspace_id)
-    if user.needs_reconnect:
-        raise service.ReconnectRequiredError("Reconnect Gmail first.")
+    service.require_gmail(user, "first")
     run = await runs_service.enqueue(session, w.id, RunKind.SYNC, conflict_if_active=False)
     return RunCreated(run_id=run.id)
 

@@ -1,7 +1,9 @@
 """Gmail connection: Google OAuth (authorization code flow, backend-owned), token refresh.
 
-This is not login (better-auth handles that). A signed-in user connects one Gmail
-account, which may have a different address than their login email.
+This is not login (better-auth handles that). Each Demux account owns at most one Gmail
+connection, stored on its own `users` row: a new account starts with none, and connecting
+one never touches another account. Two Demux accounts may connect the same Gmail; each
+then holds its own tokens. The Gmail address may differ from the login email.
 
 Endpoints from Google's OAuth 2.0 for web server apps documentation:
 - authorization: https://accounts.google.com/o/oauth2/v2/auth
@@ -52,7 +54,11 @@ def authorization_url(state: str) -> str:
         "response_type": "code",
         "scope": SCOPES,
         "access_type": "offline",
-        "prompt": "consent",
+        # select_account: always show Google's account chooser. With "consent" alone,
+        # Google silently reuses the Google account the browser is signed in to, so every
+        # Demux account in that browser ended up connected to the same Gmail.
+        # consent: always return a refresh token.
+        "prompt": "select_account consent",
         "include_granted_scopes": "true",
         "state": state,
     }
@@ -104,6 +110,23 @@ async def link_gmail(
     if tokens.refresh_token:
         user.refresh_token_enc = encrypt(tokens.refresh_token)
     user.token_expires_at = tokens.expires_at
+    user.needs_reconnect = False
+    await session.flush()
+    return user
+
+
+async def unlink_gmail(session: AsyncSession, user: User) -> User:
+    """Forget the signed-in user's Gmail connection: the address and every stored token.
+
+    Only this Demux account's row changes. The grant is not revoked at Google: another
+    Demux account may have connected the same Gmail, and revoking would cut it off too.
+    The user can remove Demux at myaccount.google.com/permissions.
+    """
+    user.google_sub = None
+    user.gmail_email = None
+    user.access_token_enc = None
+    user.refresh_token_enc = None
+    user.token_expires_at = None
     user.needs_reconnect = False
     await session.flush()
     return user

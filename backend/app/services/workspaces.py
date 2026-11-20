@@ -33,6 +33,14 @@ class GmailNotConnectedError(AppError):
     code = "gmail_not_connected"
 
 
+def require_gmail(user: User, action: str) -> None:
+    """Raise unless the worker can read this user's mail. `action` ends the message."""
+    if not gmail_connected(user):
+        raise GmailNotConnectedError(f"Connect Gmail {action}.")
+    if user.needs_reconnect:
+        raise ReconnectRequiredError(f"Reconnect Gmail {action}.")
+
+
 async def list_workspaces(session: AsyncSession, user_id: uuid.UUID) -> list[Workspace]:
     result = await session.scalars(
         select(Workspace).where(Workspace.user_id == user_id).order_by(Workspace.created_at)
@@ -53,10 +61,8 @@ async def create_workspace(
     enqueue_build: bool = True,
 ) -> Workspace:
     user = await session.get(User, user_id)
-    if user is not None and not gmail_connected(user):
-        raise GmailNotConnectedError("Connect Gmail before creating a workspace.")
-    if user is not None and user.needs_reconnect:
-        raise ReconnectRequiredError("Reconnect Gmail before creating a workspace.")
+    if user is not None:
+        require_gmail(user, "before creating a workspace")
     count = await session.scalar(
         select(func.count()).select_from(Workspace).where(Workspace.user_id == user_id)
     )
@@ -116,8 +122,8 @@ async def rebuild_workspace(
     """'Try again' after a failed build: reset content and enqueue a new build."""
     workspace = await get_workspace(session, user_id, workspace_id)
     user = await session.get(User, user_id)
-    if user is not None and user.needs_reconnect:
-        raise ReconnectRequiredError("Reconnect Gmail first.")
+    if user is not None:
+        require_gmail(user, "first")
     await runs.enqueue(session, workspace.id, RunKind.BUILD)
     workspace.status = WorkspaceStatus.BUILDING
     workspace.last_error = None

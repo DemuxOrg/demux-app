@@ -340,7 +340,7 @@ Every signed-in page (`/workspaces…`, `/profile`) lives inside one shell: the 
    - Display error banner (inside the app panel, top): bg `#FDECEA`, text `#A8321F`, "This workspace hit a display error", violet "Fix it" button.
    - Reconnect banner (under the top bar): glass card, ink text, primary button "Reconnect Gmail".
    - The side panel is a **drawer**: a ghost button in its header slides it closed (width → 0 over 300ms, the app panel takes the space); a secondary "Activity" button appears in the top bar to reopen it. Open by default from 1024px (remembered per browser), closed below 1024px where it floats over the app (`bg-white/95`).
-5. **Profile** (`/profile`, from the account card): centered column (max 640), title-lg "Profile" + "Your name and the Gmail Demux reads." `ink-on-sky`, then two white cards (radius 26, `shadow-panel`, padding 24/28): **Your name** (first + last name fields side by side, both required, primary "Save" (small) on the right, "✓ Saved" `violet-ink` beside it after saving) and **Account** (sign-in email, read-only; "Gmail Demux reads" with a quiet button "Use another account" / "Connect Gmail" / "Reconnect Gmail" that goes through Google and comes back here; the read-only trust line).
+5. **Profile** (`/profile`, from the account card): centered column (max 640), title-lg "Profile" + "Your name and the Gmail Demux reads." `ink-on-sky`, then two white cards (radius 26, `shadow-panel`, padding 24/28): **Your name** (first + last name fields side by side, both required, primary "Save" (small) on the right, "✓ Saved" `violet-ink` beside it after saving) and **Account** (sign-in email, read-only; "Gmail Demux reads" with a quiet button "Use another account" / "Connect Gmail" / "Reconnect Gmail" that goes through Google and comes back here, and, while a Gmail is connected, a quiet "Disconnect" beside it. Disconnect asks first, inline in the same row: "Disconnect [gmail]? Your workspaces stay but stop updating." with quiet "Cancel" and a `danger` text "Disconnect" button; then the row reads "Not connected"; the read-only trust line).
 
 ---
 
@@ -536,7 +536,7 @@ Inline stroke SVG or `lucide-react`. Stroke 2px (2.2–2.4 on filled buttons), r
 | Sign in | Sign in to Demux · Create your account · Check your email · We sent a 6-digit code to [email]. It expires in 10 minutes. |
 | Connect | Connect your Gmail · Connect with Google · Reading from [gmail] · Use another account |
 | Sidebar | Create workspace · Workspaces · No workspaces yet · Signed in as · Profile · Log out · Open sidebar / Close sidebar (labels) |
-| Profile | Profile · Your name and the Gmail Demux reads. · Your name · Demux greets you by your first name. · Save · Saved · Sign-in email · Gmail Demux reads |
+| Profile | Profile · Your name and the Gmail Demux reads. · Your name · Demux greets you by your first name. · Save · Saved · Sign-in email · Gmail Demux reads · Disconnect · Disconnect [gmail]? Your workspaces stay but stop updating. · Cancel |
 | Prompt page title | Hello, [first name] · What do you want to track? |
 | Prompt placeholder | Describe what you want to keep track of… |
 | Primary action | Build |

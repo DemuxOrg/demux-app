@@ -6,7 +6,8 @@ signed-in user connects Gmail: the browser goes to Google and back to
 the frontend page the flow started from (`?next=`, from a fixed list). The frontend never
 sees Google tokens.
 
-`/me` reads the signed-in user; `PATCH /me` edits their first and last name.
+`/me` reads the signed-in user; `PATCH /me` edits their first and last name;
+`DELETE /me/gmail` disconnects their Gmail.
 """
 
 import logging
@@ -138,4 +139,12 @@ async def me(user: CurrentUser) -> Me:
 @router.patch("/me", response_model=Me)
 async def update_me(body: MeUpdate, user: CurrentUser, session: SessionDep) -> Me:
     await users.rename(session, user, body.first_name, body.last_name)
+    return _me(user)
+
+
+@router.delete("/me/gmail", response_model=Me)
+async def disconnect_gmail(user: CurrentUser, session: SessionDep) -> Me:
+    """Disconnect the signed-in user's Gmail. Their workspaces stay; syncing pauses."""
+    await google.unlink_gmail(session, user)
+    logger.info("gmail disconnected: user=%s", user.id)
     return _me(user)

@@ -1,5 +1,6 @@
 # Single entry point for dev commands. Run from the repo root.
-.PHONY: setup install env db up down restart reset logs ps docker-test prod-up prod-down prod-logs \
+.PHONY: setup install env db up down restart reset users delete-user wipe logs ps docker-test \
+	prod-up prod-down prod-logs \
 	migrate migration backend worker frontend gen-api eval-agent lint test
 
 COMPOSE_PROD = docker compose -f docker-compose.prod.yml
@@ -40,6 +41,24 @@ restart:  ## restart the backend and worker (e.g. after editing .env or agent co
 
 reset:  ## stop everything and delete the Postgres data volume
 	docker compose down -v
+
+# ---- Dev data (local Postgres container; never the production stack) ----
+# Accounts cascade: deleting a user deletes their sessions, password, workspaces and runs.
+PSQL = docker compose exec -T postgres sh -c 'psql -v ON_ERROR_STOP=1 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" "$$@"' psql
+
+users:  ## list dev accounts and the Gmail each one is connected to
+	@echo "SELECT email, first_name, last_name, email_verified AS verified, coalesce(gmail_email, '-') AS gmail, created_at::date AS created FROM users ORDER BY created_at;" | $(PSQL)
+
+delete-user:  ## delete one dev account and all its data: make delete-user email=a@b.com
+	@[ -n "$(email)" ] || (echo 'usage: make delete-user email=a@b.com'; exit 1)
+	@echo "DELETE FROM auth_verifications WHERE identifier ILIKE '%' || :'email'; DELETE FROM users WHERE lower(email) = lower(:'email') RETURNING email AS deleted;" \
+		| $(PSQL) -v email='$(email)'
+
+wipe:  ## delete every account and workspace, keep the schema (asks first)
+	@printf "Delete ALL accounts and workspaces in the local dev database? Type yes: "; \
+		read ok; [ "$$ok" = yes ] || (echo "Cancelled."; exit 1)
+	@echo "TRUNCATE users, auth_verifications CASCADE;" | $(PSQL)
+	@echo "Done. Sign up again at http://localhost:3000/login"
 
 logs:  ## follow logs of every service (make logs s=worker for one)
 	docker compose logs -f --tail=100 $(s)
