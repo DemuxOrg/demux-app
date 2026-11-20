@@ -13,6 +13,8 @@
  * - `data-drawer`: "auto" (open from 768px, closed below) until the user toggles, then
  *   "open" or "closed". The CSS lives in globals.css (`dmx-shell`, `dmx-sidebar`…). Pages
  *   pad their top bar by `var(--dmx-gutter)`: room for the open button, or not.
+ * - A click anywhere outside the sidebar closes it, at every width (also a click into a
+ *   workspace's app, whose iframe reports only as the window losing focus).
  */
 import { PanelLeftOpen } from "lucide-react";
 import {
@@ -105,6 +107,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [drawer, setDrawer] = useState<"auto" | "open" | "closed">("auto");
   const open = drawer === "open" || (drawer === "auto" && desktop);
   const openRef = useRef<HTMLButtonElement>(null);
+  const sidebarRef = useRef<HTMLElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   // After a toggle, focus moves to the other toggle (the one that just appeared).
   const focusNext = useRef<"open" | "close" | null>(null);
@@ -127,6 +130,31 @@ export function AppShell({ children }: { children: ReactNode }) {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [open, desktop, setOpen]);
+  // Click outside closes. Capture phase, on "click" rather than "pointerdown": the clicked
+  // control still gets its click before the page reflows into the freed space. Focus is
+  // left where the user clicked (no move to the open button).
+  useEffect(() => {
+    if (!open) return;
+    const onClick = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (
+        sidebarRef.current?.contains(target) ||
+        openRef.current?.contains(target)
+      )
+        return;
+      setDrawer("closed");
+    };
+    const onBlur = () => {
+      if (document.activeElement?.tagName === "IFRAME") setDrawer("closed");
+    };
+    document.addEventListener("click", onClick, true);
+    window.addEventListener("blur", onBlur);
+    return () => {
+      document.removeEventListener("click", onClick, true);
+      window.removeEventListener("blur", onBlur);
+    };
+  }, [open]);
+
   const onNavigate = useCallback(() => {
     if (!desktop) setDrawer("closed");
   }, [desktop]);
@@ -144,7 +172,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           onClick={() => setOpen(false)}
           className="dmx-scrim fixed inset-0 z-30 bg-[rgb(12_26_46/0.18)]"
         />
-        <aside className="dmx-sidebar fixed inset-y-0 left-0 z-40 md:sticky md:top-0 md:h-dvh md:shrink-0 md:overflow-hidden">
+        <aside
+          ref={sidebarRef}
+          className="dmx-sidebar fixed inset-y-0 left-0 z-40 md:sticky md:top-0 md:h-dvh md:shrink-0 md:overflow-hidden"
+        >
           <Drawer
             open={open}
             closeRef={closeRef}

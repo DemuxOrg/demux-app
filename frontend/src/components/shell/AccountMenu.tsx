@@ -3,13 +3,21 @@
 /**
  * Account row at the bottom of the sidebar (theme.md §7.13), like Claude's: avatar, name
  * and login email. It opens a card above itself with the login email, the connected
- * Gmail, how many workspaces are in use, and Profile (edit name, switch Gmail).
+ * Gmail, how many workspaces are in use, Profile (edit name, switch Gmail) and Log out.
  * Closes on outside click and Escape (Escape here doesn't also close the sidebar).
  */
-import { ChevronRight, ChevronsUpDown, Mail, UserRound } from "lucide-react";
+import {
+  ChevronRight,
+  ChevronsUpDown,
+  LogOut,
+  Mail,
+  UserRound,
+} from "lucide-react";
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import type { Me } from "@/lib/api";
+import { authClient } from "@/lib/auth-client";
+import { Spinner } from "@/components/ui/Spinner";
 import { MAX_WORKSPACES, useShell } from "./AppShell";
 
 /** "Rana Haddad"; accounts created before names were asked fall back to the email. */
@@ -21,9 +29,18 @@ export function displayName(me: Me): string {
   );
 }
 
+async function signOut() {
+  await authClient.signOut().catch(() => undefined);
+  // Full page load, not router.replace: with cacheComponents, Next keeps visited routes
+  // mounted (hidden) with their state, so a client navigation would bring this
+  // signed-out session's screens back after the next sign-in.
+  window.location.replace("/login");
+}
+
 export function AccountMenu({ onNavigate }: { onNavigate: () => void }) {
   const { me, workspaces } = useShell();
   const [open, setOpen] = useState(false);
+  const [leaving, setLeaving] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const cardId = useId();
@@ -104,6 +121,22 @@ export function AccountMenu({ onNavigate }: { onNavigate: () => void }) {
                 className="dmx-nudge text-ink-3"
               />
             </Link>
+            <button
+              type="button"
+              onClick={() => {
+                setLeaving(true);
+                void signOut();
+              }}
+              disabled={leaving}
+              className="flex h-11 w-full items-center gap-3 rounded-sm px-3 text-left text-sm font-medium text-ink-2 transition-colors duration-150 ease-dmx hover:bg-surface-2 hover:text-ink disabled:opacity-40"
+            >
+              {leaving ? (
+                <Spinner size={16} />
+              ) : (
+                <LogOut size={16} aria-hidden />
+              )}
+              Log out
+            </button>
           </div>
         </div>
       )}

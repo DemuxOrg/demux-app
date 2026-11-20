@@ -3,31 +3,22 @@
 /**
  * The app sidebar's contents (theme.md §7.13): the lockup with the close button on its
  * right, Create workspace (while a slot is free), the Workspaces disclosure, and the
- * account row + Log out at the bottom. It stays mounted; AppShell and globals.css open
+ * account row at the bottom (its card holds Profile and Log out). It stays mounted; AppShell and globals.css open
  * and close it, and `inert` keeps a closed sidebar out of the tab order.
  */
-import { ChevronDown, LogOut, PanelLeftClose, Plus } from "lucide-react";
+import { ChevronDown, PanelLeftClose, Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Suspense, useId, useState, type CSSProperties, type Ref } from "react";
 import { Lockup } from "@/components/brand/Logo";
 import { activityLabel } from "@/components/StatusChip";
 import { Spinner } from "@/components/ui/Spinner";
-import { authClient } from "@/lib/auth-client";
 import type { WorkspaceSummary } from "@/lib/api";
 import { AccountMenu } from "./AccountMenu";
 import { DRAWER_ID, MAX_WORKSPACES, useShell } from "./AppShell";
 
 /** Stagger position of a sidebar row (`--i`, read by `dmx-drawer-item`). */
 const step = (i: number) => ({ "--i": i }) as CSSProperties;
-
-export async function signOut() {
-  await authClient.signOut().catch(() => undefined);
-  // Full page load, not router.replace: with cacheComponents, Next keeps visited routes
-  // mounted (hidden) with their state, so a client navigation would bring this
-  // signed-out session's screens back after the next sign-in.
-  window.location.replace("/login");
-}
 
 type Props = {
   open: boolean;
@@ -58,7 +49,6 @@ function DrawerPanel({
   pathname,
 }: Props & { pathname: string | null }) {
   const { workspaces } = useShell();
-  const [leaving, setLeaving] = useState(false);
   const full = (workspaces?.length ?? 0) >= MAX_WORKSPACES;
   const creating = pathname === "/workspaces/new";
 
@@ -117,21 +107,9 @@ function DrawerPanel({
 
       <div
         style={step(4)}
-        className="dmx-drawer-item mt-auto flex flex-col gap-0.5 border-t border-line-soft pt-3"
+        className="dmx-drawer-item mt-auto flex flex-col border-t border-line-soft pt-3"
       >
         <AccountMenu onNavigate={onNavigate} />
-        <button
-          type="button"
-          onClick={() => {
-            setLeaving(true);
-            void signOut();
-          }}
-          disabled={leaving}
-          className="flex h-11 items-center gap-3 rounded-full px-3 text-sm font-medium text-ink-2 transition-colors duration-150 ease-dmx hover:bg-surface-2 hover:text-ink disabled:opacity-40"
-        >
-          {leaving ? <Spinner size={16} /> : <LogOut size={16} aria-hidden />}
-          Log out
-        </button>
       </div>
     </nav>
   );

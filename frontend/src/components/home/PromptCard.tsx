@@ -6,11 +6,7 @@ import { useId, useState } from "react";
 import { LogoMark } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/Button";
 
-const EXAMPLES = [
-  "Unpaid invoices and who I owe",
-  "My online orders and when they arrive",
-  "Job applications by stage",
-];
+const EXAMPLES = ["Unpaid invoices and who I owe", "Job applications by stage"];
 
 export function PromptCard({
   disabled,
