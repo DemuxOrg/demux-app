@@ -118,7 +118,7 @@ export function HomeScreen() {
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="flex items-center justify-between px-6 py-[18px] sm:px-8">
-        <Lockup size={28} />
+        <Lockup size={32} />
         <AccountMenu me={me} />
       </header>
 
