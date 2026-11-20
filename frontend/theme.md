@@ -22,8 +22,8 @@
 
 - **Mark:** a white circle with a violet → pink gradient ring and three blades fanning out from one point on the left (violet on top, magenta in the middle, coral at the bottom). One input, many outputs: demultiplexing.
 - **Wordmark:** "Demux" in Instrument Sans 600, letter-spacing −0.02em, ink `#0C1A2E`.
-- **Lockup:** mark + wordmark, gap = 0.35 × mark size (28px mark → 10px gap, 19px wordmark).
-- **Sizes:** 28px in the app header, 42–56px in prompt and build cards, 64px+ for hero or empty states. Minimum 20px.
+- **Lockup:** mark + wordmark, gap = 0.35 × mark size (28px mark → 10px gap, 19px wordmark; 32px mark → 11px gap, 22px wordmark).
+- **Sizes:** 28px in the login header, 32px in the logged-in home header, 42–56px in prompt and build cards, 64px+ for hero or empty states. Minimum 20px.
 - **Clear space:** at least ¼ of the mark's diameter on every side.
 - **Never:** recolor it, put it on a gradient other than its own, add glow or drop shadow, rotate it, or set the wordmark in another font.
 - **On sky:** use the mark as is (it has its own white disc). On dark: same.
