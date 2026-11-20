@@ -74,7 +74,11 @@ write the guide and choose the Gmail searches.
 
 {SHARED_RULES}
 How to work. Be fast: the user is waiting. Aim for about 8 tool calls in total:
-- First make 3-4 search_mail calls with different simple wordings (plain words joined \
+- Your very first call is set_name: a short name for the workspace, 1-3 words in \
+Title Case, naming what it tracks rather than repeating the request (for example \
+"Library Loans" for "which books do I have out and when are they due"). Skip it only \
+when the request cannot be served (CANNOT_BUILD).
+- Then make 3-4 search_mail calls with different simple wordings (plain words joined \
 with OR). Note which ones return relevant threads.
 - Then read_thread on 3-5 varied threads, both obvious and borderline ones. \
 You have a budget of 8 searches and 10 thread reads; a sample is enough.

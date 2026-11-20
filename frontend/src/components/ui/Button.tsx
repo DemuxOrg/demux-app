@@ -7,7 +7,8 @@
  * - icon:      44px glass circle on the sky, needs `aria-label`
  * - ghost:     44px transparent circle (rename)
  *
- * `loading` keeps the width and swaps the label for a spinner.
+ * `loading` keeps the width and swaps the label for a spinner. Buttons are a `group`:
+ * give a trailing arrow `dmx-nudge` and it moves forward on hover (theme.md §9).
  */
 import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
@@ -16,7 +17,7 @@ import { Spinner } from "./Spinner";
 type Variant = "primary" | "secondary" | "quiet" | "icon" | "ghost";
 
 const base =
-  "relative inline-flex select-none items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,color,box-shadow,opacity,transform] duration-150 ease-dmx focus-visible:ring-[3px] focus-visible:ring-violet/25 disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.98] disabled:active:scale-100";
+  "group relative inline-flex select-none items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,color,box-shadow,opacity,transform] duration-150 ease-dmx focus-visible:ring-[3px] focus-visible:ring-violet/25 disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.98] disabled:active:scale-100";
 
 const variants: Record<Variant, string> = {
   primary:

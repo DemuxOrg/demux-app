@@ -156,6 +156,8 @@ From the board in the launch video: board `#16171A`, column `#1F2024`, card `#2A
 ```
 Vary the blob positions slightly between screens (mirror horizontally, for example) so pages don't look identical. Keep the same five colors.
 
+The sky is painted on a fixed layer behind the grain (`.dmx-sky` in the root layout) that slowly `drift`s (§9). The `body` keeps the plain `bg-sky` as its fallback.
+
 ### 4.2 Grain (always on top of the sky, under content)
 Grain keeps the gradient from looking like a flat CSS wash.
 ```css
@@ -253,13 +255,13 @@ States for all buttons:
 - White, radius 30, padding 24/24/18, `shadow-float`, max-width 760.
 - Row: logo mark 46px + `<textarea>` (prompt style 22px, no border, `caret-color: #6A3DF0`, placeholder `ink-3`: "Describe what you want to keep track of…").
 - Footer row: example chips on the left, primary **Build →** on the right.
-- Focus-within: `box-shadow: 0 0 0 3px rgba(106,61,240,.22), var(--shadow-float)`.
+- Focus: no ring and no movement on the card; the violet caret is the focus cue.
 
 ### 7.3 Chips (example prompts)
 height 36px, px 14, radius full, bg `surface-3`, 1px `#E3E8F0` border, `ink-2` 14px/500. Hover: bg `violet-soft`, text `violet-ink`, border `#DCD2FD`. Clicking one fills the prompt.
 
 ### 7.4 Inputs
-- **Ask for a change:** white, radius 20, padding 6/6/6/16, `shadow-input`, input 44px tall with 15px text, square violet send button. Focus-within ring as above.
+- **Ask for a change:** white, radius 20, padding 6/6/6/16, `shadow-input`, input 44px tall with 15px text, square violet send button. No focus ring, like the prompt card.
 - **Email field (marketing):** white pill, radius 30, padding 6, input 52px tall with 16px text + dark CTA inside.
 - Every input has a `<label>` (visually hidden if needed).
 
@@ -326,6 +328,12 @@ Desktop first (min 1280px). Mobile layout is out of MVP scope, but every page mu
 
 ## 9. Motion
 
+The app should feel alive but calm, like a well-made native app: things arrive in a
+short sequence, surfaces respond to the pointer, and the sky moves almost imperceptibly.
+Two curves only: `ease-dmx` `cubic-bezier(.2,.8,.2,1)` for state changes (hover, focus,
+tabs) and `ease-dmx-out` `cubic-bezier(.16,1,.3,1)` (a long, soft settle) for anything
+entering the screen.
+
 | Name | Spec | Use |
 |---|---|---|
 | `spin` | rotate 360°, 0.9s linear infinite | Active step spinner, button loading |
@@ -333,12 +341,22 @@ Desktop first (min 1280px). Mobile layout is out of MVP scope, but every page mu
 | `breathe` | scale 1 → 1.045 → 1, 2.4s ease-in-out | Logo on the build card |
 | `flow` | background-position 0 → 200px, 1.8s linear | Gradient inside the progress bar (`background-size: 200px 100%`; the 200px tile runs violet → magenta → coral → magenta → violet so it loops without a seam) |
 | `blink` | opacity steps, 1.1s | Text caret (marketing demos only) |
-| UI transitions | 150–200ms `cubic-bezier(.2,.8,.2,1)` | Hover, focus, tab switch |
-| `page` | old: fade + 4px up, 140ms · new: fade + 10px rise, 300ms after 70ms | Route changes (React `<ViewTransition>`), the sky stays still |
-| `step` | old: fade + 12px left, 150ms · new: fade + 16px from right, 320ms | Steps inside one page (sign in → code, connect → prompt) |
+| `drift` | sky layer scale 1.06, translate ±2%, 40s `ease-in-out` alternate infinite | The sky backdrop on every app page. Slow enough that nobody notices it moving, only that the page isn't a flat image |
+| `reveal` | fade + 16px rise, 700ms `ease-dmx-out`, stagger 80ms | Blocks entering a screen in reading order: title → card → helper line → list (`<Reveal index>`) |
+| `reveal-text` | each word: fade + 0.4em rise + 8px blur → sharp, 800ms `ease-dmx-out`, stagger 45ms | Page titles only (title-xl / title-lg), at most one per screen (`<RevealText>`) |
+| `pop` | fade + scale .96 + 4px from the anchor, 200ms `ease-dmx-out`, origin at the trigger | Menus and popovers |
+| UI transitions | 150–200ms `ease-dmx` | Hover, focus, tab switch |
+| Hover lift | interactive cards rise 2px and their shadow deepens one step (`shadow-glass` → `shadow-panel`), 250ms; pressed: scale .99 | Workspace cards, example chips (1px) |
+| Arrow nudge | trailing arrow moves 3px in its direction on hover of its button, 200ms | Build →, Continue →, Connect Gmail → |
+| `page` | old: fade + 4px up + 2px blur, 160ms · new: fade + 12px rise + 4px blur → sharp, 420ms `ease-dmx-out` after 60ms | Route changes (React `<ViewTransition>`), the sky stays still |
+| `step` | old: fade + 12px left, 150ms · new: fade + 16px from right, 380ms `ease-dmx-out` | Steps inside one page (sign in → code, connect → prompt) |
 | Record update | 600ms fade of the violet highlight | §7.8 |
 
-Respect `prefers-reduced-motion: reduce` and turn every loop off. No bouncing, no confetti, no parallax.
+Rules:
+- Entrances play once, when the screen appears. Polling and live updates never replay them.
+- Never animate more than ~6 reveal steps on one screen; the whole sequence settles within 1s.
+- Hover motion is for things you can click. Static content never moves on hover.
+- Respect `prefers-reduced-motion: reduce`: every loop, entrance and lift is off and content shows in its final state. No bouncing, no confetti, no parallax, no scroll-jacking.
 
 ---
 
@@ -424,6 +442,9 @@ const instrumentSans = Instrument_Sans({
   --shadow-input: 0 10px 24px -16px rgb(22 62 128 / .45);
 
   /* Motion */
+  --ease-dmx: cubic-bezier(.2,.8,.2,1);
+  --ease-dmx-out: cubic-bezier(.16,1,.3,1);
+  --animate-dmx-pop: dmx-pop .2s var(--ease-dmx-out) both;
   --animate-dmx-spin: dmx-spin .9s linear infinite;
   --animate-dmx-pulse: dmx-pulse 1.6s ease-in-out infinite;
   --animate-dmx-breathe: dmx-breathe 2.4s ease-in-out infinite;
@@ -432,6 +453,7 @@ const instrumentSans = Instrument_Sans({
   @keyframes dmx-pulse { 50% { opacity: .35; } }
   @keyframes dmx-breathe { 50% { transform: scale(1.045); } }
   @keyframes dmx-flow { from { background-position: 0 0; } to { background-position: 200px 0; } }
+  /* + dmx-reveal, dmx-reveal-word, dmx-pop, dmx-drift (§9); see globals.css */
 }
 
 @layer base {

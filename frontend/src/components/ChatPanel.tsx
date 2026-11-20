@@ -85,7 +85,7 @@ export function ChatPanel({
         )}
       </div>
       <form onSubmit={submit} className="p-3 pt-1">
-        <div className="flex items-center gap-2 rounded-lg bg-surface py-1.5 pr-1.5 pl-4 shadow-input transition-shadow duration-150 ease-dmx focus-within:shadow-[0_0_0_3px_rgb(106_61_240/0.22),var(--shadow-input)]">
+        <div className="flex items-center gap-2 rounded-lg bg-surface py-1.5 pr-1.5 pl-4 shadow-input">
           <label htmlFor={id} className="sr-only">
             Ask for a change
           </label>

@@ -17,7 +17,7 @@ from app.auth.google import gmail_connected
 from app.core.errors import AppError, ConflictError, NotFoundError
 from app.models.run import ProcessedMessage, RunKind
 from app.models.user import User
-from app.models.workspace import Workspace, WorkspaceStatus
+from app.models.workspace import Workspace, WorkspaceStatus, provisional_name
 from app.services import runs
 
 MAX_WORKSPACES_PER_USER = 2
@@ -67,7 +67,9 @@ async def create_workspace(
     prompt = prompt.strip()
     workspace = Workspace(
         user_id=user_id,
-        name=(name or prompt[:60]).strip() or "Workspace",
+        # Replaced by a short AI-chosen name during the build (`set_name`), unless the
+        # user renames it first.
+        name=(name or "").strip() or provisional_name(prompt),
         prompt=prompt,
         status=WorkspaceStatus.BUILDING if enqueue_build else WorkspaceStatus.DRAFT,
     )

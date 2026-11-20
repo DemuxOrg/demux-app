@@ -48,14 +48,14 @@ export function AccountMenu({ me }: { me: Me | null }) {
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
-        className="grid size-11 place-items-center rounded-full bg-white/60 text-base font-semibold text-ink transition-colors duration-150 hover:bg-white/90 focus-visible:ring-[3px] focus-visible:ring-violet/25"
+        className="grid size-11 place-items-center rounded-full bg-white/60 text-base font-semibold text-ink transition-[background-color,transform] duration-200 ease-dmx hover:bg-white/90 active:scale-95 focus-visible:ring-[3px] focus-visible:ring-violet/25"
       >
         {me ? initial : ""}
       </button>
       {open && me && (
         <div
           role="menu"
-          className="absolute right-0 z-40 mt-2 w-72 origin-top-right animate-dmx-rise rounded-lg border border-line bg-surface p-2 shadow-glass"
+          className="absolute right-0 z-40 mt-2 w-72 origin-top-right animate-dmx-pop rounded-lg border border-line bg-surface p-2 shadow-glass"
         >
           <div className="px-3 pt-2 pb-3">
             <p className="text-[13px] text-ink-3">Signed in as</p>
@@ -74,7 +74,7 @@ export function AccountMenu({ me }: { me: Me | null }) {
             type="button"
             onClick={signOut}
             disabled={leaving}
-            className="flex h-11 w-full items-center gap-2 rounded-sm px-3 text-left text-sm font-medium text-ink-2 hover:bg-surface-2 hover:text-ink disabled:opacity-40"
+            className="flex h-11 w-full items-center gap-2 rounded-sm px-3 text-left text-sm font-medium text-ink-2 transition-colors duration-150 ease-dmx hover:bg-surface-2 hover:text-ink disabled:opacity-40"
           >
             <LogOut size={16} aria-hidden /> Sign out
           </button>

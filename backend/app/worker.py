@@ -65,6 +65,7 @@ async def execute_run(
             await s.commit()
         state = WorkspaceState(
             prompt=ws.prompt,
+            name=ws.name,
             data=dict(ws.data or {}),
             guide=ws.guide,
             config=dict(ws.config or {}),

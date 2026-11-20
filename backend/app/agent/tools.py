@@ -256,6 +256,24 @@ async def _write_guide(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
     return ToolOutput({"ok": True}, "Updated the guide")
 
 
+NAME_MAX_WORDS = 3
+NAME_MAX_CHARS = 40
+
+
+async def _set_name(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
+    name = " ".join(str(args.get("name", "")).split()).strip(" \"'.,;:!?")
+    if not name:
+        raise ToolError("name is required")
+    if len(name.split()) > NAME_MAX_WORDS or len(name) > NAME_MAX_CHARS:
+        raise ToolError(
+            f"use at most {NAME_MAX_WORDS} words and {NAME_MAX_CHARS} characters, "
+            "e.g. 'Online Orders' or 'Job Applications'"
+        )
+    ctx.state.name = name
+    await ctx.persister.save_name(ctx.state)
+    return ToolOutput({"ok": True}, f"Named the workspace {name}")
+
+
 async def _count(ctx: RunContext, query: str, limit: int) -> int:
     counter = getattr(ctx.mailbox, "search_ids", None)
     if counter is not None:
@@ -444,6 +462,13 @@ TOOLS: dict[str, Tool] = {
             _delete_records,
         ),
         Tool(
+            "set_name",
+            "Name the workspace: 1-3 words in Title Case, a noun phrase for what it tracks "
+            "(e.g. 'Library Loans', 'Subscriptions', 'Travel Bookings'). No quotes or emoji.",
+            {"type": "object", "properties": {"name": {"type": "string"}}, "required": ["name"]},
+            _set_name,
+        ),
+        Tool(
             "write_guide",
             "Replace the guide (≤6000 chars). During sync, only the '# Learned' section may "
             "change.",
@@ -496,7 +521,7 @@ TOOLS: dict[str, Tool] = {
 }
 
 PHASE_TOOLS: dict[str, list[str]] = {
-    "design": ["search_mail", "read_thread", "write_guide", "set_queries", "finish"],
+    "design": ["set_name", "search_mail", "read_thread", "write_guide", "set_queries", "finish"],
     "process": [
         "read_thread",
         "read_records",

@@ -34,7 +34,7 @@ export function PromptCard({
   return (
     <form
       onSubmit={submit}
-      className="w-full max-w-[760px] rounded-2xl bg-surface px-6 pt-6 pb-[18px] shadow-float transition-shadow duration-200 ease-dmx focus-within:shadow-[0_0_0_3px_rgb(106_61_240/0.22),var(--shadow-float)]"
+      className="w-full max-w-[760px] rounded-2xl bg-surface px-6 pt-6 pb-[18px] shadow-float"
     >
       <div className="flex gap-4">
         <LogoMark size={46} className="mt-0.5 hidden sm:block" />
@@ -63,7 +63,7 @@ export function PromptCard({
               key={ex}
               disabled={disabled}
               onClick={() => setPrompt(ex)}
-              className="h-9 rounded-full border border-chip-line whitespace-nowrap bg-surface-3 px-3.5 text-sm font-medium text-ink-2 transition-colors duration-150 ease-dmx hover:border-[#DCD2FD] hover:bg-violet-soft hover:text-violet-ink disabled:pointer-events-none disabled:opacity-40"
+              className="h-9 rounded-full border border-chip-line whitespace-nowrap bg-surface-3 px-3.5 text-sm font-medium text-ink-2 transition-[background-color,border-color,color,transform] duration-200 ease-dmx hover:-translate-y-px hover:border-[#DCD2FD] hover:bg-violet-soft hover:text-violet-ink active:translate-y-0 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40"
             >
               {ex}
             </button>
@@ -75,7 +75,13 @@ export function PromptCard({
           disabled={disabled || !prompt.trim()}
           className="ml-auto"
         >
-          Build <ArrowRight size={18} strokeWidth={2.2} aria-hidden />
+          Build{" "}
+          <ArrowRight
+            size={18}
+            strokeWidth={2.2}
+            aria-hidden
+            className="dmx-nudge"
+          />
         </Button>
       </div>
     </form>

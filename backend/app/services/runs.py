@@ -18,7 +18,7 @@ from app.agent.context import BudgetExceeded, WorkspaceState
 from app.core.config import settings
 from app.core.errors import ConflictError
 from app.models.run import Change, Run, RunKind, RunStatus
-from app.models.workspace import Workspace
+from app.models.workspace import Workspace, provisional_name
 from app.services import store
 from app.services.store import ChangeRow
 
@@ -213,6 +213,20 @@ class DbPersister:
 
     async def save_guide(self, state: WorkspaceState) -> None:
         await self._ws_update(guide=state.guide)
+
+    async def save_name(self, state: WorkspaceState) -> None:
+        # Only while the workspace still has its creation name: a rename by the user
+        # (before a rebuild, or while this build runs) always wins.
+        async with self.sf() as s:
+            await s.execute(
+                update(Workspace)
+                .where(
+                    Workspace.id == self.workspace_id,
+                    Workspace.name == provisional_name(state.prompt),
+                )
+                .values(name=state.name)
+            )
+            await s.commit()
 
     async def save_config(self, state: WorkspaceState) -> None:
         await self._ws_update(config=state.config)

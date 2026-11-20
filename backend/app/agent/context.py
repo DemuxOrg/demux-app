@@ -19,6 +19,7 @@ from app.services.store import ChangeRow
 @dataclass
 class WorkspaceState:
     prompt: str
+    name: str = ""
     data: dict[str, Any] = field(default_factory=dict)
     guide: str = ""
     config: dict[str, Any] = field(default_factory=dict)
@@ -42,6 +43,10 @@ class BudgetExceeded(Exception):
 class Persister(Protocol):
     async def save_data(self, state: WorkspaceState, changes: list[ChangeRow]) -> None: ...
     async def save_guide(self, state: WorkspaceState) -> None: ...
+    async def save_name(self, state: WorkspaceState) -> None:
+        """Store `state.name`, unless the user has already renamed the workspace."""
+        ...
+
     async def save_config(self, state: WorkspaceState) -> None: ...
     async def save_app(self, state: WorkspaceState) -> None: ...
     async def save_synced(self, state: WorkspaceState) -> None: ...
@@ -130,6 +135,9 @@ class MemoryPersister:
     async def save_guide(self, state: WorkspaceState) -> None:
         self._dump(state)
 
+    async def save_name(self, state: WorkspaceState) -> None:
+        self._dump(state)
+
     async def save_config(self, state: WorkspaceState) -> None:
         self._dump(state)
 
@@ -183,6 +191,7 @@ class MemoryPersister:
             json.dumps(
                 {
                     "prompt": state.prompt,
+                    "name": state.name,
                     "data": state.data,
                     "guide": state.guide,
                     "config": state.config,
@@ -206,6 +215,7 @@ class MemoryPersister:
         app = out_dir / "app.html"
         state = WorkspaceState(
             prompt=raw["prompt"],
+            name=raw.get("name", ""),
             data=raw["data"],
             guide=raw["guide"],
             config=raw["config"],
