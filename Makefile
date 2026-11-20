@@ -13,10 +13,11 @@ setup: install  ## install deps and create env files if missing
 	[ -f .env ] || cp .env.example .env
 	cd backend && uv run python scripts/ensure_keys.py ../.env
 	[ -f frontend/.env.local ] || cp frontend/.env.local.example frontend/.env.local
+	cd backend && uv run python scripts/ensure_keys.py ../frontend/.env.local BETTER_AUTH_SECRET
 
 # ---- Docker stack (only Docker + make needed) ----
 
-env:  ## create .env from .env.example if missing, then fill SECRET_KEY / TOKEN_ENCRYPTION_KEY
+env:  ## create .env from .env.example if missing, then fill SECRET_KEY / TOKEN_ENCRYPTION_KEY / BETTER_AUTH_SECRET
 	@[ -f .env ] || (cp .env.example .env && echo "created .env from .env.example")
 	@docker compose build -q backend
 	@# The container only reads .env on stdin and prints the updated file, so it never needs
@@ -26,7 +27,9 @@ env:  ## create .env from .env.example if missing, then fill SECRET_KEY / TOKEN_
 		< .env > .env.new && mv .env.new .env || (rm -f .env.new; exit 1)
 
 up: env  ## build and start everything in Docker (postgres + backend + worker + frontend)
-	docker compose up -d --build --wait
+	@# -V: fresh anonymous volumes, so the frontend's node_modules match the rebuilt image
+	@# (the named Postgres volume is untouched).
+	docker compose up -d --build --wait --renew-anon-volumes
 	@echo "frontend: http://localhost:3000   API docs: http://localhost:8000/api/docs"
 
 down:  ## stop everything (keeps the Postgres data volume)

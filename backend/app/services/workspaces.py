@@ -13,6 +13,7 @@ import uuid
 from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.auth.google import gmail_connected
 from app.core.errors import AppError, ConflictError, NotFoundError
 from app.models.run import ProcessedMessage, RunKind
 from app.models.user import User
@@ -25,6 +26,11 @@ MAX_WORKSPACES_PER_USER = 2
 class ReconnectRequiredError(AppError):
     status_code = 409
     code = "reconnect_required"
+
+
+class GmailNotConnectedError(AppError):
+    status_code = 409
+    code = "gmail_not_connected"
 
 
 async def list_workspaces(session: AsyncSession, user_id: uuid.UUID) -> list[Workspace]:
@@ -47,6 +53,8 @@ async def create_workspace(
     enqueue_build: bool = True,
 ) -> Workspace:
     user = await session.get(User, user_id)
+    if user is not None and not gmail_connected(user):
+        raise GmailNotConnectedError("Connect Gmail before creating a workspace.")
     if user is not None and user.needs_reconnect:
         raise ReconnectRequiredError("Reconnect Gmail before creating a workspace.")
     count = await session.scalar(

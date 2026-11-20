@@ -1,4 +1,7 @@
-"""Google OAuth (authorization code flow, backend-owned) and token refresh.
+"""Gmail connection: Google OAuth (authorization code flow, backend-owned), token refresh.
+
+This is not login (better-auth handles that). A signed-in user connects one Gmail
+account, which may have a different address than their login email.
 
 Endpoints from Google's OAuth 2.0 for web server apps documentation:
 - authorization: https://accounts.google.com/o/oauth2/v2/auth
@@ -16,7 +19,6 @@ from datetime import UTC, datetime, timedelta
 from urllib.parse import urlencode
 
 import httpx
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.crypto import decrypt, encrypt
@@ -92,15 +94,12 @@ async def exchange_code(code: str) -> tuple[TokenSet, str, str, str]:
     return tokens, user["sub"], user["email"], body.get("scope", "")
 
 
-async def upsert_user(session: AsyncSession, google_sub: str, email: str, tokens: TokenSet) -> User:
-    user = await session.scalar(select(User).where(User.google_sub == google_sub))
-    if user is None:
-        user = await session.scalar(select(User).where(User.email == email))
-    if user is None:
-        user = User(email=email)
-        session.add(user)
+async def link_gmail(
+    session: AsyncSession, user: User, google_sub: str, gmail_email: str, tokens: TokenSet
+) -> User:
+    """Attach a Gmail account to a signed-in Demux user (replacing any previous one)."""
     user.google_sub = google_sub
-    user.email = email
+    user.gmail_email = gmail_email
     user.access_token_enc = encrypt(tokens.access_token)
     if tokens.refresh_token:
         user.refresh_token_enc = encrypt(tokens.refresh_token)
@@ -108,6 +107,11 @@ async def upsert_user(session: AsyncSession, google_sub: str, email: str, tokens
     user.needs_reconnect = False
     await session.flush()
     return user
+
+
+def gmail_connected(user: User) -> bool:
+    """True when the worker can read this user's mail (or reads the dev fake mailbox)."""
+    return bool(user.refresh_token_enc) or settings.uses_fake_mailbox
 
 
 async def refresh_access_token(refresh_token: str) -> TokenSet:

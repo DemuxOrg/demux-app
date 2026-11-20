@@ -28,7 +28,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Google Login */
+        /**
+         * Google Login
+         * @description Start connecting Gmail. Needs a signed-in Demux user.
+         */
         get: operations["google_login_api_v1_auth_google_login_get"];
         put?: never;
         post?: never;
@@ -49,23 +52,6 @@ export interface paths {
         get: operations["google_callback_api_v1_auth_google_callback_get"];
         put?: never;
         post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/auth/logout": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Logout */
-        post: operations["logout_api_v1_auth_logout_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -388,6 +374,12 @@ export interface components {
         Me: {
             /** Email */
             email: string;
+            /** Name */
+            name: string;
+            /** Gmail Email */
+            gmail_email: string | null;
+            /** Gmail Connected */
+            gmail_connected: boolean;
             /** Needs Reconnect */
             needs_reconnect: boolean;
         };
@@ -630,24 +622,6 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
                 };
-            };
-        };
-    };
-    logout_api_v1_auth_logout_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
         };
     };

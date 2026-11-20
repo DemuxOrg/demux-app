@@ -94,7 +94,10 @@ HTTP request
 | `models/user.py`, `models/workspace.py` | Table definitions. `models/__init__.py` registers them so Alembic sees them. |
 | `schemas/workspace.py` | Pydantic request/response shapes (`WorkspaceCreate`, `WorkspaceRead`). API boundary only. |
 | `services/workspaces.py` | list / create / get / delete workspaces, and the **max 2 per user** rule. |
-| `api/deps.py` | `get_current_user` — a **dev stub** (returns `dev@demux.local`; 401 in `ENV=prod`). Real Google auth will replace only this function. |
+| `api/deps.py` | `get_current_user`: resolves the better-auth session cookie to a verified user (dev user with Gmail in `ENV=test`). |
+| `api/routes/auth.py` | Gmail connection (`/auth/google/login` → Google → `/callback`, needs a signed-in user) and `GET /me`. |
+| `auth/session.py`, `auth/google.py` | Session-cookie lookup in `auth_sessions`; Gmail OAuth, encrypted tokens, refresh. |
+| `models/auth.py` | Tables written by better-auth (sessions, password accounts, email codes); owned by Alembic. |
 | `api/routes/health.py` | `GET /api/v1/health` — runs `SELECT 1`, returns 503 if the DB is down. |
 | `api/routes/workspaces.py` | `GET/POST /api/v1/workspaces`, `GET/DELETE /api/v1/workspaces/{id}`. |
 | `pipeline/` | **Empty on purpose.** Future home of the Gmail → LLM extraction code (see its README). |
@@ -141,14 +144,17 @@ curl -X POST localhost:8000/api/v1/workspaces \
 |---|---|
 | `package.json` | Scripts: `dev`, `build`, `lint`, `gen:api`, `format`. |
 | `Dockerfile`, `.dockerignore` | Node 22 + pnpm (corepack), deps from the lockfile. Targets: `dev` (`next dev`; the compose anonymous volume at `/app/node_modules` keeps the image's copy alive under the bind mount) and `prod` (`next build` + `next start`; `NEXT_PUBLIC_API_URL` is a build arg). |
-| `.env.local.example` | `NEXT_PUBLIC_API_URL` (backend base URL). Copied to `.env.local` by `make setup`. |
+| `.env.local.example` | `NEXT_PUBLIC_API_URL`, login settings (`AUTH_DATABASE_URL`, `BETTER_AUTH_*`) and SMTP for sign-in codes. Copied to `.env.local` by `make setup`. |
+| `theme.md` | The design system (colours, type, components, copy). Source of truth for all UI. |
 | `next.config.ts`, `tsconfig.json` (strict), `eslint.config.mjs`, `.prettierrc` | Tooling config. |
-| `src/app/layout.tsx` | Shared layout: nav bar, fonts, global CSS. |
-| `src/app/page.tsx` | `/` — shows backend health (ok/down), links to workspaces. |
-| `src/app/workspaces/page.tsx` | `/workspaces` — list, create form (name + prompt), delete; shows the 409 limit error. |
+| `src/app/layout.tsx`, `globals.css` | Instrument Sans, design tokens (theme.md §10.2), the sky backdrop and page-transition CSS. |
+| `src/proxy.ts` | Sends visitors without a session cookie to `/login`. |
+| `src/app/login/page.tsx` + `components/auth/` | Sign in / create account, then the 6-digit email code. |
+| `src/app/api/auth/[...all]/route.ts`, `src/lib/auth.ts`, `src/lib/email.ts` | better-auth server (Postgres, email OTP) and the SMTP sender. |
+| `src/app/workspaces/page.tsx` + `components/home/` | Connect Gmail (while there is no workspace), then the prompt card and the two workspace slots. |
 | `src/app/workspaces/[id]/page.tsx` | `/workspaces/<id>` — server wrapper that reads the id and renders the client component below. |
-| `src/components/WorkspaceDetail.tsx` | Detail view: name, prompt, status badge, "coming soon" placeholder. |
-| `src/components/StatusBadge.tsx` | Colored pill for `draft / building / ready / failed`. |
+| `src/components/WorkspaceDetail.tsx` + `components/workspace/` | Workspace view: build progress, the generated app in a sandboxed iframe, the Activity / Chat drawer. |
+| `src/components/ui/`, `brand/`, `motion/` | Buttons, fields, spinner; the logo; calm view transitions. |
 | `src/lib/api.ts` | Typed `fetch` wrapper (`api.listWorkspaces()`, …). Sends cookies; throws `ApiError` built from the backend error format. |
 | `src/lib/api-types.ts` | **Generated** by `make gen-api` from the OpenAPI schema. Never edit by hand. |
 
@@ -172,12 +178,12 @@ Keep components server-side by default; add `"use client"` only where there is i
 2. **No sensitive logging:** never log email content, prompts or extracted data — ids and counts only.
 3. **Migrations:** schema changes always go through Alembic.
 4. **API changes:** run `make gen-api` and commit the generated types.
-5. **Auth:** the backend will own Google OAuth and Gmail tokens; the frontend never sees them.
+5. **Auth:** login is better-auth (frontend); the backend owns Google OAuth and Gmail tokens, which the frontend never sees.
 6. **Keep it simple:** no queues, caches or vector DBs without an explicit team decision.
 
 ## 7. Where the next work goes
 
-- **Phase 1:** Google OAuth (replace `get_current_user`), httpOnly session cookie.
+- **Done:** login (better-auth, email code) and the Gmail connection (backend OAuth). Not built yet: phone / SMS sign-in, password reset.
 - **Later:** Gmail fetch + LLM extraction in `backend/app/pipeline/`, workspace rendering components in `frontend/src/components/`, background refresh.
 
 ## 8. Troubleshooting

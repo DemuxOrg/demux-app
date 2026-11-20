@@ -5,6 +5,7 @@
 #          node_modules alive with an anonymous volume.
 #   prod – `next build` + `next start`. NEXT_PUBLIC_API_URL is inlined into the browser
 #          bundle at build time, so pass it as a build arg (the public backend URL).
+#          Login settings (AUTH_DATABASE_URL, BETTER_AUTH_*, SMTP_*) are read at runtime.
 
 FROM node:22-alpine AS base
 WORKDIR /app
@@ -30,7 +31,9 @@ FROM deps AS build
 ARG NEXT_PUBLIC_API_URL=http://localhost:8000
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 COPY . .
-RUN pnpm build
+# Build-time placeholder (the build stage is not shipped); the real secret comes from the
+# runtime environment.
+RUN BETTER_AUTH_SECRET=build-only-placeholder pnpm build
 
 
 FROM node:22-alpine AS prod

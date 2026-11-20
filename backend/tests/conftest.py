@@ -33,6 +33,7 @@ from sqlalchemy import select  # noqa: E402
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine  # noqa: E402
 
 from app.api.deps import get_current_user  # noqa: E402
+from app.auth.crypto import encrypt  # noqa: E402
 from app.db.base import Base  # noqa: E402
 from app.db.session import get_session  # noqa: E402
 from app.main import app  # noqa: E402
@@ -74,7 +75,12 @@ def _override_session(session):
 async def _make_user(session: AsyncSession, email: str) -> User:
     user = await session.scalar(select(User).where(User.email == email))
     if user is None:
-        user = User(email=email)
+        user = User(
+            email=email,
+            email_verified=True,
+            gmail_email=email,
+            refresh_token_enc=encrypt("test-refresh-token"),
+        )
         session.add(user)
         await session.flush()
     return user

@@ -16,7 +16,10 @@ from app.models.workspace import WorkspaceStatus
 
 
 class Me(BaseModel):
-    email: str
+    email: str  # login email (better-auth)
+    name: str
+    gmail_email: str | None  # the connected Gmail, may differ from `email`
+    gmail_connected: bool
     needs_reconnect: bool
 
 

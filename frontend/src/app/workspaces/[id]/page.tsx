@@ -1,11 +1,16 @@
 /**
- * Workspace detail route (`/workspaces/[id]`).
+ * Workspace route (`/workspaces/[id]`).
  * Server component whose only job is to read the dynamic `id` param (inside a
  * Suspense boundary, as this Next version requires) and hand it to the interactive
  * <WorkspaceDetail /> client component.
  */
+import type { Metadata } from "next";
 import { Suspense } from "react";
+import { PageTransition } from "@/components/motion/PageTransition";
+import { Spinner } from "@/components/ui/Spinner";
 import { WorkspaceDetail } from "@/components/WorkspaceDetail";
+
+export const metadata: Metadata = { title: "Workspace" };
 
 async function Detail({
   params,
@@ -18,8 +23,19 @@ export default function WorkspaceDetailPage(
   props: PageProps<"/workspaces/[id]">,
 ) {
   return (
-    <Suspense fallback={<p className="text-gray-500">Loading…</p>}>
-      <Detail params={props.params} />
-    </Suspense>
+    <PageTransition>
+      <Suspense
+        fallback={
+          <div
+            className="grid min-h-dvh place-items-center"
+            aria-label="Loading"
+          >
+            <Spinner size={28} />
+          </div>
+        }
+      >
+        <Detail params={props.params} />
+      </Suspense>
+    </PageTransition>
   );
 }
