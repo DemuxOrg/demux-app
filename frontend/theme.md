@@ -254,7 +254,7 @@ States for all buttons:
 ### 7.2 Prompt card (the signature component)
 - White, radius 30, padding 24/24/18, `shadow-float`, max-width 760.
 - Row: logo mark 46px + `<textarea>` (prompt style 22px, no border, `caret-color: #6A3DF0`, placeholder `ink-3`: "Describe what you want to keep track of…").
-- Footer row: example chips on the left, primary **Build →** on the right.
+- Footer row: two example chips on the left ("Unpaid invoices and who I owe", "Job applications by stage"; short enough to share one row with Build from 640px), primary **Build →** on the right.
 - Focus: no ring and no movement on the card; the violet caret is the focus cue.
 
 ### 7.3 Chips (example prompts)
@@ -312,12 +312,13 @@ The only navigation in the signed-in app. Notion-like: from 768px it is a column
 - **Close button:** on the **right** of the sidebar header, ghost icon (§7.1) on white: 44px circle, `panel-left-close` 20px `ink-3`, `surface-2` hover.
 - **Open button:** shown only while the sidebar is closed: icon button on sky, `panel-left-open` 20px, fixed top 18px / left 24px. Both toggles carry `aria-expanded` + `aria-controls`, and focus moves to whichever one appears.
 - **Below 768px:** scrim `rgb(12 26 46 / .18)` (no blur: the sidebar has its own view-transition name, which makes it a backdrop root); a click on it, Escape, or choosing a page closes the sidebar. From 768px choosing a page keeps it open.
+- **Click outside closes it** at every width: a press anywhere outside the panel (the page, the top bar, inside a workspace's app) closes an open sidebar; the open button brings it back.
 - **Contents, top to bottom:**
   1. Header row (44px): lockup (28px mark, "Demux", links home) on the left, close button on the right.
   2. **Create workspace** row (44px, radius full, `plus` in a 28px `violet-soft` circle, 15/500 ink). Hidden once both workspaces are used; the list then says "You're using both workspaces. Delete one to build another."
   3. **Workspaces** disclosure: header button 13/500 `ink-3` with a `chevron-down` that turns −90° when collapsed, "1 of 2" on the right (tabular). Rows: 44px, radius full, 7px dot (live green when ready, pulsing violet while building, danger when failed) + name 14/500 truncated, "Building" / "Failed" 12px on the right. Selected row: `violet-soft` bg, `violet-ink` text. Empty: "No workspaces yet" 13px `ink-3`.
-  4. Footer, pinned to the bottom with a `line-soft` divider: **account row** and **Log out** row.
-- **Account row:** like Claude's: 36px avatar (initial on `violet-soft` / `violet-ink`), full name 14/600 and login email 13 `ink-3` (both truncated), `chevrons-up-down` 16px. Opens a card above it (`pop` from the bottom): "Signed in as" + login email, the Gmail line ("Reading from [gmail]" / "Gmail not connected" / "Gmail needs reconnecting"), "1 of 2 workspaces", and a **Profile** row (`user-round`, chevron that nudges).
+  4. Footer, pinned to the bottom with a `line-soft` divider: the **account row**.
+- **Account row:** like Claude's: 36px avatar (initial on `violet-soft` / `violet-ink`), full name 14/600 and login email 13 `ink-3` (both truncated), `chevrons-up-down` 16px. Opens a card above it (`pop` from the bottom): "Signed in as" + login email, the Gmail line ("Reading from [gmail]" / "Gmail not connected" / "Gmail needs reconnecting"), "1 of 2 workspaces", a **Profile** row (`user-round`, chevron that nudges) and, under it, a **Log out** row (`log-out`, spinner while signing out).
 - Selection and focus inside the sidebar use violet, as everywhere else. No brand gradient besides the logo.
 
 ### 7.12 Avatars (people in emails)
