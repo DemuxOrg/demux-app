@@ -3,8 +3,8 @@
 /**
  * Sign in / create account, then the 6-digit email code.
  *
- * - Create account: email + password → better-auth creates an unverified user and
- *   emails a code → "Check your email" → the right code verifies the email and signs in.
+ * - Create account: first name, last name, email + password → better-auth creates an
+ *   unverified user and emails a code → "Check your email" → the right code verifies the email and signs in.
  * - Sign in: email + password. An unverified account gets a fresh code (better-auth
  *   sends it) and goes to the code step.
  * The sign-in email can differ from the Gmail connected later.
@@ -63,6 +63,8 @@ function enterApp() {
 export function AuthFlow() {
   const [mode, setMode] = useState<Mode>("sign-in");
   const [step, setStep] = useState<Step>("credentials");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -103,10 +105,14 @@ export function AuthFlow() {
     setError(null);
     const address = email.trim().toLowerCase();
     if (mode === "sign-up") {
+      const first = firstName.trim();
+      const last = lastName.trim();
       const { error } = await authClient.signUp.email({
         email: address,
         password,
-        name: address.split("@")[0],
+        name: `${first} ${last}`,
+        firstName: first,
+        lastName: last,
       });
       setBusy(false);
       if (error) {
@@ -195,6 +201,28 @@ export function AuthFlow() {
                 </div>
 
                 <div className="flex flex-col gap-4">
+                  {signUp && (
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <Field
+                        id="first-name"
+                        label="First name"
+                        autoComplete="given-name"
+                        required
+                        maxLength={100}
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                      />
+                      <Field
+                        id="last-name"
+                        label="Last name"
+                        autoComplete="family-name"
+                        required
+                        maxLength={100}
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                      />
+                    </div>
+                  )}
                   <Field
                     id="email"
                     label="Email"
@@ -248,7 +276,9 @@ export function AuthFlow() {
                     type="submit"
                     loading={busy}
                     disabled={
-                      !email.trim() || password.length < (signUp ? 8 : 1)
+                      !email.trim() ||
+                      password.length < (signUp ? 8 : 1) ||
+                      (signUp && (!firstName.trim() || !lastName.trim()))
                     }
                     className="w-full"
                   >

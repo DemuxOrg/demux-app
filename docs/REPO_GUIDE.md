@@ -94,8 +94,9 @@ HTTP request
 | `models/user.py`, `models/workspace.py` | Table definitions. `models/__init__.py` registers them so Alembic sees them. |
 | `schemas/workspace.py` | Pydantic request/response shapes (`WorkspaceCreate`, `WorkspaceRead`). API boundary only. |
 | `services/workspaces.py` | list / create / get / delete workspaces, and the **max 2 per user** rule. |
+| `services/users.py` | The user's first and last name (`PATCH /me`, from the profile page). |
 | `api/deps.py` | `get_current_user`: resolves the better-auth session cookie to a verified user (dev user with Gmail in `ENV=test`). |
-| `api/routes/auth.py` | Gmail connection (`/auth/google/login` → Google → `/callback`, needs a signed-in user) and `GET /me`. |
+| `api/routes/auth.py` | Gmail connection (`/auth/google/login?next=` → Google → `/callback`, needs a signed-in user, returns to the page it started from) and `GET` / `PATCH /me`. |
 | `auth/session.py`, `auth/google.py` | Session-cookie lookup in `auth_sessions`; Gmail OAuth, encrypted tokens, refresh. |
 | `models/auth.py` | Tables written by better-auth (sessions, password accounts, email codes); owned by Alembic. |
 | `api/routes/health.py` | `GET /api/v1/health` — runs `SELECT 1`, returns 503 if the DB is down. |
@@ -151,8 +152,12 @@ curl -X POST localhost:8000/api/v1/workspaces \
 | `src/proxy.ts` | Sends visitors without a session cookie to `/login`. |
 | `src/app/login/page.tsx` + `components/auth/` | Sign in / create account, then the 6-digit email code. |
 | `src/app/api/auth/[...all]/route.ts`, `src/lib/auth.ts`, `src/lib/email.ts` | better-auth server (Postgres, email OTP) and the SMTP sender. |
-| `src/app/workspaces/page.tsx` + `components/home/` | Connect Gmail (while there is no workspace), then the prompt card and the two workspace slots. |
-| `src/app/workspaces/[id]/page.tsx` | `/workspaces/<id>` — server wrapper that reads the id and renders the client component below. |
+| `src/app/(app)/layout.tsx` + `components/shell/` | The signed-in shell (the `(app)` route group adds no URL segment): the Notion-like sidebar (Create workspace, the workspace list, the account menu, Log out) and the `me` + workspace list it shares with pages through `useShell()`. |
+| `src/app/(app)/workspaces/page.tsx` | `/workspaces` — where sign-in lands: opens the last workspace, else Create. |
+| `src/app/(app)/workspaces/new/page.tsx` + `components/home/` | `/workspaces/new` — connect Gmail if needed, then "Hello, first name" and the prompt card. |
+| `src/app/(app)/profile/page.tsx` + `components/profile/` | `/profile` — edit first and last name (`PATCH /me`), see the sign-in email, connect or switch Gmail. |
+| `src/lib/gmail.ts` | Sending the user to Google to connect Gmail and reading the result when they come back. |
+| `src/app/(app)/workspaces/[id]/page.tsx` | `/workspaces/<id>` — server wrapper that reads the id and renders the client component below. |
 | `src/components/WorkspaceDetail.tsx` + `components/workspace/` | Workspace view: build progress, the generated app in a sandboxed iframe, the Activity / Chat drawer. |
 | `src/components/ui/`, `brand/`, `motion/` | Buttons, fields, spinner; the logo; calm view transitions. |
 | `src/lib/api.ts` | Typed `fetch` wrapper (`api.listWorkspaces()`, …). Sends cookies; throws `ApiError` built from the backend error format. |

@@ -3,10 +3,14 @@
 /**
  * Workspace view (`/workspaces/[id]`, theme.md §8.2–8.3).
  *
- * - Building: top bar (back, name, Building chip, avatar) + the build progress card.
+ * Lives in the app shell: the sidebar holds navigation and the account (no back button,
+ * no avatar here), and the top bar's left padding (`--dmx-gutter`) leaves room for the
+ * sidebar's open button while it is closed.
+ *
+ * - Building: top bar (name, Building chip) + the build progress card.
  * - Failed: the reason and "Try again".
- * - Ready: top bar (back, name, rename; sync status, Sync now, Undo, ⋯, avatar), the
- *   generated app in a white panel, and the Activity | Chat drawer beside it.
+ * - Ready: top bar (name, rename; sync status, Sync now, Undo, ⋯), the generated app in
+ *   a white panel, and the Activity | Chat drawer beside it.
  *
  * Polls GET /workspaces/{id} every 2 s while a run is active, every 20 s otherwise;
  * refetches data / app only when their versions change.
@@ -19,7 +23,6 @@ import {
   Undo2,
   X,
 } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   startTransition,
@@ -28,7 +31,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { AccountMenu } from "@/components/AccountMenu";
 import { ActivityFeed } from "@/components/ActivityFeed";
 import { AppFrame } from "@/components/AppFrame";
 import { LogoMark } from "@/components/brand/Logo";
@@ -36,6 +38,7 @@ import { ChatPanel } from "@/components/ChatPanel";
 import { DetailsDrawer } from "@/components/DetailsDrawer";
 import { StepTransition } from "@/components/motion/PageTransition";
 import { RunTimeline } from "@/components/RunTimeline";
+import { rememberWorkspace, useShell } from "@/components/shell/AppShell";
 import { StatusChip, SyncStatus } from "@/components/StatusChip";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
@@ -50,7 +53,6 @@ import {
   type AppDoc,
   type ChangeRead,
   type DataDoc,
-  type Me,
   type RunRead,
   type WorkspaceDetail as Detail,
 } from "@/lib/api";
@@ -83,7 +85,7 @@ function usePanelOpen(): [boolean, (open: boolean) => void] {
 
 export function WorkspaceDetail({ id }: { id: string }) {
   const router = useRouter();
-  const [me, setMe] = useState<Me | null>(null);
+  const { me, workspaces, reload: reloadList } = useShell();
   const [ws, setWs] = useState<Detail | null>(null);
   const [shell, setShell] = useState<string | null>(null);
   const [app, setApp] = useState<AppDoc | null>(null);
@@ -146,8 +148,16 @@ export function WorkspaceDetail({ id }: { id: string }) {
       .appShell()
       .then((s) => setShell(s.head))
       .catch(() => setShell(null));
-    api.me().then(setMe).catch(handleAuthError);
   }, []);
+
+  useEffect(() => rememberWorkspace(id), [id]);
+
+  // Keep the drawer's row (name, status dot) in step with this page.
+  const status = ws?.status;
+  const wsName = ws?.name;
+  useEffect(() => {
+    if (status) void reloadList();
+  }, [status, wsName, reloadList]);
 
   const active = !!ws?.active_run;
   useEffect(() => {
@@ -206,7 +216,9 @@ export function WorkspaceDetail({ id }: { id: string }) {
       return;
     try {
       await api.deleteWorkspace(id);
-      router.push("/workspaces");
+      void reloadList();
+      const next = workspaces?.filter((w) => w.id !== id).at(-1);
+      router.push(next ? `/workspaces/${next.id}` : "/workspaces/new");
     } catch (e) {
       setActionError(
         e instanceof ApiError ? e.message : "Couldn't delete this workspace.",
@@ -238,15 +250,8 @@ export function WorkspaceDetail({ id }: { id: string }) {
   return (
     <div className="flex h-dvh flex-col">
       {/* Top bar (§7.11): sits on the sky, no background of its own. */}
-      <header className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-[18px] sm:px-6 lg:px-8">
-        <Link
-          href="/workspaces"
-          aria-label="All workspaces"
-          className="grid size-11 shrink-0 place-items-center rounded-full bg-white/60 text-ink transition-colors duration-150 hover:bg-white/90"
-        >
-          <ChevronLeft size={20} aria-hidden />
-        </Link>
-        <div className="flex min-w-0 flex-1 items-center gap-1 max-sm:basis-[calc(100%-56px)]">
+      <header className="flex flex-wrap items-center gap-x-3 gap-y-2 py-[18px] pr-4 pl-[var(--dmx-gutter)] transition-[padding] duration-[360ms] ease-dmx-out sm:pr-6 lg:pr-8">
+        <div className="flex min-h-11 min-w-0 flex-1 items-center gap-1 max-sm:basis-full">
           {renaming ? (
             <form
               className="min-w-0 flex-1"
@@ -353,7 +358,6 @@ export function WorkspaceDetail({ id }: { id: string }) {
               />
             </>
           )}
-          <AccountMenu me={me} />
         </div>
       </header>
 

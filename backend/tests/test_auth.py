@@ -7,6 +7,7 @@ from urllib.parse import parse_qs, urlparse
 
 import pytest
 
+from app.api.routes.auth import NEXT_COOKIE
 from app.auth import google
 from app.auth.crypto import decrypt, encrypt
 from app.auth.session import STATE_COOKIE, check_state, make_state
@@ -44,12 +45,16 @@ def test_state_tokens():
 
 
 async def test_session_cookie_resolves_user(client, session):
-    _, cookie = await _signed_in_user(session, "login@x.example", name="Rana")
+    _, cookie = await _signed_in_user(
+        session, "login@x.example", name="Rana Haddad", first_name="Rana", last_name="Haddad"
+    )
     client.cookies.set(COOKIE, cookie)
     me = (await client.get("/api/v1/me")).json()
     assert me == {
         "email": "login@x.example",
-        "name": "Rana",
+        "name": "Rana Haddad",
+        "first_name": "Rana",
+        "last_name": "Haddad",
         "gmail_email": None,
         "gmail_connected": False,
         "needs_reconnect": False,
@@ -95,6 +100,18 @@ async def test_callback_rejects_bad_state(client):
     assert "error=bad_state" in resp.headers["location"]
 
 
+@pytest.mark.parametrize(("next_", "kept"), [("profile", "profile"), ("https://evil", "new")])
+async def test_gmail_login_remembers_only_known_return_pages(client, next_, kept):
+    resp = await client.get(f"/api/v1/auth/google/login?next={next_}", follow_redirects=False)
+    assert resp.cookies[NEXT_COOKIE] == kept
+
+
+async def test_callback_returns_to_the_page_it_started_from(client):
+    client.cookies.set(NEXT_COOKIE, "profile", path="/api/v1/auth")
+    resp = await client.get("/api/v1/auth/google/callback?error=access_denied")
+    assert resp.headers["location"].endswith("/profile?error=google_denied")
+
+
 async def test_callback_links_gmail_to_signed_in_user(client, session, monkeypatch):
     """The Gmail address can differ from the login email; login email is kept."""
     user, cookie = await _signed_in_user(session, "login@x.example")
@@ -110,7 +127,7 @@ async def test_callback_links_gmail_to_signed_in_user(client, session, monkeypat
     resp = await client.get(
         f"/api/v1/auth/google/callback?code=c&state={state}", follow_redirects=False
     )
-    assert resp.headers["location"].endswith("/workspaces?gmail=connected")
+    assert resp.headers["location"].endswith("/workspaces/new?gmail=connected")
     me = (await client.get("/api/v1/me")).json()
     assert me["email"] == "login@x.example"
     assert me["gmail_email"] == "inbox@gmail.example" and me["gmail_connected"] is True
@@ -146,3 +163,24 @@ async def test_invalid_grant_marks_needs_reconnect(session, session_factory, mon
         await provider.get()
     await session.refresh(user)
     assert user.needs_reconnect is True
+
+
+async def test_update_me_sets_first_and_last_name(client, session):
+    user, cookie = await _signed_in_user(session, "login@x.example", name="login")
+    client.cookies.set(COOKIE, cookie)
+    resp = await client.patch("/api/v1/me", json={"first_name": " Rana ", "last_name": "Haddad"})
+    assert resp.status_code == 200
+    assert resp.json()["first_name"] == "Rana" and resp.json()["last_name"] == "Haddad"
+    await session.refresh(user)
+    assert user.name == "Rana Haddad"
+
+
+@pytest.mark.parametrize(
+    "body", [{"first_name": "  ", "last_name": "Haddad"}, {"first_name": "Rana"}]
+)
+async def test_update_me_needs_both_names(client, session, body):
+    _, cookie = await _signed_in_user(session, "login@x.example")
+    client.cookies.set(COOKIE, cookie)
+    resp = await client.patch("/api/v1/me", json=body)
+    assert resp.status_code == 422
+    assert resp.json()["error"]["code"] == "validation_error"
