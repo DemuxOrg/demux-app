@@ -13,6 +13,7 @@ import { startTransition, useCallback, useEffect, useState } from "react";
 import { AccountMenu } from "@/components/AccountMenu";
 import { Lockup } from "@/components/brand/Logo";
 import { StepTransition } from "@/components/motion/PageTransition";
+import { Reveal, RevealText } from "@/components/motion/Reveal";
 import { Spinner } from "@/components/ui/Spinner";
 import { Lock } from "lucide-react";
 import {
@@ -118,8 +119,12 @@ export function HomeScreen() {
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="flex items-center justify-between px-6 py-[18px] sm:px-8">
-        <Lockup size={32} />
-        <AccountMenu me={me} />
+        <Reveal>
+          <Lockup size={32} />
+        </Reveal>
+        <Reveal delay={120}>
+          <AccountMenu me={me} />
+        </Reveal>
       </header>
 
       {me?.needs_reconnect && (
@@ -142,29 +147,39 @@ export function HomeScreen() {
               className="grid flex-1 place-items-center pb-24"
               aria-label="Loading"
             >
-              <Spinner size={28} />
+              {/* Delayed so a fast load never flashes a spinner. */}
+              <Reveal delay={250}>
+                <Spinner size={28} />
+              </Reveal>
             </div>
           ) : step === "connect" ? (
-            <div className="flex w-full flex-1 items-center justify-center pt-6 pb-16">
+            <Reveal className="flex w-full flex-1 items-center justify-center pt-6 pb-16">
               <ConnectGmail
                 me={me!}
                 error={oauthError ?? error}
                 onContinue={() => startTransition(() => setContinued(true))}
               />
-            </div>
+            </Reveal>
           ) : (
             <div className="flex w-full flex-col items-center gap-6 pt-[clamp(24px,8vh,96px)]">
-              <h1 className="max-w-[760px] text-center text-[clamp(32px,3.4vw,46px)] leading-[1.06] font-medium tracking-[-0.035em]">
-                What do you want to see from your inbox?
-              </h1>
-              <PromptCard
-                disabled={full || !!me?.needs_reconnect}
-                onBuild={build}
+              <RevealText
+                text="What do you want to see from your inbox?"
+                className="max-w-[760px] text-center text-[clamp(32px,3.4vw,46px)] leading-[1.06] font-medium tracking-[-0.035em]"
               />
-              <p className="-mt-1 flex items-center gap-2 text-[13px] text-ink-on-sky">
+              <Reveal index={3} className="w-full max-w-[760px]">
+                <PromptCard
+                  disabled={full || !!me?.needs_reconnect}
+                  onBuild={build}
+                />
+              </Reveal>
+              <Reveal
+                as="p"
+                index={5}
+                className="-mt-1 flex items-center gap-2 text-[13px] text-ink-on-sky"
+              >
                 <Lock size={14} aria-hidden /> Read-only. Demux never sends or
                 changes an email.
-              </p>
+              </Reveal>
               {(error || oauthError) && (
                 <p
                   role="alert"
@@ -174,7 +189,7 @@ export function HomeScreen() {
                 </p>
               )}
               <div className="mt-[clamp(16px,6vh,64px)] w-full max-w-[760px]">
-                <WorkspaceSlots workspaces={workspaces!} />
+                <WorkspaceSlots workspaces={workspaces!} revealFrom={6} />
               </div>
             </div>
           )}

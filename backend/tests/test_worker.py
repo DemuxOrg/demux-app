@@ -7,7 +7,7 @@ from app.services import runs
 from app.services.workspaces import create_workspace
 from app.worker import execute_run
 from tests.helpers import GOOD_APP, SMALL_MAILBOX, ScriptedLLM, dt
-from tests.test_flows import build_llm
+from tests.test_flows import DESIGN_TURNS, build_llm
 
 
 async def test_claim_one_run_per_workspace(session, dev_user):
@@ -79,3 +79,51 @@ async def test_cannot_build_fails_workspace(session, session_factory, dev_user):
     assert ws.last_error == "heart rate is not in email."
     w = await session.get(Workspace, ws.id)
     assert w is not None
+
+
+NAMED_DESIGN = [
+    [("set_name", {"name": "Track Every Online Order"})],  # too long: retried
+    [("set_name", {"name": '"Online Orders."'})],
+    *DESIGN_TURNS,
+]
+
+
+async def test_build_names_the_workspace(session, session_factory, dev_user):
+    ws = await create_workspace(session, dev_user.id, "show me all my online orders please")
+    assert ws.name == "show me all my online orders please"  # until the build names it
+    from app.mail.fake import FakeMailbox
+
+    box = FakeMailbox.from_file(SMALL_MAILBOX, now=dt("2026-10-16T00:00:00Z"))
+    run = await runs.claim_next(session)
+    await execute_run(
+        run.id,
+        llm=build_llm(design=NAMED_DESIGN),
+        mailbox_factory=lambda _uid: box,
+        session_factory=session_factory,
+        now=dt("2026-10-16T00:00:00Z"),
+    )
+    await session.refresh(ws)
+    await session.refresh(run)
+    assert run.status == RunStatus.DONE, run.error
+    assert ws.name == "Online Orders"  # >3 words rejected; quotes and dot stripped
+
+
+async def test_build_keeps_a_name_the_user_chose(session, session_factory, dev_user):
+    from app.mail.fake import FakeMailbox
+
+    ws = await create_workspace(session, dev_user.id, "track orders")
+    ws.name = "My Shopping"  # renamed before the build got to it
+    await session.flush()
+    box = FakeMailbox.from_file(SMALL_MAILBOX, now=dt("2026-10-16T00:00:00Z"))
+    run = await runs.claim_next(session)
+    await execute_run(
+        run.id,
+        llm=build_llm(design=NAMED_DESIGN),
+        mailbox_factory=lambda _uid: box,
+        session_factory=session_factory,
+        now=dt("2026-10-16T00:00:00Z"),
+    )
+    await session.refresh(ws)
+    await session.refresh(run)
+    assert run.status == RunStatus.DONE, run.error
+    assert ws.name == "My Shopping"

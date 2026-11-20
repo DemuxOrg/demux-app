@@ -52,7 +52,7 @@ export function MoreMenu({
       {open && (
         <div
           role="menu"
-          className="absolute right-0 z-40 mt-2 w-48 origin-top-right animate-dmx-rise rounded-lg border border-line bg-surface p-1.5 shadow-glass"
+          className="absolute right-0 z-40 mt-2 w-48 origin-top-right animate-dmx-pop rounded-lg border border-line bg-surface p-1.5 shadow-glass"
         >
           <button
             role="menuitem"

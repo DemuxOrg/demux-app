@@ -18,6 +18,11 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.db.base import Base, IdMixin, TimestampMixin
 
 
+def provisional_name(prompt: str) -> str:
+    """The name a workspace gets at creation, until the design phase names it."""
+    return prompt.strip()[:60].strip() or "Workspace"
+
+
 class WorkspaceStatus(enum.StrEnum):
     DRAFT = "draft"
     BUILDING = "building"

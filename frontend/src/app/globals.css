@@ -83,6 +83,9 @@
 
   /* Motion */
   --ease-dmx: cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* Long, soft settle for anything entering the screen (theme.md §9). */
+  --ease-dmx-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-dmx-pop: dmx-pop 0.2s var(--ease-dmx-out) both;
   --animate-dmx-spin: dmx-spin 0.9s linear infinite;
   --animate-dmx-pulse: dmx-pulse 1.6s ease-in-out infinite;
   --animate-dmx-breathe: dmx-breathe 2.4s ease-in-out infinite;
@@ -126,6 +129,33 @@
     from {
       opacity: 0;
       transform: translateY(6px);
+    }
+  }
+  @keyframes dmx-pop {
+    from {
+      opacity: 0;
+      transform: translateY(-4px) scale(0.96);
+    }
+  }
+  @keyframes dmx-reveal {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+  }
+  @keyframes dmx-reveal-word {
+    from {
+      opacity: 0;
+      transform: translateY(0.4em);
+      filter: blur(8px);
+    }
+  }
+  @keyframes dmx-drift {
+    from {
+      transform: translate3d(-2%, -1%, 0) scale(1.06);
+    }
+    to {
+      transform: translate3d(2%, 1.5%, 0) scale(1.06);
     }
   }
 }
@@ -244,6 +274,58 @@
   }
 }
 
+/* The drifting sky layer (§4.1, §9 drift), fixed behind the grain. */
+@utility dmx-sky {
+  position: fixed;
+  inset: -6%;
+  z-index: -1;
+  pointer-events: none;
+  background-color: #8dbdee;
+  background-image:
+    radial-gradient(
+      70% 70% at 6% 0%,
+      rgb(86 162 244 / 0.95),
+      rgb(86 162 244 / 0) 70%
+    ),
+    radial-gradient(
+      55% 60% at 100% 4%,
+      rgb(112 178 247 / 0.9),
+      rgb(112 178 247 / 0) 70%
+    ),
+    radial-gradient(
+      50% 50% at 86% 78%,
+      rgb(208 220 234 / 0.95),
+      rgb(208 220 234 / 0) 70%
+    ),
+    radial-gradient(
+      45% 50% at 4% 100%,
+      rgb(226 230 236 / 0.95),
+      rgb(226 230 236 / 0) 70%
+    ),
+    radial-gradient(
+      40% 45% at 100% 100%,
+      rgb(72 152 242 / 0.85),
+      rgb(72 152 242 / 0) 70%
+    );
+  will-change: transform;
+  animation: dmx-drift 40s ease-in-out infinite alternate;
+}
+
+/*
+ * Entrances (§9 reveal / reveal-text). The start state lives only in the keyframes, so
+ * with reduced motion (animations off) content simply shows in its final state.
+ * `--dmx-delay` is set per element by <Reveal> / <RevealText>.
+ */
+@utility dmx-reveal {
+  animation: dmx-reveal 700ms var(--ease-dmx-out) both;
+  animation-delay: var(--dmx-delay, 0ms);
+}
+@utility dmx-reveal-word {
+  display: inline-block;
+  animation: dmx-reveal-word 800ms var(--ease-dmx-out) both;
+  animation-delay: var(--dmx-delay, 0ms);
+}
+
 @utility bg-brand-gradient {
   background-image: linear-gradient(
     90deg,
@@ -270,6 +352,32 @@
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
+/* Hover lift for clickable cards (§9): 2px rise, shadow one step deeper; press .99. */
+@utility dmx-lift {
+  transition-property: transform, box-shadow, background-color;
+  transition-duration: 250ms;
+  transition-timing-function: var(--ease-dmx-out);
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-panel);
+    }
+  }
+  &:active {
+    transform: translateY(0) scale(0.99);
+    transition-duration: 120ms;
+  }
+}
+/* Trailing arrow that nudges forward when its button (a `group`) is hovered (§9). */
+@utility dmx-nudge {
+  transition: transform 200ms var(--ease-dmx-out);
+  @media (hover: hover) {
+    :where(.group):hover:not(:disabled) & {
+      transform: translateX(3px);
+    }
+  }
+}
+
 @utility tabular {
   font-variant-numeric: tabular-nums;
 }
@@ -279,25 +387,25 @@
  * Old content leaves quickly, new content rises in gently: calm, never flashy.
  */
 ::view-transition-old(.dmx-page) {
-  animation: 140ms var(--ease-dmx) both dmx-page-out;
+  animation: 160ms var(--ease-dmx) both dmx-page-out;
 }
 ::view-transition-new(.dmx-page) {
-  animation: 300ms var(--ease-dmx) 70ms both dmx-page-in;
+  animation: 420ms var(--ease-dmx-out) 60ms both dmx-page-in;
 }
 ::view-transition-group(.dmx-page) {
-  animation-duration: 300ms;
-  animation-timing-function: var(--ease-dmx);
+  animation-duration: 420ms;
+  animation-timing-function: var(--ease-dmx-out);
 }
 /* Steps inside one page (sign in → code, connect → prompt) slide sideways a little. */
 ::view-transition-old(.dmx-step) {
   animation: 150ms var(--ease-dmx) both dmx-step-out;
 }
 ::view-transition-new(.dmx-step) {
-  animation: 320ms var(--ease-dmx) 60ms both dmx-step-in;
+  animation: 380ms var(--ease-dmx-out) 60ms both dmx-step-in;
 }
 ::view-transition-group(.dmx-step) {
-  animation-duration: 320ms;
-  animation-timing-function: var(--ease-dmx);
+  animation-duration: 380ms;
+  animation-timing-function: var(--ease-dmx-out);
 }
 ::view-transition-old(root),
 ::view-transition-new(root) {
@@ -307,12 +415,14 @@
   to {
     opacity: 0;
     transform: translateY(-4px);
+    filter: blur(2px);
   }
 }
 @keyframes dmx-page-in {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(12px);
+    filter: blur(4px);
   }
 }
 @keyframes dmx-step-out {
@@ -334,6 +444,13 @@
   *::after {
     animation: none !important;
     transition: none !important;
+  }
+  /* No hover lift or arrow nudge either (§9). */
+  .dmx-lift,
+  .dmx-lift:hover,
+  .dmx-nudge,
+  .group:hover .dmx-nudge {
+    transform: none !important;
   }
   ::view-transition-group(*),
   ::view-transition-old(*),

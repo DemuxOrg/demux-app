@@ -4,6 +4,7 @@
  */
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { Reveal } from "@/components/motion/Reveal";
 import { activityLabel } from "@/components/StatusChip";
 import { countLabel, timeAgo, type WorkspaceSummary } from "@/lib/api";
 
@@ -40,49 +41,57 @@ function Meta({ w }: { w: WorkspaceSummary }) {
 
 export function WorkspaceSlots({
   workspaces,
+  revealFrom = 0,
 }: {
   workspaces: WorkspaceSummary[];
+  /** Reveal step of the heading; the cards follow it one step apart (theme.md §9). */
+  revealFrom?: number;
 }) {
   const free = Math.max(0, MAX_WORKSPACES - workspaces.length);
   return (
     <section className="w-full max-w-[760px]" aria-labelledby="your-workspaces">
-      <div className="mb-3 flex items-baseline justify-between px-1">
+      <Reveal
+        index={revealFrom}
+        className="mb-3 flex items-baseline justify-between px-1"
+      >
         <h2 id="your-workspaces" className="text-[15px] font-semibold text-ink">
           Your workspaces
         </h2>
         <span className="text-[13px] text-ink-on-sky tabular">
           {workspaces.length} of {MAX_WORKSPACES}
         </span>
-      </div>
+      </Reveal>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-3">
-        {workspaces.map((w) => (
-          <Link
-            key={w.id}
-            href={`/workspaces/${w.id}`}
-            className="glass group flex items-center gap-3 rounded-lg px-[18px] py-4 shadow-glass transition-[background-color,transform] duration-200 ease-dmx hover:bg-white/85 active:scale-[0.99]"
-          >
-            <span className="min-w-0 flex-1">
-              <span className="block truncate text-base font-semibold">
-                {w.name}
+        {workspaces.map((w, i) => (
+          <Reveal key={w.id} index={revealFrom + 1 + i}>
+            <Link
+              href={`/workspaces/${w.id}`}
+              className="glass group dmx-lift flex items-center gap-3 rounded-lg px-[18px] py-4 shadow-glass hover:bg-white/90"
+            >
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-base font-semibold">
+                  {w.name}
+                </span>
+                <span className="mt-1 block text-[13px] text-ink-2">
+                  <Meta w={w} />
+                </span>
               </span>
-              <span className="mt-1 block text-[13px] text-ink-2">
-                <Meta w={w} />
-              </span>
-            </span>
-            <ChevronRight
-              size={18}
-              aria-hidden
-              className="shrink-0 text-ink-3 transition-transform duration-200 ease-dmx group-hover:translate-x-0.5"
-            />
-          </Link>
+              <ChevronRight
+                size={18}
+                aria-hidden
+                className="dmx-nudge shrink-0 text-ink-3 group-hover:text-ink-2"
+              />
+            </Link>
+          </Reveal>
         ))}
         {Array.from({ length: free }).map((_, i) => (
-          <div
+          <Reveal
             key={i}
+            index={revealFrom + 1 + workspaces.length + i}
             className="grid min-h-[72px] place-items-center rounded-lg border-[1.5px] border-dashed border-[rgb(12_26_46/0.22)] text-sm text-ink-on-sky"
           >
             {free === 1 ? "One more slot free" : "Slot free"}
-          </div>
+          </Reveal>
         ))}
       </div>
       {free === 0 && (

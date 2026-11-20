@@ -5,6 +5,7 @@
  */
 import { ArrowRight, Check, Lock } from "lucide-react";
 import { LogoMark } from "@/components/brand/Logo";
+import { Reveal, RevealText } from "@/components/motion/Reveal";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { CONNECT_GMAIL_URL, type Me } from "@/lib/api";
 
@@ -23,14 +24,17 @@ export function ConnectGmail({
       <div className="flex flex-col gap-6">
         <LogoMark size={56} className="animate-dmx-breathe" />
         <div className="flex flex-col gap-3">
-          <h1 className="text-[30px] leading-[1.1] font-medium tracking-[-0.03em]">
-            {connected ? "Your Gmail is connected" : "Connect your Gmail"}
-          </h1>
-          <p className="text-base text-ink-2">
+          <RevealText
+            key={connected ? "connected" : "connect"}
+            text={connected ? "Your Gmail is connected" : "Connect your Gmail"}
+            delay={120}
+            className="text-[30px] leading-[1.1] font-medium tracking-[-0.03em]"
+          />
+          <Reveal as="p" index={3} className="text-base text-ink-2">
             {connected
               ? "Next, describe what you want to keep track of. Demux reads the matching emails and builds a workspace that stays up to date."
               : "Demux reads the emails that match what you ask for, then builds a workspace that keeps itself up to date. It can be a different account from the one you signed in with."}
-          </p>
+          </Reveal>
         </div>
 
         {connected ? (
@@ -58,12 +62,17 @@ export function ConnectGmail({
               "Allow read-only access",
               "Describe what you want to see",
             ].map((label, i) => (
-              <li key={label} className="flex items-center gap-3 py-3.5">
+              <Reveal
+                as="li"
+                key={label}
+                index={4 + i}
+                className="flex items-center gap-3 py-3.5"
+              >
                 <span className="grid size-7 shrink-0 place-items-center rounded-full border-2 border-pending-line text-[13px] font-medium text-ink-3 tabular">
                   {i + 1}
                 </span>
                 <span className="text-ink-2">{label}</span>
-              </li>
+              </Reveal>
             ))}
           </ol>
         )}
@@ -84,12 +93,23 @@ export function ConnectGmail({
           </p>
           {connected ? (
             <Button onClick={onContinue}>
-              Continue <ArrowRight size={18} strokeWidth={2.2} aria-hidden />
+              Continue{" "}
+              <ArrowRight
+                size={18}
+                strokeWidth={2.2}
+                aria-hidden
+                className="dmx-nudge"
+              />
             </Button>
           ) : (
             <ButtonLink href={CONNECT_GMAIL_URL} external>
               Connect Gmail{" "}
-              <ArrowRight size={18} strokeWidth={2.2} aria-hidden />
+              <ArrowRight
+                size={18}
+                strokeWidth={2.2}
+                aria-hidden
+                className="dmx-nudge"
+              />
             </ButtonLink>
           )}
         </div>
