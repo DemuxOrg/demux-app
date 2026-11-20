@@ -127,3 +127,16 @@ async def test_build_keeps_a_name_the_user_chose(session, session_factory, dev_u
     await session.refresh(run)
     assert run.status == RunStatus.DONE, run.error
     assert ws.name == "My Shopping"
+
+
+async def test_no_scheduled_sync_without_gmail(session, dev_user):
+    from app.auth.google import unlink_gmail
+    from app.models.workspace import WorkspaceStatus
+
+    ws = Workspace(user_id=dev_user.id, name="orders", prompt="orders")
+    ws.status = WorkspaceStatus.READY
+    session.add(ws)
+    await session.flush()
+    assert ws.id in await runs.workspaces_due_for_sync(session, 10)
+    await unlink_gmail(session, dev_user)
+    assert ws.id not in await runs.workspaces_due_for_sync(session, 10)

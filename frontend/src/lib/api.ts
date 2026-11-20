@@ -65,6 +65,7 @@ export const api = {
   me: () => request<Me>("/me"),
   updateMe: (body: MeUpdate) =>
     request<Me>("/me", { method: "PATCH", body: JSON.stringify(body) }),
+  disconnectGmail: () => request<Me>("/me/gmail", { method: "DELETE" }),
   appShell: () => request<{ head: string }>("/app-shell"),
   listWorkspaces: () => request<WorkspaceSummary[]>("/workspaces"),
   createWorkspace: (prompt: string) =>

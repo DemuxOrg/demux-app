@@ -3,7 +3,8 @@
 /**
  * Profile (`/profile`, theme.md §8.6): first and last name (saved with PATCH /me; the
  * create page greets the user with the first name), the sign-in email, and the Gmail
- * Demux reads: connect, reconnect or switch accounts. Google sends the user back here.
+ * Demux reads: connect, reconnect, switch accounts (Google sends the user back here) or
+ * disconnect (asks first, inline; workspaces stay but stop syncing).
  */
 import { Check, Lock } from "lucide-react";
 import { useState } from "react";
@@ -160,7 +161,33 @@ function AccountCard({
   me: Me;
   gmail: { connected: boolean; error: string | null };
 }) {
+  const { reload } = useShell();
   const connected = me.gmail_connected && !me.needs_reconnect;
+  const [confirming, setConfirming] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  // The dev fake mailbox reports "connected" with no address: nothing to disconnect.
+  const canDisconnect = me.gmail_connected && !!me.gmail_email;
+
+  async function disconnect() {
+    setBusy(true);
+    setError(null);
+    try {
+      await api.disconnectGmail();
+      await reload(); // the sidebar and the create page follow
+      setConfirming(false);
+    } catch (err) {
+      if (!handleAuthError(err))
+        setError(
+          err instanceof ApiError
+            ? err.message
+            : "Couldn't disconnect Gmail. Try again.",
+        );
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <section className={`${card} flex flex-col`} aria-labelledby="account">
       <h2 id="account" className="text-[15px] font-semibold">
@@ -184,32 +211,64 @@ function AccountCard({
                 Disconnected. Reconnect to keep your workspaces updated.
               </dd>
             ) : (
-              gmail.connected && (
+              gmail.connected &&
+              me.gmail_connected && (
                 <dd className="flex items-center gap-1.5 text-[13px] text-violet-ink">
                   <Check size={14} strokeWidth={2.4} aria-hidden /> Connected
                 </dd>
               )
             )}
           </div>
-          <ButtonLink
-            href={connectGmailUrl("profile")}
-            external
-            variant="quiet"
-          >
-            {me.needs_reconnect
-              ? "Reconnect Gmail"
-              : connected
-                ? "Use another account"
-                : "Connect Gmail"}
-          </ButtonLink>
+          {confirming ? (
+            <div className="flex w-full flex-wrap items-center justify-end gap-3">
+              <p className="mr-auto text-[13px] text-ink-2">
+                Disconnect {me.gmail_email}? Your workspaces stay but stop
+                updating.
+              </p>
+              <Button
+                variant="quiet"
+                disabled={busy}
+                onClick={() => setConfirming(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="quiet"
+                loading={busy}
+                onClick={disconnect}
+                className="text-danger hover:text-danger"
+              >
+                Disconnect
+              </Button>
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {canDisconnect && (
+                <Button variant="quiet" onClick={() => setConfirming(true)}>
+                  Disconnect
+                </Button>
+              )}
+              <ButtonLink
+                href={connectGmailUrl("profile")}
+                external
+                variant="quiet"
+              >
+                {me.needs_reconnect
+                  ? "Reconnect Gmail"
+                  : connected
+                    ? "Use another account"
+                    : "Connect Gmail"}
+              </ButtonLink>
+            </div>
+          )}
         </div>
       </dl>
-      {gmail.error && (
+      {(error ?? gmail.error) && (
         <p
           role="alert"
           className="mb-3 rounded-sm bg-danger-bg px-4 py-3 text-sm text-danger"
         >
-          {gmail.error}
+          {error ?? gmail.error}
         </p>
       )}
       <p className="flex items-center gap-2 border-t border-line-soft pt-4 text-[13px] text-ink-3">
