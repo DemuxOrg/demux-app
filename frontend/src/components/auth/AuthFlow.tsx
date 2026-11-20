@@ -10,7 +10,6 @@
  * The sign-in email can differ from the Gmail connected later.
  */
 import { ArrowRight, Eye, EyeOff, Lock } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { startTransition, useEffect, useState } from "react";
 import { LogoMark } from "@/components/brand/Logo";
 import { StepTransition } from "@/components/motion/PageTransition";
@@ -52,8 +51,15 @@ function message(error: {
   );
 }
 
+/**
+ * Full page load into the app after the session changes. A client navigation would
+ * reuse routes Next kept mounted (cacheComponents) with the previous session's state.
+ */
+function enterApp() {
+  window.location.replace("/workspaces");
+}
+
 export function AuthFlow() {
-  const router = useRouter();
   const [mode, setMode] = useState<Mode>("sign-in");
   const [step, setStep] = useState<Step>("credentials");
   const [email, setEmail] = useState("");
@@ -68,9 +74,9 @@ export function AuthFlow() {
   // Already signed in (e.g. back button): go straight to the workspaces.
   useEffect(() => {
     authClient.getSession().then(({ data }) => {
-      if (data?.session) router.replace("/workspaces");
+      if (data?.session) enterApp();
     });
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     if (resendIn <= 0) return;
@@ -123,7 +129,7 @@ export function AuthFlow() {
       setError(message(error));
       return;
     }
-    router.push("/workspaces");
+    enterApp();
   }
 
   async function verify(value = code) {
@@ -139,7 +145,7 @@ export function AuthFlow() {
       setError(message(error));
       return;
     }
-    router.push("/workspaces");
+    enterApp();
   }
 
   async function resend() {

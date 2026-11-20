@@ -6,13 +6,11 @@
  * click and Escape.
  */
 import { LogOut, Mail } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import type { Me } from "@/lib/api";
 
 export function AccountMenu({ me }: { me: Me | null }) {
-  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -36,7 +34,10 @@ export function AccountMenu({ me }: { me: Me | null }) {
   async function signOut() {
     setLeaving(true);
     await authClient.signOut().catch(() => undefined);
-    router.replace("/login");
+    // Full page load, not router.replace: with cacheComponents, Next keeps visited
+    // routes mounted (hidden) with their state, so a client navigation would bring
+    // this signed-out session's screens back after the next sign-in.
+    window.location.replace("/login");
   }
 
   return (
