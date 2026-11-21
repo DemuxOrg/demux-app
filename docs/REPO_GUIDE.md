@@ -40,11 +40,25 @@ Open <http://localhost:3000> (backend status should say *ok*) and <http://localh
 ├── .github/workflows/ci.yml
 ├── docker/init-test-db.sql
 ├── docs/REPO_GUIDE.md          ← you are here
+├── app-kit/                    ← component kit for generated apps (Vite → backend/app/agent/kit/)
 ├── backend/                    ← Python / FastAPI
 │   └── Dockerfile  .dockerignore
 └── frontend/                   ← TypeScript / Next.js
     └── Dockerfile  .dockerignore
 ```
+
+### UI generation (generated workspace apps)
+
+| Path | Responsible for |
+|---|---|
+| `app-kit/src/` | The component kit: shadcn-style primitives (`ui/`), blocks such as Board, DataTable, Timeline, Calendar, Chart, Dashboard (`blocks/`), data helpers (`lib/data.ts`), the runtime that compiles the app's JSX and renders it (`index.tsx`), and `catalog.md`, the agent's reference. `make kit` builds it. |
+| `backend/app/agent/kit/` | The built kit (`kit.js`, `kit.css`, `catalog.md`), committed: the shell inlines it into every v2 app. |
+| `backend/app/agent/shell.py` | The fixed iframe shell: CSP, fonts, tokens, palettes, bridge; v1 (old HTML apps) or v2 (kit apps) by `app_runtime`. |
+| `backend/app/agent/palettes.py` | The five palettes (theme.md §10.3). |
+| `backend/app/agent/appcheck.py` | Static rules + headless render check every app must pass before it is stored. |
+| `backend/app/agent/gallery.py` | Every kit block on sample data through the real shell (`uv run python -m app.agent.gallery out.html teal`). |
+| `backend/app/services/setup.py` + `POST /workspaces/{id}/setup` | The user's setup answers during a build: look, clarifying questions, layouts. |
+| `frontend/src/components/workspace/BuildFlow.tsx` | The five-step build screen (theme.md §7.10). |
 
 ### Root files
 
@@ -190,6 +204,7 @@ Keep components server-side by default; add `"use client"` only where there is i
 
 - **Done:** login (better-auth, email code) and the Gmail connection (backend OAuth). Not built yet: phone / SMS sign-in, password reset.
 - **Later:** Gmail fetch + LLM extraction in `backend/app/pipeline/`, workspace rendering components in `frontend/src/components/`, background refresh.
+- **Done:** UI generation v2 (component kit, palettes, setup questions, layouts, progress screen): see `docs/UI_GENERATION_PLAN.md` and the UI generation table in §3.
 
 ## 8. Troubleshooting
 

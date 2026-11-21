@@ -6,6 +6,7 @@ import pytest
 
 from app.agent import flows
 from app.agent.context import MemoryPersister, RunContext, WorkspaceState
+from app.agent.default_app import DEFAULT_APP
 from app.agent.loop import PhaseFailed
 from app.mail.fake import FakeMailbox
 from tests.helpers import GOOD_APP, SMALL_MAILBOX, PhaseLLM, ScriptedLLM, dt, tool_results
@@ -46,7 +47,30 @@ def save_all_new(messages):
 
 DESIGN_TURNS = [
     [("search_mail", {"query": "order"})],
-    [("write_guide", {"text": GUIDE}), ("set_queries", {"queries": ["order"]})],
+    [
+        ("write_guide", {"text": GUIDE}),
+        (
+            "propose_views",
+            {
+                "options": [
+                    {
+                        "block": "DataTable",
+                        "title": "All orders",
+                        "description": "every order",
+                        "recommended": True,
+                    },
+                    {
+                        "block": "Board",
+                        "title": "Board by status",
+                        "description": "status",
+                        "recommended": False,
+                    },
+                ],
+                "primary": 0,
+            },
+        ),
+        ("set_queries", {"queries": ["order"]}),
+    ],
     [("finish", {"summary": "Tracks orders."})],
 ]
 
@@ -144,7 +168,7 @@ async def test_failed_batch_is_skipped_and_build_continues():
 async def test_app_phase_failure_falls_back_to_default_app():
     ctx, _, p = make()
     await flows.build(ctx, cfg(build_llm(app=["no tools"] * 8)))
-    assert "function render" in ctx.state.app_html
+    assert ctx.state.app_html == DEFAULT_APP
     assert any("default table view" in e["label"] for e in p.events)
 
 

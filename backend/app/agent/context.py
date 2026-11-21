@@ -27,6 +27,7 @@ class WorkspaceState:
     data_version: int = 0
     app_version: int = 0
     last_synced_at: datetime | None = None
+    palette: str = "violet"
 
     @property
     def queries(self) -> list[str]:
@@ -53,6 +54,14 @@ class Persister(Protocol):
     async def add_event(self, event: dict[str, Any]) -> None: ...
     async def add_usage(self, input_tokens: int, output_tokens: int, cost: float) -> None:
         """Record usage; raise BudgetExceeded when a run or daily cap is passed."""
+        ...
+
+    async def set_setup(self, key: str, value: Any) -> None:
+        """Store one key of the build's setup state (questions, layout options, states)."""
+        ...
+
+    async def get_setup(self) -> dict[str, Any]:
+        """The build's setup state, including the user's answers written by the API."""
         ...
 
     async def processed_ids(self) -> set[str]: ...
@@ -89,6 +98,11 @@ class RunContext:
     # Design-phase budget: keeps the first phase short and its context small.
     design_reads: int = 0
     design_searches: int = 0
+    # Setup with the user during a build (docs/UI_GENERATION_PLAN.md §6-7): how long to wait
+    # for their answers (0 = do not wait, use the recommended ones: CLI and eval).
+    setup_wait: float = 0.0
+    asked_user: bool = False
+    proposed_views: bool = False
 
     def child(self, phase: str, **overrides: Any) -> "RunContext":
         """A context for one concurrent phase: shares state, mailbox, persister and the
@@ -126,6 +140,7 @@ class MemoryPersister:
         self.cost = 0.0
         self.max_usd = max_usd
         self.state: WorkspaceState | None = None
+        self.setup: dict[str, Any] = {}
 
     async def save_data(self, state: WorkspaceState, changes: list[ChangeRow]) -> None:
         state.data_version += 1
@@ -157,6 +172,12 @@ class MemoryPersister:
         self.cost += cost
         if self.cost > self.max_usd:
             raise BudgetExceeded(f"run cost ${self.cost:.2f} exceeds ${self.max_usd:.2f}")
+
+    async def set_setup(self, key: str, value: Any) -> None:
+        self.setup[key] = value
+
+    async def get_setup(self) -> dict[str, Any]:
+        return dict(self.setup)
 
     async def processed_ids(self) -> set[str]:
         return set(self.processed)
@@ -195,6 +216,7 @@ class MemoryPersister:
                     "data": state.data,
                     "guide": state.guide,
                     "config": state.config,
+                    "palette": state.palette,
                     "last_synced_at": state.last_synced_at.isoformat()
                     if state.last_synced_at
                     else None,
@@ -220,6 +242,7 @@ class MemoryPersister:
             guide=raw["guide"],
             config=raw["config"],
             app_html=app.read_text() if app.exists() else None,
+            palette=raw.get("palette", "violet"),
             last_synced_at=datetime.fromisoformat(raw["last_synced_at"])
             if raw.get("last_synced_at")
             else None,

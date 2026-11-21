@@ -56,10 +56,14 @@ class FlowConfig:
         )
 
 
-async def _event(ctx: RunContext, phase: str, label: str) -> None:
+async def _event(ctx: RunContext, phase: str, label: str, **extra: int) -> None:
+    """One progress event. `extra` carries structured progress (`done`, `total` threads)
+    for the build screen; the label is what the activity log shows."""
     import time
 
-    await ctx.persister.add_event({"t": time.time(), "phase": phase, "tool": None, "label": label})
+    await ctx.persister.add_event(
+        {"t": time.time(), "phase": phase, "tool": None, "label": label, **extra}
+    )
 
 
 def _count_label(data: dict) -> str:
@@ -175,9 +179,10 @@ async def process_threads(
     parallel = concurrency > 1 and len(batches) > 1
     gate = asyncio.Semaphore(max(1, concurrency))
     done = 0
+    threads_done = 0
 
     async def one(i: int, batch: list[Thread], blocks: list[str]) -> str | None:
-        nonlocal done
+        nonlocal done, threads_done
         summary = None
         async with gate:
             ok = False
@@ -205,12 +210,21 @@ async def process_threads(
             pairs = [(m.message_id, t.thread_id) for t in batch for m in t.messages]
             await ctx.persister.mark_processed(pairs)
             done += 1
-            await _event(ctx, "process", f"{phase_label} ({done} of {len(batches)} batches)")
+            threads_done += len(batch)
+            await _event(
+                ctx,
+                "process",
+                f"{phase_label} ({done} of {len(batches)} batches)",
+                done=threads_done,
+                total=len(threads),
+            )
         return summary
 
     if not batches:
         return []
-    await _event(ctx, "process", f"{phase_label} ({len(threads)} threads)")
+    await _event(
+        ctx, "process", f"{phase_label} ({len(threads)} threads)", done=0, total=len(threads)
+    )
     tasks = [asyncio.create_task(one(i, b, blocks)) for i, (b, blocks) in enumerate(batches, 1)]
     try:
         results = await asyncio.gather(*tasks)
@@ -239,8 +253,8 @@ async def build(ctx: RunContext, cfg: FlowConfig) -> str:
         user=prompts.design_input(ctx.state.prompt, ctx.now, ctx.lookback_days),
         tools=tools_for("design"),
         ctx=ctx,
-        max_steps=14,
-        done_when=lambda c: bool(c.state.guide.strip() and c.state.queries),
+        max_steps=16,
+        done_when=lambda c: bool(c.state.guide.strip() and c.state.queries and c.proposed_views),
     )
     summary = (result.summary or "").strip()
     if summary.upper().startswith("CANNOT_BUILD"):
@@ -250,8 +264,16 @@ async def build(ctx: RunContext, cfg: FlowConfig) -> str:
     if not ctx.state.queries:
         raise PhaseFailed("design ended without searches")
 
-    # 2. the app is written from the guide while the emails are being read
-    app_task = asyncio.create_task(build_app(ctx, cfg))
+    # Setup steps the design phase did not need are marked, so the build screen moves on.
+    setup = await ctx.persister.get_setup()
+    if "questions_state" not in setup:
+        await ctx.persister.set_setup("questions_state", "none")
+    if not setup.get("layout_options"):
+        await ctx.persister.set_setup("layout_state", "none")
+
+    # 2. the app is written from the guide (and the layouts the user picks) while the
+    # emails are being read
+    app_task = asyncio.create_task(_layout_then_app(ctx, cfg))
     try:
         await _event(ctx, "process", "Collecting matching emails")
         threads = await collect_threads(
@@ -292,11 +314,49 @@ async def build(ctx: RunContext, cfg: FlowConfig) -> str:
     return f"{counts} {summary}"[:300]
 
 
+async def choose_layout(ctx: RunContext) -> None:
+    """Wait for the layouts the user picks (setup step 3), or use the recommended ones."""
+    from app.agent.tools import wait_setup
+
+    setup = await ctx.persister.get_setup()
+    options = [o for o in setup.get("layout_options") or [] if isinstance(o, dict)]
+    if not options:
+        return
+    choice = await wait_setup(ctx, "layout")
+    ids = {o["id"] for o in options}
+    if isinstance(choice, dict) and [v for v in choice.get("views") or [] if v in ids]:
+        chosen = [v for v in choice["views"] if v in ids]
+        primary = choice.get("primary")
+        state = "chosen"
+    else:
+        chosen = [o["id"] for o in options if o.get("recommended")] or [options[0]["id"]]
+        primary = setup.get("layout_primary")
+        state = "timed_out" if ctx.setup_wait > 0 else "auto"
+    if primary not in chosen:
+        primary = chosen[0]
+    ctx.state.config["layout"] = {
+        "views": [o for o in options if o["id"] in chosen],
+        "primary": primary,
+    }
+    await ctx.persister.save_config(ctx.state)
+    await ctx.persister.set_setup("layout_state", state)
+
+
+async def _layout_then_app(ctx: RunContext, cfg: FlowConfig) -> None:
+    await choose_layout(ctx)
+    await build_app(ctx, cfg)
+
+
 async def build_app(ctx: RunContext, cfg: FlowConfig, problems: list[str] | None = None) -> None:
     child = ctx.child("app")
     await _event(ctx, "app", "Building the interface")
     user = prompts.app_input(
-        ctx.state.prompt, ctx.state.guide, ctx.state.data, ctx.inline_max_chars
+        ctx.state.prompt,
+        ctx.state.guide,
+        ctx.state.data,
+        ctx.inline_max_chars,
+        name=ctx.state.name,
+        layout=ctx.state.config.get("layout"),
     )
     if problems:
         user += (
@@ -384,6 +444,8 @@ async def edit(ctx: RunContext, cfg: FlowConfig, message: str, recent: list[str]
                 ctx.state.app_html,
                 recent,
                 ctx.inline_max_chars,
+                palette=ctx.state.palette,
+                config=ctx.state.config,
             ),
             tools=tools_for("edit"),
             ctx=ctx,

@@ -20,6 +20,14 @@ export type ChangeRead = S["ChangeRead"];
 export type AppDoc = S["AppDoc"];
 export type DataDoc = S["DataDoc"];
 export type GuideDoc = S["GuideDoc"];
+export type AppShell = S["AppShell"];
+export type PaletteInfo = S["PaletteInfo"];
+export type PaletteId = PaletteInfo["id"];
+export type ActiveRun = S["ActiveRun"];
+export type SetupState = S["SetupState"];
+export type SetupQuestion = S["SetupQuestion"];
+export type SetupUpdate = S["SetupUpdate"];
+export type AppRuntime = AppDoc["runtime"];
 
 export const API_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
@@ -66,7 +74,8 @@ export const api = {
   updateMe: (body: MeUpdate) =>
     request<Me>("/me", { method: "PATCH", body: JSON.stringify(body) }),
   disconnectGmail: () => request<Me>("/me/gmail", { method: "DELETE" }),
-  appShell: () => request<{ head: string }>("/app-shell"),
+  appShell: (runtime: AppRuntime = "v1") =>
+    request<AppShell>(`/app-shell?runtime=${runtime}`),
   listWorkspaces: () => request<WorkspaceSummary[]>("/workspaces"),
   createWorkspace: (prompt: string) =>
     post<WorkspaceSummary>("/workspaces", { prompt }),
@@ -90,6 +99,8 @@ export const api = {
   syncNow: (id: string) => post<{ run_id: string }>(`/workspaces/${id}/sync`),
   undo: (id: string) => post<DataDoc>(`/workspaces/${id}/undo`),
   rebuild: (id: string) => post<WorkspaceSummary>(`/workspaces/${id}/rebuild`),
+  updateSetup: (id: string, body: SetupUpdate) =>
+    post<ActiveRun>(`/workspaces/${id}/setup`, body),
 };
 
 /** Send the user to sign in when the session is missing or expired. */

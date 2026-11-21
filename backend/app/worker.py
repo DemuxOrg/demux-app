@@ -73,6 +73,7 @@ async def execute_run(
             data_version=ws.data_version,
             app_version=ws.app_version,
             last_synced_at=ws.last_synced_at,
+            palette=ws.palette,
         )
         recent = await runs.recent_summaries(s, ws_id) if kind == RunKind.EDIT else []
 
@@ -87,6 +88,7 @@ async def execute_run(
         lookback_days=settings.LOOKBACK_DAYS,
         max_build_threads=settings.BUILD_MAX_THREADS,
         inline_max_chars=settings.DATA_INLINE_MAX_CHARS,
+        setup_wait=float(settings.SETUP_WAIT_SECONDS) if kind == RunKind.BUILD else 0.0,
     )
     cfg = flows.FlowConfig.from_settings(llm or OpenAICompatibleLLM())
 

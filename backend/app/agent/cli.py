@@ -53,11 +53,12 @@ async def _mailbox(spec: str, now: datetime | None):
 def write_preview(out: Path, state: WorkspaceState) -> None:
     if not state.app_html:
         return
-    page = build_srcdoc(state.app_html).replace(
+    page = build_srcdoc(state.app_html, state.palette).replace(
         "</body>",
-        "<script>window.postMessage({type:'demux:data',data:"
+        "<script>window.addEventListener('load',function(){window.postMessage("
+        "{type:'demux:data',data:"
         + json.dumps(state.data).replace("</", "<\\/")
-        + "},'*');</script></body>",
+        + "},'*')});</script></body>",
     )
     (out / "preview.html").write_text(page)
 

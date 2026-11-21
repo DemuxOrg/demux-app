@@ -1,5 +1,5 @@
 # Single entry point for dev commands. Run from the repo root.
-.PHONY: setup install env db up down restart reset users delete-user wipe logs ps docker-test \
+.PHONY: kit setup install env db up down restart reset users delete-user wipe logs ps docker-test \
 	prod-up prod-down prod-logs \
 	migrate migration backend worker frontend gen-api eval-agent lint test
 
@@ -101,6 +101,9 @@ frontend:  ## web app on :3000
 
 gen-api:  ## regenerate frontend API types (backend must be running)
 	cd frontend && pnpm gen:api
+
+kit:  ## build the component kit inlined into generated apps (app-kit/ → backend/app/agent/kit/)
+	cd app-kit && pnpm install --frozen-lockfile && pnpm build
 
 eval-agent:  ## run the agent eval scenarios (costs money): make eval-agent ARGS="--scenario 01"
 	cd backend && uv run python -m eval.agent $(ARGS)

@@ -40,6 +40,14 @@ from app.main import app  # noqa: E402
 from app.models import User  # noqa: E402
 
 
+@pytest.fixture(autouse=True)
+def _no_setup_wait(monkeypatch):
+    """Builds in tests use the recommended setup answers at once unless a test waits."""
+    from app.core.config import settings
+
+    monkeypatch.setattr(settings, "SETUP_WAIT_SECONDS", 0)
+
+
 @pytest_asyncio.fixture(scope="session")
 async def engine():
     engine = create_async_engine(os.environ["TEST_DATABASE_URL"])

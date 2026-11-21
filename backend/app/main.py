@@ -8,6 +8,7 @@ mounting all routers under `/api/v1`. OpenAPI docs live at `/api/docs` and
 
 from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 
 from app.api.routes import auth, health, workspaces
 from app.core.config import settings
@@ -25,6 +26,8 @@ def create_app() -> FastAPI:
         redoc_url=None,
     )
     app.add_middleware(RequestIdMiddleware)
+    # The app shell inlines the component kit (~1 MB); gzip makes it ~300 KB on the wire.
+    app.add_middleware(GZipMiddleware, minimum_size=2048)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[settings.FRONTEND_URL],

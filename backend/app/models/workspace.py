@@ -3,6 +3,7 @@
 Responsible for the Workspace model: the user's prompt plus the three things the agent
 edits — `app_html` (the generated interface), `data` (records by type, see the build
 spec §2.1) and `guide` (the agent's own notes). `config` holds `{"queries": [...]}`.
+`palette` is the look the user picked for the app (frontend/theme.md §10.3).
 Deleting a user cascades to their workspaces.
 """
 
@@ -63,5 +64,9 @@ class Workspace(IdMixin, TimestampMixin, Base):
         Integer, nullable=False, default=0, server_default="0"
     )
     app_version: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
+    # One of app/agent/palettes.py, chosen while the workspace is built (Undo leaves it alone).
+    palette: Mapped[str] = mapped_column(
+        Text, nullable=False, default="violet", server_default="violet"
+    )
     last_synced_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     last_error: Mapped[str | None] = mapped_column(Text, nullable=True)
