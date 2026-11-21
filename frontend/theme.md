@@ -115,7 +115,7 @@ Always use the pair: soft background + dark foreground.
 | `neutral` | `#EEF2F7` | `#33445C` | Unpaid, Booked, Waiting for approval |
 | `live` dot | `#2FB36B` | — | "Synced 3 min ago", "Live from your inbox" |
 
-**Category dots** (columns, clients), 6–7px circles: `#5EA7F4` blue · `#9A8BF7` lavender · `#E0679A` pink · `#2FB36B` green · `#F5A524` amber · `#9A7BF7` purple. Dots are always paired with a text label: never color alone.
+**Category dots** (columns, clients), 6–7px circles: `#5EA7F4` blue · `#9A8BF7` lavender · `#E0679A` pink · `#2FB36B` green · `#F5A524` amber · `#9A7BF7` purple. Dots are always paired with a text label: never color alone. Inside generated apps, dots and chart series follow the palette's series order (§10.3).
 
 ### 3.5 Dark surfaces (marketing/video only, not the MVP app)
 From the board in the launch video: board `#16171A`, column `#1F2024`, card `#2A2B30`, tag `#36373D`, text `#ECEDEF` / `#F3F4F6`, muted `#A3A7AF`, faint `#8E929B`, success text `#6BDB8C` on `rgba(52,199,89,0.16)`, live dot `#34C759`.
@@ -137,6 +137,7 @@ From the board in the launch video: board `#16171A`, column `#1F2024`, card `#2A
 | white on coral | 3.4 | ✗ never put text on coral |
 | **white on any sky** | **2.5** | **✗ never put white text on the sky** |
 | status pairs (§3.4) | 5.4–8.8 | ✓ |
+| generated-app palettes (§10.3) | 5.5–14.4 | ✓ |
 
 ---
 
@@ -293,15 +294,39 @@ Vertical list with dividers `line-on-glass`, padding 14px 0:
 3. Change: `from` pill (neutral) → arrow 14px `ink-3` → `to` pill (status color), or one sentence 13px `ink-2`
 4. Source link: mail icon 14px + "Sender · “subject or quote”" 13px `ink-2`. Hover: underline + `violet-ink`. Opens the email (`demux.openSource`).
 
-### 7.10 Build progress
-- Card: white, radius 30, padding 36/36/24, max-width 620, `shadow-float`.
-- Logo mark 56px with "breathe" animation, title-lg "Building your workspace", the prompt quoted in `ink-2`.
-- Steps (`<ol>`), each row 16px with a divider:
-  - **Done:** 28px circle `violet-soft` + violet check, label 16/500, right "Done" 13 `ink-3`.
-  - **Active:** 22px spinner (2.5px `magenta-soft` track, `magenta` arc), label 16/600, right "Batch 3 of 12" 13 `ink-2`. Below it: 6px progress bar (track `#EEF1F6`, fill = brand gradient, `role="progressbar"`) and a live line 14px `ink-2` ("Found 9 requests from 4 clients so far").
-  - **Pending:** 24px circle, 2px `#E1E6EE` border, label 16/500 `ink-3`.
-- Footer 13px `ink-3`: "You can close this page. Demux keeps building, and your workspace will be ready here."
-- Phases (fixed copy): Understanding your request → Reading your emails → Building the interface.
+### 7.10 Build flow (setup steps + progress)
+One card takes the user from Build to a ready workspace. It asks for up to three things while Demux works in the background, then shows the work. There are always five steps, in this order:
+
+| # | Step (label) | Whose turn | Title (title-lg) |
+|---|---|---|---|
+| 1 | Your look | user | How should your workspace look? |
+| 2 | A few questions | user, only if the prompt is ambiguous | A few questions |
+| 3 | Your layout | user | What should your workspace show? |
+| 4 | Reading your emails | Demux | Reading your emails |
+| 5 | Building your workspace | Demux | Almost there |
+
+**Card:** white, radius 30, padding 36/36/24, max-width 620, `shadow-float`. Top to bottom:
+1. **Header row:** logo mark 40px with "breathe" on the left; on the right "Step 3 of 5 · Your layout", 13/500 `ink-3`, tabular.
+2. **Step bar:** 5 equal segments, 6px tall, gap 4, radius full, track `#EEF1F6`. Done or skipped: `violet`. Active and the user's turn (1–3): `violet-line`. Active and Demux's turn (4–5): brand gradient with `flow` (the build card's one gradient, principle 4 in §1). Step 4 fills to threads read ÷ threads found (minimum 6%); step 5 is full and flowing. One `role="progressbar"` with `aria-valuenow` = step, `aria-valuemax` = 5 and `aria-valuetext="Step 3 of 5: Your layout"`; the segments are `aria-hidden`.
+3. **Title:** the step's title (table above), `reveal-text` on each step change. Focus moves to it.
+4. **Prompt:** quoted, 14px `ink-3`, one line, truncated (full text in `title`).
+5. **Body:** per step, below.
+6. **Footer row:** a note on the left (13px `ink-3`); on steps 1–3 the primary **Continue →** on the right (the card's only violet button).
+
+**Step bodies**
+- **1 · Your look.** `role="radiogroup"` of the five palettes (§10.3), one row (3 + 2 below 560px, 2 per row at 390px), gap 10. Tile: white, radius 16, 1px `line`, padding 10, hover lift. Inside, a preview drawn in that palette with no real data: a 64px `surface-2` well (radius 12) holding an accent pill, an accent-soft tag and three short bars in series 1–3. Under it the palette name 14/500 ink. Selected: 2px `violet` border and a 20px violet check badge at the top right (selection is Demux's own violet whatever the tile's palette). Violet is preselected. Footer note: "This sets the colours of your workspace."
+- **2 · A few questions.** Shown when the agent has asked; until it decides: 22px spinner + "Looking at your emails" 15/500 `ink-2`, and no Continue. If there are no questions, the step ticks off on its own and the card moves to step 3. Otherwise 1–3 `<fieldset>`s, gap 24. Each: `<legend>` 16/600 ink (the agent's question; it may start with what it found, e.g. "I found orders from Amazon, Zalando and Uber Eats. Should food deliveries count?"), then radio rows: min-height 44px, radius 12, 1px `line`, padding 0 14, 15/500 `ink-2`, 18px radio. Selected: `violet-soft` background, `violet-line` border, `violet-ink` text. The recommended option is preselected and carries a "Recommended" tag (§7.7) on the right. The last row, "Other…", shows a text input (40px, radius 12, §7.4 rules) when chosen.
+- **3 · Your layout.** Until the options are ready: spinner + "Preparing options from your emails". Then a `<fieldset>` of checkbox tiles, 2 per row (1 below 520px), gap 10: white, radius 16, 1px `line`, padding 12, hover lift. Each tile: a static 64px thumbnail of its block kind (board, table, timeline, calendar, totals, chart, gallery) drawn in the **chosen palette**, the agent's title 15/600 ("Board by status"), one line 13px `ink-3`, a 20px checkbox at the top right. Recommended tiles are preselected and tagged "Recommended". Selected: 2px `violet` border. The last ticked tile cannot be unticked (helper 13px `ink-3`: "Pick at least one"). Under the grid: label "Opens first" 13/500 `ink-2` and a 40px pill select of the ticked layouts, set to the recommended one.
+- **4 · Reading your emails.** Line 16/500 ink "48 of 120 threads read" (tabular; "Collecting matching emails" until the count is known) and a live line 14px `ink-2` "14 shipments found so far" (the main record type, named from the guide). Footer note, from here on: "That's everything we need from you. You can close this page; your workspace will be ready here."
+- **5 · Almost there.** Line 16/500 ink "Building your workspace", live line 14px `ink-2` from the latest event ("Adjusting the interface to your data"). When the workspace is ready, the page moves to it with `page`.
+
+**Behaviour**
+- Steps only move forward, with the `step` motion (§9). The total is always 5: a skipped step fills like a done one.
+- Answers are saved as soon as the user presses Continue, even if Demux does not need them yet.
+- A step Demux is waiting on (2 or 3) left unanswered for 2 minutes: the build continues with the preselected answers, and the card says so under the title, 13px `ink-3`: "We went ahead with the recommended answers."
+- Opening the page mid-build (a reload, another tab, coming back later) resumes at the current step, with answered steps shown as done.
+- Failure and "can't build" keep the existing copy (§11) inside the same card.
+- `prefers-reduced-motion`: no `breathe`, `flow` or `reveal-text`; segments fill without animation.
 
 ### 7.11 Top bar (app)
 Padding 18px top, sits on sky (no bar background). Left padding is `var(--dmx-gutter)`: 80px while the sidebar is closed (room for its open button, §7.13), 24px while it is open beside the page; the padding eases with the sidebar (360ms `ease-dmx-out`). Workspace page: workspace name (title-sm) + rename (ghost icon) or status chip on the left; sync status, Sync now, Undo, Activity, More (⋯) on the right. No back button and no avatar: workspaces and the account live in the sidebar. The create and profile pages have no top bar.
@@ -336,7 +361,7 @@ Every signed-in page (`/workspaces…`, `/profile`) lives inside one shell: the 
 0. **Landing** (`/workspaces`): opens the workspace used last in this browser, else the newest one, else **Create**.
 1. **Create, connect** (`/workspaces/new` while no Gmail is connected or it needs a reconnect): centered white card (max 520, radius 30, `shadow-float`): breathing mark 56px, title-lg "Connect your Gmail", one sentence, primary "Connect with Google →", trust line. Google's errors show in the card.
 2. **Create, prompt** (`/workspaces/new` once Gmail is connected): centered, top third: title-xl "Hello, [first name]" (the first name from sign-up or the profile page; just "Hello" for older accounts without one), then "What do you want to track?" 22/500 `ink-on-sky`, the prompt card (max 760), the read-only line with a lock icon. With both workspaces used, the prompt is disabled and the limit line replaces the read-only line. Build opens the new workspace in the same area.
-3. **Workspace, building** (`/workspaces/[id]`, status `building`): sky + top bar (name, Building chip). Centered build card (§7.10). Nothing else.
+3. **Workspace, building** (`/workspaces/[id]`, status `building`): sky + top bar (name, Building chip). Centered build flow card (§7.10). Nothing else.
 4. **Result** (`/workspaces/[id]`, status `ready`): sky + top bar (§7.11). Body = row, gap 16, padding 0 16 16, full viewport height: **app panel** (white, radius 26, `shadow-panel`, flex 999 1 640px; the sandboxed iframe lives here) + **side panel** (glass, radius 26, flex 1 1 320px, max 380px) with Activity | Chat tabs, the activity list, and the ask input pinned to the bottom.
    - Display error banner (inside the app panel, top): bg `#FDECEA`, text `#A8321F`, "This workspace hit a display error", violet "Fix it" button.
    - Reconnect banner (under the top bar): glass card, ink text, primary button "Reconnect Gmail".
@@ -358,7 +383,7 @@ entering the screen.
 | `spin` | rotate 360°, 0.9s linear infinite | Active step spinner, button loading |
 | `pulse` | opacity 1 → .35 → 1, 1.6s ease-in-out | Building dot |
 | `breathe` | scale 1 → 1.045 → 1, 2.4s ease-in-out | Logo on the build card |
-| `flow` | background-position 0 → 200px, 1.8s linear | Gradient inside the progress bar (`background-size: 200px 100%`; the 200px tile runs violet → magenta → coral → magenta → violet so it loops without a seam) |
+| `flow` | background-position 0 → 200px, 1.8s linear | Gradient inside the build step bar while Demux works (§7.10; `background-size: 200px 100%`; the 200px tile runs violet → magenta → coral → magenta → violet so it loops without a seam) |
 | `blink` | opacity steps, 1.1s | Text caret (marketing demos only) |
 | `drift` | sky layer scale 1.06, translate ±2%, 40s `ease-in-out` alternate infinite | The sky backdrop on every app page. Slow enough that nobody notices it moving, only that the page isn't a flat image |
 | `reveal` | fade + 16px rise, 700ms `ease-dmx-out`, stagger 80ms | Blocks entering a screen in reading order: title → card → helper line → list (`<Reveal index>`) |
@@ -369,7 +394,7 @@ entering the screen.
 | Hover lift | interactive cards rise 2px and their shadow deepens one step (`shadow-glass` → `shadow-panel`), 250ms; pressed: scale .99 | Workspace cards, example chips (1px) |
 | Arrow nudge | trailing arrow moves 3px in its direction on hover of its button, 200ms | Build →, Continue →, Connect Gmail → |
 | `page` | old: fade + 4px up + 2px blur, 160ms · new: fade + 12px rise + 4px blur → sharp, 420ms `ease-dmx-out` after 60ms | Route changes (React `<ViewTransition>`), the sky stays still |
-| `step` | old: fade + 12px left, 150ms · new: fade + 16px from right, 380ms `ease-dmx-out` | Steps inside one page (sign in → code, connect → prompt) |
+| `step` | old: fade + 12px left, 150ms · new: fade + 16px from right, 380ms `ease-dmx-out` | Steps inside one page (sign in → code, connect → prompt, the build flow steps §7.10) |
 | Record update | 600ms fade of the violet highlight | §7.8 |
 
 Rules:
@@ -503,23 +528,78 @@ const instrumentSans = Instrument_Sans({
 Put the grain from §4.2 on the page shell component (the element that has `bg-sky`, with `position: relative`).
 
 ### 10.3 Generated apps (sandboxed iframe)
-The iframe's CSP allows `font-src data:` only, so Google Fonts cannot load inside it. To make generated apps match:
-- In the **fixed shell** (not the agent's HTML), inline Instrument Sans latin 400/500/600 as a base64 `@font-face`, with the system stack as fallback.
-- `demux-base.css` exposes the same tokens as CSS variables, so the agent styles with variables, never raw hex values:
+Generated apps are white-surface UIs in a sandboxed iframe. **How they look comes from the fixed shell (`backend/app/agent/shell.py`), never from the agent's code:** the agent chooses components and fields; the shell decides colour, type and spacing. The plan behind this section is `docs/UI_GENERATION_PLAN.md`.
+
+**Shell.** The iframe's CSP allows `font-src data:` only, so Google Fonts cannot load inside it. The shell inlines Instrument Sans latin 400/500/600 as base64 `@font-face` (system stack as fallback), the tokens below as CSS variables, the palettes, and the component kit (v2 apps) or the base classes (v1 apps). The iframe and the headless app check use the same shell.
+
+**Fixed tokens**, identical in every palette:
 ```css
 :root{
   --dmx-font: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
   --dmx-ink:#0C1A2E; --dmx-ink-2:#33445C; --dmx-ink-3:#5B6B80;
   --dmx-surface:#FFFFFF; --dmx-surface-2:#F4F7FB; --dmx-line:#E6EBF2; --dmx-line-soft:#EDF1F6; --dmx-tag:#F1F4F8;
-  --dmx-accent:#6A3DF0; --dmx-accent-soft:#EEE9FE; --dmx-accent-ink:#4B24C9;
   --dmx-success-bg:#E4F5EA; --dmx-success:#1D6B37; --dmx-danger-bg:#FDECEA; --dmx-danger:#A8321F;
   --dmx-warning-bg:#FFF1E2; --dmx-warning:#8F4405; --dmx-info-bg:#E6F0FD; --dmx-info:#1F5FB8;
   --dmx-neutral-bg:#EEF2F7; --dmx-neutral:#33445C;
-  --dmx-r-tag:6px; --dmx-r-card:12px; --dmx-r-col:16px;
+  --dmx-cat-blue:#5EA7F4; --dmx-cat-lavender:#9A8BF7; --dmx-cat-pink:#E0679A;
+  --dmx-cat-green:#2FB36B; --dmx-cat-amber:#F5A524; --dmx-cat-purple:#9A7BF7;
+  --dmx-series-other:#AEB8C6;
+  --dmx-r-tag:6px; --dmx-r-card:12px; --dmx-r-col:16px; --dmx-r-pill:999px;
 }
 ```
-- Generated apps are white-surface UIs. **No sky gradient and no brand gradient inside generated apps.** Violet only for the selected or updated state.
-- Agent prompt rule: "Use the `--dmx-*` variables and base classes. One accent color (`--dmx-accent`). Status colors only for status."
+
+**Palettes.** A palette sets the accent family and the chart series order, nothing else. The shell sets it on the root (`<html data-palette="teal">`, or live through the bridge message `demux:palette`); missing or unknown means `violet`. It is stored per workspace (`workspaces.palette`). The user chooses it once, while the workspace is built (§7.10 step 1); it does not change afterwards, and Undo does not touch it.
+
+| Palette | `--dmx-accent` | `-accent-hover` | `-accent-ink` | `-accent-soft` | `-accent-line` | `-accent-tint` |
+|---|---|---|---|---|---|---|
+| **Violet** (default) | `#6A3DF0` | `#5A2FDC` | `#4B24C9` | `#EEE9FE` | `#C9BCFB` | `#FBFAFF` |
+| Ocean | `#0E67B0` | `#0B5794` | `#0A4A80` | `#E1F0FB` | `#ADD3F0` | `#F7FBFE` |
+| Teal | `#0F766E` | `#0B615A` | `#0A5650` | `#DDF3EF` | `#A6DCD3` | `#F6FCFB` |
+| Rose | `#C02C6C` | `#A6235C` | `#921C50` | `#FCE6EF` | `#F2B8CF` | `#FFF9FB` |
+| Graphite | `#2E3D54` | `#1E2A3D` | `#1E2A3D` | `#E6EAF0` | `#C3CCD8` | `#F9FAFC` |
+
+Derived from the accent in every palette: `--dmx-accent-ring` (the accent at 22% opacity, the focus ring) and `--dmx-accent-glow` (8%, the just-updated halo). Each palette also sets `--dmx-series-1` … `--dmx-series-5`, the order for chart series and category dots. Series 1 is always the accent; series 2–5 are `--dmx-cat-*` colours, leaving out the one closest to the accent:
+
+| Palette | Series 2 · 3 · 4 · 5 |
+|---|---|
+| Violet | blue · pink · green · amber |
+| Ocean | lavender · pink · green · amber |
+| Teal | amber · lavender · pink · blue |
+| Rose | blue · green · amber · lavender |
+| Graphite | blue · amber · green · pink |
+
+Contrast (WCAG 2.x, checked):
+
+| Palette | white on accent (= accent on white) | white on accent-hover | accent-ink on accent-soft | accent on accent-tint |
+|---|---|---|---|---|
+| Violet | 5.9 | 7.3 | 7.4 | 5.7 |
+| Ocean | 5.9 | 7.5 | 7.8 | 5.6 |
+| Teal | 5.5 | 7.3 | 7.4 | 5.3 |
+| Rose | 5.5 | 7.0 | 7.1 | 5.3 |
+| Graphite | 11.0 | 14.4 | 12.0 | 10.5 |
+
+Series colours are 2.0–3.2:1 on white, so they never carry meaning alone: always a legend, a direct label, or a text label next to the dot.
+
+Why these five: their hues stay away from the status colours (§3.4). There is no green, orange or red palette, because it would read as success, warning or danger. Ocean (207°) sits close to info (215°); its Updated tag keeps the dot and the "Updated" text, so it still reads differently from an info pill. Graphite is the quietest: its highlight is grey, close to the neutral pill.
+
+**Rules**
+- Palettes exist **only inside generated apps**. Demux's own UI (sidebar, top bar, cards, build flow) stays violet whatever the workspace's palette.
+- A palette changes the accent family and the series order only. Neutrals, status pairs, type, radii and spacing never change.
+- **No raw colours in generated code:** no hex, `rgb()`, `hsl()` or named colours, only `var(--dmx-*)`. The app check rejects them.
+- No sky gradient and no brand gradient inside generated apps. The accent marks the selected or updated state, the main control, and series 1 of charts and category dots, nothing else. Status colours only for status.
+- Charts: at most 5 series, in `--dmx-series-1…5` order; anything beyond is grouped into "Other" (`--dmx-series-other`). Flat fills: no gradients, 3D or shadows. Tabular numbers on axes and labels.
+- The look is decided with the user during the build, not changed later: there is no palette switcher in the workspace, and a chat request for other colours gets one sentence saying the look was set when the workspace was built.
+- Agent prompt rule: "Style only through the kit (v2) or the base classes and `--dmx-*` variables (v1). Never write a colour value. One accent (`--dmx-accent`). Status colours only for status."
+
+**Component kit (v2 apps).** New apps compose the kit: shadcn-based blocks (`Board`, `DataTable`, `Dashboard`, `StatCard`, `Chart`, `Timeline`, `Calendar`, `Gallery`, `ListDetail`, `RecordSheet`, `ViewTabs`, `FilterBar`, `EmptyState`) and primitives, restyled to this file rather than shadcn's defaults:
+- Buttons: §7.1 pill shapes, in the palette's accent; one primary per app.
+- Records: §7.8 record card, board column and just-updated highlight (in the palette's accent); §7.7 tags and status pills. A click opens the record in a side sheet (all fields, "Open email"); cards also carry a 28px mail icon button (`ink-3`, accent-soft on hover, label "Open email").
+- Tables: header 13/500 `ink-3`, cells padded 10/12 with `line-soft` dividers, row hover `surface-2`, tabular numbers.
+- Tabs: §7.5 segmented control with the `rgba(12,26,46,.06)` track.
+- Type: §5 styles, weights 400/500/600 only, large numbers at 500. Icons: §10.4.
+- The agent writes no CSS colours and no Tailwind classes: it passes props and lays blocks out with the kit's `Stack`, `Row`, `Grid` and `Section`.
+
+**Base classes (v1 apps).** Apps built before the kit keep the base classes in `shell.py` (`.table`, `.card`, `.board` + `.column`, `.badge`, `.btn`, …). They style through the same variables, so palettes apply to them too.
 
 ### 10.4 Icons
 Inline stroke SVG or `lucide-react`. Stroke 2px (2.2–2.4 on filled buttons), round caps and joins, sizes 14/16/18/20, color `currentColor`. Icons in use: `panel-left-open`, `panel-left-close`, `user-round`, `plus`, `chevron-down`, `chevrons-up-down`, `log-out`, `chevron-left`, `chevron-right`, `pencil`, `refresh-cw`, `undo-2`, `more-horizontal`, `arrow-right`, `arrow-up`, `check`, `lock`, `mail`. No filled or duotone icons, no emoji, no sparkles/wand/stars icons.
@@ -530,7 +610,7 @@ Inline stroke SVG or `lucide-react`. Stroke 2px (2.2–2.4 on filled buttons), r
 
 - **Tone:** plain, short, concrete. Say what happened, with a real noun and a number. Sentence case. No exclamation marks.
 - **Never write:** "AI-powered", "magic", "supercharge", "seamless", "unlock", "revolutionize", "✨", "Oops!".
-- **Product vocabulary (fixed):** *workspace* (never "view" or "dashboard"), *prompt*, *build* (first run), *sync* (later runs), *record*, *field*, *message* (one email), *thread* (a conversation). "Live apps" is marketing-only.
+- **Product vocabulary (fixed):** *workspace* (never "view" or "dashboard"), *prompt*, *build* (first run), *sync* (later runs), *record*, *field*, *message* (one email), *thread* (a conversation), *layout* (a board, table, timeline… inside a workspace; never "view" or "widget"), *look* (the workspace's palette, named by its palette name). "Live apps" is marketing-only.
 
 | Context | Copy |
 |---|---|
@@ -544,9 +624,15 @@ Inline stroke SVG or `lucide-react`. Stroke 2px (2.2–2.4 on filled buttons), r
 | Trust line | Read-only. Demux never sends or changes an email. |
 | Workspace list | Workspaces · 1 of 2 |
 | Limit reached | You're using both workspaces. Delete one to build another. |
-| Build title | Building your workspace |
-| Build phases | Understanding your request · Reading your emails · Building the interface |
-| Build footer | You can close this page. Demux keeps building, and your workspace will be ready here. |
+| Build steps | Your look · A few questions · Your layout · Reading your emails · Building your workspace |
+| Step counter | Step 3 of 5 · Your layout |
+| Step 1 | How should your workspace look? · Violet · Ocean · Teal · Rose · Graphite · This sets the colours of your workspace. · Continue |
+| Step 2 | A few questions · Looking at your emails · Recommended · Other… · Continue |
+| Step 3 | What should your workspace show? · Preparing options from your emails · Recommended · Pick at least one · Opens first · Continue |
+| Step 4 | Reading your emails · Collecting matching emails · 48 of 120 threads read · 14 shipments found so far |
+| Step 5 | Almost there · Building your workspace |
+| Your part done | That's everything we need from you. You can close this page; your workspace will be ready here. |
+| No answer in time | We went ahead with the recommended answers. |
 | Build failed | We couldn't build this workspace. [reason] · Try again |
 | Sync status | Synced 3 min ago · Syncing… |
 | Actions | Sync now · Undo · Ask for a change… |
@@ -569,3 +655,5 @@ Inline stroke SVG or `lucide-react`. Stroke 2px (2.2–2.4 on filled buttons), r
 | Tinted blue shadows, large and soft | Black, hard or multiple stacked shadows |
 | Generous whitespace, left-aligned dense content | Bento grids, feature-icon rows, filler sections |
 | Real names, amounts and dates in examples | Lorem ipsum, "John Doe", invented % stats |
+| Generated apps coloured only through `--dmx-*` and one of the five palettes | Raw hex/rgb in generated code, a sixth "custom" palette, or a palette colour in Demux's own UI |
+| Build steps that ask one thing each, with the recommended answer preselected | Extra steps added mid-build, or a question without a default |

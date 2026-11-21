@@ -42,7 +42,7 @@ import { rememberWorkspace, useShell } from "@/components/shell/AppShell";
 import { StatusChip, SyncStatus } from "@/components/StatusChip";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
-import { BuildProgress } from "@/components/workspace/BuildProgress";
+import { BuildFlow } from "@/components/workspace/BuildFlow";
 import { MoreMenu } from "@/components/workspace/MoreMenu";
 import { SidePanel, type SideTab } from "@/components/workspace/SidePanel";
 import {
@@ -51,6 +51,8 @@ import {
   CONNECT_GMAIL_URL,
   handleAuthError,
   type AppDoc,
+  type AppRuntime,
+  type AppShell,
   type ChangeRead,
   type DataDoc,
   type RunRead,
@@ -87,7 +89,10 @@ export function WorkspaceDetail({ id }: { id: string }) {
   const router = useRouter();
   const { me, workspaces, reload: reloadList } = useShell();
   const [ws, setWs] = useState<Detail | null>(null);
-  const [shell, setShell] = useState<string | null>(null);
+  // The fixed iframe shell per app runtime (v2 inlines the component kit).
+  const [shells, setShells] = useState<Partial<Record<AppRuntime, AppShell>>>(
+    {},
+  );
   const [app, setApp] = useState<AppDoc | null>(null);
   const [data, setData] = useState<DataDoc | null>(null);
   const [changes, setChanges] = useState<ChangeRead[]>([]);
@@ -145,10 +150,21 @@ export function WorkspaceDetail({ id }: { id: string }) {
 
   useEffect(() => {
     api
-      .appShell()
-      .then((s) => setShell(s.head))
-      .catch(() => setShell(null));
+      .appShell("v1")
+      .then((s) => setShells((x) => ({ ...x, v1: s })))
+      .catch(() => undefined);
   }, []);
+
+  const runtime = app?.runtime;
+  useEffect(() => {
+    if (!runtime || shells[runtime]) return;
+    api
+      .appShell(runtime)
+      .then((s) => setShells((x) => ({ ...x, [runtime]: s })))
+      .catch(() => undefined);
+  }, [runtime, shells]);
+  const shell = runtime ? shells[runtime] : undefined;
+  const palettes = shells.v1?.palettes ?? shells.v2?.palettes ?? [];
 
   useEffect(() => rememberWorkspace(id), [id]);
 
@@ -396,9 +412,14 @@ export function WorkspaceDetail({ id }: { id: string }) {
           {building ? (
             <div className="flex h-full justify-center overflow-y-auto px-4 pt-[clamp(8px,6vh,72px)] pb-16">
               <div className="w-full max-w-[620px]">
-                <BuildProgress
+                <BuildFlow
+                  workspaceId={id}
                   prompt={ws.prompt}
-                  events={ws.active_run?.events ?? []}
+                  run={ws.active_run ?? null}
+                  palettes={palettes}
+                  palette={ws.palette}
+                  recordCounts={ws.record_counts}
+                  onChanged={refresh}
                 />
               </div>
             </div>
@@ -441,9 +462,10 @@ export function WorkspaceDetail({ id }: { id: string }) {
               >
                 {app?.html && shell && data ? (
                   <AppFrame
-                    shellHead={shell}
+                    shellHead={shell.head}
                     html={app.html}
                     appVersion={app.version}
+                    palette={ws.palette}
                     data={data.data}
                     onError={onAppError}
                   />

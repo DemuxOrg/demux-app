@@ -7,6 +7,8 @@
  * - `sandbox="allow-scripts"` only: opaque origin, no same-origin access, no popups,
  *   no top navigation, no forms.
  * - srcdoc = fixed shell from the backend (CSP meta, base CSS, bridge) + agent HTML.
+ * - The palette goes in by message (`demux:palette`, before the data), so changing it
+ *   recolours the running app without reloading it or losing its UI state.
  * - Every message is checked with `event.source === iframe.contentWindow`.
  * - openSource accepts only Gmail-like hex ids; openLink only https URLs, after a
  *   confirm dialog owned by this (parent) page.
@@ -20,12 +22,14 @@ export function AppFrame({
   shellHead,
   html,
   appVersion,
+  palette,
   data,
   onError,
 }: {
   shellHead: string;
   html: string;
   appVersion: number;
+  palette: string;
   data: unknown;
   onError: (message: string | null) => void;
 }) {
@@ -40,6 +44,13 @@ export function AppFrame({
     [shellHead, html],
   );
 
+  const postPalette = useCallback(() => {
+    frameRef.current?.contentWindow?.postMessage(
+      { type: "demux:palette", palette },
+      "*",
+    );
+  }, [palette]);
+
   const postData = useCallback(() => {
     frameRef.current?.contentWindow?.postMessage(
       { type: "demux:data", data },
@@ -49,6 +60,11 @@ export function AppFrame({
 
   const docKey = `${appVersion}:${srcDoc.length}`;
   const ready = readyFor === docKey;
+
+  // Palette first, so the first render already has the right colours.
+  useEffect(() => {
+    if (ready) postPalette();
+  }, [ready, postPalette]);
 
   useEffect(() => {
     if (ready) postData();

@@ -280,6 +280,22 @@ class DbPersister:
                 f"Today's ${settings.MAX_USD_PER_DAY:.2f} spending limit was reached."
             )
 
+    async def set_setup(self, key: str, value: Any) -> None:
+        import json
+
+        # One key at a time: the API writes the user's answers into the same JSON.
+        async with self.sf() as s:
+            await s.execute(
+                text("UPDATE runs SET input = input || CAST(:patch AS jsonb) WHERE id = :id"),
+                {"patch": json.dumps({key: value}), "id": self.run_id},
+            )
+            await s.commit()
+
+    async def get_setup(self) -> dict[str, Any]:
+        async with self.sf() as s:
+            value = await s.scalar(select(Run.input).where(Run.id == self.run_id))
+        return dict(value or {})
+
     async def processed_ids(self) -> set[str]:
         async with self.sf() as s:
             return await store.processed_message_ids(s, self.workspace_id)

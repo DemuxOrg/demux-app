@@ -45,6 +45,13 @@ class UnauthorizedError(AppError):
     code = "unauthorized"
 
 
+class ValidationError(AppError):
+    """Input that is well-formed but does not fit the current state (same code as 422s)."""
+
+    status_code = 422
+    code = "validation_error"
+
+
 def error_response(status_code: int, code: str, message: str) -> JSONResponse:
     return JSONResponse(
         status_code=status_code, content={"error": {"code": code, "message": message}}

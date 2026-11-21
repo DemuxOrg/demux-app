@@ -1,12 +1,23 @@
-"""The fixed shell around every generated app: CSP, fonts, base stylesheet, bridge script.
+"""The fixed shell around every generated app: CSP, fonts, tokens, palettes, bridge script.
+
+Two runtimes (`app_runtime`):
+- v2 (kit apps, frontend/theme.md §10.3): the app is a `<script type="text/jsx">` that
+  defines `App({ data })` with the component kit (`kit/`, built from app-kit/). The shell
+  inlines the kit's CSS and JS; the kit compiles the JSX and renders App with React.
+- v1 (apps written before the kit): plain HTML + JS defining `render(data)`, styled with
+  the base classes below.
 
 The same shell is used by the headless app check and by the frontend iframe (served by
 `GET /api/v1/app-shell`), so what passes the check is what the user sees.
 """
 
 import base64
+import json
+import re
 from functools import cache
 from pathlib import Path
+
+from app.agent.palettes import CATEGORY, PALETTE_IDS, SERIES_OTHER, palette_css, valid_palette
 
 CSP = (
     "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; "
@@ -14,6 +25,7 @@ CSP = (
 )
 
 FONTS_DIR = Path(__file__).parent / "fonts"
+KIT_DIR = Path(__file__).parent / "kit"
 
 
 def _font_faces() -> str:
@@ -33,23 +45,24 @@ def _font_faces() -> str:
     return "".join(faces)
 
 
-# Demux tokens for generated apps (frontend/theme.md §10.3). White surfaces, one accent
-# (violet) for selected/updated state, status colours only for status. No dark mode, no
-# gradients. The short names (--bg, --fg, --accent, …) are kept as aliases so apps
-# written before the rebrand keep working.
-BASE_CSS = """
+# Demux tokens for generated apps (frontend/theme.md §10.3). White surfaces; one accent
+# (from the workspace's palette, see palettes.py) for selected/updated state; status colours
+# only for status. No dark mode, no gradients. The short names (--bg, --fg, --accent, …) are
+# kept as aliases so apps written before the rebrand keep working.
+TOKENS_CSS = (
+    """
 :root{
 --dmx-font:"Instrument Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
 --dmx-ink:#0C1A2E;--dmx-ink-2:#33445C;--dmx-ink-3:#5B6B80;
 --dmx-surface:#FFFFFF;--dmx-surface-2:#F4F7FB;--dmx-line:#E6EBF2;--dmx-line-soft:#EDF1F6;
 --dmx-tag:#F1F4F8;
---dmx-accent:#6A3DF0;--dmx-accent-hover:#5A2FDC;--dmx-accent-soft:#EEE9FE;
---dmx-accent-ink:#4B24C9;--dmx-accent-line:#C9BCFB;--dmx-accent-tint:#FBFAFF;
 --dmx-success-bg:#E4F5EA;--dmx-success:#1D6B37;--dmx-danger-bg:#FDECEA;--dmx-danger:#A8321F;
 --dmx-warning-bg:#FFF1E2;--dmx-warning:#8F4405;--dmx-info-bg:#E6F0FD;--dmx-info:#1F5FB8;
 --dmx-neutral-bg:#EEF2F7;--dmx-neutral:#33445C;
---dmx-cat-blue:#5EA7F4;--dmx-cat-lavender:#9A8BF7;--dmx-cat-pink:#E0679A;
---dmx-cat-green:#2FB36B;--dmx-cat-amber:#F5A524;--dmx-cat-purple:#9A7BF7;
+"""
+    + "".join(f"--dmx-cat-{k}:{v};" for k, v in CATEGORY.items())
+    + f"--dmx-series-other:{SERIES_OTHER};"
+    + """
 --dmx-r-tag:6px;--dmx-r-card:12px;--dmx-r-col:16px;--dmx-r-pill:999px;
 --bg:var(--dmx-surface);--fg:var(--dmx-ink);--muted:var(--dmx-ink-3);--border:var(--dmx-line);
 --card:var(--dmx-surface-2);--accent:var(--dmx-accent);--accent-fg:#FFFFFF;
@@ -57,10 +70,16 @@ BASE_CSS = """
 --radius:var(--dmx-r-card);
 font-family:var(--dmx-font);font-size:14px;color-scheme:light;
 -webkit-font-smoothing:antialiased}
+"""
+    + palette_css()
+)
+
+# Base classes of v1 apps (v2 apps get the kit's stylesheet instead).
+V1_CSS = """
 *{box-sizing:border-box}
 body{margin:0;padding:24px;background:var(--dmx-surface);color:var(--dmx-ink);line-height:1.45}
 ::selection{background:var(--dmx-accent-soft);color:var(--dmx-accent-ink)}
-:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(106,61,240,.22)}
+:focus-visible{outline:none;box-shadow:0 0 0 3px var(--dmx-accent-ring)}
 h1,h2,h3{margin:0 0 10px;color:var(--dmx-ink);text-wrap:balance}
 h1{font-size:24px;line-height:1.2;font-weight:600;letter-spacing:-.02em}
 h2{font-size:18px;line-height:1.3;font-weight:600;letter-spacing:-.015em}
@@ -93,7 +112,8 @@ background:var(--dmx-cat-blue);flex:none}
 border-radius:var(--dmx-r-pill);border:1px solid #E3E8F0;background:#F5F7FB;
 color:var(--dmx-ink-2);cursor:pointer;font:inherit;font-weight:500;
 transition:background-color .15s,color .15s,border-color .15s}
-.btn:hover{background:var(--dmx-accent-soft);color:var(--dmx-accent-ink);border-color:#DCD2FD}
+.btn:hover{background:var(--dmx-accent-soft);color:var(--dmx-accent-ink);
+border-color:var(--dmx-accent-line)}
 .btn.primary,.btn.active,.btn[aria-pressed=true]{background:var(--dmx-accent);color:#FFFFFF;
 border-color:var(--dmx-accent)}
 .btn.primary:hover{background:var(--dmx-accent-hover);color:#FFFFFF}
@@ -106,7 +126,7 @@ border:1px solid var(--dmx-line);background:var(--dmx-surface);color:var(--dmx-i
 font:inherit;caret-color:var(--dmx-accent)}
 .input::placeholder{color:var(--dmx-ink-3)}
 .input:focus,select:focus{outline:none;border-color:var(--dmx-accent-line);
-box-shadow:0 0 0 3px rgba(106,61,240,.22)}
+box-shadow:0 0 0 3px var(--dmx-accent-ring)}
 .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:16px}
 .board{display:flex;gap:12px;align-items:flex-start;overflow-x:auto;padding-bottom:4px}
 .column{flex:0 0 272px;display:flex;flex-direction:column;gap:8px;
@@ -118,13 +138,16 @@ font-weight:500;color:var(--dmx-ink-2)}
 .stat b{font-size:24px;line-height:1.2;font-weight:500;letter-spacing:-.02em}
 .stat span{font-size:13px;color:var(--dmx-ink-3)}
 .updated{background:var(--dmx-accent-tint)!important;border-color:var(--dmx-accent-line)!important;
-box-shadow:0 0 0 3px rgba(106,61,240,.08)}
+box-shadow:0 0 0 3px var(--dmx-accent-glow)}
 .empty{padding:48px 16px;text-align:center;color:var(--dmx-ink-3)}
 """
+
+BASE_CSS = TOKENS_CSS + V1_CSS
 
 BRIDGE_JS = """
 (function(){
   var parentWin = window.parent;
+  var PALETTES = __PALETTES__;
   function send(msg){ try { parentWin.postMessage(msg, '*'); } catch (e) {} }
   window.demux = Object.freeze({
     openSource: function(threadId){ send({type:'demux:openSource', threadId: String(threadId)}); },
@@ -142,7 +165,14 @@ BRIDGE_JS = """
   window.addEventListener('message', function(ev){
     if (ev.source !== parentWin) return;
     var d = ev.data;
-    if (!d || d.type !== 'demux:data') return;
+    if (!d) return;
+    if (d.type === 'demux:palette') {
+      if (PALETTES.indexOf(d.palette) >= 0) {
+        document.documentElement.setAttribute('data-palette', d.palette);
+      }
+      return;
+    }
+    if (d.type !== 'demux:data') return;
     draw(d.data);
   });
   window.addEventListener('error', function(ev){
@@ -156,16 +186,49 @@ BRIDGE_JS = """
 """
 
 
+_JSX_SCRIPT = re.compile(r"""<script\b[^>]*\btype\s*=\s*["']text/jsx["']""", re.I)
+
+
+def app_runtime(app_html: str | None) -> str:
+    """ "v2" for kit apps (a <script type="text/jsx">), else "v1"."""
+    return "v2" if app_html and _JSX_SCRIPT.search(app_html) else "v1"
+
+
 @cache
-def shell_head() -> str:
-    return (
+def _kit() -> tuple[str, str]:
+    """The built kit (app-kit/, `make kit`), safe to inline in <script> / <style>."""
+    js = (KIT_DIR / "kit.js").read_text(encoding="utf-8").replace("</script", "<\\/script")
+    css = (KIT_DIR / "kit.css").read_text(encoding="utf-8").replace("</style", "<\\/style")
+    return js, css
+
+
+@cache
+def kit_catalog() -> str:
+    """The kit reference the app and edit prompts include."""
+    return (KIT_DIR / "catalog.md").read_text(encoding="utf-8")
+
+
+@cache
+def shell_head(runtime: str = "v1") -> str:
+    bridge = BRIDGE_JS.replace("__PALETTES__", json.dumps(list(PALETTE_IDS)))
+    head = (
         '<meta charset="utf-8">'
         f'<meta http-equiv="Content-Security-Policy" content="{CSP}">'
         '<meta name="viewport" content="width=device-width,initial-scale=1">'
-        f"<style>{_font_faces()}{BASE_CSS}</style>"
-        f"<script>{BRIDGE_JS}</script>"
     )
+    if runtime == "v2":
+        js, css = _kit()
+        return (
+            head + f"<style>{_font_faces()}{TOKENS_CSS}{css}</style>"
+            f"<script>{bridge}</script><script>{js}</script>"
+        )
+    return head + f"<style>{_font_faces()}{BASE_CSS}</style><script>{bridge}</script>"
 
 
-def build_srcdoc(app_html: str) -> str:
-    return f"<!doctype html><html><head>{shell_head()}</head><body>{app_html}</body></html>"
+def build_srcdoc(app_html: str, palette: str | None = None) -> str:
+    """The full document, as the iframe gets it. The frontend builds the same string (with
+    the head for the app's runtime) and sets the palette with a `demux:palette` message."""
+    return (
+        f'<!doctype html><html data-palette="{valid_palette(palette)}">'
+        f"<head>{shell_head(app_runtime(app_html))}</head><body>{app_html}</body></html>"
+    )

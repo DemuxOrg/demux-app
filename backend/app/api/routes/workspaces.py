@@ -6,11 +6,13 @@ schema. Unknown or foreign ids are 404.
 
 import uuid
 from datetime import datetime
+from typing import Literal
 
 from fastapi import APIRouter, Query, Response, status
 from sqlalchemy import exists, select
 
-from app.agent.shell import shell_head
+from app.agent.palettes import PALETTES, valid_palette
+from app.agent.shell import app_runtime, shell_head
 from app.api.deps import CurrentUser, SessionDep
 from app.models.run import Change, Run, RunKind
 from app.models.workspace import Workspace
@@ -22,14 +24,18 @@ from app.schemas.workspace import (
     DataDoc,
     GuideDoc,
     MessageCreate,
+    PaletteInfo,
     RunCreated,
     RunRead,
+    SetupState,
+    SetupUpdate,
     WorkspaceCreate,
     WorkspaceDetail,
     WorkspaceRename,
     WorkspaceSummary,
 )
 from app.services import runs as runs_service
+from app.services import setup as setup_service
 from app.services import store
 from app.services import workspaces as service
 
@@ -71,6 +77,18 @@ def _run(r: Run) -> RunRead:
     )
 
 
+def _active(r: Run) -> ActiveRun:
+    setup = setup_service.setup_state(r)
+    return ActiveRun(
+        id=r.id,
+        kind=r.kind,
+        status=r.status,
+        events=r.events or [],
+        created_at=r.created_at,
+        setup=SetupState(**setup) if setup else None,
+    )
+
+
 def _change(c: Change) -> ChangeRead:
     return ChangeRead(
         id=c.id,
@@ -86,9 +104,23 @@ def _change(c: Change) -> ChangeRead:
 
 
 @shell_router.get("/app-shell", response_model=AppShell)
-async def app_shell() -> AppShell:
-    """The fixed <head> content (CSP, base CSS, bridge) every app iframe is wrapped in."""
-    return AppShell(head=shell_head())
+async def app_shell(runtime: Literal["v1", "v2"] = "v1") -> AppShell:
+    """The fixed <head> content (CSP, base CSS, bridge) every app iframe is wrapped in,
+    and the palettes it knows (for the palette tiles)."""
+    return AppShell(
+        head=shell_head(runtime),
+        palettes=[
+            PaletteInfo(
+                id=p.id,
+                name=p.name,
+                accent=p.accent,
+                accent_ink=p.ink,
+                accent_soft=p.soft,
+                series=p.series_hex,
+            )
+            for p in PALETTES.values()
+        ],
+    )
 
 
 @router.get("", response_model=list[WorkspaceSummary])
@@ -118,7 +150,8 @@ async def get_workspace(workspace_id: uuid.UUID, session: SessionDep, user: Curr
         last_synced_at=w.last_synced_at,
         record_counts=service.record_counts(w),
         queries=list((w.config or {}).get("queries", [])),
-        active_run=ActiveRun.model_validate(active) if active else None,
+        palette=valid_palette(w.palette),
+        active_run=_active(active) if active else None,
         last_error=w.last_error,
         can_undo=bool(has_snapshot) and active is None,
         created_at=w.created_at,
@@ -132,6 +165,23 @@ async def rename_workspace(
     return _summary(await service.rename_workspace(session, user.id, workspace_id, body.name))
 
 
+@router.post("/{workspace_id}/setup", response_model=ActiveRun)
+async def update_setup(
+    workspace_id: uuid.UUID, body: SetupUpdate, session: SessionDep, user: CurrentUser
+):
+    """The user's answer to a setup step while the workspace is built: the look, the
+    answers to the clarifying questions, or the layouts."""
+    run = await setup_service.update_setup(
+        session,
+        user.id,
+        workspace_id,
+        palette=body.palette,
+        answers=body.answers,
+        layout=body.layout.model_dump() if body.layout else None,
+    )
+    return _active(run)
+
+
 @router.delete("/{workspace_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_workspace(workspace_id: uuid.UUID, session: SessionDep, user: CurrentUser):
     await service.delete_workspace(session, user.id, workspace_id)
@@ -141,7 +191,7 @@ async def delete_workspace(workspace_id: uuid.UUID, session: SessionDep, user: C
 @router.get("/{workspace_id}/app", response_model=AppDoc)
 async def get_app(workspace_id: uuid.UUID, session: SessionDep, user: CurrentUser):
     w = await service.get_workspace(session, user.id, workspace_id)
-    return AppDoc(html=w.app_html, version=w.app_version)
+    return AppDoc(html=w.app_html, version=w.app_version, runtime=app_runtime(w.app_html))
 
 
 @router.get("/{workspace_id}/data", response_model=DataDoc)

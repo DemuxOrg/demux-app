@@ -133,6 +133,27 @@ export interface paths {
         patch: operations["rename_workspace_api_v1_workspaces__workspace_id__patch"];
         trace?: never;
     };
+    "/api/v1/workspaces/{workspace_id}/setup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Update Setup
+         * @description The user's answer to a setup step while the workspace is built: the look, the
+         *     answers to the clarifying questions, or the layouts.
+         */
+        post: operations["update_setup_api_v1_workspaces__workspace_id__setup_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/workspaces/{workspace_id}/app": {
         parameters: {
             query?: never;
@@ -295,7 +316,8 @@ export interface paths {
         };
         /**
          * App Shell
-         * @description The fixed <head> content (CSP, base CSS, bridge) every app iframe is wrapped in.
+         * @description The fixed <head> content (CSP, base CSS, bridge) every app iframe is wrapped in,
+         *     and the palettes it knows (for the palette tiles).
          */
         get: operations["app_shell_api_v1_app_shell_get"];
         put?: never;
@@ -326,6 +348,7 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+            setup?: components["schemas"]["SetupState"] | null;
         };
         /** AppDoc */
         AppDoc: {
@@ -333,11 +356,18 @@ export interface components {
             html: string | null;
             /** Version */
             version: number;
+            /**
+             * Runtime
+             * @enum {string}
+             */
+            runtime: "v1" | "v2";
         };
         /** AppShell */
         AppShell: {
             /** Head */
             head: string;
+            /** Palettes */
+            palettes: components["schemas"]["PaletteInfo"][];
         };
         /** ChangeRead */
         ChangeRead: {
@@ -391,6 +421,32 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /** LayoutChoice */
+        LayoutChoice: {
+            /** Views */
+            views: string[];
+            /** Primary */
+            primary: string;
+        };
+        /** LayoutOption */
+        LayoutOption: {
+            /** Id */
+            id: string;
+            /** Block */
+            block: string;
+            /** Title */
+            title: string;
+            /**
+             * Description
+             * @default
+             */
+            description: string;
+            /**
+             * Recommended
+             * @default false
+             */
+            recommended: boolean;
+        };
         /** Me */
         Me: {
             /** Email */
@@ -420,6 +476,27 @@ export interface components {
             /** Text */
             text: string;
         };
+        /**
+         * PaletteInfo
+         * @description What the frontend needs to draw a palette tile (frontend/theme.md §7.10).
+         */
+        PaletteInfo: {
+            /**
+             * Id
+             * @enum {string}
+             */
+            id: "violet" | "ocean" | "teal" | "rose" | "graphite";
+            /** Name */
+            name: string;
+            /** Accent */
+            accent: string;
+            /** Accent Ink */
+            accent_ink: string;
+            /** Accent Soft */
+            accent_soft: string;
+            /** Series */
+            series: string[];
+        };
         /** RunCreated */
         RunCreated: {
             /**
@@ -438,6 +515,10 @@ export interface components {
             tool?: string | null;
             /** Label */
             label: string;
+            /** Done */
+            done?: number | null;
+            /** Total */
+            total?: number | null;
         };
         /**
          * RunKind
@@ -484,6 +565,58 @@ export interface components {
          * @enum {string}
          */
         RunStatus: "queued" | "running" | "done" | "failed";
+        /** SetupQuestion */
+        SetupQuestion: {
+            /** Id */
+            id: string;
+            /** Question */
+            question: string;
+            /** Options */
+            options: string[];
+            /** Recommended */
+            recommended: number;
+        };
+        /**
+         * SetupState
+         * @description Where a build's setup with the user stands (frontend/theme.md §7.10).
+         */
+        SetupState: {
+            /** Palette */
+            palette: ("violet" | "ocean" | "teal" | "rose" | "graphite") | null;
+            /**
+             * Questions State
+             * @enum {string}
+             */
+            questions_state: "deciding" | "asking" | "answered" | "timed_out" | "none";
+            /** Questions */
+            questions: components["schemas"]["SetupQuestion"][];
+            /** Answered */
+            answered: boolean;
+            /**
+             * Layout State
+             * @enum {string}
+             */
+            layout_state: "waiting" | "choosing" | "chosen" | "timed_out" | "auto" | "none";
+            /** Layout Options */
+            layout_options: components["schemas"]["LayoutOption"][];
+            /** Layout Primary */
+            layout_primary: string | null;
+            /** Layout Chosen */
+            layout_chosen: boolean;
+        };
+        /**
+         * SetupUpdate
+         * @description One setup step's answer: the look, the answers to the questions, or the layouts.
+         */
+        SetupUpdate: {
+            /** Palette */
+            palette?: ("violet" | "ocean" | "teal" | "rose" | "graphite") | null;
+            /** Answers */
+            answers?: {
+                [key: string]: string;
+            } | null;
+            layout?: components["schemas"]["LayoutChoice"] | null;
+        };
         /** ValidationError */
         ValidationError: {
             /** Location */
@@ -528,6 +661,11 @@ export interface components {
             };
             /** Queries */
             queries: string[];
+            /**
+             * Palette
+             * @enum {string}
+             */
+            palette: "violet" | "ocean" | "teal" | "rose" | "graphite";
             active_run: components["schemas"]["ActiveRun"] | null;
             /** Last Error */
             last_error: string | null;
@@ -889,6 +1027,41 @@ export interface operations {
             };
         };
     };
+    update_setup_api_v1_workspaces__workspace_id__setup_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetupUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActiveRun"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_app_api_v1_workspaces__workspace_id__app_get: {
         parameters: {
             query?: never;
@@ -1179,7 +1352,9 @@ export interface operations {
     };
     app_shell_api_v1_app_shell_get: {
         parameters: {
-            query?: never;
+            query?: {
+                runtime?: "v1" | "v2";
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -1193,6 +1368,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AppShell"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

@@ -60,6 +60,8 @@ class Settings(BaseSettings):
     SYNC_INTERVAL_MIN: int = 10
     LOOKBACK_DAYS: int = 90
     BUILD_MAX_THREADS: int = 80
+    # How long a build waits for the user's setup answers (questions, layouts), seconds.
+    SETUP_WAIT_SECONDS: int = 120
     BATCH_THREADS: int = 6
     BATCH_MAX_CHARS: int = 45_000  # a batch is also cut when its email text gets this big
     PROCESS_CONCURRENCY: int = 8  # build backfill batches run in parallel

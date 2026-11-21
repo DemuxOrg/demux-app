@@ -82,3 +82,29 @@ async def test_validation_error_uses_error_format(client):
 async def test_app_shell_has_csp(client):
     head = (await client.get("/api/v1/app-shell")).json()["head"]
     assert "Content-Security-Policy" in head and "default-src 'none'" in head
+
+
+async def test_palette_defaults_to_violet_and_undo_keeps_it(client, session):
+    ws = (await client.post(URL, json=BODY)).json()
+    assert (await client.get(f"{URL}/{ws['id']}")).json()["palette"] == "violet"
+    # No endpoint changes it after setup.
+    put = await client.put(f"{URL}/{ws['id']}/palette", json={"palette": "teal"})
+    assert put.status_code in (404, 405)
+
+    # Chosen during the build, the palette is not part of what Undo restores.
+    w = await session.get(Workspace, ws["id"])
+    w.palette = "teal"
+    await session.execute(Run.__table__.update().values(status=RunStatus.DONE.value))
+    session.add(Snapshot(workspace_id=w.id, data={}, guide="g", config={}))
+    await session.flush()
+    assert (await client.post(f"{URL}/{ws['id']}/undo")).status_code == 200
+    assert (await client.get(f"{URL}/{ws['id']}")).json()["palette"] == "teal"
+
+
+async def test_app_shell_lists_palettes(client):
+    shell = (await client.get("/api/v1/app-shell")).json()
+    ids = [p["id"] for p in shell["palettes"]]
+    assert ids == ["violet", "ocean", "teal", "rose", "graphite"]
+    for p in shell["palettes"]:
+        assert len(p["series"]) == 5 and p["series"][0] == p["accent"]
+        assert f':root[data-palette="{p["id"]}"]' in shell["head"]

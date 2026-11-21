@@ -7,10 +7,11 @@ these). They also define the OpenAPI schema from which the frontend types are ge
 
 import uuid
 from datetime import datetime
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
+from app.agent.palettes import PaletteId
 from app.models.run import RunKind, RunStatus
 from app.models.workspace import WorkspaceStatus
 
@@ -57,6 +58,53 @@ class RunEvent(BaseModel):
     phase: str
     tool: str | None = None
     label: str
+    # Structured progress (reading emails): threads read so far and in total.
+    done: int | None = None
+    total: int | None = None
+
+
+class SetupQuestion(BaseModel):
+    id: str
+    question: str
+    options: list[str]
+    recommended: int
+
+
+class LayoutOption(BaseModel):
+    id: str
+    block: str
+    title: str
+    description: str = ""
+    recommended: bool = False
+
+
+class SetupState(BaseModel):
+    """Where a build's setup with the user stands (frontend/theme.md §7.10)."""
+
+    palette: PaletteId | None  # the look the user picked; None = not picked yet
+    questions_state: Literal["deciding", "asking", "answered", "timed_out", "none"]
+    questions: list[SetupQuestion]
+    answered: bool  # the user sent answers (the build may not have read them yet)
+    layout_state: Literal["waiting", "choosing", "chosen", "timed_out", "auto", "none"]
+    layout_options: list[LayoutOption]
+    layout_primary: str | None
+    layout_chosen: bool  # the user sent a choice
+
+
+Answer = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=300)]
+
+
+class LayoutChoice(BaseModel):
+    views: list[str] = Field(min_length=1, max_length=5)
+    primary: str
+
+
+class SetupUpdate(BaseModel):
+    """One setup step's answer: the look, the answers to the questions, or the layouts."""
+
+    palette: PaletteId | None = None
+    answers: dict[str, Answer] | None = None
+    layout: LayoutChoice | None = None
 
 
 class ActiveRun(BaseModel):
@@ -67,6 +115,7 @@ class ActiveRun(BaseModel):
     status: RunStatus
     events: list[RunEvent]
     created_at: datetime
+    setup: SetupState | None = None  # build runs only
 
 
 class WorkspaceDetail(BaseModel):
@@ -79,6 +128,7 @@ class WorkspaceDetail(BaseModel):
     last_synced_at: datetime | None
     record_counts: dict[str, int]
     queries: list[str]
+    palette: PaletteId
     active_run: ActiveRun | None
     last_error: str | None
     can_undo: bool
@@ -88,10 +138,23 @@ class WorkspaceDetail(BaseModel):
 class AppDoc(BaseModel):
     html: str | None
     version: int
+    runtime: Literal["v1", "v2"]  # v2: a kit app (the shell for ?runtime=v2)
+
+
+class PaletteInfo(BaseModel):
+    """What the frontend needs to draw a palette tile (frontend/theme.md §7.10)."""
+
+    id: PaletteId
+    name: str
+    accent: str
+    accent_ink: str
+    accent_soft: str
+    series: list[str]  # series 1-5, hex
 
 
 class AppShell(BaseModel):
     head: str
+    palettes: list[PaletteInfo]
 
 
 class DataDoc(BaseModel):

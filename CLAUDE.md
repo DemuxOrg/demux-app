@@ -3,7 +3,7 @@
 Demux turns a user's Gmail into structured, refreshable workspaces using an LLM extraction pipeline. Phase 0 is only the skeleton. See `docs/REPO_GUIDE.md` for a full tour.
 
 ## Running things
-Everything goes through the `Makefile` at the repo root: `make up` / `make down` (whole stack in Docker), `make logs`, `make restart`, `make prod-up`, `make setup`, `make install`, `make db`, `make migrate`, `make backend`, `make frontend`, `make gen-api`, `make lint`, `make test`. Dev data: `make users` (list accounts), `make delete-user email=…`, `make wipe` (every account, keeps the schema), `make reset` (drops the whole volume).
+Everything goes through the `Makefile` at the repo root: `make up` / `make down` (whole stack in Docker), `make logs`, `make restart`, `make prod-up`, `make setup`, `make install`, `make db`, `make migrate`, `make backend`, `make frontend`, `make gen-api`, `make kit`, `make lint`, `make test`. Dev data: `make users` (list accounts), `make delete-user email=…`, `make wipe` (every account, keeps the schema), `make reset` (drops the whole volume).
 
 ## Backend conventions
 - Layering: **routes → services → models**. Routes stay thin (parse input, call a service, return a schema). Business logic lives in `app/services/`.
@@ -24,6 +24,9 @@ Everything goes through the `Makefile` at the repo root: `make up` / `make down`
 
 ## UI
 `frontend/theme.md` is the design system and wins over code: read it before changing UI, change it first. Generated apps get the same tokens through `backend/app/agent/shell.py`.
+
+## Generated apps (UI generation)
+See `docs/UI_GENERATION_PLAN.md`. The agent writes a small JSX app composed from the component kit in `app-kit/` (shadcn-style, React + Radix + Recharts). After changing `app-kit/src`, run `make kit` and commit the built `backend/app/agent/kit/` (the shell inlines it; the iframe allows no network). Every global the kit exposes must be documented in `app-kit/src/catalog.md` (the build fails otherwise): it is the agent's reference. During a build the user picks a look, answers optional clarifying questions and picks layouts (`app/services/setup.py`, `frontend/src/components/workspace/BuildFlow.tsx`).
 
 ## Keep it simple
 No new infra (queues, caches, vector DBs) without an explicit decision.
