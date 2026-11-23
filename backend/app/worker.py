@@ -4,6 +4,9 @@
   workspace at a time, up to WORKER_CONCURRENCY runs in parallel.
 - Every SYNC_INTERVAL_MIN, enqueues a sync for each `ready` workspace with no active run
   (skipping users who must reconnect Gmail).
+- About once an hour, counts each user's received messages per finished day (Gmail ids
+  only, never content) into `mailbox_daily_stats` for the admin pages.
+- Runs queued demo-inbox seeds from /admin (`app/services/demo.py`).
 - Logs ids, counts and costs only.
 """
 
@@ -17,7 +20,7 @@ from sqlalchemy import update
 
 from app.agent import flows
 from app.agent.context import BudgetExceeded, RunContext, WorkspaceState
-from app.agent.llm import ChatModel, LLMError, OpenAICompatibleLLM
+from app.agent.llm import ChatModel, LLMError, MeteredLLM, OpenAICompatibleLLM, usage_scope
 from app.agent.loop import PhaseFailed
 from app.auth.google import UserTokenProvider
 from app.core.config import settings
@@ -28,7 +31,7 @@ from app.mail.gmail import GmailMailbox
 from app.models.run import Run, RunKind, RunStatus
 from app.models.user import User
 from app.models.workspace import Workspace, WorkspaceStatus
-from app.services import runs
+from app.services import demo, mailbox_stats, runs
 
 logger = logging.getLogger("app.worker")
 
@@ -90,47 +93,49 @@ async def execute_run(
         inline_max_chars=settings.DATA_INLINE_MAX_CHARS,
         setup_wait=float(settings.SETUP_WAIT_SECONDS) if kind == RunKind.BUILD else 0.0,
     )
-    cfg = flows.FlowConfig.from_settings(llm or OpenAICompatibleLLM())
-
+    cfg = flows.FlowConfig.from_settings(MeteredLLM(llm or OpenAICompatibleLLM()))
     status, summary, error, ws_status = RunStatus.DONE, None, None, None
-    try:
-        if needs_reconnect:
-            raise ReconnectRequired("reconnect required")
-        if kind == RunKind.BUILD:
-            summary = await flows.build(ctx, cfg)
-            ws_status = WorkspaceStatus.READY
-        elif kind == RunKind.SYNC:
-            summary = await flows.sync(ctx, cfg)
-        else:
-            summary = await flows.edit(ctx, cfg, str(payload.get("text", "")), recent)
-    except flows.CannotBuild as e:
-        status, error, ws_status = RunStatus.FAILED, str(e), WorkspaceStatus.FAILED
-    except ReconnectRequired:
-        status, error = (
-            RunStatus.FAILED,
-            "reconnect_required: Gmail access expired. Reconnect Gmail.",
-        )
-        async with session_factory() as s:
-            await s.execute(update(User).where(User.id == user_id).values(needs_reconnect=True))
-            await s.commit()
-    except BudgetExceeded as e:
-        status, error = RunStatus.FAILED, f"budget_exceeded: {e}"
-    except LLMError as e:
-        status, error = RunStatus.FAILED, f"llm_error: {e}"
-    except PhaseFailed:
-        status, error = (
-            RunStatus.FAILED,
-            "agent_stuck: The agent could not finish this step. Try again, or rephrase.",
-        )
-    except MailboxError as e:
-        status, error = RunStatus.FAILED, f"mail_error: Gmail could not be read ({e})."
-    except Exception as e:  # noqa: BLE001 - the worker must survive any run
-        logger.exception("run %s crashed", run_id)
-        status, error = RunStatus.FAILED, f"internal_error: {type(e).__name__}"
-    finally:
-        aclose = getattr(mailbox, "aclose", None)
-        if aclose:
-            await aclose()
+    with usage_scope(
+        session_factory=session_factory, user_id=user_id, workspace_id=ws_id, run_id=run_id
+    ):
+        try:
+            if needs_reconnect:
+                raise ReconnectRequired("reconnect required")
+            if kind == RunKind.BUILD:
+                summary = await flows.build(ctx, cfg)
+                ws_status = WorkspaceStatus.READY
+            elif kind == RunKind.SYNC:
+                summary = await flows.sync(ctx, cfg)
+            else:
+                summary = await flows.edit(ctx, cfg, str(payload.get("text", "")), recent)
+        except flows.CannotBuild as e:
+            status, error, ws_status = RunStatus.FAILED, str(e), WorkspaceStatus.FAILED
+        except ReconnectRequired:
+            status, error = (
+                RunStatus.FAILED,
+                "reconnect_required: Gmail access expired. Reconnect Gmail.",
+            )
+            async with session_factory() as s:
+                await s.execute(update(User).where(User.id == user_id).values(needs_reconnect=True))
+                await s.commit()
+        except BudgetExceeded as e:
+            status, error = RunStatus.FAILED, f"budget_exceeded: {e}"
+        except LLMError as e:
+            status, error = RunStatus.FAILED, f"llm_error: {e}"
+        except PhaseFailed:
+            status, error = (
+                RunStatus.FAILED,
+                "agent_stuck: The agent could not finish this step. Try again, or rephrase.",
+            )
+        except MailboxError as e:
+            status, error = RunStatus.FAILED, f"mail_error: Gmail could not be read ({e})."
+        except Exception as e:  # noqa: BLE001 - the worker must survive any run
+            logger.exception("run %s crashed", run_id)
+            status, error = RunStatus.FAILED, f"internal_error: {type(e).__name__}"
+        finally:
+            aclose = getattr(mailbox, "aclose", None)
+            if aclose:
+                await aclose()
 
     if status == RunStatus.FAILED and kind == RunKind.BUILD:
         ws_status = WorkspaceStatus.FAILED
@@ -157,11 +162,52 @@ async def execute_run(
     )
 
 
+async def count_mailboxes(mailbox_factory=gmail_for, session_factory=SessionLocal) -> int:
+    """Store missing per-day received-message counts. Returns how many days were stored."""
+    async with session_factory() as s:
+        due = await mailbox_stats.missing_days(s)
+    stored = 0
+    for user_id, days in due:
+        mailbox = mailbox_factory(user_id)
+        try:
+            for day in days:
+                start, end = mailbox_stats.day_bounds(day)
+                count = await mailbox.count_received(start, end)
+                async with session_factory() as s:
+                    await mailbox_stats.save_count(s, user_id, day, count)
+                    await s.commit()
+                stored += 1
+        except MailboxError as e:  # includes ReconnectRequired: try again next hour
+            logger.warning("mailbox count failed user=%s (%s)", user_id, type(e).__name__)
+        finally:
+            aclose = getattr(mailbox, "aclose", None)
+            if aclose:
+                await aclose()
+    return stored
+
+
 class Worker:
     def __init__(self) -> None:
         self.tasks: set[asyncio.Task] = set()
         self.stopping = asyncio.Event()
         self.last_schedule = 0.0
+        self.last_mail_count = -3600.0
+        self.counting: asyncio.Task | None = None
+
+    def start_mailbox_count(self) -> None:
+        """Hourly, in the background, so a large inbox never delays claiming runs."""
+        if self.counting is not None and not self.counting.done():
+            return
+
+        async def run() -> None:
+            try:
+                n = await count_mailboxes()
+                if n:
+                    logger.info("stored %s mailbox day counts", n)
+            except Exception:  # noqa: BLE001
+                logger.exception("mailbox count failed")
+
+        self.counting = asyncio.create_task(run())
 
     async def schedule_syncs(self) -> None:
         async with SessionLocal() as s:
@@ -172,6 +218,17 @@ class Worker:
         if due:
             logger.info("scheduled %s syncs", len(due))
 
+    async def claim_seed(self) -> None:
+        """Start the next queued demo-inbox seed (/admin), if any."""
+        async with SessionLocal() as s:
+            seed = await demo.claim_next(s)
+            await s.commit()
+        if seed is not None:
+            logger.info("claimed demo seed %s", seed.id)
+            task = asyncio.create_task(demo.execute_seed(seed.id, session_factory=SessionLocal))
+            self.tasks.add(task)
+            task.add_done_callback(self.tasks.discard)
+
     async def claim(self) -> uuid.UUID | None:
         async with SessionLocal() as s:
             run = await runs.claim_next(s)
@@ -181,6 +238,7 @@ class Worker:
     async def loop(self) -> None:
         async with SessionLocal() as s:
             n = await runs.fail_stale_running(s)
+            await demo.fail_stale(s)
             await s.commit()
         if n:
             logger.info("marked %s interrupted runs as failed", n)
@@ -195,6 +253,10 @@ class Worker:
                 if loop.time() - self.last_schedule >= 60:
                     self.last_schedule = loop.time()
                     await self.schedule_syncs()
+                if loop.time() - self.last_mail_count >= 3600:
+                    self.last_mail_count = loop.time()
+                    self.start_mailbox_count()
+                await self.claim_seed()
                 while len(self.tasks) < settings.WORKER_CONCURRENCY:
                     run_id = await self.claim()
                     if run_id is None:

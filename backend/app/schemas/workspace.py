@@ -24,6 +24,7 @@ class Me(BaseModel):
     gmail_email: str | None  # the connected Gmail, may differ from `email`
     gmail_connected: bool
     needs_reconnect: bool
+    is_admin: bool = False  # may open /admin
 
 
 PersonName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]

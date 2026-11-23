@@ -4,6 +4,8 @@
   `users.threads.get?format=metadata` per thread for the summary.
 - `get_thread`: `users.threads.get?format=full`; body is text/plain, falling back to
   stripped text/html. Attachments: file names only.
+- `count_received`: `users.messages.list` ids only (admin usage stats); no message is
+  fetched.
 
 Access tokens come from a provider with `get(force_refresh=False)`; on a 401 the token is
 refreshed once. Never logs content.
@@ -156,6 +158,26 @@ class GmailMailbox:
             if not page_token:
                 break
         return ids[:max_results]
+
+    async def count_received(self, after: datetime, before: datetime, cap: int = 20_000) -> int:
+        """Messages received in [after, before): ids only, sent mail and chats excluded."""
+        span = f"after:{int(after.timestamp())} before:{int(before.timestamp())}"
+        q = f"-in:sent -in:chats -in:draft {span}"
+        count, page_token = 0, None
+        while count < cap:
+            params: dict[str, Any] = {
+                "q": q,
+                "maxResults": 500,
+                "fields": "messages/id,nextPageToken",
+            }
+            if page_token:
+                params["pageToken"] = page_token
+            body = await self._get("/messages", params)
+            count += len(body.get("messages", []))
+            page_token = body.get("nextPageToken")
+            if not page_token:
+                break
+        return min(count, cap)
 
     async def _summary(self, thread_id: str) -> ThreadSummary | None:
         params = [

@@ -328,6 +328,125 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Overview */
+        get: operations["overview_api_v1_admin_overview_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Users */
+        get: operations["users_api_v1_admin_users_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/users/{user_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** User Detail */
+        get: operations["user_detail_api_v1_admin_users__user_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/workspaces/{workspace_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Workspace Detail */
+        get: operations["workspace_detail_api_v1_admin_workspaces__workspace_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/demo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Demo State */
+        get: operations["demo_state_api_v1_admin_demo_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/demo/seeds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Seed */
+        post: operations["create_seed_api_v1_admin_demo_seeds_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/demo/cleanup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cleanup */
+        post: operations["cleanup_api_v1_admin_demo_cleanup_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -349,6 +468,194 @@ export interface components {
              */
             created_at: string;
             setup?: components["schemas"]["SetupState"] | null;
+        };
+        /** AdminEdit */
+        AdminEdit: {
+            /**
+             * Run Id
+             * Format: uuid
+             */
+            run_id: string;
+            /** Text */
+            text: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Status */
+            status: string;
+        };
+        /** AdminOverview */
+        AdminOverview: {
+            /** Days */
+            days: number;
+            /**
+             * Start
+             * Format: date
+             */
+            start: string;
+            /**
+             * End
+             * Format: date
+             */
+            end: string;
+            /** Active Users */
+            active_users: number;
+            /** Total Users */
+            total_users: number;
+            /** Workspaces */
+            workspaces: number;
+            /** New Workspaces */
+            new_workspaces: number;
+            /** Builds */
+            builds: number;
+            /** Syncs */
+            syncs: number;
+            /** Edits */
+            edits: number;
+            /** Input Tokens */
+            input_tokens: number;
+            /** Output Tokens */
+            output_tokens: number;
+            /** Cost Usd */
+            cost_usd: number;
+            /** Failed Runs */
+            failed_runs: number;
+            /** Finished Runs */
+            finished_runs: number;
+            /** Cost By Phase */
+            cost_by_phase: components["schemas"]["DailyKeyCost"][];
+            /** Cost By Model */
+            cost_by_model: components["schemas"]["DailyKeyCost"][];
+            /** Tokens */
+            tokens: components["schemas"]["DailyTokens"][];
+            /** Cost Per User */
+            cost_per_user: components["schemas"]["DailyUserCost"][];
+            /** Failures */
+            failures: components["schemas"]["DailyFailures"][];
+        };
+        /** AdminRun */
+        AdminRun: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Kind */
+            kind: string;
+            /** Status */
+            status: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Duration S */
+            duration_s: number | null;
+            /** Input Tokens */
+            input_tokens: number;
+            /** Output Tokens */
+            output_tokens: number;
+            /** Cost Usd */
+            cost_usd: number;
+            /** Error Code */
+            error_code: string | null;
+        };
+        /** AdminUserDetail */
+        AdminUserDetail: {
+            user: components["schemas"]["AdminUserRow"];
+            /** Mailbox Daily */
+            mailbox_daily: components["schemas"]["DailyCount"][];
+            /** Workspaces */
+            workspaces: components["schemas"]["AdminWorkspace"][];
+        };
+        /** AdminUserRow */
+        AdminUserRow: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Email */
+            email: string;
+            /** Name */
+            name: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Last Active At */
+            last_active_at: string | null;
+            /** Workspaces */
+            workspaces: number;
+            /** Emails Processed */
+            emails_processed: number;
+            /** Emails Received Per Day */
+            emails_received_per_day: number | null;
+            /** Cost 7D */
+            cost_7d: number;
+            /** Cost 30D */
+            cost_30d: number;
+            /** Cost Total */
+            cost_total: number;
+            /** Gmail Connected */
+            gmail_connected: boolean;
+            /** Needs Reconnect */
+            needs_reconnect: boolean;
+        };
+        /** AdminWorkspace */
+        AdminWorkspace: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
+            /** Name */
+            name: string;
+            /** Prompt */
+            prompt: string;
+            /** Status */
+            status: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Last Synced At */
+            last_synced_at: string | null;
+            /** Record Count */
+            record_count: number;
+            /** Emails Processed */
+            emails_processed: number;
+            /** Emails Per Day */
+            emails_per_day: number;
+            /** Cost 7D */
+            cost_7d: number;
+            /** Cost 30D */
+            cost_30d: number;
+            /** Cost Total */
+            cost_total: number;
+            /** Runs */
+            runs: components["schemas"]["AdminRun"][];
+            /** Edits */
+            edits: components["schemas"]["AdminEdit"][];
+        };
+        /** AdminWorkspaceDetail */
+        AdminWorkspaceDetail: {
+            workspace: components["schemas"]["AdminWorkspace"];
+            /** Owner Email */
+            owner_email: string;
+            /** Days */
+            days: number;
+            /** Daily */
+            daily: components["schemas"]["DailyWorkspaceUsage"][];
         };
         /** AppDoc */
         AppDoc: {
@@ -400,6 +707,82 @@ export interface components {
              */
             created_at: string;
         };
+        /** DailyCount */
+        DailyCount: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Count */
+            count: number | null;
+        };
+        /** DailyFailures */
+        DailyFailures: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Finished */
+            finished: number;
+            /** Failed */
+            failed: number;
+        };
+        /** DailyKeyCost */
+        DailyKeyCost: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Key */
+            key: string;
+            /** Cost Usd */
+            cost_usd: number;
+        };
+        /** DailyTokens */
+        DailyTokens: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Input Tokens */
+            input_tokens: number;
+            /** Output Tokens */
+            output_tokens: number;
+        };
+        /** DailyUserCost */
+        DailyUserCost: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Active Users */
+            active_users: number;
+            /** P50 Usd */
+            p50_usd: number;
+            /** P95 Usd */
+            p95_usd: number;
+        };
+        /** DailyWorkspaceUsage */
+        DailyWorkspaceUsage: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Cost Usd */
+            cost_usd: number;
+            /** Input Tokens */
+            input_tokens: number;
+            /** Output Tokens */
+            output_tokens: number;
+            /** Emails */
+            emails: number;
+        };
         /** DataDoc */
         DataDoc: {
             /** Data */
@@ -408,6 +791,61 @@ export interface components {
             };
             /** Version */
             version: number;
+        };
+        /** DemoCleanup */
+        DemoCleanup: {
+            /** Removed */
+            removed: number;
+        };
+        /** DemoInboxState */
+        DemoInboxState: {
+            /** Configured */
+            configured: boolean;
+            /** Inbox Email */
+            inbox_email: string | null;
+            /** Model */
+            model: string;
+            /** Seeds */
+            seeds: components["schemas"]["DemoSeedRead"][];
+        };
+        /** DemoSeedCreate */
+        DemoSeedCreate: {
+            /** Prompt */
+            prompt: string;
+            /**
+             * Thread Count
+             * @default 15
+             */
+            thread_count: number;
+        };
+        /** DemoSeedRead */
+        DemoSeedRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Prompt */
+            prompt: string;
+            /** Thread Count */
+            thread_count: number;
+            /** Status */
+            status: string;
+            /** Threads Created */
+            threads_created: number;
+            /** Messages Created */
+            messages_created: number;
+            /** Cost Usd */
+            cost_usd: number;
+            /** Error */
+            error: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Finished At */
+            finished_at: string | null;
         };
         /** GuideDoc */
         GuideDoc: {
@@ -463,6 +901,11 @@ export interface components {
             gmail_connected: boolean;
             /** Needs Reconnect */
             needs_reconnect: boolean;
+            /**
+             * Is Admin
+             * @default false
+             */
+            is_admin: boolean;
         };
         /** MeUpdate */
         MeUpdate: {
@@ -1377,6 +1820,194 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    overview_api_v1_admin_overview_get: {
+        parameters: {
+            query?: {
+                days?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminOverview"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    users_api_v1_admin_users_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminUserRow"][];
+                };
+            };
+        };
+    };
+    user_detail_api_v1_admin_users__user_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminUserDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    workspace_detail_api_v1_admin_workspaces__workspace_id__get: {
+        parameters: {
+            query?: {
+                days?: number;
+            };
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminWorkspaceDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    demo_state_api_v1_admin_demo_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DemoInboxState"];
+                };
+            };
+        };
+    };
+    create_seed_api_v1_admin_demo_seeds_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DemoSeedCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DemoSeedRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cleanup_api_v1_admin_demo_cleanup_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DemoCleanup"];
                 };
             };
         };
