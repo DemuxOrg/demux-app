@@ -1,0 +1,7 @@
+# Keep the image build context clean; deps come from the lockfile, not the host's installs.
+node_modules/
+.next/
+.env.local
+.env*.local
+*.tsbuildinfo
+next-env.d.ts

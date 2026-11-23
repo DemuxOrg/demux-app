@@ -1,0 +1,121 @@
+/*
+ * Kit styles (frontend/theme.md §10.3). Every colour is a --dmx-* variable from the
+ * shell (fixed tokens + the workspace's palette), so the palette the user picked during
+ * the build applies to every component. Tailwind only runs here, at kit build time: the
+ * generated app code never writes classes.
+ */
+@import "tailwindcss";
+
+@theme inline {
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --color-ink: var(--dmx-ink);
+  --color-ink-2: var(--dmx-ink-2);
+  --color-ink-3: var(--dmx-ink-3);
+  --color-surface: var(--dmx-surface);
+  --color-surface-2: var(--dmx-surface-2);
+  --color-line: var(--dmx-line);
+  --color-line-soft: var(--dmx-line-soft);
+  --color-tag: var(--dmx-tag);
+
+  --color-accent: var(--dmx-accent);
+  --color-accent-hover: var(--dmx-accent-hover);
+  --color-accent-ink: var(--dmx-accent-ink);
+  --color-accent-soft: var(--dmx-accent-soft);
+  --color-accent-line: var(--dmx-accent-line);
+  --color-accent-tint: var(--dmx-accent-tint);
+  --color-ring: var(--dmx-accent-ring);
+  --color-glow: var(--dmx-accent-glow);
+
+  --color-success: var(--dmx-success);
+  --color-success-bg: var(--dmx-success-bg);
+  --color-danger: var(--dmx-danger);
+  --color-danger-bg: var(--dmx-danger-bg);
+  --color-warning: var(--dmx-warning);
+  --color-warning-bg: var(--dmx-warning-bg);
+  --color-info: var(--dmx-info);
+  --color-info-bg: var(--dmx-info-bg);
+  --color-neutral: var(--dmx-neutral);
+  --color-neutral-bg: var(--dmx-neutral-bg);
+
+  --color-series-1: var(--dmx-series-1);
+  --color-series-2: var(--dmx-series-2);
+  --color-series-3: var(--dmx-series-3);
+  --color-series-4: var(--dmx-series-4);
+  --color-series-5: var(--dmx-series-5);
+  --color-series-other: var(--dmx-series-other);
+
+  --font-sans: var(--dmx-font);
+
+  --radius-tag: 6px;
+  --radius-card: 12px;
+  --radius-col: 16px;
+  --radius-panel: 20px;
+
+  --shadow-pop: 0 20px 40px -28px rgb(22 62 128 / 0.5), 0 2px 6px rgb(22 62 128 / 0.05);
+  --shadow-sheet: 0 40px 80px -40px rgb(22 62 128 / 0.5), 0 2px 6px rgb(22 62 128 / 0.05);
+  --shadow-pill: 0 6px 14px -8px rgb(22 62 128 / 0.5);
+
+  --ease-dmx: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-dmx-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-dmx-pop: dmx-pop 0.2s var(--ease-dmx-out) both;
+  --animate-dmx-sheet: dmx-sheet 0.36s var(--ease-dmx-out) both;
+  --animate-dmx-fade: dmx-fade 0.2s var(--ease-dmx) both;
+
+  @keyframes dmx-pop {
+    from { opacity: 0; transform: translateY(-4px) scale(0.96); }
+  }
+  @keyframes dmx-sheet {
+    from { opacity: 0.4; transform: translateX(24px); }
+  }
+  @keyframes dmx-fade {
+    from { opacity: 0; }
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--dmx-font);
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--dmx-ink);
+    background: var(--dmx-surface);
+  }
+  #demux-root {
+    padding: 24px;
+  }
+  ::selection {
+    background: var(--dmx-accent-soft);
+    color: var(--dmx-accent-ink);
+  }
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--dmx-accent-ring);
+  }
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  button, input, select, textarea {
+    font: inherit;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

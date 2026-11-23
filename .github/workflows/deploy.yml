@@ -1,0 +1,140 @@
+# Continuous deployment to production (Scaleway, Amsterdam).
+#
+# Every push to `main` runs the CI suite first (ci.yml, called below). If it passes:
+#   1. builds the backend and frontend images and pushes them to the Scaleway Container
+#      Registry, tagged with the commit SHA;
+#   2. points the three Serverless Containers at the new images (worker first: it runs
+#      the database migrations on start), and waits until each one is `ready`;
+#   3. checks https://api.usedemux.com/api/v1/health and https://app.usedemux.com/login.
+#
+# Rollback: Actions → Deploy → Run workflow, and pick an older commit or branch.
+# Avoid deploying while a workspace build is running: the new worker marks every run
+# left `running` as failed when it starts.
+#
+# Needs repository secrets SCW_ACCESS_KEY, SCW_SECRET_KEY (API key of the IAM application
+# `github-deploy`, with ContainerRegistryFullAccess + ContainersFullAccess on project
+# demux) and SCW_DEFAULT_PROJECT_ID. Container settings and secrets stay on Scaleway:
+# this workflow only changes the image.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# One deploy at a time; a new push waits for the running deploy instead of cancelling it.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  SCW_DEFAULT_REGION: nl-ams
+  REGISTRY_HOST: rg.nl-ams.scw.cloud
+  REGISTRY: rg.nl-ams.scw.cloud/demux
+  API_URL: https://api.usedemux.com
+  APP_URL: https://app.usedemux.com
+  WORKER_ID: 6d2805b6-4f3d-42f5-a233-831c951d2469
+  API_ID: 2c4096ae-6082-4627-99be-1e2248ef02c4
+  FRONTEND_ID: 095bc896-1da7-4caf-9334-80e9dc5a1218
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  deploy:
+    needs: ci
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://app.usedemux.com
+    env:
+      SCW_ACCESS_KEY: ${{ secrets.SCW_ACCESS_KEY }}
+      SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
+      SCW_DEFAULT_PROJECT_ID: ${{ secrets.SCW_DEFAULT_PROJECT_ID }}
+      TAG: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY_HOST }}
+          username: nologin
+          password: ${{ secrets.SCW_SECRET_KEY }}
+
+      - name: Build and push backend (API + worker)
+        uses: docker/build-push-action@v6
+        with:
+          context: backend
+          target: prod
+          platforms: linux/amd64
+          push: true
+          tags: ${{ env.REGISTRY }}/backend:${{ github.sha }}
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
+
+      - name: Build and push frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: frontend
+          target: prod
+          platforms: linux/amd64
+          push: true
+          # Inlined into the browser bundle at build time.
+          build-args: NEXT_PUBLIC_API_URL=${{ env.API_URL }}
+          tags: ${{ env.REGISTRY }}/frontend:${{ github.sha }}
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
+
+      - name: Install Scaleway CLI
+        run: curl -fsSL https://raw.githubusercontent.com/scaleway/scaleway-cli/main/scripts/get.sh | sh
+
+      - name: Deploy the new images
+        run: |
+          set -euo pipefail
+
+          # Update one container's image, then wait until Scaleway reports it `ready`.
+          # Output is discarded: it lists the container's environment variables.
+          deploy() {
+            local id="$1" name="$2" image="$3" status
+            echo "::group::$name → $image"
+            scw container container update "$id" image="$image" -o json >/dev/null
+            sleep 20  # let the status leave `ready` before polling
+            for _ in $(seq 1 60); do
+              status=$(scw container container get "$id" -o json | jq -r .status)
+              case "$status" in
+                ready) echo "$name is ready"; echo "::endgroup::"; return 0 ;;
+                error)
+                  echo "::error::$name failed to deploy: $(scw container container get "$id" -o json | jq -r .error_message)"
+                  return 1 ;;
+              esac
+              echo "$name: $status"
+              sleep 10
+            done
+            echo "::error::$name is still '$status' after 10 minutes"
+            return 1
+          }
+
+          # Worker first: its start command runs `alembic upgrade head`.
+          deploy "$WORKER_ID" worker "$REGISTRY/backend:$TAG"
+          deploy "$API_ID" api "$REGISTRY/backend:$TAG"
+          deploy "$FRONTEND_ID" frontend "$REGISTRY/frontend:$TAG"
+
+      - name: Check production answers
+        run: |
+          set -euo pipefail
+          # The API and frontend may be scaled to zero: allow time for a cold start.
+          check() {
+            for _ in $(seq 1 18); do
+              if curl -fsS --max-time 30 -o /dev/null "$1"; then echo "ok: $1"; return 0; fi
+              sleep 10
+            done
+            echo "::error::no healthy answer from $1"
+            return 1
+          }
+          check "$API_URL/api/v1/health"
+          check "$APP_URL/login"

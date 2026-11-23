@@ -1,0 +1,543 @@
+"use client";
+
+/**
+ * Workspace view (`/workspaces/[id]`, theme.md §8.2–8.3).
+ *
+ * Lives in the app shell: the sidebar holds navigation and the account (no back button,
+ * no avatar here), and the top bar's left padding (`--dmx-gutter`) leaves room for the
+ * sidebar's open button while it is closed.
+ *
+ * - Building: top bar (name, Building chip) + the build progress card.
+ * - Failed: the reason and "Try again".
+ * - Ready: top bar (name, rename; sync status, Sync now, Undo, ⋯), the generated app in
+ *   a white panel, and the Activity | Chat drawer beside it.
+ *
+ * Polls GET /workspaces/{id} every 2 s while a run is active, every 20 s otherwise;
+ * refetches data / app only when their versions change.
+ */
+import {
+  ChevronLeft,
+  PanelRightOpen,
+  Pencil,
+  RefreshCw,
+  Undo2,
+  X,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import {
+  startTransition,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { ActivityFeed } from "@/components/ActivityFeed";
+import { AppFrame } from "@/components/AppFrame";
+import { LogoMark } from "@/components/brand/Logo";
+import { ChatPanel } from "@/components/ChatPanel";
+import { DetailsDrawer } from "@/components/DetailsDrawer";
+import { StepTransition } from "@/components/motion/PageTransition";
+import { RunTimeline } from "@/components/RunTimeline";
+import { rememberWorkspace, useShell } from "@/components/shell/AppShell";
+import { StatusChip, SyncStatus } from "@/components/StatusChip";
+import { Button, ButtonLink } from "@/components/ui/Button";
+import { Spinner } from "@/components/ui/Spinner";
+import { BuildFlow } from "@/components/workspace/BuildFlow";
+import { MoreMenu } from "@/components/workspace/MoreMenu";
+import { SidePanel, type SideTab } from "@/components/workspace/SidePanel";
+import {
+  api,
+  ApiError,
+  CONNECT_GMAIL_URL,
+  handleAuthError,
+  type AppDoc,
+  type AppRuntime,
+  type AppShell,
+  type ChangeRead,
+  type DataDoc,
+  type RunRead,
+  type WorkspaceDetail as Detail,
+} from "@/lib/api";
+
+const PANEL_KEY = "demux.sidePanelOpen";
+
+function usePanelOpen(): [boolean, (open: boolean) => void] {
+  // The panel only renders after the workspace loads in the browser, so reading
+  // storage in the initializer cannot cause a hydration mismatch.
+  // Default: open on desktop, closed on small screens where the panel covers the app.
+  const [open, setOpen] = useState(() => {
+    if (typeof window === "undefined") return true;
+    if (!window.matchMedia("(min-width: 1024px)").matches) return false;
+    try {
+      return localStorage.getItem(PANEL_KEY) !== "false";
+    } catch {
+      return true; // storage unavailable
+    }
+  });
+  const set = useCallback((v: boolean) => {
+    setOpen(v);
+    try {
+      localStorage.setItem(PANEL_KEY, String(v));
+    } catch {
+      /* ignore */
+    }
+  }, []);
+  return [open, set];
+}
+
+export function WorkspaceDetail({ id }: { id: string }) {
+  const router = useRouter();
+  const { me, workspaces, reload: reloadList } = useShell();
+  const [ws, setWs] = useState<Detail | null>(null);
+  // The fixed iframe shell per app runtime (v2 inlines the component kit).
+  const [shells, setShells] = useState<Partial<Record<AppRuntime, AppShell>>>(
+    {},
+  );
+  const [app, setApp] = useState<AppDoc | null>(null);
+  const [data, setData] = useState<DataDoc | null>(null);
+  const [changes, setChanges] = useState<ChangeRead[]>([]);
+  const [runs, setRuns] = useState<RunRead[]>([]);
+  const [tab, setTab] = useState<SideTab>("activity");
+  const [panelOpen, setPanelOpen] = usePanelOpen();
+  const [error, setError] = useState<string | null>(null); // loading errors
+  const [actionError, setActionError] = useState<string | null>(null); // until next action
+  const [appError, setAppError] = useState<string | null>(null);
+  const [details, setDetails] = useState(false);
+  const [renaming, setRenaming] = useState(false);
+  const [name, setName] = useState("");
+  const [busyAction, setBusyAction] = useState<string | null>(null);
+  const seen = useRef({ data: -1, app: -1, active: "" });
+
+  const loadSide = useCallback(async () => {
+    const [c, r] = await Promise.all([api.listChanges(id), api.listRuns(id)]);
+    setChanges(c);
+    setRuns(r);
+  }, [id]);
+
+  const refresh = useCallback(async () => {
+    try {
+      const w = await api.getWorkspace(id);
+      startTransition(() => setWs(w));
+      const activeKey = w.active_run
+        ? `${w.active_run.id}:${w.active_run.events.length}`
+        : "";
+      const jobs: Promise<unknown>[] = [];
+      if (w.data_version !== seen.current.data) {
+        seen.current.data = w.data_version;
+        jobs.push(api.getData(id).then(setData));
+      }
+      if (w.app_version !== seen.current.app) {
+        seen.current.app = w.app_version;
+        jobs.push(api.getApp(id).then(setApp));
+      }
+      if (activeKey !== seen.current.active || jobs.length) {
+        seen.current.active = activeKey;
+        jobs.push(loadSide());
+      }
+      await Promise.all(jobs);
+      setError(null);
+    } catch (e) {
+      if (handleAuthError(e)) return;
+      if (e instanceof ApiError && e.status === 404) {
+        setError("This workspace doesn't exist, or it was deleted.");
+        return;
+      }
+      setError(
+        e instanceof Error ? e.message : "Couldn't load this workspace.",
+      );
+    }
+  }, [id, loadSide]);
+
+  useEffect(() => {
+    api
+      .appShell("v1")
+      .then((s) => setShells((x) => ({ ...x, v1: s })))
+      .catch(() => undefined);
+  }, []);
+
+  const runtime = app?.runtime;
+  useEffect(() => {
+    if (!runtime || shells[runtime]) return;
+    api
+      .appShell(runtime)
+      .then((s) => setShells((x) => ({ ...x, [runtime]: s })))
+      .catch(() => undefined);
+  }, [runtime, shells]);
+  const shell = runtime ? shells[runtime] : undefined;
+  const palettes = shells.v1?.palettes ?? shells.v2?.palettes ?? [];
+
+  useEffect(() => rememberWorkspace(id), [id]);
+
+  // Keep the drawer's row (name, status dot) in step with this page.
+  const status = ws?.status;
+  const wsName = ws?.name;
+  useEffect(() => {
+    if (status) void reloadList();
+  }, [status, wsName, reloadList]);
+
+  const active = !!ws?.active_run;
+  useEffect(() => {
+    const first = setTimeout(refresh, 0);
+    const timer = setInterval(refresh, active ? 2000 : 20000);
+    return () => {
+      clearTimeout(first);
+      clearInterval(timer);
+    };
+  }, [refresh, active]);
+
+  const onAppError = useCallback((m: string | null) => setAppError(m), []);
+
+  async function act(
+    key: string,
+    fn: () => Promise<unknown>,
+  ): Promise<boolean> {
+    setActionError(null);
+    setBusyAction(key);
+    try {
+      await fn();
+      await refresh();
+      return true;
+    } catch (e) {
+      if (handleAuthError(e)) return false;
+      setActionError(
+        e instanceof ApiError ? e.message : "Something went wrong. Try again.",
+      );
+      await refresh();
+      return false;
+    } finally {
+      setBusyAction(null);
+    }
+  }
+
+  async function sendMessage(text: string) {
+    setTab("chat");
+    setPanelOpen(true);
+    if (!(await act("message", () => api.sendMessage(id, text)))) {
+      throw new Error("not sent"); // keeps the text in the box
+    }
+  }
+
+  function startRename() {
+    if (!ws) return;
+    setName(ws.name);
+    setRenaming(true);
+  }
+
+  async function remove() {
+    if (
+      !window.confirm(
+        "Delete this workspace and everything in it? This can't be undone.",
+      )
+    )
+      return;
+    try {
+      await api.deleteWorkspace(id);
+      void reloadList();
+      const next = workspaces?.filter((w) => w.id !== id).at(-1);
+      router.push(next ? `/workspaces/${next.id}` : "/workspaces/new");
+    } catch (e) {
+      setActionError(
+        e instanceof ApiError ? e.message : "Couldn't delete this workspace.",
+      );
+    }
+  }
+
+  if (error && !ws)
+    return (
+      <div className="flex min-h-dvh flex-col items-center justify-center gap-4 px-4 text-center">
+        <p className="text-lg font-medium">{error}</p>
+        <ButtonLink href="/workspaces" variant="secondary">
+          <ChevronLeft size={16} aria-hidden /> All workspaces
+        </ButtonLink>
+      </div>
+    );
+  if (!ws)
+    return (
+      <div className="grid min-h-dvh place-items-center" aria-label="Loading">
+        <Spinner size={28} />
+      </div>
+    );
+
+  const building = ws.status === "building" || ws.active_run?.kind === "build";
+  const failed = ws.status === "failed" && !building;
+  const ready = !building && !failed;
+  const view = building ? "building" : failed ? "failed" : "ready";
+
+  return (
+    <div className="flex h-dvh flex-col">
+      {/* Top bar (§7.11): sits on the sky, no background of its own. */}
+      <header className="flex flex-wrap items-center gap-x-3 gap-y-2 py-[18px] pr-4 pl-[var(--dmx-gutter)] transition-[padding] duration-[360ms] ease-dmx-out sm:pr-6 lg:pr-8">
+        <div className="flex min-h-11 min-w-0 flex-1 items-center gap-1 max-sm:basis-full">
+          {renaming ? (
+            <form
+              className="min-w-0 flex-1"
+              onSubmit={(e) => {
+                e.preventDefault();
+                setRenaming(false);
+                if (name.trim() && name.trim() !== ws.name)
+                  act("rename", () => api.renameWorkspace(id, name.trim()));
+              }}
+            >
+              <label htmlFor="ws-name" className="sr-only">
+                Workspace name
+              </label>
+              <input
+                id="ws-name"
+                autoFocus
+                value={name}
+                maxLength={200}
+                onChange={(e) => setName(e.target.value)}
+                onBlur={(e) => e.currentTarget.form?.requestSubmit()}
+                onKeyDown={(e) => e.key === "Escape" && setRenaming(false)}
+                className="h-11 w-full max-w-md rounded-full bg-white/80 px-4 text-lg font-semibold tracking-[-0.015em] text-ink caret-violet outline-none focus:shadow-[0_0_0_3px_rgb(106_61_240/0.22)]"
+              />
+            </form>
+          ) : (
+            <>
+              <h1 className="truncate pl-1 text-lg leading-[1.3] font-semibold tracking-[-0.015em]">
+                {ws.name}
+              </h1>
+              {ready && (
+                <button
+                  type="button"
+                  onClick={startRename}
+                  aria-label="Rename workspace"
+                  className="grid size-11 shrink-0 place-items-center rounded-full text-ink-on-sky transition-colors hover:bg-white/60"
+                >
+                  <Pencil size={16} aria-hidden />
+                </button>
+              )}
+              <span className="ml-1">
+                <StatusChip
+                  status={ws.status}
+                  activeKind={ws.active_run?.kind}
+                />
+              </span>
+            </>
+          )}
+        </div>
+
+        <div className="ml-auto flex items-center gap-2">
+          {ready && (
+            <>
+              {!ws.active_run && (
+                <span className="mr-1 hidden xl:inline-flex">
+                  <SyncStatus lastSyncedAt={ws.last_synced_at} />
+                </span>
+              )}
+              <Button
+                variant="secondary"
+                onClick={() => act("sync", () => api.syncNow(id))}
+                disabled={active}
+                aria-label="Sync now"
+              >
+                <RefreshCw
+                  size={16}
+                  aria-hidden
+                  className={
+                    ws.active_run?.kind === "sync" || busyAction === "sync"
+                      ? "animate-dmx-spin"
+                      : ""
+                  }
+                />
+                <span className="hidden md:inline">
+                  {ws.active_run?.kind === "sync" ? "Syncing…" : "Sync now"}
+                </span>
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => act("undo", () => api.undo(id))}
+                disabled={!ws.can_undo || active}
+                title="Put back the version before the last change"
+                aria-label="Undo"
+              >
+                <Undo2 size={16} aria-hidden />
+                <span className="hidden md:inline">Undo</span>
+              </Button>
+              {!panelOpen && (
+                <Button
+                  variant="secondary"
+                  onClick={() => setPanelOpen(true)}
+                  aria-controls="side-panel"
+                  aria-expanded={false}
+                  aria-label="Show activity and chat"
+                  className="animate-dmx-rise"
+                >
+                  <PanelRightOpen size={16} aria-hidden />
+                  <span className="hidden md:inline">Activity</span>
+                </Button>
+              )}
+              <MoreMenu
+                onRename={startRename}
+                onDetails={() => setDetails(true)}
+                onDelete={remove}
+              />
+            </>
+          )}
+        </div>
+      </header>
+
+      {me?.needs_reconnect && (
+        <div className="px-4 pb-3 sm:px-6 lg:px-8">
+          <div className="glass flex flex-wrap items-center gap-3 rounded-lg px-5 py-3 shadow-glass">
+            <p className="min-w-0 flex-1 text-sm">
+              Gmail disconnected. Reconnect to keep this workspace updated.
+            </p>
+            <ButtonLink href={CONNECT_GMAIL_URL} external size="sm">
+              Reconnect Gmail
+            </ButtonLink>
+          </div>
+        </div>
+      )}
+      {(actionError || (error && ws)) && (
+        <div className="px-4 pb-3 sm:px-6 lg:px-8" role="alert">
+          <div className="flex items-center gap-3 rounded-lg bg-danger-bg py-1 pr-1 pl-5 text-sm text-danger">
+            <p className="min-w-0 flex-1 py-2">{actionError || error}</p>
+            {actionError && (
+              <button
+                type="button"
+                onClick={() => setActionError(null)}
+                aria-label="Dismiss"
+                className="grid size-11 place-items-center rounded-full hover:bg-white/60"
+              >
+                <X size={16} aria-hidden />
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      <main className="relative min-h-0 flex-1">
+        <StepTransition stepKey={view}>
+          {building ? (
+            <div className="flex h-full justify-center overflow-y-auto px-4 pt-[clamp(8px,6vh,72px)] pb-16">
+              <div className="w-full max-w-[620px]">
+                <BuildFlow
+                  workspaceId={id}
+                  prompt={ws.prompt}
+                  run={ws.active_run ?? null}
+                  palettes={palettes}
+                  palette={ws.palette}
+                  recordCounts={ws.record_counts}
+                  onChanged={refresh}
+                />
+              </div>
+            </div>
+          ) : failed ? (
+            <div className="flex h-full justify-center overflow-y-auto px-4 pt-[clamp(8px,6vh,72px)] pb-16">
+              <section className="h-fit w-full max-w-[620px] rounded-2xl bg-surface px-7 pt-9 pb-7 shadow-float sm:px-9">
+                <LogoMark size={46} />
+                <h2 className="mt-6 text-[30px] leading-[1.1] font-medium tracking-[-0.03em]">
+                  We couldn&apos;t build this workspace
+                </h2>
+                <p className="mt-3 text-base text-ink-2">
+                  {ws.last_error?.replace(/^[A-Za-z_]+: /, "") ||
+                    "The build stopped before it finished."}
+                </p>
+                <p className="mt-4 rounded-sm bg-surface-2 px-4 py-3 text-sm text-ink-2">
+                  “{ws.prompt}”
+                </p>
+                <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+                  <button
+                    type="button"
+                    onClick={remove}
+                    className="rounded text-sm font-medium text-ink-2 hover:text-danger hover:underline"
+                  >
+                    Delete workspace
+                  </button>
+                  <Button
+                    loading={busyAction === "rebuild"}
+                    onClick={() => act("rebuild", () => api.rebuild(id))}
+                  >
+                    Try again
+                  </Button>
+                </div>
+              </section>
+            </div>
+          ) : (
+            <div className="flex h-full px-3 pb-3 sm:px-4 sm:pb-4">
+              <section
+                aria-label="Workspace app"
+                className="relative min-w-0 flex-1 overflow-hidden rounded-xl bg-surface shadow-panel"
+              >
+                {app?.html && shell && data ? (
+                  <AppFrame
+                    shellHead={shell.head}
+                    html={app.html}
+                    appVersion={app.version}
+                    palette={ws.palette}
+                    data={data.data}
+                    onError={onAppError}
+                  />
+                ) : (
+                  <div
+                    className="grid h-full place-items-center"
+                    aria-label="Loading the app"
+                  >
+                    <Spinner size={24} />
+                  </div>
+                )}
+                {appError && (
+                  <div
+                    role="alert"
+                    className="absolute inset-x-3 top-3 flex animate-dmx-rise flex-wrap items-center gap-3 rounded-md bg-danger-bg py-1.5 pr-1.5 pl-4 text-sm text-danger shadow-input"
+                  >
+                    <span className="min-w-0 flex-1">
+                      This workspace hit a display error.
+                    </span>
+                    <Button
+                      size="sm"
+                      disabled={active}
+                      onClick={() =>
+                        sendMessage(
+                          `The app shows this error, please fix the app: ${appError}`,
+                        ).catch(() => undefined)
+                      }
+                    >
+                      Fix it
+                    </Button>
+                    <button
+                      type="button"
+                      onClick={() => setAppError(null)}
+                      aria-label="Dismiss"
+                      className="grid size-11 place-items-center rounded-full hover:bg-white/60"
+                    >
+                      <X size={16} aria-hidden />
+                    </button>
+                  </div>
+                )}
+              </section>
+
+              <SidePanel
+                open={panelOpen}
+                onClose={() => setPanelOpen(false)}
+                tab={tab}
+                onTab={setTab}
+                activity={
+                  <>
+                    {ws.active_run && ws.active_run.kind !== "build" && (
+                      <div className="border-b border-[rgb(12_26_46/0.08)] py-4">
+                        <RunTimeline events={ws.active_run.events} />
+                      </div>
+                    )}
+                    <ActivityFeed changes={changes} runs={runs} />
+                  </>
+                }
+                chat={
+                  <ChatPanel runs={runs} workspace={ws} onSend={sendMessage} />
+                }
+              />
+            </div>
+          )}
+        </StepTransition>
+      </main>
+      {details && (
+        <DetailsDrawer
+          workspace={ws}
+          runs={runs}
+          onClose={() => setDetails(false)}
+        />
+      )}
+    </div>
+  );
+}

@@ -1,0 +1,550 @@
+[
+  {
+    "thread_id": "e4d0b8c5fa12ec31",
+    "messages": [
+      {
+        "message_id": "564dcc2b1d16ea1f",
+        "sender": "Northfield Food Bank via VolunteerHub <noreply@volunteerhub.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-08-03T09:00:00Z",
+        "subject": "Shift confirmed: warehouse sorting, Saturday 15 August 2026",
+        "body": "Hi Priya,\n\nYou're booked in for the following shift:\n\nRole: Warehouse sorting\nDate: Saturday 15 August 2026\nTime: 09:30 - 12:30\nLocation: Mill Lane warehouse, Unit 4\n\nNeed to cancel? Reply to this email or contact your coordinator.\nVolunteerHub",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "e255e8ef5c9b1501",
+    "messages": [
+      {
+        "message_id": "f24a90dc8678cb42",
+        "sender": "Gwen Hale <gwen@northfieldfoodbank.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-08-05T15:00:00Z",
+        "subject": "Welcome back - induction refresher",
+        "body": "Hi Priya,\n\nLovely to have you back after the summer! Quick reminder that the induction refresher video\nis on VolunteerHub - please watch it before your first shift on the 15th.\n\n-- \nGwen Hale\nVolunteer Coordinator, Northfield Food Bank",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "40addc5b17776042",
+    "messages": [
+      {
+        "message_id": "33b20b60fc43c6df",
+        "sender": "Northfield Food Bank via VolunteerHub <noreply@volunteerhub.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-08-17T09:00:00Z",
+        "subject": "Shift confirmed: warehouse sorting, Saturday 29 August 2026",
+        "body": "Hi Priya,\n\nYou're booked in for the following shift:\n\nRole: Warehouse sorting\nDate: Saturday 29 August 2026\nTime: 09:30 - 12:30\nLocation: Mill Lane warehouse, Unit 4\n\nNeed to cancel? Reply to this email or contact your coordinator.\nVolunteerHub",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "a0a3ffd80353fe39",
+    "messages": [
+      {
+        "message_id": "b02ddd0ce03c3e6b",
+        "sender": "SafeServe Training <certificates@safeserve.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-08-20T14:00:00Z",
+        "subject": "Your food hygiene certificate",
+        "body": "Hi Priya,\n\nCongratulations on completing Level 2 Food Hygiene.\nYour certificate (no. FH2-77810) is attached and valid for 3 years.\n\nSafeServe Training",
+        "attachments": [
+          "FH2-77810.pdf"
+        ]
+      }
+    ]
+  },
+  {
+    "thread_id": "ead1bfaf7889a921",
+    "messages": [
+      {
+        "message_id": "ef9bb0808893418d",
+        "sender": "Northfield Food Bank via VolunteerHub <noreply@volunteerhub.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-08-28T08:00:00Z",
+        "subject": "Reminder: your volunteer shift tomorrow, 29 Aug",
+        "body": "Hi Priya,\n\nJust a reminder that you're volunteering tomorrow, 29 Aug, 9:30am at the Mill Lane warehouse.\nPlease wear closed-toe shoes. Tea and biscuits provided!\n\nVolunteerHub",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "c6ac1c117bda9941",
+    "messages": [
+      {
+        "message_id": "788845d92829b598",
+        "sender": "Northfield Food Bank via VolunteerHub <noreply@volunteerhub.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-08-31T09:00:00Z",
+        "subject": "Shift confirmed: warehouse sorting, Saturday 12 September 2026",
+        "body": "Hi Priya,\n\nYou're booked in for the following shift:\n\nRole: Warehouse sorting\nDate: Saturday 12 September 2026\nTime: 09:30 - 12:30\nLocation: Mill Lane warehouse, Unit 4\n\nNeed to cancel? Reply to this email or contact your coordinator.\nVolunteerHub",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "32544ade74458c57",
+    "messages": [
+      {
+        "message_id": "1723d1f9cd15ab81",
+        "sender": "Northfield Food Bank via VolunteerHub <noreply@volunteerhub.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-09-07T10:00:00Z",
+        "subject": "Volunteer survey - 5 minutes",
+        "body": "Hi Priya,\n\nNorthfield Food Bank would love your feedback on volunteering this year.\nThe survey takes about 5 minutes and is anonymous.\n\nVolunteerHub",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "8f5d9264e821545e",
+    "messages": [
+      {
+        "message_id": "6868514f8f7a636d",
+        "sender": "Northfield Food Bank via VolunteerHub <noreply@volunteerhub.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-09-14T09:00:00Z",
+        "subject": "Shift confirmed: warehouse sorting, Saturday 26 September 2026",
+        "body": "Hi Priya,\n\nYou're booked in for the following shift:\n\nRole: Warehouse sorting\nDate: Saturday 26 September 2026\nTime: 09:30 - 12:30\nLocation: Mill Lane warehouse, Unit 4\n\nNeed to cancel? Reply to this email or contact your coordinator.\nVolunteerHub",
+        "attachments": []
+      },
+      {
+        "message_id": "b3f2d69e79a4616f",
+        "sender": "Priya Nair <priya.nair@postbox.example>",
+        "to": [
+          "gwen@northfieldfoodbank.example"
+        ],
+        "date": "2026-09-21T20:10:00Z",
+        "subject": "Re: Shift confirmed: warehouse sorting, Saturday 26 September 2026",
+        "body": "Hi Gwen,\n\nI'm really sorry, I can't make the 26th after all - my cousin's wedding got moved to that weekend.\nCould you take me off that one?\n\nPriya",
+        "attachments": []
+      },
+      {
+        "message_id": "f88073b992f8be7c",
+        "sender": "Gwen Hale <gwen@northfieldfoodbank.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-09-22T08:35:00Z",
+        "subject": "Re: Shift confirmed: warehouse sorting, Saturday 26 September 2026",
+        "body": "No problem at all Priya, I've removed you from the 26 September shift. Enjoy the wedding!\n\nGwen\n-- \nGwen Hale\nVolunteer Coordinator, Northfield Food Bank",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "44b6f11008141ad5",
+    "messages": [
+      {
+        "message_id": "055543d8f4e8c420",
+        "sender": "Northfield Food Bank via VolunteerHub <noreply@volunteerhub.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-09-28T09:00:00Z",
+        "subject": "Shift confirmed: warehouse sorting, Saturday 10 October 2026",
+        "body": "Hi Priya,\n\nYou're booked in for the following shift:\n\nRole: Warehouse sorting\nDate: Saturday 10 October 2026\nTime: 09:30 - 12:30\nLocation: Mill Lane warehouse, Unit 4\n\nNeed to cancel? Reply to this email or contact your coordinator.\nVolunteerHub",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "13b71992688fe57b",
+    "messages": [
+      {
+        "message_id": "4d3cfbf1d871e2b2",
+        "sender": "Marta Silva <marta.silva@postbox.example>",
+        "to": [
+          "priya.nair@postbox.example",
+          "dev.patel@postbox.example",
+          "lou.chen@postbox.example"
+        ],
+        "date": "2026-09-29T19:00:00Z",
+        "subject": "Can anyone cover Sat 3 Oct sorting?",
+        "body": "Hi all,\n\nI've got a family thing on Saturday 3 Oct and need someone to cover my warehouse sorting shift (9:30-12:30).\nGwen says it's fine as long as she knows who.\n\nThanks!\nMarta",
+        "attachments": []
+      },
+      {
+        "message_id": "8cf9cdbd7ee8b572",
+        "sender": "Priya Nair <priya.nair@postbox.example>",
+        "to": [
+          "marta.silva@postbox.example",
+          "gwen@northfieldfoodbank.example"
+        ],
+        "date": "2026-09-29T20:30:00Z",
+        "subject": "Re: Can anyone cover Sat 3 Oct sorting?",
+        "body": "Hi Marta,\n\nI can take it! Gwen, please put me down for Saturday 3 October.\n\nPriya",
+        "attachments": []
+      },
+      {
+        "message_id": "ce9ab2bdf29af885",
+        "sender": "Gwen Hale <gwen@northfieldfoodbank.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-09-30T08:10:00Z",
+        "subject": "Re: Can anyone cover Sat 3 Oct sorting?",
+        "body": "Thanks Priya, done - you're on for Saturday 3 Oct, 9:30-12:30 at Mill Lane.\n\nGwen\n-- \nGwen Hale\nVolunteer Coordinator, Northfield Food Bank",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "d084a0e610b86ed1",
+    "messages": [
+      {
+        "message_id": "f77f4fd7d3a12d5e",
+        "sender": "Gwen Hale <gwen@northfieldfoodbank.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-10-01T11:00:00Z",
+        "subject": "Thank you for September",
+        "body": "Hi Priya,\n\nJust a note to say thank you - you logged 6 volunteer hours with us in September.\nTogether the team sorted 3.2 tonnes of food last month!\n\n-- \nGwen Hale\nVolunteer Coordinator, Northfield Food Bank",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "5530df836218f24a",
+    "messages": [
+      {
+        "message_id": "b1d2d1335e734d9e",
+        "sender": "Northfield Food Bank <news@northfieldfoodbank.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-10-05T09:00:00Z",
+        "subject": "Northfield News - October",
+        "body": "Northfield News - October\n\n- Harvest supper fundraiser on 17 October: tickets GBP 15\n- We distributed 1,240 food parcels in September\n- New partner: Greenway Supermarkets\n\nYou are receiving this as a supporter. Unsubscribe.",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "3b3333f8ee28335c",
+    "messages": [
+      {
+        "message_id": "42b8a5ea81579ac4",
+        "sender": "Northfield Food Bank via VolunteerHub <noreply@volunteerhub.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-10-09T08:00:00Z",
+        "subject": "Reminder: your volunteer shift tomorrow, 10 Oct",
+        "body": "Hi Priya,\n\nJust a reminder that you're volunteering tomorrow, 10 Oct, 9:30am at the Mill Lane warehouse.\nPlease wear closed-toe shoes. Tea and biscuits provided!\n\nVolunteerHub",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "4bd0e32d5d8d31c8",
+    "messages": [
+      {
+        "message_id": "bb584d3d66fd7f48",
+        "sender": "TeleNova <billing@telenova.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-10-10T05:00:00Z",
+        "subject": "Your bill is ready",
+        "body": "Hi Priya,\n\nYour October bill of GBP 18.00 is ready and will be collected on 20 October.\nView it in the TeleNova app.\n\nTeleNova",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "779a2ff4c5bda881",
+    "messages": [
+      {
+        "message_id": "a5c233c19589a5fd",
+        "sender": "Northfield Food Bank via VolunteerHub <noreply@volunteerhub.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-10-12T09:00:00Z",
+        "subject": "Shift confirmed: warehouse sorting, Saturday 24 October 2026",
+        "body": "Hi Priya,\n\nYou're booked in for the following shift:\n\nRole: Warehouse sorting\nDate: Saturday 24 October 2026\nTime: 09:30 - 12:30\nLocation: Mill Lane warehouse, Unit 4\n\nNeed to cancel? Reply to this email or contact your coordinator.\nVolunteerHub",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "f183fb5d368d0813",
+    "messages": [
+      {
+        "message_id": "ec0f1dd8135d30e5",
+        "sender": "Dev Patel <dev.patel@postbox.example>",
+        "to": [
+          "priya.nair@postbox.example",
+          "lou.chen@postbox.example"
+        ],
+        "date": "2026-10-12T18:00:00Z",
+        "subject": "Cover needed: Fri 16 Oct evening van",
+        "body": "Hey both,\n\nAny chance one of you could cover my Friday 16 Oct evening van round (17:30-20:00)?\nI'm stuck at work.\n\nDev",
+        "attachments": []
+      },
+      {
+        "message_id": "ced67751066a897e",
+        "sender": "Priya Nair <priya.nair@postbox.example>",
+        "to": [
+          "dev.patel@postbox.example"
+        ],
+        "date": "2026-10-12T19:45:00Z",
+        "subject": "Re: Cover needed: Fri 16 Oct evening van",
+        "body": "Sorry Dev, I'm away that evening. Hope Lou can do it!\n\nPriya\n\n> Any chance one of you could cover my Friday 16 Oct evening van round",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "ac448b6f757dac00",
+    "messages": [
+      {
+        "message_id": "30fd5f21ab661a3a",
+        "sender": "Gwen Hale <gwen@northfieldfoodbank.example>",
+        "to": [
+          "volunteers@northfieldfoodbank.example"
+        ],
+        "date": "2026-10-15T10:00:00Z",
+        "subject": "Volunteers needed: holiday hamper packing, 28 November",
+        "body": "Dear volunteers,\n\nWe're packing 400 holiday hampers on Saturday 28 November at St Bride's church hall.\nWe need 20 people for the afternoon session (1pm to 5pm).\n\nReply to this email if you can help.\n\n-- \nGwen Hale\nVolunteer Coordinator, Northfield Food Bank",
+        "attachments": []
+      },
+      {
+        "message_id": "71ff785026e42659",
+        "sender": "Priya Nair <priya.nair@postbox.example>",
+        "to": [
+          "gwen@northfieldfoodbank.example"
+        ],
+        "date": "2026-10-15T12:22:00Z",
+        "subject": "Re: Volunteers needed: holiday hamper packing, 28 November",
+        "body": "Count me in for the hampers!\n\nPriya",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "58da80c287e56952",
+    "messages": [
+      {
+        "message_id": "9a717dd4a43a2696",
+        "sender": "Asha Nair <asha.nair@postbox.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-10-18T12:00:00Z",
+        "subject": "Diwali plans",
+        "body": "Hi beta,\n\nAre you coming home for Diwali? Auntie is asking. Let me know which train so Dad can pick you up.\n\nLove, Mum",
+        "attachments": []
+      },
+      {
+        "message_id": "895f302969453f2b",
+        "sender": "Priya Nair <priya.nair@postbox.example>",
+        "to": [
+          "asha.nair@postbox.example"
+        ],
+        "date": "2026-10-18T13:30:00Z",
+        "subject": "Re: Diwali plans",
+        "body": "Yes! I'll get the Friday evening train. Will send times.\n\nP x",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "cbc4655ec8ede4c7",
+    "messages": [
+      {
+        "message_id": "222076fdfa03798e",
+        "sender": "Gwen Hale <gwen@northfieldfoodbank.example>",
+        "to": [
+          "volunteers@northfieldfoodbank.example"
+        ],
+        "date": "2026-10-20T10:00:00Z",
+        "subject": "You're invited: volunteer thank-you party",
+        "body": "Dear volunteers,\n\nJoin us for our annual volunteer thank-you party on Friday 11 December, 7pm, at the Fox & Hound.\nFood on us, partners welcome. RSVP by 30 November.\n\n-- \nGwen Hale\nVolunteer Coordinator, Northfield Food Bank",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "8013181d7a190aec",
+    "messages": [
+      {
+        "message_id": "a3cd35a77dfacd88",
+        "sender": "FreshCo <offers@freshco.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-10-21T07:00:00Z",
+        "subject": "Your weekly deals at FreshCo",
+        "body": "Hi Priya,\n\nThis week: 3 for 2 on pasta, half price on winter veg, and double points on Sunday.\nOffers valid until Tuesday.\n\nFreshCo",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "9ac4408d56b49121",
+    "messages": [
+      {
+        "message_id": "23d2e001973c1a71",
+        "sender": "Northfield Food Bank via VolunteerHub <noreply@volunteerhub.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-10-23T08:00:00Z",
+        "subject": "Reminder: your volunteer shift tomorrow, 24 Oct",
+        "body": "Hi Priya,\n\nJust a reminder that you're volunteering tomorrow, 24 Oct, 9:30am at the Mill Lane warehouse.\nPlease wear closed-toe shoes. Tea and biscuits provided!\n\nVolunteerHub",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "066d6e2f49d34c7f",
+    "messages": [
+      {
+        "message_id": "0512700812ccbe45",
+        "sender": "FitHub Northfield <classes@fithub.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-10-25T18:00:00Z",
+        "subject": "Your class schedule this week",
+        "body": "Hi Priya,\n\nYou're booked in for:\nSpin Express - Tue 27 Oct, 18:00\nYoga Flow - Thu 29 Oct, 19:00\n\nFitHub Northfield",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "0661a73dfe0e1689",
+    "messages": [
+      {
+        "message_id": "42b97f59ff94a1e9",
+        "sender": "Gwen Hale <gwen@northfieldfoodbank.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-10-28T16:00:00Z",
+        "subject": "Your November rota",
+        "body": "Hi Priya,\n\nThanks for signing up for more shifts in November! Here's your rota:\n\n1. Sat 7 Nov, 09:00-12:00 - Pantry intake desk, main hall at Northfield Community Centre\n2. Wed 11 Nov, 17:30-20:00 - Mobile pantry van, Eastgate estate (meet at the van by the library car park)\n3. Sat 14 Nov, 10:00-13:00 - School food drive collection, Riverside Primary School\n4. Sun 22 Nov, 10:00-12:30 - Gleaning at Hollins Lane allotments (bring gloves)\n5. Sat 28 Nov, 13:00-17:00 - Holiday hamper packing, St Bride's church hall\n\nLet me know if any of these don't work.\n\nGwen\n-- \nGwen Hale\nVolunteer Coordinator, Northfield Food Bank",
+        "attachments": []
+      },
+      {
+        "message_id": "868c9465c3c22315",
+        "sender": "Priya Nair <priya.nair@postbox.example>",
+        "to": [
+          "gwen@northfieldfoodbank.example"
+        ],
+        "date": "2026-10-28T18:40:00Z",
+        "subject": "Re: Your November rota",
+        "body": "All good, thanks Gwen. See you on the 7th!\n\nPriya\n\nOn Wed, 28 Oct 2026, Gwen Hale wrote:\n> Thanks for signing up for more shifts in November! Here's your rota:",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "e4bb448733f42093",
+    "messages": [
+      {
+        "message_id": "11af0f7ef0acfc43",
+        "sender": "Lou Chen <lou.chen@postbox.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-10-29T09:15:00Z",
+        "subject": "Parking at Eastgate for the van",
+        "body": "Hi Priya,\n\nSaw you're on the Eastgate van with me on the 11th. Don't park on the estate, use the library car park, it's free after 5.\n\nLou",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "203c768dea1f6f3a",
+    "messages": [
+      {
+        "message_id": "3428cf6ae7a7bc2e",
+        "sender": "Bean Counter Cafe <rota@beancountercafe.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-10-29T17:00:00Z",
+        "subject": "Bean Counter Cafe - rota w/c 2 November",
+        "body": "Hi team,\n\nRota for next week:\nPriya: Mon 2 Nov 07:00-15:00, Thu 5 Nov 07:00-15:00, Fri 6 Nov 11:00-19:00\nSwaps must be agreed with the manager.\n\nBean Counter Cafe",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "b36b8ef886861dc6",
+    "messages": [
+      {
+        "message_id": "0c32b2beabe5d94f",
+        "sender": "Kemi Ade <kemi.ade@postbox.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-10-30T08:30:00Z",
+        "subject": "Saturday drinks for Kemi's birthday",
+        "body": "Hiya!\n\nDrinks for my birthday on Saturday 7 Nov from 8pm at the Crown. No presents, just come!\n\nK",
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "thread_id": "ab27f1d4c3bca2a9",
+    "messages": [
+      {
+        "message_id": "12299fd056c8739b",
+        "sender": "Gwen Hale <gwen@northfieldfoodbank.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-11-02T10:30:00Z",
+        "subject": "Christmas market stall - can you help?",
+        "body": "Hi Priya,\n\nOne more ask: we have a stall at the Christmas market on Saturday 5 December, 11:00-15:00, Market Square.\nIt's mostly collecting donations and chatting to people. Could you do it?\n\nGwen\n-- \nGwen Hale\nVolunteer Coordinator, Northfield Food Bank",
+        "attachments": []
+      },
+      {
+        "message_id": "566d7afd68e840d8",
+        "sender": "Priya Nair <priya.nair@postbox.example>",
+        "to": [
+          "gwen@northfieldfoodbank.example"
+        ],
+        "date": "2026-11-02T19:05:00Z",
+        "subject": "Re: Christmas market stall - can you help?",
+        "body": "Yes, happy to! Put me down for the market stall.\n\nPriya",
+        "attachments": []
+      },
+      {
+        "message_id": "5a549f1b960699bf",
+        "sender": "Gwen Hale <gwen@northfieldfoodbank.example>",
+        "to": [
+          "priya.nair@postbox.example"
+        ],
+        "date": "2026-11-03T08:20:00Z",
+        "subject": "Re: Christmas market stall - can you help?",
+        "body": "Brilliant, you're on: Sat 5 Dec, 11:00-15:00, Christmas market stall, Market Square.\n\nGwen\n-- \nGwen Hale\nVolunteer Coordinator, Northfield Food Bank",
+        "attachments": []
+      }
+    ]
+  }
+]

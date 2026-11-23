@@ -1,0 +1,12 @@
+# Keep the image build context clean; deps come from uv.lock, not the host venv.
+.venv/
+.idea/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.env
+# agent transcripts and eval output (contain email-derived content)
+.runs/
+eval/agent/runs/
+eval/planner/

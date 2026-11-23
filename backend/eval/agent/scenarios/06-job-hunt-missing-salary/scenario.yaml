@@ -1,0 +1,27 @@
+id: 06-job-hunt-missing-salary
+prompt: "Track the jobs I've applied for: the company, the role, what stage I'm at, and the salary range for each one."
+steps:
+- name: build
+  now: 2026-10-26T09:00:00Z
+  expect:
+    - {kind: unique, all_of: ["Fernhill"]}
+    - {kind: value, find: ["Fernhill"], any_of: ["interview", "final", "round", "onsite"]}
+    - {kind: value, find: ["Corvid"], any_of: ["reject", "declined", "unsuccessful", "not moving", "not progressed", "closed"]}
+    - {kind: value, find: ["Tidewell"], any_of: ["filled", "reject", "closed", "unsuccessful", "declined"]}
+    - {kind: value, find: ["Pelican"], any_of: ["interview", "30 Oct", "Oct 30", "2026-10-30"]}
+    - {kind: exists, all_of: ["Saltmarsh"]}
+    - {kind: null_or_missing, find: ["Fernhill"], field_hint: "salary"}
+    - {kind: null_or_missing, find: ["Pelican"], field_hint: "salary"}
+    - {kind: null_or_missing, find: ["Quillon"], field_hint: "salary"}
+    - {kind: app_shows, any_of: ["Salary", "salary"]}
+    - {kind: absent, any_of: ["Kestrel", "Orbitly", "Bramble", "DataSkills"]}
+    - {kind: count, min: 7, max: 10}
+- name: sync-1
+  now: 2026-10-29T09:00:00Z
+  expect:
+    - {kind: unique, all_of: ["Fernhill"]}
+    - {kind: value, find: ["Fernhill"], any_of: ["offer"]}
+    - {kind: null_or_missing, find: ["Fernhill"], field_hint: "salary"}
+    - {kind: unchanged_except, find: [["Fernhill"]]}
+    - {kind: app_shows, any_of: ["Salary", "salary"]}
+    - {kind: count, min: 7, max: 10}
