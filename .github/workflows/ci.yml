@@ -50,6 +50,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
+        with:
+          # The pnpm version comes from `packageManager` in frontend/package.json
+          # (the action reads the repo-root package.json by default, and there is none).
+          package_json_file: frontend/package.json
       - uses: actions/setup-node@v4
         with:
           node-version: 22
