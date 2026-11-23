@@ -61,6 +61,9 @@ jobs:
           cache-dependency-path: frontend/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
+      # Generates next-env.d.ts and the global route types (PageProps, LayoutProps), which
+      # are gitignored and otherwise only exist after `next dev` / `next build`.
+      - run: pnpm exec next typegen
       - run: pnpm exec tsc --noEmit
       - run: pnpm build
         env:

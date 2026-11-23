@@ -110,7 +110,7 @@ eval-agent:  ## run the agent eval scenarios (costs money): make eval-agent ARGS
 
 lint:
 	cd backend && uv run ruff check . && uv run ruff format --check .
-	cd frontend && pnpm lint && pnpm exec tsc --noEmit
+	cd frontend && pnpm lint && pnpm exec next typegen && pnpm exec tsc --noEmit
 
 test:
 	cd backend && uv run pytest
