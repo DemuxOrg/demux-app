@@ -1,11 +1,15 @@
 # Continuous integration: runs on every push and pull request.
 # - backend: ruff + pytest against a real Postgres service container
 # - frontend: eslint + type check + production build
+# Pushes to `main` run it through deploy.yml instead (workflow_call), which deploys only
+# if it passes; `branches-ignore` avoids running it twice there.
 name: CI
 
 on:
   push:
+    branches-ignore: [main]
   pull_request:
+  workflow_call:
 
 jobs:
   backend:
