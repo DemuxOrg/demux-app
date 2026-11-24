@@ -16,7 +16,7 @@ from urllib.parse import urlencode
 from fastapi import APIRouter, Request
 from fastapi.responses import RedirectResponse
 
-from app.api.deps import CurrentUser, SessionDep, get_current_user
+from app.api.deps import CurrentUser, SessionDep, get_current_user, is_admin
 from app.auth import google
 from app.auth.session import (
     STATE_COOKIE,
@@ -128,6 +128,7 @@ def _me(user: User) -> Me:
         gmail_email=user.gmail_email,
         gmail_connected=google.gmail_connected(user),
         needs_reconnect=user.needs_reconnect,
+        is_admin=is_admin(user),
     )
 
 

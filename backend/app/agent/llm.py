@@ -2,15 +2,28 @@
 
 Works with any endpoint that speaks `/chat/completions` with `tools` (default: the
 Hugging Face router). Never logs prompts or responses; callers get them back.
+
+Metering: `MeteredLLM` wraps any chat model, prices every call from `prices.yaml` and
+writes one `llm_calls` row per call (tokens, the unit prices used, cost, latency,
+status) into the scope set with `usage_scope()` (run, workspace, user, DB session
+factory) and `usage_phase()` (design, batch, app, edit, seed). Without a scope (CLI,
+eval) nothing is written. The cost on the reply is the exact amount stored on the row,
+so run totals added from it always equal the sum of their calls.
 """
 
 import asyncio
+import contextlib
 import functools
 import logging
 import time
-from dataclasses import dataclass, field
+import uuid
+from collections.abc import Iterator
+from contextvars import ContextVar
+from dataclasses import dataclass, field, replace
+from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 from typing import Any, Protocol
+from urllib.parse import urlparse
 
 import yaml
 from openai import APIConnectionError, APIStatusError, APITimeoutError, AsyncOpenAI
@@ -27,10 +40,46 @@ def _prices() -> dict[str, Any]:
     return yaml.safe_load(PRICES_FILE.read_text())
 
 
-def cost_usd(model: str, input_tokens: int, output_tokens: int) -> float:
+@dataclass(frozen=True)
+class Price:
+    """USD per million tokens. `cached_input` defaults to `input` when not listed."""
+
+    input: Decimal
+    cached_input: Decimal
+    output: Decimal
+
+
+def price_for(model: str) -> Price:
     table = _prices()
-    price = table["models"].get(model) or table["default"]
-    return (input_tokens * price["input"] + output_tokens * price["output"]) / 1_000_000
+    p = table["models"].get(model) or table["default"]
+    inp = Decimal(str(p["input"]))
+    return Price(inp, Decimal(str(p.get("cached_input", p["input"]))), Decimal(str(p["output"])))
+
+
+def priced_cost(
+    price: Price, input_tokens: int, cached_input_tokens: int, output_tokens: int
+) -> Decimal:
+    """Cost of one call in USD, rounded to the 6 decimals stored in the database."""
+    cached = min(max(cached_input_tokens, 0), input_tokens)
+    total = (
+        (input_tokens - cached) * price.input
+        + cached * price.cached_input
+        + output_tokens * price.output
+    ) / 1_000_000
+    return total.quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP)
+
+
+def cost_usd(
+    model: str, input_tokens: int, output_tokens: int, cached_input_tokens: int = 0
+) -> float:
+    return float(priced_cost(price_for(model), input_tokens, cached_input_tokens, output_tokens))
+
+
+def provider_of(model: str) -> str:
+    """`Qwen/Qwen3.8-27B:nebius` -> `nebius`; no suffix -> the endpoint's host."""
+    if ":" in model:
+        return model.rsplit(":", 1)[1]
+    return urlparse(settings.LLM_BASE_URL).hostname or "unknown"
 
 
 @dataclass
@@ -49,10 +98,14 @@ class LLMReply:
     latency_ms: int
     raw_message: dict[str, Any] = field(default_factory=dict)  # to append to the history
     model: str = ""  # the model that actually answered (may be the fallback)
+    cached_input_tokens: int = 0  # part of input_tokens served from the provider's cache
+    cost_usd: float | None = None  # set by MeteredLLM: exactly what was recorded
 
 
 class LLMError(Exception):
-    pass
+    def __init__(self, message: str, code: str = "llm_error"):
+        super().__init__(message)
+        self.code = code
 
 
 class ChatModel(Protocol):
@@ -105,7 +158,7 @@ class OpenAICompatibleLLM:
                 raise
         latency = int((time.perf_counter() - start) * 1000)
         if not resp.choices:
-            raise LLMError("The AI model returned an empty answer.")
+            raise LLMError("The AI model returned an empty answer.", "empty_answer")
         msg = resp.choices[0].message
         calls = [
             ToolCall(id=c.id, name=c.function.name, arguments=c.function.arguments or "{}")
@@ -123,6 +176,7 @@ class OpenAICompatibleLLM:
                 for c in calls
             ]
         usage = resp.usage
+        details = getattr(usage, "prompt_tokens_details", None) if usage else None
         return LLMReply(
             content=msg.content,
             tool_calls=calls,
@@ -131,6 +185,7 @@ class OpenAICompatibleLLM:
             latency_ms=latency,
             raw_message=raw,
             model=model,
+            cached_input_tokens=(getattr(details, "cached_tokens", None) or 0) if details else 0,
         )
 
     async def chat(
@@ -145,23 +200,26 @@ class OpenAICompatibleLLM:
                 try:
                     return await self._once(candidate, messages, tools)
                 except (APITimeoutError, APIConnectionError) as e:
-                    last = f"{type(e).__name__}"
+                    last = "timeout" if isinstance(e, APITimeoutError) else "connection"
                 except APIStatusError as e:
                     code = e.status_code
                     if code == 401:
                         raise LLMError(
                             "The AI provider rejected the API key (401). Set a valid "
-                            "LLM_API_KEY (or HF_TOKEN) in .env and restart the worker."
+                            "LLM_API_KEY (or HF_TOKEN) in .env and restart the worker.",
+                            "http_401",
                         ) from e
                     if code == 402:
                         raise LLMError(
                             "The AI provider account is out of credits (402). Add credits "
-                            "or switch provider in .env."
+                            "or switch provider in .env.",
+                            "http_402",
                         ) from e
                     if code == 403:
                         raise LLMError(
                             "The AI provider refused the request (403): the key lacks "
-                            "permission for this model."
+                            "permission for this model.",
+                            "http_403",
                         ) from e
                     if code == 429 or code >= 500:
                         last = f"HTTP {code}"
@@ -177,5 +235,123 @@ class OpenAICompatibleLLM:
                 await asyncio.sleep(min(8.0, 1.5 * (attempt + 1)))
         raise LLMError(
             f"The AI provider kept failing ({last}) after several retries. "
-            "Nothing was lost; try again in a minute."
+            "Nothing was lost; try again in a minute.",
+            last.replace("HTTP ", "http_"),
         )
+
+
+# ------------------------------------------------------------------ metering
+
+
+@dataclass(frozen=True)
+class UsageScope:
+    """Who an LLM call is billed to. `session_factory=None` records nothing."""
+
+    session_factory: Any = None  # async_sessionmaker; opens its own short transaction
+    user_id: uuid.UUID | None = None
+    workspace_id: uuid.UUID | None = None
+    run_id: uuid.UUID | None = None
+    phase: str = ""
+
+
+_scope: ContextVar[UsageScope | None] = ContextVar("llm_usage_scope", default=None)
+
+
+def current_scope() -> UsageScope:
+    return _scope.get() or UsageScope()
+
+
+# Agent phase names -> llm_calls.phase.
+_PHASES = {"process": "batch"}
+
+
+@contextlib.contextmanager
+def usage_scope(**values: Any) -> Iterator[None]:
+    """Bill the LLM calls made inside this block (and tasks started in it) to `values`."""
+    token = _scope.set(replace(current_scope(), **values))
+    try:
+        yield
+    finally:
+        _scope.reset(token)
+
+
+@contextlib.contextmanager
+def usage_phase(phase: str) -> Iterator[None]:
+    with usage_scope(phase=_PHASES.get(phase, phase)):
+        yield
+
+
+async def _record(scope: UsageScope, **row: Any) -> None:
+    if scope.session_factory is None:
+        return
+    from app.models.usage import LLMCall
+
+    try:
+        async with scope.session_factory() as s:
+            s.add(
+                LLMCall(
+                    run_id=scope.run_id,
+                    workspace_id=scope.workspace_id,
+                    user_id=scope.user_id,
+                    phase=scope.phase or "unknown",
+                    **row,
+                )
+            )
+            await s.commit()
+    except Exception:  # noqa: BLE001 - accounting must never fail the run
+        logger.exception("could not record llm call run=%s", scope.run_id)
+
+
+class MeteredLLM:
+    """Wraps a chat model: prices each call and records it in `llm_calls`."""
+
+    def __init__(self, inner: ChatModel):
+        self.inner = inner
+
+    async def chat(
+        self, model: str, messages: list[dict[str, Any]], tools: list[dict[str, Any]]
+    ) -> LLMReply:
+        scope = current_scope()
+        start = time.perf_counter()
+        try:
+            reply = await self.inner.chat(model, messages, tools)
+        except LLMError as e:
+            price = price_for(model)
+            await _record(
+                scope,
+                model=model,
+                provider=provider_of(model),
+                input_tokens=0,
+                cached_input_tokens=0,
+                output_tokens=0,
+                input_price=price.input,
+                cached_input_price=price.cached_input,
+                output_price=price.output,
+                cost_usd=Decimal(0),
+                latency_ms=int((time.perf_counter() - start) * 1000),
+                status="error",
+                error_code=e.code,
+            )
+            raise
+        used = reply.model or model
+        price = price_for(used)
+        cost = priced_cost(
+            price, reply.input_tokens, reply.cached_input_tokens, reply.output_tokens
+        )
+        await _record(
+            scope,
+            model=used,
+            provider=provider_of(used),
+            input_tokens=reply.input_tokens,
+            cached_input_tokens=reply.cached_input_tokens,
+            output_tokens=reply.output_tokens,
+            input_price=price.input,
+            cached_input_price=price.cached_input,
+            output_price=price.output,
+            cost_usd=cost,
+            latency_ms=reply.latency_ms,
+            status="ok",
+            error_code=None,
+        )
+        reply.cost_usd = float(cost)
+        return reply

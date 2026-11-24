@@ -28,6 +28,15 @@ export type SetupState = S["SetupState"];
 export type SetupQuestion = S["SetupQuestion"];
 export type SetupUpdate = S["SetupUpdate"];
 export type AppRuntime = AppDoc["runtime"];
+export type AdminOverview = S["AdminOverview"];
+export type AdminUserRow = S["AdminUserRow"];
+export type AdminUserDetail = S["AdminUserDetail"];
+export type AdminWorkspace = S["AdminWorkspace"];
+export type AdminWorkspaceDetail = S["AdminWorkspaceDetail"];
+export type AdminRun = S["AdminRun"];
+export type DemoInboxState = S["DemoInboxState"];
+export type DemoSeedRead = S["DemoSeedRead"];
+export type AdminRange = 7 | 30 | 90;
 
 export const API_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
@@ -101,6 +110,20 @@ export const api = {
   rebuild: (id: string) => post<WorkspaceSummary>(`/workspaces/${id}/rebuild`),
   updateSetup: (id: string, body: SetupUpdate) =>
     post<ActiveRun>(`/workspaces/${id}/setup`, body),
+};
+
+/** Staff-only endpoints (/admin pages). Non-admins get 404 from every one of them. */
+export const adminApi = {
+  overview: (days: AdminRange) =>
+    request<AdminOverview>(`/admin/overview?days=${days}`),
+  users: () => request<AdminUserRow[]>("/admin/users"),
+  user: (id: string) => request<AdminUserDetail>(`/admin/users/${id}`),
+  workspace: (id: string, days: AdminRange) =>
+    request<AdminWorkspaceDetail>(`/admin/workspaces/${id}?days=${days}`),
+  demo: () => request<DemoInboxState>("/admin/demo"),
+  createSeed: (prompt: string, thread_count: number) =>
+    post<DemoSeedRead>("/admin/demo/seeds", { prompt, thread_count }),
+  cleanupDemo: () => post<{ removed: number }>("/admin/demo/cleanup"),
 };
 
 /** Send the user to sign in when the session is missing or expired. */

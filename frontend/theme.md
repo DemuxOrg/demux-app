@@ -346,6 +346,26 @@ The only navigation in the signed-in app. Notion-like: from 768px it is a column
 - **Account row:** like Claude's: 36px avatar (initial on `violet-soft` / `violet-ink`), full name 14/600 and login email 13 `ink-3` (both truncated), `chevrons-up-down` 16px. Opens a card above it (`pop` from the bottom): "Signed in as" + login email, the Gmail line ("Reading from [gmail]" / "Gmail not connected" / "Gmail needs reconnecting"), "1 of 2 workspaces", a **Profile** row (`user-round`, chevron that nudges) and, under it, a **Log out** row (`log-out`, spinner while signing out).
 - Selection and focus inside the sidebar use violet, as everywhere else. No brand gradient besides the logo.
 
+### 7.14 Admin pages (internal, `/admin`)
+Demux staff only (admins: `ADMIN_EMAILS` or `users.is_admin`; everyone else gets the app's 404). Dense, plain and quiet: they are for reading numbers, not for showing off.
+- **Shell:** sky + grain like every page, no app sidebar. Top bar (padding 18px 24px): lockup 28px + "Admin" 14/500 `ink-on-sky` on the left; a segmented control (§7.5, on sky) with **Overview · Users · Demo inbox** in the middle; a secondary "Back to Demux" button on the right. Content column max 1240px, padding 0 24 48, groups separated by gap 16.
+- **Surfaces:** white cards, radius `lg` (20px), `shadow-glass`, padding 20/22. Never glass for data. Card title 15/600 ink, an optional one-line note 13px `ink-3` under it.
+- **Stat tiles:** a row of white tiles (min 160px, wrap), label 13/500 `ink-3` on top, value 28/500 −0.02em ink, tabular; an optional sub-line 13px `ink-3` ("3 failed of 41").
+- **Tables:** inside a white card, 14px, rows 44px with `line-soft` dividers, header 13/500 `ink-3` (sortable headers are buttons with a 14px chevron; `aria-sort`). Numbers right-aligned, tabular. A row that opens a detail page is a link on its first cell.
+- **Charts:** inside cards, height 220px. Thin bars (2px surface gap, 4px rounded ends), 2px lines, `line-soft` grid, 12px `ink-3` axis text, no axis lines. Hover tooltip on every chart: white, radius 12, 1px `line`, `shadow-glass`, 13px. A legend under every chart with two or more series; every chart has a "Show table" toggle (13/500 `ink-2`) for exact values. Series colours (the only place besides generated apps where non-brand hues appear; validated for colour-blind separation on white):
+
+  | Slot | Token | Hex | Used for |
+  |---|---|---|---|
+  | 1 | `chart-1` | `#6A3DF0` | design · first model · tokens in · p50 |
+  | 2 | `chart-2` | `#EB6834` | batch · second model · tokens out · p95 |
+  | 3 | `chart-3` | `#1BAF7A` | app · third model |
+  | 4 | `chart-4` | `#2A78D6` | edit · fourth model |
+  | 5 | `chart-5` | `#D63A7C` | seed (demo inbox) · other models |
+
+  Slots are assigned in this fixed order by the entity (a phase keeps its colour when others are hidden). Failure rate uses `danger`.
+- **Range picker:** segmented control "7 days · 30 days · 90 days", top right of the page header.
+- **Privacy:** admin pages show prompts and edit messages (typed by the user), counts, tokens and costs. Never email content, subjects, senders, record values, the guide or app HTML. A one-line reminder sits in the footer: "Shown: prompts, edit messages, counts and costs. Never email content."
+
 ### 7.12 Avatars (people in emails)
 44px circle (40 on mobile), initials 14–15/600, soft background + dark text pairs: `#DCE9F9/#1F5FB8`, `#FCE3D6/#9A3B12`, `#E9E1FB/#5A33C8`, `#E4F5EA/#1D6B37`. Choose the pair from a hash of the sender's email so it stays stable.
 
@@ -367,6 +387,8 @@ Every signed-in page (`/workspaces…`, `/profile`) lives inside one shell: the 
    - Reconnect banner (under the top bar): glass card, ink text, primary button "Reconnect Gmail".
    - The side panel is a **drawer**: a ghost button in its header slides it closed (width → 0 over 300ms, the app panel takes the space); a secondary "Activity" button appears in the top bar to reopen it. Open by default from 1024px (remembered per browser), closed below 1024px where it floats over the app (`bg-white/95`).
 5. **Profile** (`/profile`, from the account card): centered column (max 640), title-lg "Profile" + "Your name and the Gmail Demux reads." `ink-on-sky`, then two white cards (radius 26, `shadow-panel`, padding 24/28): **Your name** (first + last name fields side by side, both required, primary "Save" (small) on the right, "✓ Saved" `violet-ink` beside it after saving) and **Account** (sign-in email, read-only; "Gmail Demux reads" with a quiet button "Use another account" / "Connect Gmail" / "Reconnect Gmail" that goes through Google and comes back here, and, while a Gmail is connected, a quiet "Disconnect" beside it. Disconnect asks first, inline in the same row: "Disconnect [gmail]? Your workspaces stay but stop updating." with quiet "Cancel" and a `danger` text "Disconnect" button; then the row reads "Not connected"; the read-only trust line).
+
+6. **Admin** (`/admin`, `/admin/users`, `/admin/users/[id]`, `/admin/workspaces/[id]`, `/admin/demo`; §7.14). Overview: title-lg "Usage" + range picker, stat tiles (active users, workspaces, builds / syncs / edits, tokens in, tokens out, cost), four chart cards (daily cost by phase with a "By phase / By model" toggle, tokens in vs out, cost per active user p50 / p95, run failure rate). Users: one table, sorted by cost (30 days). User: header card (email, signed up, last active, Gmail state) + stat tiles + a mail-volume chart + one card per workspace (prompt, counts, runs table, edit messages). Workspace: cost and emails-per-day charts + runs table. Demo inbox: one white card with a textarea "Who is the inbox owner, and what threads do they get?", a thread-count select and the page's primary **Write threads** button; a list of past requests with status; a quiet "Move demo threads to Trash" button.
 
 ---
 

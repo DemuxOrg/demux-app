@@ -28,5 +28,11 @@ Everything goes through the `Makefile` at the repo root: `make up` / `make down`
 ## Generated apps (UI generation)
 See `docs/UI_GENERATION_PLAN.md`. The agent writes a small JSX app composed from the component kit in `app-kit/` (shadcn-style, React + Radix + Recharts). After changing `app-kit/src`, run `make kit` and commit the built `backend/app/agent/kit/` (the shell inlines it; the iframe allows no network). Every global the kit exposes must be documented in `app-kit/src/catalog.md` (the build fails otherwise): it is the agent's reference. During a build the user picks a look, answers optional clarifying questions and picks layouts (`app/services/setup.py`, `frontend/src/components/workspace/BuildFlow.tsx`).
 
+## Admin (/admin)
+- Staff only: `ADMIN_EMAILS` (env) or `users.is_admin`. Every `/api/v1/admin/*` route depends on `get_admin_user` (401 without session, 404 for non-admins, one `admin_audit` row per request).
+- **Privacy:** admin responses carry ids, counts, tokens, costs, statuses, dates, prompts and edit messages only. Never email content, subjects, senders, record values, the guide, app HTML or run summaries. A new response field must be added to `ALLOWED_FIELDS` in `backend/tests/test_admin.py` (the test fails otherwise): review it against this rule first.
+- **Cost metering:** every LLM call goes through `MeteredLLM` (`app/agent/llm.py`), which writes an `llm_calls` row with the prices used; bill calls with `usage_scope(...)`. Run totals are added from the same amounts.
+- **Demo inbox:** `/admin/demo` writes synthetic threads into the `TEST_GMAIL` inbox over IMAP (app password); the only code that writes mail. Never point it at a user's Gmail.
+
 ## Keep it simple
 No new infra (queues, caches, vector DBs) without an explicit decision.
