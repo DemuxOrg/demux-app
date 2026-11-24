@@ -71,6 +71,24 @@ class Settings(BaseSettings):
     # Dev only (ENV=dev): the worker reads this fake mailbox JSON instead of Gmail.
     DEV_FAKE_MAILBOX: str = ""
 
+    # --- Admin (/admin) ---
+    # Comma-separated login emails that may open /admin (users.is_admin also grants it).
+    ADMIN_EMAILS: str = ""
+    # Demo inbox: a test Gmail that /admin fills with synthetic threads over IMAP, using an
+    # app password (Google account > Security > App passwords; needs 2-Step Verification).
+    TEST_GMAIL: str = ""
+    TEST_GMAIL_PASSWORD: str = ""
+    DEMO_IMAP_HOST: str = "imap.gmail.com"
+    DEMO_MODEL: str = ""  # empty: BUILD_MODEL (a Qwen model on the Hugging Face router)
+
+    @property
+    def admin_emails(self) -> set[str]:
+        return {e.strip().lower() for e in self.ADMIN_EMAILS.split(",") if e.strip()}
+
+    @property
+    def demo_inbox_configured(self) -> bool:
+        return bool(self.TEST_GMAIL and self.TEST_GMAIL_PASSWORD)
+
     @property
     def llm_api_key(self) -> str:
         return self.LLM_API_KEY or self.HF_TOKEN

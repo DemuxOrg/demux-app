@@ -50,7 +50,10 @@ def _enum(e: type[enum.Enum], name: str) -> Enum:
 
 class Run(IdMixin, Base):
     __tablename__ = "runs"
-    __table_args__ = (Index("ix_runs_status_created_at", "status", "created_at"),)
+    __table_args__ = (
+        Index("ix_runs_status_created_at", "status", "created_at"),
+        Index("ix_runs_created_at", "created_at"),  # admin overview by date range
+    )
 
     workspace_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
@@ -132,6 +135,10 @@ class Snapshot(IdMixin, Base):
 
 class ProcessedMessage(Base):
     __tablename__ = "processed_messages"
+    # Admin: emails processed per workspace per day.
+    __table_args__ = (
+        Index("ix_processed_messages_workspace_created", "workspace_id", "created_at"),
+    )
 
     workspace_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("workspaces.id", ondelete="CASCADE"), primary_key=True

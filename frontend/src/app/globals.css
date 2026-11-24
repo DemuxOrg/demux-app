@@ -59,6 +59,13 @@
   --color-neutral: #33445c;
   --color-live: #2fb36b;
 
+  /* Admin chart series (theme.md §7.14), fixed order */
+  --color-chart-1: #6a3df0;
+  --color-chart-2: #eb6834;
+  --color-chart-3: #1baf7a;
+  --color-chart-4: #2a78d6;
+  --color-chart-5: #d63a7c;
+
   /* Type */
   --font-sans:
     var(--font-instrument-sans), -apple-system, "Helvetica Neue", Arial,

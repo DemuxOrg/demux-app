@@ -8,6 +8,7 @@ One row per person using Demux. Two independent identities live here:
 - **Gmail connection** (written by the backend's Google OAuth flow): `gmail_email`,
   `google_sub` and the encrypted tokens (Fernet, see app/auth/crypto.py). The tokens
   never leave the backend. The Gmail address can differ from the login email.
+- **Admin** (`is_admin`): may open /admin. ADMIN_EMAILS in the environment also grants it.
 """
 
 from datetime import datetime
@@ -40,5 +41,9 @@ class User(IdMixin, TimestampMixin, Base):
         DateTime(timezone=True), nullable=True
     )
     needs_reconnect: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False, server_default=false()
+    )
+
+    is_admin: Mapped[bool] = mapped_column(
         Boolean, nullable=False, default=False, server_default=false()
     )

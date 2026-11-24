@@ -234,6 +234,14 @@ class FakeMailbox:
     ) -> list[str]:
         return [s.thread_id for s in await self.search(query, max_results, after, before)]
 
+    async def count_received(self, after: datetime, before: datetime) -> int:
+        count = 0
+        for thread in self._threads.values():
+            visible = self._visible(thread)
+            if visible is not None:
+                count += sum(1 for m in visible.messages if after <= m.date < before)
+        return count
+
     async def get_thread(self, thread_id: str) -> Thread:
         thread = self._threads.get(thread_id)
         visible = self._visible(thread) if thread else None

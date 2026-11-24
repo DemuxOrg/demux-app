@@ -58,6 +58,7 @@ async def test_session_cookie_resolves_user(client, session):
         "gmail_email": None,
         "gmail_connected": False,
         "needs_reconnect": False,
+        "is_admin": False,
     }
 
 

@@ -12,6 +12,7 @@ import {
   LogOut,
   Mail,
   UserRound,
+  ChartColumn,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
@@ -121,6 +122,24 @@ export function AccountMenu({ onNavigate }: { onNavigate: () => void }) {
                 className="dmx-nudge text-ink-3"
               />
             </Link>
+            {me.is_admin && (
+              <Link
+                href="/admin"
+                onClick={() => {
+                  setOpen(false);
+                  onNavigate();
+                }}
+                className="group flex h-11 items-center gap-3 rounded-sm px-3 text-sm font-medium text-ink-2 transition-colors duration-150 ease-dmx hover:bg-surface-2 hover:text-ink"
+              >
+                <ChartColumn size={16} aria-hidden />
+                <span className="flex-1">Admin</span>
+                <ChevronRight
+                  size={16}
+                  aria-hidden
+                  className="dmx-nudge text-ink-3"
+                />
+              </Link>
+            )}
             <button
               type="button"
               onClick={() => {

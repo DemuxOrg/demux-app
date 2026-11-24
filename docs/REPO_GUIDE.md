@@ -115,6 +115,11 @@ HTTP request
 | `models/auth.py` | Tables written by better-auth (sessions, password accounts, email codes); owned by Alembic. |
 | `api/routes/health.py` | `GET /api/v1/health` — runs `SELECT 1`, returns 503 if the DB is down. |
 | `api/routes/workspaces.py` | `GET/POST /api/v1/workspaces`, `GET/DELETE /api/v1/workspaces/{id}`. |
+| `api/routes/admin.py`, `services/admin.py`, `schemas/admin.py` | `/api/v1/admin`: usage overview, users, user and workspace detail (staff only, see CLAUDE.md § Admin). |
+| `models/usage.py` | `llm_calls` (one row per LLM call, priced at call time) and `mailbox_daily_stats` (messages received per user per day, counted from ids). |
+| `models/admin.py`, `services/admin_audit.py` | `admin_audit` (who viewed what) and `demo_seeds`. |
+| `services/demo.py`, `mail/demo_inbox.py` | Demo inbox: the LLM writes synthetic threads for a persona, IMAP appends them to `TEST_GMAIL`. Run by the worker. |
+| `services/mailbox_stats.py` | Which per-day mail counts the worker still has to take. |
 | `pipeline/` | **Empty on purpose.** Future home of the Gmail → LLM extraction code (see its README). |
 
 ### `tests/`
