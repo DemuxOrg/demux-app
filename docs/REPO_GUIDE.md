@@ -177,7 +177,7 @@ curl -X POST localhost:8000/api/v1/workspaces \
 | `src/app/(app)/profile/page.tsx` + `components/profile/` | `/profile` — edit first and last name (`PATCH /me`), see the sign-in email, connect or switch Gmail. |
 | `src/lib/gmail.ts` | Sending the user to Google to connect Gmail and reading the result when they come back. |
 | `src/app/(app)/workspaces/[id]/page.tsx` | `/workspaces/<id>` — server wrapper that reads the id and renders the client component below. |
-| `src/components/WorkspaceDetail.tsx` + `components/workspace/` | Workspace view: build progress, the generated app in a sandboxed iframe, the Activity / Chat drawer. |
+| `src/components/WorkspaceDetail.tsx` + `components/workspace/` | Workspace view: build progress, the generated app in a sandboxed iframe, the chat drawer. |
 | `src/components/ui/`, `brand/`, `motion/` | Buttons, fields, spinner; the logo; calm view transitions. |
 | `src/lib/api.ts` | Typed `fetch` wrapper (`api.listWorkspaces()`, …). Sends cookies; throws `ApiError` built from the backend error format. |
 | `src/lib/api-types.ts` | **Generated** by `make gen-api` from the OpenAPI schema. Never edit by hand. |

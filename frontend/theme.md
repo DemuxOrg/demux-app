@@ -240,7 +240,7 @@ Tailwind recipes assume the tokens in §10.
 | Variant | Spec | Tailwind |
 |---|---|---|
 | **Primary** (Build, Send, Join) | height 48px (height 44px in panels), px 20–22, radius full, `violet` bg, white 16px/500, optional trailing arrow 18px | `inline-flex items-center gap-2 h-12 px-[22px] rounded-full bg-violet text-white text-base font-medium hover:bg-violet-hover` |
-| **Secondary on sky** (Sync now, Undo) | height 44px, px 16, radius full, `glass-strong` bg, ink 14px/500, leading icon 16px | `inline-flex items-center gap-2 h-11 px-4 rounded-full bg-white/60 text-ink text-sm font-medium hover:bg-white/90` |
+| **Secondary on sky** (Undo, Chat) | height 44px, px 16, radius full, `glass-strong` bg, ink 14px/500, leading icon 16px | `inline-flex items-center gap-2 h-11 px-4 rounded-full bg-white/60 text-ink text-sm font-medium hover:bg-white/90` |
 | **Icon button on sky** (back, more, account) | 44 × 44px circle, `glass-strong`, icon 18–20px ink, `aria-label` required | `grid place-items-center size-11 rounded-full bg-white/60 hover:bg-white/90` |
 | **Ghost icon** (rename) | 44 × 44px circle, transparent, icon 16px `ink-on-sky` | `grid place-items-center size-11 rounded-full hover:bg-white/60` |
 | **Send (square)** | 44 × 44px, radius 14, violet, white arrow-up | `grid place-items-center size-11 rounded-[14px] bg-violet` |
@@ -288,6 +288,7 @@ height 30px, px 12, radius full, 13px/500, 7px dot.
 - **Board column:** bg `surface-2`, radius 16, padding 12, gap 8. Header 13/500 `ink-2` + dot + count in `ink-3`.
 
 ### 7.9 Activity item (side panel)
+*Hidden for now: the side panel shows Chat only (§8.4). Kept for when Activity returns.*
 Vertical list with dividers `line-on-glass`, padding 14px 0:
 1. Time, 12px `ink-2` (newest item gets a 6px violet dot)
 2. Record title, 15/600
@@ -329,7 +330,7 @@ One card takes the user from Build to a ready workspace. It asks for up to three
 - `prefers-reduced-motion`: no `breathe`, `flow` or `reveal-text`; segments fill without animation.
 
 ### 7.11 Top bar (app)
-Padding 18px top, sits on sky (no bar background). Left padding is `var(--dmx-gutter)`: 80px while the sidebar is closed (room for its open button, §7.13), 24px while it is open beside the page; the padding eases with the sidebar (360ms `ease-dmx-out`). Workspace page: workspace name (title-sm) + rename (ghost icon) or status chip on the left; sync status, Sync now, Undo, Activity, More (⋯) on the right. No back button and no avatar: workspaces and the account live in the sidebar. The create and profile pages have no top bar.
+Padding 18px top, sits on sky (no bar background). Left padding is `var(--dmx-gutter)`: 80px while the sidebar is closed (room for its open button, §7.13), 24px while it is open beside the page; the padding eases with the sidebar (360ms `ease-dmx-out`). Workspace page: workspace name (title-sm) + rename (ghost icon) or status chip on the left; sync status, Undo, Chat, More (⋯: Rename, Delete) on the right. No sync button: workspaces sync on their own (every few minutes, and the page refreshes when it comes back into view). No workspace details are shown to users. No back button and no avatar: workspaces and the account live in the sidebar. The create and profile pages have no top bar.
 
 ### 7.13 App sidebar (navigation)
 The only navigation in the signed-in app. Notion-like: from 768px it is a column beside the page and **pushes** it (the page shrinks while it is open and takes the full width when it closes); below 768px it floats over the page with a scrim. Open by default from 768px, closed below; the user's toggle then holds while they move between pages (not across reloads).
@@ -339,7 +340,7 @@ The only navigation in the signed-in app. Notion-like: from 768px it is a column
 - **Below 768px:** scrim `rgb(12 26 46 / .18)` (no blur: the sidebar has its own view-transition name, which makes it a backdrop root); a click on it, Escape, or choosing a page closes the sidebar. From 768px choosing a page keeps it open.
 - **Click outside closes it** at every width: a press anywhere outside the panel (the page, the top bar, inside a workspace's app) closes an open sidebar; the open button brings it back.
 - **Contents, top to bottom:**
-  1. Header row (44px): lockup (28px mark, "Demux", links home) on the left, close button on the right.
+  1. Header row (44px): lockup (28px mark, "Demux", opens Create: `/workspaces/new`) on the left, close button on the right.
   2. **Create workspace** row (44px, radius full, `plus` in a 28px `violet-soft` circle, 15/500 ink). Hidden once both workspaces are used; the list then says "You're using both workspaces. Delete one to build another."
   3. **Workspaces** disclosure: header button 13/500 `ink-3` with a `chevron-down` that turns −90° when collapsed, "1 of 2" on the right (tabular). Rows: 44px, radius full, 7px dot (live green when ready, pulsing violet while building, danger when failed) + name 14/500 truncated, "Building" / "Failed" 12px on the right. Selected row: `violet-soft` bg, `violet-ink` text. Empty: "No workspaces yet" 13px `ink-3`.
   4. Footer, pinned to the bottom with a `line-soft` divider: the **account row**.
@@ -380,12 +381,12 @@ Every signed-in page (`/workspaces…`, `/profile`) lives inside one shell: the 
 0. **Login** (`/login`): sky + lockup top left. Centered white card (max 440, radius 30, `shadow-float`): mark 46px, title-lg "Sign in to Demux" / "Create your account", first name + last name side by side (sign-up only, both required; they become "Hello, [first name]"), email + password fields (labels 13/500 `ink-2`, inputs 48px, radius 12), full-width primary, a text link to switch. Then **Check your email**: 6 code boxes (56px tall, radius 12, one real `<input autocomplete="one-time-code">`), primary "Verify", "Resend code" (30 s cooldown) and "Use a different email". Trust line under the card.
 0. **Landing** (`/workspaces`): opens the workspace used last in this browser, else the newest one, else **Create**.
 1. **Create, connect** (`/workspaces/new` while no Gmail is connected or it needs a reconnect): centered white card (max 520, radius 30, `shadow-float`): breathing mark 56px, title-lg "Connect your Gmail", one sentence, primary "Connect with Google →", trust line. Google's errors show in the card.
-2. **Create, prompt** (`/workspaces/new` once Gmail is connected): centered, top third: title-xl "Hello, [first name]" (the first name from sign-up or the profile page; just "Hello" for older accounts without one), then "What do you want to track?" 22/500 `ink-on-sky`, the prompt card (max 760), the read-only line with a lock icon. With both workspaces used, the prompt is disabled and the limit line replaces the read-only line. Build opens the new workspace in the same area.
+2. **Create, prompt** (`/workspaces/new` once Gmail is connected): centered, top third: title-xl "Hello, [first name]" (the first name from sign-up or the profile page; just "Hello" for older accounts without one), then "What do you want to track?" 22/500 `ink-on-sky`, the prompt card (max 760), the read-only line with a lock icon. With both workspaces used, the prompt is disabled and a limit notice replaces the read-only line: a white card (max 760, radius 20, `shadow-panel`, padding 16/20) with "Workspace limit reached" 15/600 ink and "You can have 2 workspaces. Delete one to create a new one." 14 `ink-2`. Build opens the new workspace in the same area.
 3. **Workspace, building** (`/workspaces/[id]`, status `building`): sky + top bar (name, Building chip). Centered build flow card (§7.10). Nothing else.
-4. **Result** (`/workspaces/[id]`, status `ready`): sky + top bar (§7.11). Body = row, gap 16, padding 0 16 16, full viewport height: **app panel** (white, radius 26, `shadow-panel`, flex 999 1 640px; the sandboxed iframe lives here) + **side panel** (glass, radius 26, flex 1 1 320px, max 380px) with Activity | Chat tabs, the activity list, and the ask input pinned to the bottom.
+4. **Result** (`/workspaces/[id]`, status `ready`): sky + top bar (§7.11). Body = row, gap 16, padding 0 16 16, full viewport height: **app panel** (white, radius 26, `shadow-panel`, flex 999 1 640px; the sandboxed iframe lives here) + **side panel** (glass, radius 26, flex 1 1 320px, max 380px) with the chat and the ask input pinned to the bottom (no tabs: Activity is hidden for now).
    - Display error banner (inside the app panel, top): bg `#FDECEA`, text `#A8321F`, "This workspace hit a display error", violet "Fix it" button.
    - Reconnect banner (under the top bar): glass card, ink text, primary button "Reconnect Gmail".
-   - The side panel is a **drawer**: a ghost button in its header slides it closed (width → 0 over 300ms, the app panel takes the space); a secondary "Activity" button appears in the top bar to reopen it. Open by default from 1024px (remembered per browser), closed below 1024px where it floats over the app (`bg-white/95`).
+   - The side panel is a **drawer**: a ghost button in its header slides it closed (width → 0 over 300ms, the app panel takes the space); a secondary "Chat" button appears in the top bar to reopen it. Open by default from 1024px (remembered per browser), closed below 1024px where it floats over the app (`bg-white/95`).
 5. **Profile** (`/profile`, from the account card): centered column (max 640), title-lg "Profile" + "Your name and the Gmail Demux reads." `ink-on-sky`, then two white cards (radius 26, `shadow-panel`, padding 24/28): **Your name** (first + last name fields side by side, both required, primary "Save" (small) on the right, "✓ Saved" `violet-ink` beside it after saving) and **Account** (sign-in email, read-only; "Gmail Demux reads" with a quiet button "Use another account" / "Connect Gmail" / "Reconnect Gmail" that goes through Google and comes back here, and, while a Gmail is connected, a quiet "Disconnect" beside it. Disconnect asks first, inline in the same row: "Disconnect [gmail]? Your workspaces stay but stop updating." with quiet "Cancel" and a `danger` text "Disconnect" button; then the row reads "Not connected"; the read-only trust line).
 
 6. **Admin** (`/admin`, `/admin/users`, `/admin/users/[id]`, `/admin/workspaces/[id]`, `/admin/demo`; §7.14). Overview: title-lg "Usage" + range picker, stat tiles (active users, workspaces, builds / syncs / edits, tokens in, tokens out, cost), four chart cards (daily cost by phase with a "By phase / By model" toggle, tokens in vs out, cost per active user p50 / p95, run failure rate). Users: one table, sorted by cost (30 days). User: header card (email, signed up, last active, Gmail state) + stat tiles + a mail-volume chart + one card per workspace (prompt, counts, runs table, edit messages). Workspace: cost and emails-per-day charts + runs table. Demo inbox: one white card with a textarea "Who is the inbox owner, and what threads do they get?", a thread-count select and the page's primary **Write threads** button; a list of past requests with status; a quiet "Move demo threads to Trash" button.
@@ -645,7 +646,7 @@ Inline stroke SVG or `lucide-react`. Stroke 2px (2.2–2.4 on filled buttons), r
 | Primary action | Build |
 | Trust line | Read-only. Demux never sends or changes an email. |
 | Workspace list | Workspaces · 1 of 2 |
-| Limit reached | You're using both workspaces. Delete one to build another. |
+| Limit reached | Workspace limit reached · You can have 2 workspaces. Delete one to create a new one. (sidebar: You're using both workspaces. Delete one to build another.) |
 | Build steps | Your look · A few questions · Your layout · Reading your emails · Building your workspace |
 | Step counter | Step 3 of 5 · Your layout |
 | Step 1 | How should your workspace look? · Violet · Ocean · Teal · Rose · Graphite · This sets the colours of your workspace. · Continue |
@@ -657,7 +658,7 @@ Inline stroke SVG or `lucide-react`. Stroke 2px (2.2–2.4 on filled buttons), r
 | No answer in time | We went ahead with the recommended answers. |
 | Build failed | We couldn't build this workspace. [reason] · Try again |
 | Sync status | Synced 3 min ago · Syncing… |
-| Actions | Sync now · Undo · Ask for a change… |
+| Actions | Undo · Chat · Ask for a change… |
 | Record updated | Updated 2 min ago |
 | Live label | Live from your inbox |
 | Display error | This workspace hit a display error · Fix it |
