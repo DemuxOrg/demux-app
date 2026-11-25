@@ -105,6 +105,24 @@ async def test_gmail_connection_belongs_to_one_account(session):
     assert a.id != b.id and a.gmail_email == b.gmail_email == "shared@gmail.com"
 
 
+async def test_switching_gmail_never_keeps_the_old_refresh_token(session):
+    user, _ = await _signed_in_user(session, "switch@x.example")
+    later = datetime.now(UTC) + timedelta(hours=1)
+    await google.link_gmail(
+        session, user, "sub-a", "a@gmail.com", google.TokenSet("a", "ref-a", later)
+    )
+    # Same Google account again without a refresh token: the stored one stays valid.
+    await google.link_gmail(
+        session, user, "sub-a", "a@gmail.com", google.TokenSet("a2", None, later)
+    )
+    assert decrypt(user.refresh_token_enc) == "ref-a"
+    # Another Google account without a refresh token: account A's token must go.
+    await google.link_gmail(
+        session, user, "sub-b", "b@gmail.com", google.TokenSet("b", None, later)
+    )
+    assert user.gmail_email == "b@gmail.com" and user.refresh_token_enc is None
+
+
 async def test_disconnect_gmail_clears_only_this_account(client, session):
     tokens = google.TokenSet("access", "refresh", datetime.now(UTC) + timedelta(hours=1))
     a, cookie = await _signed_in_user(session, "a@x.example")

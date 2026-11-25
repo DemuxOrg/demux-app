@@ -118,7 +118,10 @@ class GmailMailbox:
                         await asyncio.sleep(2 * (attempt + 1))
                         continue
                     raise ReconnectRequired("gmail access denied (scope missing?)")
-                resp.raise_for_status()
+                if resp.status_code >= 400:
+                    # e.g. 400 for a query Gmail cannot parse: the caller reports it to
+                    # the agent instead of failing the whole run.
+                    raise MailboxError(f"Gmail rejected the request (HTTP {resp.status_code})")
                 return resp.json()
             raise MailboxError(f"Gmail request failed ({path.split('/')[1]})")
 
