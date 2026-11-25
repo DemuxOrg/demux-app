@@ -1,8 +1,23 @@
 id: 03-volunteer-rota-five-shifts
 prompt: "Keep a list of my volunteer shifts at the food bank - the date, time, what I'm doing and where."
+relevant:
+  - {label: "15 Aug sorting", threads: [e4d0b8c5fa12ec31]}
+  - {label: "29 Aug sorting", threads: [40addc5b17776042, ead1bfaf7889a921]}
+  - {label: "12 Sep sorting", threads: [c6ac1c117bda9941]}
+  - {label: "26 Sep sorting (cancelled)", threads: [8f5d9264e821545e]}
+  - {label: "3 Oct sorting (covered for Marta)", threads: [13b71992688fe57b]}
+  - {label: "10 Oct sorting", threads: [44b6f11008141ad5, 3b3333f8ee28335c]}
+  - {label: "24 Oct sorting", threads: [779a2ff4c5bda881, 9ac4408d56b49121]}
+  - {label: "November rota (five shifts)", threads: [0661a73dfe0e1689, ac448b6f757dac00, e4bb448733f42093]}
+  - {label: "5 Dec Christmas market (sync-1)", threads: [ab27f1d4c3bca2a9]}
 steps:
 - name: build
   now: 2026-10-30T09:00:00Z
+  asks:
+    - {ask: "the date", record: ["Eastgate"], value_any: ["2026-11-11", "11 Nov", "Nov 11", "11/11", "November 11", "11 November"], label_any: ["date"]}
+    - {ask: "the time", record: ["Eastgate"], value_any: ["17:30", "5:30"], label_any: ["time"]}
+    - {ask: "what I'm doing", record: ["Eastgate"], value_any: ["van", "pantry"], label_any: ["role", "task", "activity"]}
+    - {ask: "where", record: ["intake"], value_any: ["Community Centre", "main hall"], label_any: ["location", "venue", "place", "where"]}
   expect:
     - {kind: unique, all_of: ["intake"]}
     - {kind: unique, all_of: ["Eastgate"]}

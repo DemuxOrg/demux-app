@@ -17,12 +17,14 @@ const TABS = [
   { href: "/admin", label: "Overview" },
   { href: "/admin/users", label: "Users" },
   { href: "/admin/demo", label: "Demo inbox" },
+  { href: "/admin/evals", label: "Evals" },
 ];
 
 function activeTab(path: string): string {
   if (path.startsWith("/admin/users") || path.startsWith("/admin/workspaces"))
     return "/admin/users";
   if (path.startsWith("/admin/demo")) return "/admin/demo";
+  if (path.startsWith("/admin/evals")) return "/admin/evals";
   return "/admin";
 }
 

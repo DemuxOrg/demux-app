@@ -1,0 +1,35 @@
+id: 11-appointments-health-or-everything
+prompt: "Keep track of my appointments."
+# Vague: health appointments (dentist, blood test, physio, optician, GP) sit next to a
+# haircut, a car service, a parents' evening and work meeting invites. The build should
+# ask which count. The scripted user wants health appointments only.
+clarify:
+  should_ask: true
+  topic_any: ["health", "medical", "healthcare", "doctor", "doctors", "dentist", "work", "meeting", "meetings", "personal", "haircut", "car", "school"]
+  answer_any: ["health", "medical", "healthcare", "doctor", "doctors"]
+  avoid_any: ["both", "all", "everything", "include", "including", "personal", "work and", "and work"]
+relevant:
+  - {label: "Dental check-up 3 Dec", threads: [f9f8efb85373cd2b]}
+  - {label: "Blood test (moved to 26 Nov)", threads: [743b6541ac0f52c8, 8c368323e76a2f71]}
+  - {label: "GP Dr Hassan 13 Oct (past)", threads: [d8cabe02f5629ec8]}
+  - {label: "Physio sessions 20 + 27 Nov", threads: [d303b1ebc3bd9ff8]}
+  - {label: "Eye test 9 Dec", threads: [62ceedbda8f1ca65]}
+steps:
+- name: build
+  now: 2026-11-18T09:00:00Z
+  asks:
+    - {ask: "what the appointment is (implied)", record: ["ClearView"], value_any: ["eye test"], label_any: ["appointment", "type"]}
+    - {ask: "the date (implied)", record: ["ClearView"], value_any: ["2026-12-09", "9 Dec", "Dec 9", "09/12", "12/09", "9 December", "December 9"], label_any: ["date", "when"]}
+    - {ask: "the time (implied)", record: ["ClearView"], value_any: ["14:15", "2:15"], label_any: ["time"]}
+    - {ask: "where (implied)", record: ["blood"], value_any: ["Willow"], label_any: ["location", "where", "place", "clinic"]}
+  expect:
+    - {kind: value, find: ["Brightsmile"], any_of: ["10:30"]}
+    - {kind: unique, all_of: ["blood"]}
+    - {kind: value, find: ["blood"], any_of: ["2026-11-26", "26 Nov", "Nov 26", "26/11", "11/26", "26 November", "November 26"]}
+    - {kind: exists, all_of: ["ClearView"]}
+    - {kind: exists, all_of: ["MoveWell"]}
+    - {kind: exists, all_of: ["Hassan"]}
+    - {kind: absent, any_of: ["Shear Studio", "AutoCare", "Oakfield", "Q4 planning", "1:1"]}
+    - {kind: absent, any_of: ["Wellness Weekly", "FC-220913", "Ostro"]}
+    - {kind: count, min: 5, max: 7}
+    - {kind: app_ok}

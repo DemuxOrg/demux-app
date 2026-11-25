@@ -1,8 +1,22 @@
 id: 06-job-hunt-missing-salary
 prompt: "Track the jobs I've applied for: the company, the role, what stage I'm at, and the salary range for each one."
+relevant:
+  - {label: "Brightmoor Bank graduate programme", threads: [62556f78897c8b1e, 4d68125bf4ba72ea, 0187868cb1d1ba3c, f0ab1ff7e162bff5]}
+  - {label: "Tidewell Retail (filled)", threads: [affd23fac9f7ac4f, e3c8553c219d3dc1]}
+  - {label: "Fernhill Analytics", threads: [0b0d530114531255, 692a6682514739be, f457f5c9576114eb, 869ab44041315ac1, 51d1b148e9afe206, b2d405b42ced3016, 5c058570c26f76e5]}
+  - {label: "Corvid Insurance (rejected)", threads: [c4b353aeb7bfff6a, c9c77191df326697]}
+  - {label: "Lumora Health", threads: [a1761f47ec7aaa06, 30bf39dfcdf5c004]}
+  - {label: "Pelican Logistics", threads: [9cd75b29f6f65623, 5bbe3fb2b902ca5d]}
+  - {label: "Quillon Games", threads: [e0845e3744ff4691]}
+  - {label: "Saltmarsh Energy", threads: [889b62288f29bb01]}
 steps:
 - name: build
   now: 2026-10-26T09:00:00Z
+  asks:
+    - {ask: "the company", record: ["Fernhill"], value_any: ["Fernhill"], label_any: ["company", "employer"]}
+    - {ask: "the role", record: ["Fernhill"], value_any: ["Data Analyst"], label_any: ["role", "position", "job title"]}
+    - {ask: "what stage I'm at", record: ["Corvid"], value_any: ["rejected", "declined", "unsuccessful", "closed"], label_any: ["stage", "status"]}
+    - {ask: "the salary range", label_any: ["salary"]}
   expect:
     - {kind: unique, all_of: ["Fernhill"]}
     - {kind: value, find: ["Fernhill"], any_of: ["interview", "final", "round", "onsite"]}

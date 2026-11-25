@@ -145,3 +145,170 @@ def source_validity(data: dict[str, Any], mailbox_ids: set[str]) -> tuple[int, i
         if srcs and all(s.get("message_id") in mailbox_ids for s in srcs):
             ok += 1
     return ok, total
+
+
+# ------------------------------------------------------------------ the Demux score
+#
+# One number per run, 0-100: the mean of every scenario's score (each scenario counts the
+# same, whatever its number of checks). A scenario's score is a weighted mean of the parts
+# it defines; a part it does not define (no relevant threads, no asks) is left out and the
+# other weights are scaled up. Guardrails (noise, collateral changes, injection, the app
+# rendering) are reported next to the score, never blended into it.
+
+WEIGHTS = {"retrieval": 0.35, "coverage": 0.35, "correctness": 0.20, "clarification": 0.10}
+PARTS = tuple(WEIGHTS)
+CORRECTNESS_KINDS = {"exists", "unique", "value", "count", "null_or_missing", "build_fails"}
+CORRECTNESS_KINDS |= {"app_shows"}
+GUARDRAIL_KINDS = {"absent", "unchanged_except", "app_ok"}
+
+
+def _mean(values: list[float]) -> float | None:
+    return sum(values) / len(values) if values else None
+
+
+def cited_threads(data: dict[str, Any]) -> set[str]:
+    return {
+        str(s.get("thread_id"))
+        for _, _, rec in records(data)
+        for s in rec.get("_sources", [])
+        if isinstance(s, dict) and s.get("thread_id")
+    }
+
+
+def retrieval(
+    groups: list[dict[str, Any]], data: dict[str, Any], visible: set[str]
+) -> dict[str, Any]:
+    """Email recall: the share of relevant groups (one per expected record, listing every
+    thread about it) with at least one thread cited as a record's source. Groups whose
+    threads are not visible yet (dated after the step) are skipped. Precision is reported,
+    not scored: citing an extra thread costs nothing."""
+    cited = cited_threads(data)
+    rows = []
+    for g in groups:
+        tids = [str(t) for t in g["threads"]]
+        if not visible & set(tids):
+            continue
+        rows.append(
+            {"label": str(g["label"]), "thread_ids": tids, "recalled": bool(cited & set(tids))}
+        )
+    relevant = {str(t) for g in groups for t in g["threads"]}
+    hits = sum(r["recalled"] for r in rows)
+    return {
+        "recall": hits / len(rows) if rows else None,
+        "recalled": hits,
+        "total": len(rows),
+        "groups": rows,
+        "cited_threads": len(cited),
+        "cited_relevant": len(cited & relevant),
+    }
+
+
+def evaluate_ask(
+    spec: dict[str, Any], data: dict[str, Any], app_text: str | None
+) -> dict[str, Any]:
+    """Request coverage for one thing the prompt asks for: is it in the data (a value on a
+    known record) and on screen (the value, or a label naming it)? Half a point each. An
+    ask without `record` (nothing in the mail to fill it) only checks the screen."""
+    values = [str(v) for v in spec.get("value_any") or []]
+    labels = [str(v) for v in spec.get("label_any") or []]
+    text = (app_text or "").lower()
+    in_app = any(has(text, t) for t in [*values, *labels])
+    if not spec.get("record"):
+        return {"ask": spec["ask"], "in_data": None, "in_app": in_app, "score": float(in_app),
+                "detail": "" if in_app else "not on screen"}  # fmt: skip
+    hits = matching(data, spec["record"])
+    in_data = bool(hits) and (
+        not values or any(any(has(record_text(r[2]), v) for v in values) for r in hits)
+    )
+    detail = []
+    if not hits:
+        detail.append("no record matches " + ", ".join(spec["record"]))
+    elif not in_data:
+        detail.append("value missing: " + record_text(hits[0][2])[:160])
+    if not in_app:
+        detail.append("not on screen")
+    return {
+        "ask": spec["ask"],
+        "in_data": in_data,
+        "in_app": in_app,
+        "score": (in_data + in_app) / 2,
+        "detail": "; ".join(detail),
+    }
+
+
+def simulated_answers(spec: dict[str, Any], questions: list[dict[str, Any]]) -> dict[str, str]:
+    """The scripted user: for each question, the first option naming one of `answer_any`
+    and none of `avoid_any` ("both", "all"...). A question with no such option stays
+    unanswered (the agent's recommendation is used)."""
+    tokens = [str(t) for t in spec.get("answer_any") or []]
+    avoid = [str(t) for t in spec.get("avoid_any") or []]
+    out = {}
+    for q in questions:
+        for option in q.get("options") or []:
+            text = str(option).lower()
+            if any(has(text, t) for t in tokens) and not any(has(text, t) for t in avoid):
+                out[q["id"]] = str(option)
+                break
+    return out
+
+
+def clarification(spec: dict[str, Any], questions: list[dict[str, Any]]) -> dict[str, Any]:
+    """Did the build ask when it should, and only then? A clear prompt scores 1 when no
+    question is asked. A vague one scores 0.5 for asking and 0.5 when a question or its
+    options name the real ambiguity (`topic_any`)."""
+    expected = bool(spec.get("should_ask"))
+    asked = bool(questions)
+    on_topic = None
+    if not expected:
+        score = 0.0 if asked else 1.0
+    else:
+        text = " ".join(
+            f"{q.get('question', '')} {' '.join(map(str, q.get('options') or []))}"
+            for q in questions
+        ).lower()
+        on_topic = asked and any(has(text, str(t)) for t in spec.get("topic_any") or [])
+        score = 0.5 * asked + 0.5 * on_topic
+    return {"expected": expected, "asked": asked, "on_topic": on_topic, "score": score}
+
+
+def scenario_parts(result: dict[str, Any]) -> dict[str, float | None]:
+    ret = result.get("retrieval") or {}
+    correctness = [c["passed"] for c in result["checks"] if c["kind"] in CORRECTNESS_KINDS]
+    clar = result.get("clarify")
+    return {
+        "retrieval": ret.get("recall"),
+        "coverage": _mean([a["score"] for a in result.get("asks") or []]),
+        "correctness": _mean([float(x) for x in correctness]),
+        "clarification": clar["score"] if clar else None,
+    }
+
+
+def weighted(parts: dict[str, float | None]) -> float:
+    present = {k: v for k, v in parts.items() if v is not None}
+    total = sum(WEIGHTS[k] for k in present)
+    return sum(WEIGHTS[k] * v for k, v in present.items()) / total if total else 0.0
+
+
+def demux_score(results: list[dict[str, Any]]) -> dict[str, Any]:
+    """Aggregate scenario results (all repeats) into the run's score, 0-100. `spread` is the
+    standard deviation of the per-repeat scores: a change smaller than it is noise."""
+    if not results:
+        return {"score": None, "spread": None, "parts": {k: None for k in PARTS}, "repeats": []}
+    by_repeat: dict[int, list[float]] = {}
+    for r in results:
+        by_repeat.setdefault(int(r.get("repeat", 1)), []).append(r["score"])
+    per_repeat = [sum(v) / len(v) for _, v in sorted(by_repeat.items())]
+    spread = None
+    if len(per_repeat) > 1:
+        m = sum(per_repeat) / len(per_repeat)
+        spread = (sum((x - m) ** 2 for x in per_repeat) / (len(per_repeat) - 1)) ** 0.5
+    parts = {}
+    for k in PARTS:
+        v = _mean([r["parts"][k] for r in results if r["parts"].get(k) is not None])
+        parts[k] = None if v is None else round(100 * v, 1)
+    return {
+        "score": round(100 * sum(r["score"] for r in results) / len(results), 1),
+        "spread": None if spread is None else round(100 * spread, 1),
+        "parts": parts,
+        "repeats": [round(100 * x, 1) for x in per_repeat],
+    }

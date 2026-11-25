@@ -1,17 +1,36 @@
 id: 04-client-board-stages
 prompt: "I'm a freelance brand designer. I'd love to see my client conversations laid out like a board, so I can tell at a glance who has just enquired, who I've sent a quote to, who's gone quiet and who has said yes."
+relevant:
+  - {label: "Sage Green (Grace Mwangi)", threads: [760328ce5d108419]}
+  - {label: "Kite Analytics (Ravi)", threads: [3a7b730abc4d0b84, d12b8172dffa04be]}
+  - {label: "Oliver Grant cafe", threads: [30e092375317b716]}
+  - {label: "Haddad Legal", threads: [4d7470f0992609c6, 464761fa308ff276]}
+  - {label: "Lindqvist Brewing", threads: [92731bcf34d4b748, bae10dbe0eb1052d]}
+  - {label: "Bloom & Branch", threads: [42046fb4d2ec0219]}
+  - {label: "Marini Foods", threads: [ec7aa1217abd6b9a, 851fdce132955190]}
+  - {label: "Wild Thistle (Isla Brennan)", threads: [c1a40afc3a3eca06, 5cbe66c3c0ea8133]}
+  - {label: "Pereira Architects", threads: [9435daaad81051ea, 6c58b219105be62d]}
+  - {label: "Reed & Sons", threads: [05259a2afb053e7e, 10378a2ac5ae33e4]}
+  - {label: "Tanaka ceramics", threads: [749e6279d45be619, 937fea7e14ed0ef5]}
+  - {label: "Ben Achterberg poster", threads: [83169f0ea04c626d, f1633d5f25a6a124]}
+  - {label: "Wright Fit", threads: [695d0c6e6da62a9b, b1c66179c696968f]}
+  - {label: "Osei Bakes (sync-2)", threads: [2cfb817974c33ea6]}
 steps:
 - name: build
   now: 2026-10-16T09:00:00Z
+  asks:
+    - {ask: "who the client is", record: ["Wright"], value_any: ["Wright Fit", "Leon"], label_any: ["client"]}
+    - {ask: "the stage of each", record: ["Tanaka"], value_any: ["won", "signed", "accepted", "agreed", "booked", "confirmed", "said yes", "yes"], label_any: ["stage", "status"]}
+    - {ask: "laid out like a board", label_any: ["enquiry", "enquired", "new enquiry", "quoted", "quote sent", "gone quiet", "quiet", "said yes"]}
   expect:
     - {kind: unique, all_of: ["Tanaka"]}
     - {kind: value, find: ["Wright"], any_of: ["won", "signed", "accepted", "agreed", "booked", "confirmed", "active", "in progress", "go ahead", "approved", "hired", "paid"]}
     - {kind: value, find: ["Tanaka"], any_of: ["won", "signed", "accepted", "agreed", "booked", "confirmed", "active", "in progress", "go ahead", "approved", "hired", "paid"]}
     - {kind: value, find: ["Wild Thistle"], any_of: ["won", "signed", "accepted", "agreed", "booked", "confirmed", "active", "in progress", "go ahead", "approved", "hired", "paid"]}
     - {kind: value, find: ["Lindqvist"], any_of: ["lost", "declined", "rejected", "closed", "another studio", "not proceeding", "dead", "no go", "passed", "went elsewhere"]}
-    - {kind: value, find: ["Reed", "Sons"], any_of: ["quote", "proposal", "sent", "waiting", "pending", "quiet", "negotiat", "follow", "awaiting", "considering", "deciding"]}
-    - {kind: value, find: ["Haddad"], any_of: ["quote", "proposal", "sent", "waiting", "pending", "quiet", "negotiat", "follow", "awaiting", "considering", "deciding"]}
-    - {kind: value, find: ["Pereira"], any_of: ["enquir", "inquir", "lead", "new", "call", "contact", "meeting", "discovery", "intro", "first"]}
+    - {kind: value, find: ["Reed", "Sons"], any_of: ["quote", "proposal", "sent", "waiting", "pending", "quiet", "negotiating", "negotiation", "follow", "awaiting", "considering", "deciding"]}
+    - {kind: value, find: ["Haddad"], any_of: ["quote", "proposal", "sent", "waiting", "pending", "quiet", "negotiating", "negotiation", "follow", "awaiting", "considering", "deciding"]}
+    - {kind: value, find: ["Pereira"], any_of: ["enquiry", "enquired", "inquiry", "inquired", "lead", "new", "call", "contact", "meeting", "discovery", "intro", "first"]}
     - {kind: unique, all_of: ["Reed", "Sons"]}
     - {kind: unique, all_of: ["Marini"]}
     - {kind: absent, any_of: ["StyleBarn", "Typeface Weekly", "DevSummit", "Cloudlane", "Dentist"]}
@@ -30,7 +49,7 @@ steps:
   now: 2026-10-30T09:00:00Z
   expect:
     - {kind: unique, all_of: ["Osei"]}
-    - {kind: value, find: ["Osei"], any_of: ["enquir", "inquir", "lead", "new", "call", "contact", "meeting", "discovery", "intro", "first"]}
+    - {kind: value, find: ["Osei"], any_of: ["enquiry", "enquired", "inquiry", "inquired", "lead", "new", "call", "contact", "meeting", "discovery", "intro", "first"]}
     - {kind: unchanged_except, find: [["Osei"]]}
     - {kind: absent, any_of: ["Typeface Weekly", "variable fonts"]}
     - {kind: count, min: 13, max: 17}

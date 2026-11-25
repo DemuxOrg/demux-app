@@ -1,0 +1,37 @@
+id: 10-orders-shop-or-purchases
+prompt: "Track my orders."
+# Vague: the owner runs a ceramics shop on Crafthaus (orders customers place with them)
+# and also buys online (orders they placed). The build should ask which. The scripted
+# user wants the shop's sales.
+clarify:
+  should_ask: true
+  topic_any: ["sell", "selling", "sales", "sold", "shop", "customer", "customers", "buyer", "buyers", "buy", "bought", "purchase", "purchases", "placed", "Crafthaus"]
+  answer_any: ["sales", "sold", "sell", "selling", "customer", "customers", "buyers", "Crafthaus", "shop"]
+  avoid_any: ["both", "all", "everything", "placed", "bought", "purchase", "purchases", "include", "including", "supplies"]
+relevant:
+  - {label: "CH-4471 Emma Watts (shipped)", threads: [69bf9478f4fa2cde, ee36177c99a726d5]}
+  - {label: "CH-4475 Raj Patel (to ship)", threads: [9fe0b256df74d89e, c4fa80cd9f28cb04]}
+  - {label: "CH-4480 Lucia Moreno (delivered)", threads: [8bd12470d05c67ae, 352e64e83435ea8c, 195ecdc728e94f6f]}
+  - {label: "CH-4482 Tom Harris (new address, shipped)", threads: [907ce971160452c2, 738a594afa694242, db271a9b28a0afb6]}
+  - {label: "CH-4486 Ines Kovac (cancelled)", threads: [2df36bded5d0cc05, 5ced597f2312b679]}
+  - {label: "CH-4490 Grace Lee (new)", threads: [0073da4afe164b50]}
+steps:
+- name: build
+  now: 2026-11-06T09:00:00Z
+  asks:
+    - {ask: "each order", record: ["4480"], value_any: ["4480"], label_any: ["order"]}
+    - {ask: "who ordered (implied)", record: ["4475"], value_any: ["Raj", "Patel"], label_any: ["buyer", "customer"]}
+    - {ask: "what was ordered (implied)", record: ["4475"], value_any: ["serving bowl", "bowl"], label_any: ["item", "product"]}
+    - {ask: "where each order is at (implied)", record: ["4486"], value_any: ["cancelled", "canceled", "refunded"], label_any: ["status"]}
+  expect:
+    - {kind: unique, all_of: ["4471"]}
+    - {kind: value, find: ["4471"], any_of: ["shipped", "dispatched", "sent"]}
+    - {kind: value, find: ["4475"], any_of: ["awaiting", "to ship", "not shipped", "unshipped", "pending", "new", "open", "processing", "paid"]}
+    - {kind: value, find: ["4480"], any_of: ["delivered", "completed", "complete", "reviewed"]}
+    - {kind: value, find: ["4482"], any_of: ["shipped", "dispatched", "sent"]}
+    - {kind: value, find: ["4486"], any_of: ["cancelled", "canceled", "refunded", "refund"]}
+    - {kind: exists, all_of: ["4490"]}
+    - {kind: absent, any_of: ["KD-2290", "GT-88123", "BH-5512", "KW-3071", "headphones", "Glaze Book"]}
+    - {kind: absent, any_of: ["Holiday selling", "18.40", "bisque"]}
+    - {kind: count, min: 6, max: 7}
+    - {kind: app_ok}

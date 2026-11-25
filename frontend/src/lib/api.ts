@@ -36,6 +36,11 @@ export type AdminWorkspaceDetail = S["AdminWorkspaceDetail"];
 export type AdminRun = S["AdminRun"];
 export type DemoInboxState = S["DemoInboxState"];
 export type DemoSeedRead = S["DemoSeedRead"];
+export type EvalsState = S["EvalsState"];
+export type EvalRunRow = S["EvalRunRow"];
+export type EvalRunDetail = S["EvalRunDetail"];
+export type EvalScenarioResult = S["EvalScenarioResult"];
+export type EvalParts = S["EvalParts"];
 export type AdminRange = 7 | 30 | 90;
 
 export const API_URL =
@@ -124,6 +129,11 @@ export const adminApi = {
   createSeed: (prompt: string, thread_count: number) =>
     post<DemoSeedRead>("/admin/demo/seeds", { prompt, thread_count }),
   cleanupDemo: () => post<{ removed: number }>("/admin/demo/cleanup"),
+  evals: () => request<EvalsState>("/admin/evals"),
+  evalRun: (id: string) => request<EvalRunDetail>(`/admin/evals/${id}`),
+  createEval: (repeats: number, scenario_ids: string[]) =>
+    post<EvalRunRow>("/admin/evals", { repeats, scenario_ids }),
+  cancelEval: (id: string) => post<EvalRunRow>(`/admin/evals/${id}/cancel`),
 };
 
 /** Send the user to sign in when the session is missing or expired. */

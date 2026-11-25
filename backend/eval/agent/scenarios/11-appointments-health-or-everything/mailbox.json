@@ -1,0 +1,253 @@
+[
+ {
+  "thread_id": "f9f8efb85373cd2b",
+  "messages": [
+   {
+    "message_id": "e6fa015be477cbbc",
+    "sender": "Brightsmile Dental <appointments@brightsmile.example>",
+    "to": [
+     "jordan@blakehome.example"
+    ],
+    "date": "2026-11-02T10:00:00Z",
+    "subject": "Appointment confirmed: dental check-up",
+    "body": "Dear Jordan,\n\nYour appointment is confirmed.\nWhat: Check-up and scale & polish with Dr Elena Rossi\nWhen: Thursday 3 December 2026 at 10:30\nWhere: Brightsmile Dental, 41 Market Street\n\nPlease arrive 5 minutes early. To change it, call 01632 960 214.\nBrightsmile Dental\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "743b6541ac0f52c8",
+  "messages": [
+   {
+    "message_id": "38ef565986d71f64",
+    "sender": "Willow Medical Centre <noreply@willowmedical.example>",
+    "to": [
+     "jordan@blakehome.example"
+    ],
+    "date": "2026-11-05T08:15:00Z",
+    "subject": "Your blood test appointment",
+    "body": "Dear Jordan Blake,\n\nYou have a blood test booked at Willow Medical Centre (Room 3)\non Wednesday 25 November 2026 at 08:40 with the practice nurse.\nPlease fast for 12 hours before your test (water is fine).\n\nWillow Medical Centre\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "8c368323e76a2f71",
+  "messages": [
+   {
+    "message_id": "167b6f0021d6a7cc",
+    "sender": "Willow Medical Centre <noreply@willowmedical.example>",
+    "to": [
+     "jordan@blakehome.example"
+    ],
+    "date": "2026-11-12T14:30:00Z",
+    "subject": "Your appointment has been moved",
+    "body": "Dear Jordan Blake,\n\nBecause of staff training, your blood test has been moved to\nThursday 26 November 2026 at 08:40 (same place: Room 3). Your 25 November slot\nhas been cancelled. Please still fast for 12 hours.\n\nWillow Medical Centre\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "d8cabe02f5629ec8",
+  "messages": [
+   {
+    "message_id": "38ffe4d17e61a8d1",
+    "sender": "Willow Medical Centre <noreply@willowmedical.example>",
+    "to": [
+     "jordan@blakehome.example"
+    ],
+    "date": "2026-10-05T09:00:00Z",
+    "subject": "Appointment confirmation",
+    "body": "Dear Jordan Blake,\n\nYour appointment with Dr Amir Hassan is confirmed for\nTuesday 13 October 2026 at 09:10 at Willow Medical Centre.\n\nWillow Medical Centre\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "d303b1ebc3bd9ff8",
+  "messages": [
+   {
+    "message_id": "3dc9b4867c1835ee",
+    "sender": "MoveWell Physio <bookings@movewell.example>",
+    "to": [
+     "jordan@blakehome.example"
+    ],
+    "date": "2026-10-28T16:20:00Z",
+    "subject": "Your physio sessions at MoveWell",
+    "body": "Hi Jordan,\n\nThanks for booking your knee rehab sessions with Priya Desai.\nSession 1: Friday 20 November 2026, 17:00\nSession 2: Friday 27 November 2026, 17:00\nWhere: MoveWell Physio, 22 Canal Road (first floor)\n\nWear shorts or loose trousers. See you soon!\nMoveWell Physio\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "62ceedbda8f1ca65",
+  "messages": [
+   {
+    "message_id": "d728888ba220dc27",
+    "sender": "ClearView Optics <hello@clearviewoptics.example>",
+    "to": [
+     "jordan@blakehome.example"
+    ],
+    "date": "2026-11-10T11:05:00Z",
+    "subject": "Eye test booked",
+    "body": "Hi Jordan,\n\nYour eye test is booked for Wednesday 9 December 2026 at 14:15\nat ClearView Optics, 7 High Street. It takes about 30 minutes.\nBring your current glasses.\n\nClearView Optics\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "01337345a962c35b",
+  "messages": [
+   {
+    "message_id": "aebbb81869f85a51",
+    "sender": "Shear Studio <book@shearstudio.example>",
+    "to": [
+     "jordan@blakehome.example"
+    ],
+    "date": "2026-11-16T12:00:00Z",
+    "subject": "See you Saturday at Shear Studio",
+    "body": "Hi Jordan, your cut with Marco is booked for Saturday 21 November at 12:00. Shear Studio\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "7dabce89b317630c",
+  "messages": [
+   {
+    "message_id": "09eed7d68ced6c38",
+    "sender": "AutoCare Garage <service@autocare.example>",
+    "to": [
+     "jordan@blakehome.example"
+    ],
+    "date": "2026-11-09T15:40:00Z",
+    "subject": "AutoCare: your car service booking",
+    "body": "Dear Jordan,\n\nYour Ford Focus (KX19 LMP) is booked in for a full service and MOT on\nWednesday 2 December 2026, drop-off 08:00. We'll call when it's ready.\n\nAutoCare Garage, Unit 5 Riverside Estate\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "5dd9384f212841a5",
+  "messages": [
+   {
+    "message_id": "3a8fe8c681a91a34",
+    "sender": "Oakfield Primary School <office@oakfieldprimary.example>",
+    "to": [
+     "jordan@blakehome.example"
+    ],
+    "date": "2026-11-11T13:10:00Z",
+    "subject": "Parents' evening - booking confirmed",
+    "body": "Dear Parent/Carer,\n\nYour parents' evening appointment with Ms Clarke (Year 4) is booked for\nTuesday 1 December at 16:20 in Classroom 4B. Appointments are 10 minutes.\n\nOakfield Primary School\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "ab5f1e594cb8a2c2",
+  "messages": [
+   {
+    "message_id": "b34f19d77b97bb5f",
+    "sender": "Nimbus Calendar <calendar@nimbuswork.example>",
+    "to": [
+     "jordan@blakehome.example"
+    ],
+    "date": "2026-11-13T09:30:00Z",
+    "subject": "Invitation: Q4 planning review @ Mon 23 Nov 2026 14:00 - 15:00",
+    "body": "Hannah Ortiz has invited you to: Q4 planning review\nWhen: Monday 23 November 2026, 14:00 - 15:00\nWhere: Meeting room Tay / video link\nGoing? Yes - Maybe - No\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "8a5a288a98c1a555",
+  "messages": [
+   {
+    "message_id": "901658323ec52642",
+    "sender": "Nimbus Calendar <calendar@nimbuswork.example>",
+    "to": [
+     "jordan@blakehome.example"
+    ],
+    "date": "2026-11-12T09:31:00Z",
+    "subject": "Invitation: 1:1 Jordan / Hannah @ Thu 19 Nov 2026 10:00 - 10:30",
+    "body": "Hannah Ortiz has invited you to: 1:1 Jordan / Hannah\nWhen: Thursday 19 November 2026, 10:00 - 10:30\nWhere: video link\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "ac1efb9a8e08118e",
+  "messages": [
+   {
+    "message_id": "424fd6fa268f0919",
+    "sender": "Greenleaf Pharmacy <news@greenleafpharmacy.example>",
+    "to": [
+     "jordan@blakehome.example"
+    ],
+    "date": "2026-11-08T07:00:00Z",
+    "subject": "Wellness Weekly: 5 tips for winter immunity",
+    "body": "Wellness Weekly. Five tips for winter immunity, and flu jabs are now available:\nbook online in two minutes at any Greenleaf Pharmacy. Unsubscribe any time.\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "c0a86af25312992a",
+  "messages": [
+   {
+    "message_id": "76d505b75b071ee8",
+    "sender": "Northbank <statements@northbank.example>",
+    "to": [
+     "jordan@blakehome.example"
+    ],
+    "date": "2026-11-04T04:00:00Z",
+    "subject": "Your Northbank statement is ready",
+    "body": "Your Northbank current account statement for October is ready in online banking.\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "bd49e64bfd7d19af",
+  "messages": [
+   {
+    "message_id": "dca937bebb6e06a5",
+    "sender": "Sasha Kim <sasha.kim@mailbox.example>",
+    "to": [
+     "jordan@blakehome.example"
+    ],
+    "date": "2026-11-14T20:02:00Z",
+    "subject": "Dinner next week?",
+    "body": "Jordan! Dinner at Ostro next Friday? I can book for 8 if you're free. S\n",
+    "attachments": []
+   },
+   {
+    "message_id": "eb7ed48a2ea4123f",
+    "sender": "Jordan Blake <jordan@blakehome.example>",
+    "to": [
+     "sasha.kim@mailbox.example"
+    ],
+    "date": "2026-11-14T20:40:00Z",
+    "subject": "Re: Dinner next week?",
+    "body": "Friday's physio for me until 6, so 8 is perfect. Book it! J\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "ee941406b2845c6c",
+  "messages": [
+   {
+    "message_id": "5831bdc4027b30b0",
+    "sender": "FreshCo <orders@freshco.example>",
+    "to": [
+     "jordan@blakehome.example"
+    ],
+    "date": "2026-11-15T10:00:00Z",
+    "subject": "Your grocery delivery slot",
+    "body": "Your FreshCo delivery is booked for Sunday 22 November, 10:00-11:00. Order FC-220913.\n",
+    "attachments": []
+   }
+  ]
+ }
+]

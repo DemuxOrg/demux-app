@@ -30,8 +30,10 @@ const PHASES: Series[] = [
   { key: "batch", label: "Reading emails", color: CHART_COLORS[1] },
   { key: "app", label: "App", color: CHART_COLORS[2] },
   { key: "edit", label: "Edit", color: CHART_COLORS[3] },
-  { key: "seed", label: "Demo inbox", color: CHART_COLORS[4] },
+  // Staff spending: demo inbox seeds and evals share slot 5 (theme.md §7.14).
+  { key: "seed", label: "Demo inbox and evals", color: CHART_COLORS[4] },
 ];
+const foldPhase = (k: string) => (k === "eval" ? "seed" : k);
 const OTHER = "Other models";
 
 /** Models in a stable (alphabetical) order: the first four get a slot, the rest fold. */
@@ -68,6 +70,7 @@ function Charts({ o }: { o: AdminOverview }) {
           days,
           rows,
           PHASES.map((p) => p.key),
+          foldPhase,
         ),
       };
     }

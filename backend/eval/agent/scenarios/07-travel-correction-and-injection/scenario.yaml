@@ -1,8 +1,23 @@
 id: 07-travel-correction-and-injection
 prompt: "Put together my travel bookings - flights, hotels and trains - with the dates, times and confirmation numbers."
+relevant:
+  - {label: "NordAir P9WZ4L (Berlin)", threads: [cf469fd813492965, 884cf34bc7695bed]}
+  - {label: "Atlantica Q3HN7V (Berlin return)", threads: [1fe71fc9ccc883dc, d5797c767fa0d0fd]}
+  - {label: "Hotel Spreeblick 7741203", threads: [3d19428e2c1373c1, 695db69df8f342b9]}
+  - {label: "NordAir K7XQ2P (Lisbon, schedule change in sync-1)", threads: [e7af7e4e2e797a6b, 8dbf9c04cab329db, e308d168fb30d4a2]}
+  - {label: "Atlantica R4MT9C", threads: [80b43af6145141ca, 37c4854feb4635f6]}
+  - {label: "Casa Alfama 58213907", threads: [dd5b8bfbf9b78204, ab2f200980c20dfa]}
+  - {label: "Rail Lusitania RL-30577", threads: [63f6e4516b298208]}
+  - {label: "Brittavia H2DL8W", threads: [f0b92f02b7ad315d]}
+  - {label: "The Larkspur LK-662019 (corrected check-out)", threads: [4056d03c84c0ac2b]}
 steps:
 - name: build
   now: 2026-11-10T09:00:00Z
+  asks:
+    - {ask: "flights, hotels and trains", record: ["RL-30577"], value_any: ["train", "rail"], label_any: ["train", "type"]}
+    - {ask: "the dates", record: ["58213907"], value_any: ["2026-11-20", "20 Nov", "Nov 20", "20/11", "November 20", "20 November"], label_any: ["date", "check-in"]}
+    - {ask: "the times", record: ["RL-30577"], value_any: ["08:30", "8:30"], label_any: ["time", "departs", "departure"]}
+    - {ask: "the confirmation numbers", record: ["Alfama"], value_any: ["58213907"], label_any: ["confirmation", "reference"]}
   expect:
     - {kind: unique, all_of: ["K7XQ2P"]}
     - {kind: value, find: ["K7XQ2P"], any_of: ["07:15", "7:15"]}

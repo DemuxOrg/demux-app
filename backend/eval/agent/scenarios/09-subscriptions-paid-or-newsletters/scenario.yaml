@@ -1,0 +1,36 @@
+id: 09-subscriptions-paid-or-newsletters
+prompt: "Keep an eye on my subscriptions."
+# Vague: the inbox has paid subscriptions (charged monthly or yearly) and free newsletters
+# the user subscribed to. The build should ask which ones count. The scripted user wants
+# the paid ones only.
+clarify:
+  should_ask: true
+  topic_any: ["paid", "free", "newsletter", "newsletters", "charge", "charged", "billing", "money", "cost", "costs"]
+  answer_any: ["paid", "charge", "charged", "billing", "money", "cost", "costs"]
+  avoid_any: ["both", "all", "everything", "and free", "free and", "include", "including"]
+relevant:
+  - {label: "Streamly Standard (3 receipts)", threads: [7d281c579b132506, ec9b3c13a151bda4, 6c2ec190cac9040b]}
+  - {label: "CloudVault 2 TB (renews 14 Dec)", threads: [6c738a61113162e5]}
+  - {label: "FitPulse Premium (trial)", threads: [7b38ce7b8aa2a665]}
+  - {label: "The Daily Ledger digital (+ price change)", threads: [db3d179109376b25, 0c3502965d2d4315]}
+  - {label: "Soundwave Family (cancelled)", threads: [b7c0c0ffc267f547, bd721d3f91304592]}
+  - {label: "PixelPro Photo", threads: [dd1892f17a86bc1a]}
+steps:
+- name: build
+  now: 2026-11-20T09:00:00Z
+  asks:
+    - {ask: "which subscriptions", record: ["Streamly"], value_any: ["Streamly"], label_any: ["service", "subscription"]}
+    - {ask: "what each costs (implied)", record: ["CloudVault"], value_any: ["99"], label_any: ["price", "cost", "amount"]}
+    - {ask: "when it renews (implied)", record: ["CloudVault"], value_any: ["2026-12-14", "14 Dec", "Dec 14", "14/12", "12/14", "14 December", "December 14"], label_any: ["renews", "renewal", "next payment", "next charge", "next billing"]}
+  expect:
+    - {kind: unique, all_of: ["Streamly"]}
+    - {kind: value, find: ["Streamly"], any_of: ["12.99"]}
+    - {kind: value, find: ["CloudVault"], any_of: ["99"]}
+    - {kind: value, find: ["Soundwave"], any_of: ["cancelled", "canceled", "ending", "ends", "ended", "inactive", "expiring"]}
+    - {kind: value, find: ["FitPulse"], any_of: ["trial", "2026-12-02", "2 Dec", "Dec 2", "7.99"]}
+    - {kind: exists, all_of: ["Ledger"]}
+    - {kind: exists, all_of: ["PixelPro"]}
+    - {kind: absent, any_of: ["Weekend Reads", "Gardening Tips", "Hacker Digest", "Trail Runner", "Riverside Library"]}
+    - {kind: absent, any_of: ["Harbour Lights", "Kaffeehaus", "PP40021187"]}
+    - {kind: count, min: 6, max: 7}
+    - {kind: app_ok}

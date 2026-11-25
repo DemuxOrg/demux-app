@@ -101,11 +101,14 @@ Use `--mailbox gmail:<you@gmail.com>` to run against a signed-in user's Gmail. O
 
 ## Eval
 
-These runs cost money and are not part of CI.
+These runs cost money and are not part of CI. Each run gets one **Demux score** (0-100): email recall 35%, request coverage 35%, correctness 20%, clarification 10%, with guardrails (noise, collateral changes, prompt injection, the app rendering) shown beside it. `backend/eval/agent/scenarios/AUTHORING.md` explains the parts and how to write a scenario.
+
+The easiest way to run it is **/admin/evals**: pick scenarios and repeats, press *Run evals*, and the history shows each run's score by date and commit, with every scenario, step and check one click away. Scores compare only between runs with the same suite hash.
 
 | Command | What it does |
 |---|---|
-| `make eval-agent` | Runs the 8 synthetic scenarios in `backend/eval/agent/scenarios/` and writes `backend/eval/agent/runs/<ts>/report.md` + `report.json` |
+| `make eval-agent` | Runs the 11 synthetic scenarios in `backend/eval/agent/scenarios/` (3 of them vague, to test clarifying questions), prints the Demux score and writes `backend/eval/agent/runs/<ts>/report.md` + `report.json` |
+| `make eval-agent ARGS="--concurrency 3"` | Runs 3 scenarios at a time |
 | `make eval-agent ARGS="--repeats 3"` | Repeats the full run 3 times; gate decisions on the mean |
 | `make eval-agent ARGS="--scenario 01 07"` | Runs a subset of scenarios |
 | `make eval-agent ARGS="--replay --workspace <id> --days 14"` | Builds a copy of a real workspace 14 days back, syncs it day by day, and compares it with a fresh build |

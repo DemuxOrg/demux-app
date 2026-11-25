@@ -26,6 +26,9 @@ x-backend: &backend
   environment:
     DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-demux}:${POSTGRES_PASSWORD:-demux}@postgres:5432/${POSTGRES_DB:-demux}
     ENV: prod
+    # The commit evals (/admin/evals) record; `make prod-up` sets them from git.
+    GIT_SHA: ${GIT_SHA:-}
+    GIT_BRANCH: ${GIT_BRANCH:-}
   init: true
   restart: unless-stopped
 

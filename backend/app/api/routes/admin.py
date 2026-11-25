@@ -1,11 +1,13 @@
-"""`/api/v1/admin`: usage, costs and the demo inbox, for Demux staff only.
+"""`/api/v1/admin`: usage, costs, the demo inbox and agent evals, for Demux staff only.
 
 Every route depends on `get_admin_user` (router level): 401 without a session, the same
 404 as an unknown URL for anyone who is not an admin, and one `admin_audit` row per
 request. Response shapes are in `app/schemas/admin.py` (privacy rules there).
 """
 
+import json
 import uuid
+from typing import Any
 
 from fastapi import APIRouter, Depends, Query, status
 
@@ -28,9 +30,23 @@ from app.schemas.admin import (
     DemoInboxState,
     DemoSeedCreate,
     DemoSeedRead,
+    EvalAsk,
+    EvalCheck,
+    EvalClarify,
+    EvalGroup,
+    EvalParts,
+    EvalQuestion,
+    EvalRetrieval,
+    EvalRunCreate,
+    EvalRunDetail,
+    EvalRunRow,
+    EvalScenarioInfo,
+    EvalScenarioResult,
+    EvalsState,
+    EvalStep,
 )
 from app.services import admin as service
-from app.services import demo
+from app.services import demo, evals
 
 router = APIRouter(prefix="/admin", tags=["admin"], dependencies=[Depends(get_admin_user)])
 
@@ -126,3 +142,91 @@ async def create_seed(body: DemoSeedCreate, admin: AdminUser, session: SessionDe
 @router.post("/demo/cleanup", response_model=DemoCleanup)
 async def cleanup() -> DemoCleanup:
     return DemoCleanup(removed=await demo.remove_demo_threads())
+
+
+# ------------------------------------------------------------------ evals
+
+
+def _pct(v: Any) -> float | None:
+    return None if v is None else round(100 * float(v), 1)
+
+
+def _spec(spec: dict[str, Any]) -> str:
+    """A check as written: `value {"find": [...], "any_of": [...]}` (kind first)."""
+    rest = {k: v for k, v in spec.items() if k != "kind"}
+    return f"{spec.get('kind', '?')} {json.dumps(rest, ensure_ascii=False)}"
+
+
+def _scenario(r: dict[str, Any]) -> EvalScenarioResult:
+    """One scenario of a stored report (eval/agent/runner.py) as the API shape."""
+    ret = r.get("retrieval")
+    clar = r.get("clarify")
+    return EvalScenarioResult(
+        id=r["id"],
+        repeat=r.get("repeat", 1),
+        prompt=r.get("prompt", ""),
+        score=_pct(r["score"]) or 0.0,
+        parts=EvalParts(**{k: _pct(v) for k, v in (r.get("parts") or {}).items()}),
+        retrieval=EvalRetrieval(**{**ret, "groups": [EvalGroup(**g) for g in ret["groups"]]})
+        if ret
+        else None,
+        asks=[EvalAsk(**a) for a in r.get("asks") or []],
+        clarify=EvalClarify(**{**clar, "questions": [EvalQuestion(**q) for q in clar["questions"]]})
+        if clar
+        else None,
+        steps=[
+            EvalStep(
+                name=st["name"],
+                kind=st["kind"],
+                error=st.get("error"),
+                cost_usd=st["cost_usd"],
+                input_tokens=st["input_tokens"],
+                output_tokens=st["output_tokens"],
+                latency_s=st["latency_s"],
+                record_count=st["records"],
+                app_renders=st["app_renders"],
+                checks=[
+                    EvalCheck(
+                        step=c["step"],
+                        kind=c["kind"],
+                        passed=c["passed"],
+                        expected=_spec(c["spec"]),
+                        detail=c.get("detail", ""),
+                    )
+                    for c in st.get("checks") or []
+                ],
+            )
+            for st in r.get("steps") or []
+        ],
+    )
+
+
+@router.get("/evals", response_model=EvalsState)
+async def evals_state(session: SessionDep) -> EvalsState:
+    return EvalsState(
+        build_model=settings.BUILD_MODEL,
+        scenarios=[EvalScenarioInfo(**s) for s in evals.scenarios()],
+        runs=[EvalRunRow.model_validate(r) for r in await evals.list_evals(session)],
+    )
+
+
+@router.post("/evals", response_model=EvalRunRow, status_code=status.HTTP_202_ACCEPTED)
+async def create_eval(body: EvalRunCreate, admin: AdminUser, session: SessionDep) -> EvalRunRow:
+    run = await evals.create_eval(session, admin, body.repeats, body.scenario_ids)
+    await session.refresh(run)
+    return EvalRunRow.model_validate(run)
+
+
+@router.get("/evals/{eval_id}", response_model=EvalRunDetail)
+async def eval_detail(eval_id: uuid.UUID, session: SessionDep) -> EvalRunDetail:
+    run = await evals.get_eval(session, eval_id)
+    row = EvalRunRow.model_validate(run)
+    results = (run.report or {}).get("results") or []
+    return EvalRunDetail(**row.model_dump(), scenarios=[_scenario(r) for r in results])
+
+
+@router.post("/evals/{eval_id}/cancel", response_model=EvalRunRow)
+async def cancel_eval(eval_id: uuid.UUID, session: SessionDep) -> EvalRunRow:
+    run = await evals.cancel_eval(session, eval_id)
+    await session.refresh(run)
+    return EvalRunRow.model_validate(run)
