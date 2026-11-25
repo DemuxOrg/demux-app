@@ -7,7 +7,7 @@
  */
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { Suspense, useEffect, useState, type ReactNode } from "react";
 import { Lockup } from "@/components/brand/Logo";
 import { ButtonLink } from "@/components/ui/Button";
 import { api, handleAuthError, type Me } from "@/lib/api";
@@ -26,8 +26,38 @@ function activeTab(path: string): string {
   return "/admin";
 }
 
+function LiveAdminTabs() {
+  return <AdminTabs current={activeTab(usePathname())} />;
+}
+
+function AdminTabs({ current }: { current: string | null }) {
+  return (
+    <nav aria-label="Admin sections">
+      <ul className="flex gap-1 rounded-full bg-white/50 p-1">
+        {TABS.map((t) => {
+          const selected = t.href === current;
+          return (
+            <li key={t.href}>
+              <Link
+                href={t.href}
+                aria-current={selected ? "page" : undefined}
+                className={`inline-flex h-10 items-center rounded-full px-4 text-sm font-medium transition-colors duration-150 ease-dmx focus-visible:ring-[3px] focus-visible:ring-violet/25 ${
+                  selected
+                    ? "bg-white text-ink shadow-pill"
+                    : "text-ink-2 hover:text-ink"
+                }`}
+              >
+                {t.label}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  );
+}
+
 export function AdminShell({ children }: { children: ReactNode }) {
-  const path = usePathname();
   const [me, setMe] = useState<Me | null>(null);
   const [failed, setFailed] = useState(false);
 
@@ -40,7 +70,6 @@ export function AdminShell({ children }: { children: ReactNode }) {
       });
   }, []);
 
-  const current = activeTab(path);
   const allowed = me?.is_admin === true;
 
   return (
@@ -53,28 +82,11 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <span className="text-sm font-medium text-ink-on-sky">Admin</span>
         </div>
         {allowed && (
-          <nav aria-label="Admin sections">
-            <ul className="flex gap-1 rounded-full bg-white/50 p-1">
-              {TABS.map((t) => {
-                const selected = t.href === current;
-                return (
-                  <li key={t.href}>
-                    <Link
-                      href={t.href}
-                      aria-current={selected ? "page" : undefined}
-                      className={`inline-flex h-10 items-center rounded-full px-4 text-sm font-medium transition-colors duration-150 ease-dmx focus-visible:ring-[3px] focus-visible:ring-violet/25 ${
-                        selected
-                          ? "bg-white text-ink shadow-pill"
-                          : "text-ink-2 hover:text-ink"
-                      }`}
-                    >
-                      {t.label}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </nav>
+          // The URL is only known at request time: the tabs first render without a
+          // highlight and the live one streams in (same as the app sidebar).
+          <Suspense fallback={<AdminTabs current={null} />}>
+            <LiveAdminTabs />
+          </Suspense>
         )}
         <ButtonLink href="/workspaces" variant="secondary">
           Back to Demux
