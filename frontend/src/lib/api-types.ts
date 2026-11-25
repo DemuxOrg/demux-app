@@ -447,6 +447,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/evals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Evals State */
+        get: operations["evals_state_api_v1_admin_evals_get"];
+        put?: never;
+        /** Create Eval */
+        post: operations["create_eval_api_v1_admin_evals_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/evals/{eval_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Eval Detail */
+        get: operations["eval_detail_api_v1_admin_evals__eval_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/evals/{eval_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel Eval */
+        post: operations["cancel_eval_api_v1_admin_evals__eval_id__cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -846,6 +898,279 @@ export interface components {
             created_at: string;
             /** Finished At */
             finished_at: string | null;
+        };
+        /** EvalAsk */
+        EvalAsk: {
+            /** Step */
+            step: string;
+            /** Ask */
+            ask: string;
+            /** In Data */
+            in_data: boolean | null;
+            /** In App */
+            in_app: boolean;
+            /** Score */
+            score: number;
+            /** Detail */
+            detail: string;
+        };
+        /** EvalCheck */
+        EvalCheck: {
+            /** Step */
+            step: string;
+            /** Kind */
+            kind: string;
+            /** Passed */
+            passed: boolean;
+            /** Expected */
+            expected: string;
+            /** Detail */
+            detail: string;
+        };
+        /** EvalClarify */
+        EvalClarify: {
+            /** Expected */
+            expected: boolean;
+            /** Asked */
+            asked: boolean;
+            /** On Topic */
+            on_topic: boolean | null;
+            /** Score */
+            score: number;
+            /** Questions */
+            questions: components["schemas"]["EvalQuestion"][];
+        };
+        /** EvalGroup */
+        EvalGroup: {
+            /** Label */
+            label: string;
+            /** Thread Ids */
+            thread_ids: string[];
+            /** Recalled */
+            recalled: boolean;
+        };
+        /** EvalGuardrail */
+        EvalGuardrail: {
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+            /** Value */
+            value: number | null;
+            /** Target */
+            target: number;
+            /** Op */
+            op: string;
+            /** Met */
+            met: boolean | null;
+        };
+        /** EvalParts */
+        EvalParts: {
+            /** Retrieval */
+            retrieval?: number | null;
+            /** Coverage */
+            coverage?: number | null;
+            /** Correctness */
+            correctness?: number | null;
+            /** Clarification */
+            clarification?: number | null;
+        };
+        /** EvalQuestion */
+        EvalQuestion: {
+            /** Question */
+            question: string;
+            /** Options */
+            options: string[];
+            /** Answer */
+            answer: string | null;
+        };
+        /** EvalRetrieval */
+        EvalRetrieval: {
+            /** Recall */
+            recall: number | null;
+            /** Recalled */
+            recalled: number;
+            /** Total */
+            total: number;
+            /** Cited Threads */
+            cited_threads: number;
+            /** Cited Relevant */
+            cited_relevant: number;
+            /** Groups */
+            groups: components["schemas"]["EvalGroup"][];
+        };
+        /** EvalRunCreate */
+        EvalRunCreate: {
+            /**
+             * Repeats
+             * @default 1
+             */
+            repeats: number;
+            /** Scenario Ids */
+            scenario_ids?: string[];
+        };
+        /** EvalRunDetail */
+        EvalRunDetail: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Status */
+            status: string;
+            /** Scenario Ids */
+            scenario_ids: string[];
+            /** Repeats */
+            repeats: number;
+            /** Progress Done */
+            progress_done: number;
+            /** Progress Total */
+            progress_total: number;
+            /** Commit */
+            commit: string | null;
+            /** Branch */
+            branch: string | null;
+            /** Agent Hash */
+            agent_hash: string | null;
+            /** Suite Hash */
+            suite_hash: string | null;
+            /** Build Model */
+            build_model: string | null;
+            /** Sync Model */
+            sync_model: string | null;
+            /** Score */
+            score: number | null;
+            /** Spread */
+            spread: number | null;
+            parts: components["schemas"]["EvalParts"];
+            /** Guardrails */
+            guardrails: components["schemas"]["EvalGuardrail"][];
+            /** Cost Usd */
+            cost_usd: number;
+            /** Error */
+            error: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Started At */
+            started_at: string | null;
+            /** Finished At */
+            finished_at: string | null;
+            /** Scenarios */
+            scenarios: components["schemas"]["EvalScenarioResult"][];
+        };
+        /** EvalRunRow */
+        EvalRunRow: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Status */
+            status: string;
+            /** Scenario Ids */
+            scenario_ids: string[];
+            /** Repeats */
+            repeats: number;
+            /** Progress Done */
+            progress_done: number;
+            /** Progress Total */
+            progress_total: number;
+            /** Commit */
+            commit: string | null;
+            /** Branch */
+            branch: string | null;
+            /** Agent Hash */
+            agent_hash: string | null;
+            /** Suite Hash */
+            suite_hash: string | null;
+            /** Build Model */
+            build_model: string | null;
+            /** Sync Model */
+            sync_model: string | null;
+            /** Score */
+            score: number | null;
+            /** Spread */
+            spread: number | null;
+            parts: components["schemas"]["EvalParts"];
+            /** Guardrails */
+            guardrails: components["schemas"]["EvalGuardrail"][];
+            /** Cost Usd */
+            cost_usd: number;
+            /** Error */
+            error: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Started At */
+            started_at: string | null;
+            /** Finished At */
+            finished_at: string | null;
+        };
+        /** EvalScenarioInfo */
+        EvalScenarioInfo: {
+            /** Id */
+            id: string;
+            /** Prompt */
+            prompt: string;
+            /** Steps */
+            steps: number;
+            /** Vague */
+            vague: boolean;
+        };
+        /** EvalScenarioResult */
+        EvalScenarioResult: {
+            /** Id */
+            id: string;
+            /** Repeat */
+            repeat: number;
+            /** Prompt */
+            prompt: string;
+            /** Score */
+            score: number;
+            parts: components["schemas"]["EvalParts"];
+            retrieval: components["schemas"]["EvalRetrieval"] | null;
+            /** Asks */
+            asks: components["schemas"]["EvalAsk"][];
+            clarify: components["schemas"]["EvalClarify"] | null;
+            /** Steps */
+            steps: components["schemas"]["EvalStep"][];
+        };
+        /** EvalStep */
+        EvalStep: {
+            /** Name */
+            name: string;
+            /** Kind */
+            kind: string;
+            /** Error */
+            error: string | null;
+            /** Cost Usd */
+            cost_usd: number;
+            /** Input Tokens */
+            input_tokens: number;
+            /** Output Tokens */
+            output_tokens: number;
+            /** Latency S */
+            latency_s: number;
+            /** Record Count */
+            record_count: number;
+            /** App Renders */
+            app_renders: boolean;
+            /** Checks */
+            checks: components["schemas"]["EvalCheck"][];
+        };
+        /** EvalsState */
+        EvalsState: {
+            /** Build Model */
+            build_model: string;
+            /** Scenarios */
+            scenarios: components["schemas"]["EvalScenarioInfo"][];
+            /** Runs */
+            runs: components["schemas"]["EvalRunRow"][];
         };
         /** GuideDoc */
         GuideDoc: {
@@ -2008,6 +2333,121 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DemoCleanup"];
+                };
+            };
+        };
+    };
+    evals_state_api_v1_admin_evals_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvalsState"];
+                };
+            };
+        };
+    };
+    create_eval_api_v1_admin_evals_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EvalRunCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvalRunRow"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    eval_detail_api_v1_admin_evals__eval_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                eval_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvalRunDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cancel_eval_api_v1_admin_evals__eval_id__cancel_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                eval_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvalRunRow"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

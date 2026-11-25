@@ -5,6 +5,38 @@ Each folder has `scenario.yaml` (prompt + steps + shape-free expectations) and `
 each sync step reveals 1-5 messages dated between the previous `now` and its own. All domains are `.example`.
 Noise threads (newsletters, vendor marketing, personal mail) make up 20-30% of each mailbox.
 
+## The Demux score (`scoring.py`)
+
+Each scenario scores 0-100 from up to four parts; a part it does not define is left out and
+the other weights scale up. The run's score is the mean over scenarios (and repeats).
+
+| Part | Weight | From | Measures |
+|---|---|---|---|
+| Email recall | 35% | `relevant` | share of relevant groups with a thread cited by some record (end of the last build/sync) |
+| Request coverage | 35% | `asks` on a step | each thing the prompt asks for: half a point in the data, half on screen |
+| Correctness | 20% | `expect` | pass rate of exists / unique / value / count / null_or_missing / build_fails / app_shows |
+| Clarification | 10% | `clarify` | clear prompt: 1 if no question. Vague: 0.5 for asking + 0.5 if a question names the ambiguity |
+
+`absent`, `unchanged_except` and `app_ok` are guardrails: reported next to the score, never in it.
+Recall leans on purpose: extra records and extra cited threads cost nothing in the score.
+
+Fields:
+- `relevant`: one group per expected record, `{label, threads: [thread ids]}` listing every thread
+  about it (an order seen in 4 threads is one group). A group counts once any of its threads is a
+  record's source. Groups whose threads are all dated after a step are not counted at that step.
+  Only threads whose content a correct workspace must use belong here (not context mail).
+- `asks` (on a step): `{ask, record: [tokens to find the record], value_any: [...], label_any: [...]}`.
+  In the data: a record matching `record` has one of `value_any`. On screen: the rendered app shows
+  one of `value_any` or `label_any`. Without `record` (nothing in the mail fills it, e.g. salary in
+  06) only the screen is checked. Tokens match whole words (`has()`): write `enquiry`, never `enquir`.
+- `clarify`: `{should_ask, topic_any, answer_any, avoid_any}`. Omitted means a clear prompt
+  (`should_ask: false`). The scripted user answers each question with the first option that names
+  one of `answer_any` and none of `avoid_any`; other questions get the agent's recommended option.
+  The steps' expectations assume that answer.
+
+Changing a scenario or the scoring changes the suite hash shown in /admin/evals: scores are only
+comparable between runs with the same suite hash.
+
 ## 01-supplier-bills-paid-later (32 threads)
 - Intent: a coffee roaster's supplier bills (12 invoices from 8 suppliers, paid and unpaid). ACME invoice 1042 is unpaid at build time.
 - Noise: ACME "Weekly digest" and plan-upgrade promo, Greenleaf catalogue, Harbor Bean "Guji" pre-order, Roast Magazine, bank statement, courier survey, sister.
@@ -48,3 +80,23 @@ Noise threads (newsletters, vendor marketing, personal mail) make up 20-30% of e
 ## 08-cannot-build-fitness-data (32 threads; adapted from planner case `project-profitability-unsupported`)
 - Intent: the prompt asks for step counts and sleep data from a fitness watch. The mailbox is a normal filmmaker inbox with no fitness data, so the build must end with CANNOT_BUILD.
 - Noise: the original newsletters and promos. There are no sync steps.
+
+## 09-subscriptions-paid-or-newsletters (21 threads; vague)
+- Prompt "Keep an eye on my subscriptions." The inbox has six paid subscriptions (Streamly x3 receipts,
+  CloudVault renewal, FitPulse trial, Daily Ledger + price change, Soundwave receipt + cancellation,
+  PixelPro) and five free newsletter subscriptions (Weekend Reads x2, Gardening Tips, Hacker Digest,
+  Riverside Library, a Trail Runner Notes confirmation). The build should ask; the user answers "paid".
+- Noise: a Streamly promo (Harbour Lights), bank, friend, dentist reminder, parcel.
+
+## 10-orders-shop-or-purchases (23 threads; vague)
+- Prompt "Track my orders." Sam sells ceramics on Crafthaus (6 sales: CH-4471 shipped, CH-4475 to ship
+  with a buyer message, CH-4480 delivered + review, CH-4482 address change then shipped, CH-4486
+  cancelled, CH-4490 new) and buys online (ClayDepot, Gadgetry x2, Bookhive, Kilnworks). The build
+  should ask; the user answers "my shop's sales".
+- Noise: Crafthaus newsletter and seller fees, studio firing schedule, bank, mum.
+
+## 11-appointments-health-or-everything (15 threads; vague)
+- Prompt "Keep track of my appointments." Health: dentist, blood test (moved from 25 to 26 Nov: newest
+  wins), past GP visit, two physio sessions in one email, eye test. Other: haircut, car service,
+  parents' evening, two work meeting invites. The build should ask; the user answers "health".
+- Noise: pharmacy newsletter (mentions flu jabs), bank, a dinner thread, a grocery delivery slot.

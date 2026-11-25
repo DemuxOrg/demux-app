@@ -21,7 +21,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.db.base import Base, IdMixin
 
 # Values of `llm_calls.phase`.
-PHASES = ("design", "batch", "app", "edit", "seed")
+PHASES = ("design", "batch", "app", "edit", "seed", "eval")
 
 
 class LLMCall(IdMixin, Base):

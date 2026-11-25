@@ -1,0 +1,349 @@
+[
+ {
+  "thread_id": "7d281c579b132506",
+  "messages": [
+   {
+    "message_id": "e13f6ddac701dce2",
+    "sender": "Streamly <billing@streamly.example>",
+    "to": [
+     "lena@fischermail.example"
+    ],
+    "date": "2026-09-03T06:12:00Z",
+    "subject": "Your Streamly receipt - September",
+    "body": "Hi Lena,\n\nThanks for watching with Streamly. Here is your receipt.\n\nPlan: Streamly Standard (HD, 2 screens)\nAmount: EUR 12.99\nCharged to: Visa ending 2218\nBilling period: September 2026\nNext payment: 3 October 2026\n\nManage your plan any time in Account > Membership.\nStreamly\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "ec9b3c13a151bda4",
+  "messages": [
+   {
+    "message_id": "bd94ceb1707a4adb",
+    "sender": "Streamly <billing@streamly.example>",
+    "to": [
+     "lena@fischermail.example"
+    ],
+    "date": "2026-10-03T06:09:00Z",
+    "subject": "Your Streamly receipt - October",
+    "body": "Hi Lena,\n\nThanks for watching with Streamly. Here is your receipt.\n\nPlan: Streamly Standard (HD, 2 screens)\nAmount: EUR 12.99\nCharged to: Visa ending 2218\nBilling period: October 2026\nNext payment: 3 November 2026\n\nManage your plan any time in Account > Membership.\nStreamly\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "6c2ec190cac9040b",
+  "messages": [
+   {
+    "message_id": "9075645a02f09c69",
+    "sender": "Streamly <billing@streamly.example>",
+    "to": [
+     "lena@fischermail.example"
+    ],
+    "date": "2026-11-03T06:15:00Z",
+    "subject": "Your Streamly receipt - November",
+    "body": "Hi Lena,\n\nThanks for watching with Streamly. Here is your receipt.\n\nPlan: Streamly Standard (HD, 2 screens)\nAmount: EUR 12.99\nCharged to: Visa ending 2218\nBilling period: November 2026\nNext payment: 3 December 2026\n\nManage your plan any time in Account > Membership.\nStreamly\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "fda3562f72b998d4",
+  "messages": [
+   {
+    "message_id": "0629d0175da8f061",
+    "sender": "Streamly <hello@streamly.example>",
+    "to": [
+     "lena@fischermail.example"
+    ],
+    "date": "2026-11-12T17:30:00Z",
+    "subject": "New on Streamly this week: Harbour Lights",
+    "body": "Hi Lena,\n\nNew this week: Harbour Lights, a six-part coastal mystery, plus season 2 of Kitchen Wars.\nPick up where you left off on any device.\n\nStreamly\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "6c738a61113162e5",
+  "messages": [
+   {
+    "message_id": "4fe695c1b84a64c5",
+    "sender": "CloudVault <accounts@cloudvault.example>",
+    "to": [
+     "lena@fischermail.example"
+    ],
+    "date": "2026-11-14T08:00:00Z",
+    "subject": "Your CloudVault 2 TB plan renews soon",
+    "body": "Hello Lena,\n\nYour annual CloudVault 2 TB plan renews automatically on 14 December 2026.\nWe'll charge EUR 99.00 to your Mastercard ending 0937.\n\nYou're using 1.31 TB of 2 TB. No action is needed to keep your files safe.\n\nThe CloudVault team\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "7b38ce7b8aa2a665",
+  "messages": [
+   {
+    "message_id": "5852e219b5a063d9",
+    "sender": "FitPulse <premium@fitpulse.example>",
+    "to": [
+     "lena@fischermail.example"
+    ],
+    "date": "2026-11-04T07:45:00Z",
+    "subject": "Your FitPulse Premium trial ends soon",
+    "body": "Hi Lena,\n\nYou're 2 weeks into your free FitPulse Premium trial. Your trial ends on\n2 December 2026. After that, Premium is EUR 7.99 per month, billed to your\nGoogle Play account, unless you cancel before then.\n\nKeep moving!\nFitPulse\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "db3d179109376b25",
+  "messages": [
+   {
+    "message_id": "adfbfa75c8d60b99",
+    "sender": "The Daily Ledger <subscriptions@dailyledger.example>",
+    "to": [
+     "lena@fischermail.example"
+    ],
+    "date": "2026-09-15T09:20:00Z",
+    "subject": "Welcome to The Daily Ledger digital",
+    "body": "Dear Lena Fischer,\n\nWelcome to The Daily Ledger. Your Digital subscription is now active.\n\nPrice: EUR 15.00 per month, billed on the 15th of each month\nPayment method: Visa ending 2218\n\nEnjoy unlimited articles, the daily puzzle and the e-paper.\nReader Services, The Daily Ledger\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "0c3502965d2d4315",
+  "messages": [
+   {
+    "message_id": "c1ca2a2fae6f3166",
+    "sender": "The Daily Ledger <subscriptions@dailyledger.example>",
+    "to": [
+     "lena@fischermail.example"
+    ],
+    "date": "2026-11-10T09:05:00Z",
+    "subject": "A change to your Daily Ledger subscription price",
+    "body": "Dear Lena Fischer,\n\nFrom 15 January 2027 the price of your Digital subscription will change from\nEUR 15.00 to EUR 17.00 per month. You don't need to do anything to keep reading.\nIf you'd like to cancel, you can do so in your account before that date.\n\nReader Services, The Daily Ledger\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "b7c0c0ffc267f547",
+  "messages": [
+   {
+    "message_id": "37f916c1cbf8dbd9",
+    "sender": "Soundwave <no-reply@soundwave.example>",
+    "to": [
+     "lena@fischermail.example"
+    ],
+    "date": "2026-10-01T05:30:00Z",
+    "subject": "Soundwave Family - receipt",
+    "body": "Hi Lena,\n\nYour Soundwave Family plan (6 accounts) renewed today.\nAmount: EUR 16.99\nNext billing date: 1 November 2026\n\nSoundwave\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "bd721d3f91304592",
+  "messages": [
+   {
+    "message_id": "0cb76997f823bb2b",
+    "sender": "Soundwave <no-reply@soundwave.example>",
+    "to": [
+     "lena@fischermail.example"
+    ],
+    "date": "2026-11-08T19:42:00Z",
+    "subject": "Your Soundwave Family subscription has been cancelled",
+    "body": "Hi Lena,\n\nWe've cancelled your Soundwave Family subscription as you asked.\nYou'll keep Premium until 30 November 2026, then your account switches to\nSoundwave Free. You won't be charged again.\n\nChanged your mind? You can restart any time.\nSoundwave\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "dd1892f17a86bc1a",
+  "messages": [
+   {
+    "message_id": "df215635fc563438",
+    "sender": "PixelPro <billing@pixelpro.example>",
+    "to": [
+     "lena@fischermail.example"
+    ],
+    "date": "2026-11-12T10:10:00Z",
+    "subject": "PixelPro Photo plan - payment received",
+    "body": "Hello Lena,\n\nWe received your payment for the PixelPro Photo plan.\nAmount: EUR 11.99 (monthly)\nNext charge: 12 December 2026\nInvoice number: PXP-2026-118842\n\nPixelPro\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "9f5b63f033248701",
+  "messages": [
+   {
+    "message_id": "57e128314ef2c5c1",
+    "sender": "Weekend Reads <letters@weekendreads.example>",
+    "to": [
+     "lena@fischermail.example"
+    ],
+    "date": "2026-10-31T07:00:00Z",
+    "subject": "Weekend Reads - Issue 212: the slow return of night trains",
+    "body": "Good morning,\n\nIssue 212: the slow return of night trains. Plus three longreads for your Saturday and one good chart.\n\nYou're receiving this because you subscribed to Weekend Reads (free).\nUnsubscribe or manage your subscription at weekendreads.example/me\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "6de7c448ab1ab3ff",
+  "messages": [
+   {
+    "message_id": "ca482cc8f7998872",
+    "sender": "Weekend Reads <letters@weekendreads.example>",
+    "to": [
+     "lena@fischermail.example"
+    ],
+    "date": "2026-11-14T07:00:00Z",
+    "subject": "Weekend Reads - Issue 214: why we keep paper diaries",
+    "body": "Good morning,\n\nIssue 214: why we keep paper diaries. Plus three longreads for your Saturday and one good chart.\n\nYou're receiving this because you subscribed to Weekend Reads (free).\nUnsubscribe or manage your subscription at weekendreads.example/me\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "15e081816c9fbd2c",
+  "messages": [
+   {
+    "message_id": "da1c06ab5181bee4",
+    "sender": "Gardening Tips Weekly <tips@greenfingers.example>",
+    "to": [
+     "lena@fischermail.example"
+    ],
+    "date": "2026-11-06T06:30:00Z",
+    "subject": "Gardening Tips Weekly: November jobs",
+    "body": "Hi Lena,\n\nNovember jobs: plant tulip bulbs, lift dahlias, and give the lawn its last cut.\n\nYou subscribed to Gardening Tips Weekly. It's free, and you can unsubscribe here.\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "775526271d0d3f5c",
+  "messages": [
+   {
+    "message_id": "28068d427bbfe614",
+    "sender": "Hacker Digest <digest@hackerdigest.example>",
+    "to": [
+     "lena@fischermail.example"
+    ],
+    "date": "2026-11-16T05:00:00Z",
+    "subject": "Hacker Digest: top stories for Monday",
+    "body": "Top stories today:\n1. A tiny database in 400 lines\n2. Why your build is slow\n3. Show: a pocket synth\n\nYou're subscribed to the daily Hacker Digest. Manage subscription | Unsubscribe\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "999e32ad8e18c42c",
+  "messages": [
+   {
+    "message_id": "d013a60ed8d3f06d",
+    "sender": "Riverside Library <news@riversidelibrary.example>",
+    "to": [
+     "lena@fischermail.example"
+    ],
+    "date": "2026-11-02T12:00:00Z",
+    "subject": "Riverside Library news - November",
+    "body": "Dear member,\n\nThis month: the winter reading challenge starts on 1 December, and the\nmakerspace is open on Thursdays. Your membership is free.\n\nTo stop these emails, manage your subscription in your library account.\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "55d766af7500f673",
+  "messages": [
+   {
+    "message_id": "99404d9d97baa71d",
+    "sender": "Trail Runner Notes <hello@trailnotes.example>",
+    "to": [
+     "lena@fischermail.example"
+    ],
+    "date": "2026-11-09T21:14:00Z",
+    "subject": "Please confirm your subscription to Trail Runner Notes",
+    "body": "Hi,\n\nOne click and you're in: confirm your subscription to Trail Runner Notes,\na free monthly letter about running off-road.\n\nIf you didn't sign up, ignore this email.\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "bf07c1a7f75a2e6c",
+  "messages": [
+   {
+    "message_id": "6904e05ed4a44516",
+    "sender": "Northbank <statements@northbank.example>",
+    "to": [
+     "lena@fischermail.example"
+    ],
+    "date": "2026-11-05T04:00:00Z",
+    "subject": "Your October statement is ready",
+    "body": "Your Northbank current account statement for October is ready in online banking.\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "ec23223ac1abadde",
+  "messages": [
+   {
+    "message_id": "cd8ec2afa3979043",
+    "sender": "Mira Hoffmann <mira.h@mailbox.example>",
+    "to": [
+     "lena@fischermail.example"
+    ],
+    "date": "2026-11-13T18:22:00Z",
+    "subject": "Coffee on Saturday?",
+    "body": "Hey Lena, fancy coffee at Kaffeehaus on Saturday around 11? Mira\n",
+    "attachments": []
+   },
+   {
+    "message_id": "05de3f11bf563909",
+    "sender": "Lena Fischer <lena@fischermail.example>",
+    "to": [
+     "mira.h@mailbox.example"
+    ],
+    "date": "2026-11-13T19:01:00Z",
+    "subject": "Re: Coffee on Saturday?",
+    "body": "Yes please! See you at 11. L\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "abb288e4142fd479",
+  "messages": [
+   {
+    "message_id": "805ffc1d7d06bc92",
+    "sender": "Lindenhof Dental <reception@lindenhofdental.example>",
+    "to": [
+     "lena@fischermail.example"
+    ],
+    "date": "2026-11-11T08:00:00Z",
+    "subject": "Reminder: dental check-up",
+    "body": "Dear Lena, this is a reminder of your check-up on Tuesday 24 November at 09:20.\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "ae0318dcb4d414e5",
+  "messages": [
+   {
+    "message_id": "4d69f06aa4f58d86",
+    "sender": "ParcelPost <noreply@parcelpost.example>",
+    "to": [
+     "lena@fischermail.example"
+    ],
+    "date": "2026-11-17T13:40:00Z",
+    "subject": "Your parcel has been delivered",
+    "body": "Your parcel PP40021187 was delivered at 13:38 and left with your neighbour at no. 14.\n",
+    "attachments": []
+   }
+  ]
+ }
+]

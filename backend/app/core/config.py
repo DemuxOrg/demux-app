@@ -80,6 +80,12 @@ class Settings(BaseSettings):
     TEST_GMAIL_PASSWORD: str = ""
     DEMO_IMAP_HOST: str = "imap.gmail.com"
     DEMO_MODEL: str = ""  # empty: BUILD_MODEL (a Qwen model on the Hugging Face router)
+    # Evals (/admin/evals): scenarios run at once, and the commit a score is recorded
+    # against. GIT_SHA / GIT_BRANCH are for images built without .git; otherwise .git is
+    # read directly (EVAL_GIT_DIR points at it when it is mounted elsewhere).
+    EVAL_CONCURRENCY: int = 3
+    GIT_SHA: str = ""
+    GIT_BRANCH: str = ""
 
     @property
     def admin_emails(self) -> set[str]:

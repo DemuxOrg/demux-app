@@ -6,6 +6,7 @@ for autogenerate. Add new models here.
 
 from app.models.admin import AdminAudit, DemoSeed, DemoSeedStatus
 from app.models.auth import AuthAccount, AuthSession, AuthVerification
+from app.models.eval import EvalRun, EvalRunStatus
 from app.models.run import Change, ProcessedMessage, Run, RunKind, RunStatus, Snapshot
 from app.models.usage import LLMCall, MailboxDailyStat
 from app.models.user import User
@@ -15,6 +16,8 @@ __all__ = [
     "AdminAudit",
     "DemoSeed",
     "DemoSeedStatus",
+    "EvalRun",
+    "EvalRunStatus",
     "LLMCall",
     "MailboxDailyStat",
     "AuthAccount",

@@ -170,3 +170,143 @@ class DemoSeedCreate(BaseModel):
 
 class DemoCleanup(_Out):
     removed: int
+
+
+# ------------------------------------------------------------------ evals
+#
+# Everything below comes from the eval suite: the synthetic mailboxes and expectations in
+# `backend/eval/agent/scenarios/` (committed fixtures), never a user's inbox. Labels,
+# check specs, check details and the agent's questions are fixture text.
+
+
+class EvalScenarioInfo(_Out):
+    id: str
+    prompt: str  # fixture prompt
+    steps: int
+    vague: bool  # the build should ask clarifying questions
+
+
+class EvalParts(_Out):
+    retrieval: float | None = None  # email recall, 0-100
+    coverage: float | None = None  # request coverage, 0-100
+    correctness: float | None = None
+    clarification: float | None = None
+
+
+class EvalGuardrail(_Out):
+    key: str
+    label: str
+    value: float | None
+    target: float
+    op: str  # "≥" or "≤"
+    met: bool | None
+
+
+class EvalRunRow(_Out):
+    id: uuid.UUID
+    status: str
+    scenario_ids: list[str]
+    repeats: int
+    progress_done: int
+    progress_total: int
+    commit: str | None
+    branch: str | None
+    agent_hash: str | None
+    suite_hash: str | None
+    build_model: str | None
+    sync_model: str | None
+    score: float | None
+    spread: float | None
+    parts: EvalParts
+    guardrails: list[EvalGuardrail]
+    cost_usd: float
+    error: str | None
+    created_at: datetime
+    started_at: datetime | None
+    finished_at: datetime | None
+
+
+class EvalsState(_Out):
+    build_model: str  # what a new run will use
+    scenarios: list[EvalScenarioInfo]
+    runs: list[EvalRunRow]
+
+
+class EvalRunCreate(BaseModel):
+    repeats: int = Field(default=1, ge=1, le=5)
+    scenario_ids: list[str] = Field(default_factory=list, max_length=50)  # empty: all
+
+
+class EvalCheck(_Out):
+    step: str
+    kind: str
+    passed: bool
+    expected: str  # the check as written in scenario.yaml
+    detail: str
+
+
+class EvalAsk(_Out):
+    step: str
+    ask: str
+    in_data: bool | None
+    in_app: bool
+    score: float
+    detail: str
+
+
+class EvalGroup(_Out):
+    label: str
+    thread_ids: list[str]
+    recalled: bool
+
+
+class EvalRetrieval(_Out):
+    recall: float | None
+    recalled: int
+    total: int
+    cited_threads: int
+    cited_relevant: int
+    groups: list[EvalGroup]
+
+
+class EvalQuestion(_Out):
+    question: str
+    options: list[str]
+    answer: str | None  # the scripted user's pick; none: the recommended option was used
+
+
+class EvalClarify(_Out):
+    expected: bool
+    asked: bool
+    on_topic: bool | None
+    score: float
+    questions: list[EvalQuestion]
+
+
+class EvalStep(_Out):
+    name: str
+    kind: str
+    error: str | None
+    cost_usd: float
+    input_tokens: int
+    output_tokens: int
+    latency_s: float
+    record_count: int
+    app_renders: bool
+    checks: list[EvalCheck]
+
+
+class EvalScenarioResult(_Out):
+    id: str
+    repeat: int
+    prompt: str
+    score: float  # 0-100
+    parts: EvalParts
+    retrieval: EvalRetrieval | None
+    asks: list[EvalAsk]
+    clarify: EvalClarify | None
+    steps: list[EvalStep]
+
+
+class EvalRunDetail(EvalRunRow):
+    scenarios: list[EvalScenarioResult]

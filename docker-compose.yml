@@ -69,7 +69,15 @@ services:
     <<: *backend
     # No hot reload: restarting mid-run would fail the run. After changing agent code:
     #   docker compose restart worker
+    # (evals from /admin/evals run in their own process, so they always use the code on
+    # disk; .git is mounted read-only so each eval records the commit it ran.)
     command: ["python", "-m", "app.worker"]
+    environment:
+      <<: *backend-env
+      EVAL_GIT_DIR: /repo/.git
+    volumes:
+      - ./backend:/app
+      - ./.git:/repo/.git:ro
     depends_on:
       # Waits for the backend so migrations have run.
       backend:

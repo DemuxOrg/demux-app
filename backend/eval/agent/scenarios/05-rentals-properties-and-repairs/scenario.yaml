@@ -1,8 +1,23 @@
 id: 05-rentals-properties-and-repairs
 prompt: "I manage a few rental flats. Show each property and the repair requests for it, with who reported it and whether it's been fixed yet."
+relevant:
+  - {label: "Smoke alarm (Ana Romero)", threads: [089110c4647fce86]}
+  - {label: "Kitchen tap, Quayside (Jess)", threads: [dbf93c119b6deae4, de7b10bdc02ed3bb]}
+  - {label: "Boiler, Larch Road (Omar)", threads: [b3bc78ae353c030a, 8b6d763ec0237ed8, 295aaae03acb9a16]}
+  - {label: "Damp, Beacon Street (Ana)", threads: [b24bd3cc728d0c76, d84ed15fc1b0c69e, 30483ce3a95330d0, 56362e63b271b8b1]}
+  - {label: "Fence, Orchard Close (Peter)", threads: [4250072c41e046c2]}
+  - {label: "Extractor fan, Larch Road (Omar)", threads: [88a1da179ef5c180, d0e3eff6eb0649d8]}
+  - {label: "Door lock, Quayside (Jess)", threads: [23cb328364f9fdaa]}
+  - {label: "Dishwasher, Orchard Close (Peter)", threads: [fc99d577e0d91d76, 0806ef95d57a06d7]}
+  - {label: "Bathroom window, Orchard Close (sync-1)", threads: [517031e62eaf337d]}
 steps:
 - name: build
   now: 2026-10-12T09:00:00Z
+  asks:
+    - {ask: "each property", record: ["dishwasher"], value_any: ["Orchard"], label_any: ["property", "address"]}
+    - {ask: "the repair requests", record: ["extractor"], value_any: ["extractor", "fan"], label_any: ["repair", "issue", "request"]}
+    - {ask: "who reported it", record: ["dishwasher"], value_any: ["Novak", "Peter"], label_any: ["reported", "reporter", "tenant"]}
+    - {ask: "fixed yet", record: ["boiler"], value_any: ["fixed", "resolved", "done", "complete", "completed", "closed", "repaired"], label_any: ["status", "fixed"]}
   expect:
     - {kind: exists, all_of: ["Larch"]}
     - {kind: exists, all_of: ["Quayside"]}

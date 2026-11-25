@@ -1,8 +1,29 @@
 id: 01-supplier-bills-paid-later
 prompt: "Keep track of the bills my suppliers send me - who it's from, how much, when it's due and whether I've paid it yet."
+# Email recall ground truth: one group per expected record, listing every thread about
+# it. A group counts as recalled when a record cites any of its threads.
+relevant:
+  - {label: "GP-2187 Greenleaf", threads: [81161aeb89e7990b]}
+  - {label: "HBI-76902 Harbor Bean (+ overdue)", threads: [593b47ad2b90e7c0, 83854896f191e905]}
+  - {label: "AD-3241 Alpine Dairy", threads: [3d0b2cb2770aa29b, faa8088d70b5961a]}
+  - {label: "5583 Brightline Energy", threads: [2ec766613ea39551, 8a50f99d72af3ffa]}
+  - {label: "0987 ACME Hosting (+ receipt)", threads: [45684dc13593edfc, 7617dd81f313d529]}
+  - {label: "KES-0817 Kessler (+ reminder)", threads: [d0ac936bd0891ebe, a6ec29b7c01b8ee0, ccfda54c0fb9be3c]}
+  - {label: "CW-40912 CityWaste (+ payment)", threads: [a9fd02af84e40806, 74a6b7b1169d5c80]}
+  - {label: "AD-3307 Alpine Dairy", threads: [637fdb651cad0d57, faa8088d70b5961a]}
+  - {label: "GP-2291 Greenleaf", threads: [7405f17bad3f3d17]}
+  - {label: "HBI-77310 Harbor Bean", threads: [9d99fb0fafc7b14e]}
+  - {label: "1042 ACME Hosting (+ receipt in sync-1)", threads: [980e7e0c8008d86f, b1f7de7b9304c28c]}
+  - {label: "RPS-118 Rivera print", threads: [3f5a529da6b412cc]}
 steps:
 - name: build
   now: 2026-10-20T09:00:00Z
+  # Request coverage: each thing the prompt asks for, in the data and on screen.
+  asks:
+    - {ask: "who it's from", record: ["GP-2187"], value_any: ["Greenleaf"], label_any: ["supplier", "vendor"]}
+    - {ask: "how much", record: ["GP-2187"], value_any: ["980"], label_any: ["amount", "total"]}
+    - {ask: "when it's due", record: ["GP-2187"], value_any: ["2026-08-31", "31 Aug", "Aug 31", "31/08", "08/31", "31 August", "August 31"], label_any: ["due"]}
+    - {ask: "paid or not", record: ["1042"], value_any: ["unpaid", "due", "open", "outstanding", "pending", "not paid"], label_any: ["paid", "status"]}
   expect:
     - {kind: exists, all_of: ["ACME", "1042"]}
     - {kind: unique, all_of: ["1042"]}

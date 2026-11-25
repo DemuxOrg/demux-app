@@ -74,7 +74,8 @@ db:  ## start Postgres only (also creates demux_test on first run)
 	docker compose up -d --wait postgres
 
 prod-up: env  ## build and start the production-like stack (docker-compose.prod.yml)
-	$(COMPOSE_PROD) up -d --build --wait
+	GIT_SHA=$$(git rev-parse HEAD 2>/dev/null) GIT_BRANCH=$$(git rev-parse --abbrev-ref HEAD 2>/dev/null) \
+		$(COMPOSE_PROD) up -d --build --wait
 
 prod-down:  ## stop the production-like stack (keeps its data volume)
 	$(COMPOSE_PROD) down
@@ -105,7 +106,7 @@ gen-api:  ## regenerate frontend API types (backend must be running)
 kit:  ## build the component kit inlined into generated apps (app-kit/ → backend/app/agent/kit/)
 	cd app-kit && pnpm install --frozen-lockfile && pnpm build
 
-eval-agent:  ## run the agent eval scenarios (costs money): make eval-agent ARGS="--scenario 01"
+eval-agent:  ## run the agent evals from the CLI (costs money): make eval-agent ARGS="--scenario 01 --concurrency 3". From the UI: /admin/evals
 	cd backend && uv run python -m eval.agent $(ARGS)
 
 lint:

@@ -120,6 +120,7 @@ HTTP request
 | `models/admin.py`, `services/admin_audit.py` | `admin_audit` (who viewed what) and `demo_seeds`. |
 | `services/demo.py`, `mail/demo_inbox.py` | Demo inbox: the LLM writes synthetic threads for a persona, IMAP appends them to `TEST_GMAIL`. Run by the worker. |
 | `services/mailbox_stats.py` | Which per-day mail counts the worker still has to take. |
+| `services/evals.py`, `models/eval.py` | Evals from `/admin/evals`: queue a run, the worker starts `python -m eval.agent --job <id>` in its own process (so it runs the code on disk), which runs the scenario suite and stores the Demux score, parts, guardrails and report in `eval_runs`. Scoring lives in `eval/agent/` (see `scenarios/AUTHORING.md`). |
 | `pipeline/` | **Empty on purpose.** Future home of the Gmail → LLM extraction code (see its README). |
 
 ### `tests/`

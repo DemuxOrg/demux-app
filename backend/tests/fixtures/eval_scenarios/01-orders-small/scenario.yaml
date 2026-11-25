@@ -1,0 +1,25 @@
+# A tiny scenario for tests/test_evals.py (scripted LLM, no cost).
+id: 01-orders-small
+prompt: "Track my orders: the item, the total and whether it arrived."
+relevant:
+  - {label: "A-1001 desk lamp", threads: [25c33903b16c1718]}
+  - {label: "77-552 charger", threads: [f81bc33bca062e4a]}
+  - {label: "A-1042 office chair", threads: [96a3f27d70f5614b, 81544975cc160ddf]}
+steps:
+- name: build
+  now: 2026-10-16T00:00:00Z
+  asks:
+    - {ask: "the item", record: ["A-1001"], value_any: ["Desk lamp"], label_any: ["item"]}
+    - {ask: "the total", record: ["A-1042"], value_any: ["189"], label_any: ["total"]}
+  expect:
+    - {kind: exists, all_of: ["A-1001"]}
+    - {kind: unique, all_of: ["A-1042"]}
+    - {kind: absent, any_of: ["Autumn sale"]}
+    - {kind: count, min: 3, max: 3}
+- name: sync-1
+  now: 2026-10-22T00:00:00Z
+  asks:
+    - {ask: "whether it arrived", record: ["A-1042"], value_any: ["delivered", "arrived"]}
+  expect:
+    - {kind: value, find: ["A-1042"], any_of: ["delivered"]}
+    - {kind: unchanged_except, find: [["A-1042"]]}

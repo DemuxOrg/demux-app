@@ -32,6 +32,7 @@ See `docs/UI_GENERATION_PLAN.md`. The agent writes a small JSX app composed from
 - Staff only: `ADMIN_EMAILS` (env) or `users.is_admin`. Every `/api/v1/admin/*` route depends on `get_admin_user` (401 without session, 404 for non-admins, one `admin_audit` row per request).
 - **Privacy:** admin responses carry ids, counts, tokens, costs, statuses, dates, prompts and edit messages only. Never email content, subjects, senders, record values, the guide, app HTML or run summaries. A new response field must be added to `ALLOWED_FIELDS` in `backend/tests/test_admin.py` (the test fails otherwise): review it against this rule first.
 - **Cost metering:** every LLM call goes through `MeteredLLM` (`app/agent/llm.py`), which writes an `llm_calls` row with the prices used; bill calls with `usage_scope(...)`. Run totals are added from the same amounts.
+- **Evals:** `/admin/evals` queues a run of the agent eval suite (`app/services/evals.py`, `eval/agent/`); it is the one admin page that shows fixture content (from the synthetic mailboxes in `eval/agent/scenarios/`, never a user's inbox). Its LLM calls are billed as phase `eval`, kept out of per-user costs like `seed`. Changing scenarios or scoring changes the suite hash: say so, since scores before and after don't compare.
 - **Demo inbox:** `/admin/demo` writes synthetic threads into the `TEST_GMAIL` inbox over IMAP (app password); the only code that writes mail. Never point it at a user's Gmail.
 
 ## Keep it simple

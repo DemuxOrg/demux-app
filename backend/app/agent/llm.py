@@ -6,8 +6,8 @@ Hugging Face router). Never logs prompts or responses; callers get them back.
 Metering: `MeteredLLM` wraps any chat model, prices every call from `prices.yaml` and
 writes one `llm_calls` row per call (tokens, the unit prices used, cost, latency,
 status) into the scope set with `usage_scope()` (run, workspace, user, DB session
-factory) and `usage_phase()` (design, batch, app, edit, seed). Without a scope (CLI,
-eval) nothing is written. The cost on the reply is the exact amount stored on the row,
+factory) and `usage_phase()` (design, batch, app, edit, seed, eval). Without a scope
+(CLI) nothing is written. The cost on the reply is the exact amount stored on the row,
 so run totals added from it always equal the sum of their calls.
 """
 
@@ -275,8 +275,16 @@ def usage_scope(**values: Any) -> Iterator[None]:
         _scope.reset(token)
 
 
+# Scopes whose phase the agent's own phases do not replace: every call of an eval run
+# (/admin/evals) is billed as "eval", whatever agent phase makes it.
+_STICKY_PHASES = {"eval"}
+
+
 @contextlib.contextmanager
 def usage_phase(phase: str) -> Iterator[None]:
+    if current_scope().phase in _STICKY_PHASES:
+        yield
+        return
     with usage_scope(phase=_PHASES.get(phase, phase)):
         yield
 

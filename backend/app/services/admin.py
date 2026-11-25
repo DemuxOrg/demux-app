@@ -26,6 +26,8 @@ from app.models.user import User
 from app.models.workspace import Workspace
 
 RANGES = (7, 30, 90)
+# Staff spending (demo inbox, evals): in the totals, never in a user's cost.
+STAFF_PHASES = ("seed", "eval")
 RUNS_PER_WORKSPACE = 50
 # Prefixes the worker puts on run errors (app/worker.py); anything else is shown as a code.
 ERROR_CODES = (
@@ -179,7 +181,7 @@ async def overview(session: AsyncSession, days: int) -> Overview:
 
     per_user = (
         select(day.label("d"), LLMCall.user_id, func.sum(LLMCall.cost_usd).label("c"))
-        .where(in_range, LLMCall.user_id.is_not(None), LLMCall.phase != "seed")
+        .where(in_range, LLMCall.user_id.is_not(None), LLMCall.phase.not_in(STAFF_PHASES))
         .group_by(day, LLMCall.user_id)
         .subquery()
     )
@@ -324,7 +326,7 @@ async def users_table(session: AsyncSession) -> list[UserRow]:
         ).all()
     )
     received = await _received_per_day(session)
-    costs = await _costs(session, LLMCall.user_id, [LLMCall.phase != "seed"])
+    costs = await _costs(session, LLMCall.user_id, [LLMCall.phase.not_in(STAFF_PHASES)])
     active = await _last_active(session)
     rows = [
         UserRow(
@@ -527,7 +529,7 @@ async def user_detail(session: AsyncSession, user_id: uuid.UUID) -> UserDetail |
     workspaces = await _load_workspaces(session, Workspace.user_id == user_id)
     ws_rows = await _workspace_rows(session, workspaces, RUNS_PER_WORKSPACE)
     costs = await _costs(
-        session, LLMCall.user_id, [LLMCall.user_id == user_id, LLMCall.phase != "seed"]
+        session, LLMCall.user_id, [LLMCall.user_id == user_id, LLMCall.phase.not_in(STAFF_PHASES)]
     )
     c7, c30, ct = costs.get(user_id, (0.0, 0.0, 0.0))
     span = _days(30, _today() - timedelta(days=1))

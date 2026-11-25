@@ -1,0 +1,392 @@
+[
+ {
+  "thread_id": "69bf9478f4fa2cde",
+  "messages": [
+   {
+    "message_id": "06ee754513436956",
+    "sender": "Crafthaus <orders@crafthaus.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-10-12T10:31:00Z",
+    "subject": "You have a new order! #CH-4471",
+    "body": "Hi Sam,\n\nGreat news, you've made a sale on Crafthaus.\n\nOrder: #CH-4471\nBuyer: Emma Watts\nItem: 2 x Speckled stoneware mug\nOrder total: EUR 48.00\nShip to: Emma Watts, Leeds\nPlease ship by: 16 October\n\nMark the order as shipped in your Shop Manager once it's on its way.\nCrafthaus Seller Support\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "ee36177c99a726d5",
+  "messages": [
+   {
+    "message_id": "4c0d956da942d389",
+    "sender": "Crafthaus <orders@crafthaus.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-10-14T16:05:00Z",
+    "subject": "Order #CH-4471 marked as shipped",
+    "body": "Hi Sam,\n\nYou marked order #CH-4471 as shipped with Royal Parcel (tracking RP558201913).\nWe've let the buyer know. Payment for this order will be released to you 3 days\nafter delivery.\n\nCrafthaus Seller Support\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "9fe0b256df74d89e",
+  "messages": [
+   {
+    "message_id": "20b72a60cea5d682",
+    "sender": "Crafthaus <orders@crafthaus.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-10-20T19:12:00Z",
+    "subject": "You have a new order! #CH-4475",
+    "body": "Hi Sam,\n\nGreat news, you've made a sale on Crafthaus.\n\nOrder: #CH-4475\nBuyer: Raj Patel\nItem: Large serving bowl, ash glaze\nOrder total: EUR 65.00\nShip to: Raj Patel, Bristol\nPlease ship by: 24 October\n\nMark the order as shipped in your Shop Manager once it's on its way.\nCrafthaus Seller Support\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "c4fa80cd9f28cb04",
+  "messages": [
+   {
+    "message_id": "3f1dfa68cdd5133e",
+    "sender": "Raj Patel via Crafthaus <messages@crafthaus.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-10-21T08:40:00Z",
+    "subject": "Question about order #CH-4475",
+    "body": "Hi Sam, the bowl is a birthday present - could you gift wrap it and leave the price out?\nAlso no rush, the birthday is on 2 November. Thanks! Raj\n",
+    "attachments": []
+   },
+   {
+    "message_id": "7891fe72ee2e7991",
+    "sender": "Sam Okoye <sam@okoyeceramics.example>",
+    "to": [
+     "messages@crafthaus.example"
+    ],
+    "date": "2026-10-21T09:15:00Z",
+    "subject": "Re: Question about order #CH-4475",
+    "body": "Hi Raj, of course - I'll gift wrap it and won't include the receipt. I'll post it\nearly next week so it's with you well before the 2nd. Sam\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "8bd12470d05c67ae",
+  "messages": [
+   {
+    "message_id": "a262d561702134c9",
+    "sender": "Crafthaus <orders@crafthaus.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-10-22T13:02:00Z",
+    "subject": "You have a new order! #CH-4480",
+    "body": "Hi Sam,\n\nGreat news, you've made a sale on Crafthaus.\n\nOrder: #CH-4480\nBuyer: Lucia Moreno\nItem: Tall celadon vase\nOrder total: EUR 120.00\nShip to: Lucia Moreno, Manchester\nPlease ship by: 26 October\n\nMark the order as shipped in your Shop Manager once it's on its way.\nCrafthaus Seller Support\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "352e64e83435ea8c",
+  "messages": [
+   {
+    "message_id": "894e2eff1fd14414",
+    "sender": "Crafthaus <orders@crafthaus.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-10-24T11:47:00Z",
+    "subject": "Order #CH-4480 marked as shipped",
+    "body": "Hi Sam,\n\nYou marked order #CH-4480 as shipped with Royal Parcel (tracking RP558377410).\nWe've let the buyer know. Payment for this order will be released to you 3 days\nafter delivery.\n\nCrafthaus Seller Support\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "195ecdc728e94f6f",
+  "messages": [
+   {
+    "message_id": "f5cf1a6d42dbef71",
+    "sender": "Crafthaus <orders@crafthaus.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-10-30T20:18:00Z",
+    "subject": "Lucia left a 5-star review",
+    "body": "Hi Sam,\n\nLucia Moreno received order #CH-4480 (Tall celadon vase) and left a review:\n\"Arrived beautifully packed and it's even lovelier in person.\" (5 stars)\n\nCrafthaus\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "907ce971160452c2",
+  "messages": [
+   {
+    "message_id": "36cda26800a622b9",
+    "sender": "Crafthaus <orders@crafthaus.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-10-28T09:55:00Z",
+    "subject": "You have a new order! #CH-4482",
+    "body": "Hi Sam,\n\nGreat news, you've made a sale on Crafthaus.\n\nOrder: #CH-4482\nBuyer: Tom Harris\nItem: Set of 4 dinner plates, oatmeal\nOrder total: EUR 96.00\nShip to: Tom Harris, York\nPlease ship by: 1 November\n\nMark the order as shipped in your Shop Manager once it's on its way.\nCrafthaus Seller Support\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "738a594afa694242",
+  "messages": [
+   {
+    "message_id": "5328f87d5e2fafd8",
+    "sender": "Tom Harris via Crafthaus <messages@crafthaus.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-10-29T07:20:00Z",
+    "subject": "Change of address for order #CH-4482",
+    "body": "Hi Sam, sorry - we've just moved. Could you send the plates to 8 Mill Row, York YO1 7HB\ninstead? Tom\n",
+    "attachments": []
+   },
+   {
+    "message_id": "653d553a5c8ba561",
+    "sender": "Sam Okoye <sam@okoyeceramics.example>",
+    "to": [
+     "messages@crafthaus.example"
+    ],
+    "date": "2026-10-29T08:02:00Z",
+    "subject": "Re: Change of address for order #CH-4482",
+    "body": "No problem Tom, updated - they'll go to 8 Mill Row. Sam\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "db271a9b28a0afb6",
+  "messages": [
+   {
+    "message_id": "46793776f0477610",
+    "sender": "Crafthaus <orders@crafthaus.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-11-02T15:30:00Z",
+    "subject": "Order #CH-4482 marked as shipped",
+    "body": "Hi Sam,\n\nYou marked order #CH-4482 as shipped with Royal Parcel (tracking RP558501266).\nWe've let the buyer know. Payment for this order will be released to you 3 days\nafter delivery.\n\nCrafthaus Seller Support\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "2df36bded5d0cc05",
+  "messages": [
+   {
+    "message_id": "2f8d47014ba7b0c5",
+    "sender": "Crafthaus <orders@crafthaus.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-10-31T21:40:00Z",
+    "subject": "You have a new order! #CH-4486",
+    "body": "Hi Sam,\n\nGreat news, you've made a sale on Crafthaus.\n\nOrder: #CH-4486\nBuyer: Ines Kovac\nItem: Speckled stoneware mug\nOrder total: EUR 24.00\nShip to: Ines Kovac, Glasgow\nPlease ship by: 4 November\n\nMark the order as shipped in your Shop Manager once it's on its way.\nCrafthaus Seller Support\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "5ced597f2312b679",
+  "messages": [
+   {
+    "message_id": "aaf7d71958def024",
+    "sender": "Crafthaus <orders@crafthaus.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-11-01T10:10:00Z",
+    "subject": "Order #CH-4486 cancelled by the buyer",
+    "body": "Hi Sam,\n\nInes Kovac cancelled order #CH-4486 (Speckled stoneware mug) before it shipped.\nWe've refunded EUR 24.00 to the buyer. You don't need to do anything.\n\nCrafthaus Seller Support\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "0073da4afe164b50",
+  "messages": [
+   {
+    "message_id": "fad26bef4de013ea",
+    "sender": "Crafthaus <orders@crafthaus.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-11-04T12:25:00Z",
+    "subject": "You have a new order! #CH-4490",
+    "body": "Hi Sam,\n\nGreat news, you've made a sale on Crafthaus.\n\nOrder: #CH-4490\nBuyer: Grace Lee\nItem: Round teapot with cane handle\nOrder total: EUR 85.00\nShip to: Grace Lee, Cardiff\nPlease ship by: 8 November\n\nMark the order as shipped in your Shop Manager once it's on its way.\nCrafthaus Seller Support\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "22d06cf007731a4b",
+  "messages": [
+   {
+    "message_id": "5ac337ff31d1f607",
+    "sender": "ClayDepot <orders@claydepot.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-10-18T14:00:00Z",
+    "subject": "Your ClayDepot order KD-2290 has shipped",
+    "body": "Hi Sam,\n\nYour order KD-2290 is on its way: 2 x Buff stoneware clay 12.5 kg - EUR 54.00.\nTracking: DX-7781002. Expected delivery: 21 October.\n\nClayDepot\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "dc9916143e425aa2",
+  "messages": [
+   {
+    "message_id": "2585172d5715bf6b",
+    "sender": "Gadgetry <hello@gadgetry.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-10-25T18:30:00Z",
+    "subject": "Your Gadgetry order GT-88123",
+    "body": "Thanks for your order, Sam!\n\nOrder GT-88123: Arc wireless headphones, graphite - EUR 129.00\nEstimated delivery: 28 October\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "c9b6ff325813f853",
+  "messages": [
+   {
+    "message_id": "e5a48ee0212a85dd",
+    "sender": "Gadgetry <hello@gadgetry.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-10-28T12:12:00Z",
+    "subject": "Delivered: Gadgetry order GT-88123",
+    "body": "Your Gadgetry order GT-88123 was delivered today. Enjoy your new headphones!\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "05fab309339a8cf8",
+  "messages": [
+   {
+    "message_id": "c7cebf60ded8ca5b",
+    "sender": "Bookhive <orders@bookhive.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-11-03T09:00:00Z",
+    "subject": "Bookhive order BH-5512 dispatched",
+    "body": "Hi Sam, your order BH-5512 (The Glaze Book, hardback - EUR 32.00) has been dispatched.\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "7776d3b62e397dae",
+  "messages": [
+   {
+    "message_id": "4e35788bd269d7ce",
+    "sender": "Kilnworks Supplies <sales@kilnworks.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-11-05T11:20:00Z",
+    "subject": "Order confirmation KW-3071",
+    "body": "Dear Sam Okoye,\n\nThank you for your order KW-3071: 1 x Celadon glaze 5 kg, 1 x Wax resist 1 L.\nTotal EUR 61.50. We'll email you when it ships (usually 2-3 working days).\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "7f5eb6001ab6699e",
+  "messages": [
+   {
+    "message_id": "8b9ccb220f548341",
+    "sender": "Crafthaus <news@crafthaus.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-11-02T08:00:00Z",
+    "subject": "Holiday selling tips from Crafthaus",
+    "body": "Hi Sam,\n\nHoliday shoppers are here. Five tips: add gift wrap as an option, set your last\nshipping date, refresh your photos, offer bundles, and reply to messages fast.\n\nCrafthaus\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "9f0340c0e12fd74a",
+  "messages": [
+   {
+    "message_id": "c2080e82e880452b",
+    "sender": "Crafthaus Billing <billing@crafthaus.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-11-01T06:00:00Z",
+    "subject": "Your October seller fees",
+    "body": "Hi Sam, your Crafthaus seller fees for October: EUR 18.40 (listing and transaction fees).\nThey've been deducted from your payout. Statement attached in Shop Manager.\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "b170b4f22763f897",
+  "messages": [
+   {
+    "message_id": "3da79e60cde2e7af",
+    "sender": "Hollow Lane Studio <studio@hollowlane.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-11-02T17:45:00Z",
+    "subject": "Kiln firing schedule this week",
+    "body": "Hi all, bisque firing on Wednesday, glaze firing Saturday. Shelves need to be loaded by 6pm.\nHollow Lane Studio\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "7d690d0a6c269008",
+  "messages": [
+   {
+    "message_id": "2b860e3e5429d2cb",
+    "sender": "Northbank <statements@northbank.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-11-03T04:00:00Z",
+    "subject": "Your Northbank statement is ready",
+    "body": "Your Northbank business account statement for October is ready in online banking.\n",
+    "attachments": []
+   }
+  ]
+ },
+ {
+  "thread_id": "765a9ecb124a6929",
+  "messages": [
+   {
+    "message_id": "55acb011e56d908f",
+    "sender": "Ada Okoye <ada.okoye@mailbox.example>",
+    "to": [
+     "sam@okoyeceramics.example"
+    ],
+    "date": "2026-11-04T19:00:00Z",
+    "subject": "Sunday lunch",
+    "body": "Sam, lunch on Sunday at 1? Bring one of your new mugs for your aunt, she keeps asking. Mum\n",
+    "attachments": []
+   }
+  ]
+ }
+]

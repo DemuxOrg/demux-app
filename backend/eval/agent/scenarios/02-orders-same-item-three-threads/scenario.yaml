@@ -1,8 +1,23 @@
 id: 02-orders-same-item-three-threads
 prompt: "Track my online orders - what I ordered, from which shop, and where each delivery is at."
+relevant:
+  - {label: "BZ-5530 Breezo", threads: [e2926639f15e9e8f, 90e9f98f23433ca1]}
+  - {label: "PO-66120 Peak Outdoors (returned)", threads: [a2f7369aee835830, 49fb97a96979a7b5, 97917cea6782ff10]}
+  - {label: "LL-30875 Lumen Lighting", threads: [0299d596906b8e2f, 9878e4d8ec2d096f]}
+  - {label: "CC-118204 CoffeeCraft (backorder)", threads: [406290bcd0da1453, bedd691cbba1da56]}
+  - {label: "OL-55817 Oakline desk", threads: [5d92879e83982129, 96841495dd88d957, c0784e54045dc99b, 173a06a743db7fa8, aaf37bbefcd40152, da80df65184c24d6]}
+  - {label: "VP-2210 Verdant Plants", threads: [a908856d28d41f9b, 1f031b187a350c9c]}
+  - {label: "700-1182934 MegaMart shoes", threads: [169d9fcc6eb3374b, 92e4ea0bf283fa68]}
+  - {label: "SB-90314 Shutterbay lens", threads: [4bff23cf232b2c03, c52c3ba352e0a134, 12ad4d7fc6da6902, af894e11028a7635]}
+  - {label: "CV-7712 Canvasly", threads: [67e7d69c671d97e9, 4f88e7bfd7926d3c]}
+  - {label: "KL-4418 Kitchenly", threads: [d19d4a38c06052a4, 01538a1113d767ca]}
 steps:
 - name: build
   now: 2026-11-02T09:00:00Z
+  asks:
+    - {ask: "what I ordered", record: ["55817"], value_any: ["Arden", "standing desk"], label_any: ["item", "product"]}
+    - {ask: "which shop", record: ["55817"], value_any: ["Oakline"], label_any: ["shop", "store", "retailer", "merchant"]}
+    - {ask: "where the delivery is at", record: ["SB-90314"], value_any: ["transit", "shipped", "on its way", "dispatched"], label_any: ["status", "delivery"]}
   expect:
     - {kind: unique, all_of: ["Oakline"]}
     - {kind: unique, all_of: ["55817"]}

@@ -57,6 +57,17 @@ ALLOWED_FIELDS = {
     # demo inbox (synthetic data written by admins; `error` is our own failure message)
     "configured", "inbox_email", "model", "seeds", "thread_count", "threads_created",
     "messages_created", "error", "finished_at", "removed",
+    # evals: scores, statuses, versions, costs, and text from the committed synthetic
+    # fixtures in backend/eval/agent/scenarios (labels, check specs and details, the
+    # agent's questions on fixture mail), never a user's inbox
+    "scenarios", "steps", "vague", "scenario_ids", "repeats", "progress_done",
+    "progress_total", "commit", "branch", "agent_hash", "suite_hash", "build_model",
+    "sync_model", "score", "spread", "parts", "retrieval", "coverage", "correctness",
+    "clarification", "guardrails", "label", "value", "target", "op", "met", "started_at",
+    "repeat", "asks", "ask", "in_data", "in_app", "detail", "step", "passed", "expected",
+    "recall", "recalled", "total", "cited_threads", "cited_relevant", "groups",
+    "thread_ids", "clarify", "asked", "on_topic", "questions", "question", "options",
+    "answer", "latency_s", "app_renders", "checks",
 }  # fmt: skip
 
 # Never allowed, whatever the schema says.
@@ -81,6 +92,7 @@ def admin_paths() -> list[tuple[str, str]]:
         if path.startswith("/api/v1/admin"):
             concrete = path.replace("{user_id}", str(uuid.uuid4()))
             concrete = concrete.replace("{workspace_id}", str(uuid.uuid4()))
+            concrete = concrete.replace("{eval_id}", str(uuid.uuid4()))
             out += [(method.upper(), concrete) for method in ops]
     return out
 

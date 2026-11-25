@@ -7,6 +7,8 @@
 - About once an hour, counts each user's received messages per finished day (Gmail ids
   only, never content) into `mailbox_daily_stats` for the admin pages.
 - Runs queued demo-inbox seeds from /admin (`app/services/demo.py`).
+- Runs queued evals from /admin/evals, one at a time, each in its own process
+  (`app/services/evals.py`).
 - Logs ids, counts and costs only.
 """
 
@@ -31,7 +33,7 @@ from app.mail.gmail import GmailMailbox
 from app.models.run import Run, RunKind, RunStatus
 from app.models.user import User
 from app.models.workspace import Workspace, WorkspaceStatus
-from app.services import demo, mailbox_stats, runs
+from app.services import demo, evals, mailbox_stats, runs
 
 logger = logging.getLogger("app.worker")
 
@@ -193,6 +195,7 @@ class Worker:
         self.last_schedule = 0.0
         self.last_mail_count = -3600.0
         self.counting: asyncio.Task | None = None
+        self.eval_task: asyncio.Task | None = None
 
     def start_mailbox_count(self) -> None:
         """Hourly, in the background, so a large inbox never delays claiming runs."""
@@ -229,6 +232,17 @@ class Worker:
             self.tasks.add(task)
             task.add_done_callback(self.tasks.discard)
 
+    async def claim_eval(self) -> None:
+        """Start the next queued eval (/admin/evals) unless one is running."""
+        if self.eval_task is not None and not self.eval_task.done():
+            return
+        async with SessionLocal() as s:
+            run = await evals.claim_next(s)
+            await s.commit()
+        if run is not None:
+            logger.info("claimed eval %s", run.id)
+            self.eval_task = asyncio.create_task(evals.spawn(run.id, session_factory=SessionLocal))
+
     async def claim(self) -> uuid.UUID | None:
         async with SessionLocal() as s:
             run = await runs.claim_next(s)
@@ -239,6 +253,7 @@ class Worker:
         async with SessionLocal() as s:
             n = await runs.fail_stale_running(s)
             await demo.fail_stale(s)
+            await evals.fail_stale(s)
             await s.commit()
         if n:
             logger.info("marked %s interrupted runs as failed", n)
@@ -257,6 +272,7 @@ class Worker:
                     self.last_mail_count = loop.time()
                     self.start_mailbox_count()
                 await self.claim_seed()
+                await self.claim_eval()
                 while len(self.tasks) < settings.WORKER_CONCURRENCY:
                     run_id = await self.claim()
                     if run_id is None:
@@ -271,6 +287,9 @@ class Worker:
                 await asyncio.wait_for(self.stopping.wait(), timeout=2)
             except TimeoutError:
                 pass
+        if self.eval_task is not None and not self.eval_task.done():
+            self.eval_task.cancel()  # stops the eval process; marked failed on restart
+            await asyncio.gather(self.eval_task, return_exceptions=True)
         if self.tasks:
             logger.info("waiting for %s running runs", len(self.tasks))
             await asyncio.gather(*self.tasks, return_exceptions=True)
