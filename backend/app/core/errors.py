@@ -45,6 +45,13 @@ class UnauthorizedError(AppError):
     code = "unauthorized"
 
 
+class PaymentRequiredError(AppError):
+    """Signed in, but no subscription, trial or free access (app/services/access.py)."""
+
+    status_code = 402
+    code = "subscription_required"
+
+
 class ValidationError(AppError):
     """Input that is well-formed but does not fit the current state (same code as 422s)."""
 

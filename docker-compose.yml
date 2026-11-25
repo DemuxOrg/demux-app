@@ -88,6 +88,8 @@ services:
       # migrations, which is why it waits for a healthy backend.
       AUTH_DATABASE_URL: postgresql://${POSTGRES_USER:-demux}:${POSTGRES_PASSWORD:-demux}@postgres:5432/${POSTGRES_DB:-demux}
       BETTER_AUTH_URL: ${FRONTEND_URL:-http://localhost:3000}
+      # The sign-up check (src/lib/access.ts) calls the API inside the compose network.
+      BACKEND_INTERNAL_URL: http://backend:8000
     ports:
       - "3000:3000"
     volumes:

@@ -16,12 +16,14 @@ import { Loading } from "./ui";
 const TABS = [
   { href: "/admin", label: "Overview" },
   { href: "/admin/users", label: "Users" },
+  { href: "/admin/access", label: "Access" },
   { href: "/admin/demo", label: "Demo inbox" },
 ];
 
 function activeTab(path: string): string {
   if (path.startsWith("/admin/users") || path.startsWith("/admin/workspaces"))
     return "/admin/users";
+  if (path.startsWith("/admin/access")) return "/admin/access";
   if (path.startsWith("/admin/demo")) return "/admin/demo";
   return "/admin";
 }

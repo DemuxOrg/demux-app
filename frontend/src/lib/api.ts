@@ -10,6 +10,7 @@ import type { components } from "./api-types";
 
 type S = components["schemas"];
 export type Me = S["Me"];
+export type Access = S["AccessInfo"];
 export type MeUpdate = S["MeUpdate"];
 export type WorkspaceSummary = S["WorkspaceSummary"];
 export type WorkspaceDetail = S["WorkspaceDetail"];
@@ -36,10 +37,17 @@ export type AdminWorkspaceDetail = S["AdminWorkspaceDetail"];
 export type AdminRun = S["AdminRun"];
 export type DemoInboxState = S["DemoInboxState"];
 export type DemoSeedRead = S["DemoSeedRead"];
+export type AdminAccessState = S["AdminAccessState"];
+export type AdminGrant = S["AdminGrant"];
+export type AdminGrantCreate = S["AdminGrantCreate"];
+export type AdminCustomer = S["AdminCustomer"];
 export type AdminRange = 7 | 30 | 90;
 
 export const API_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+/** The marketing site, where people subscribe. */
+export const LANDING_URL =
+  process.env.NEXT_PUBLIC_LANDING_URL || "https://www.usedemux.com";
 /** Starts the backend-owned Gmail OAuth flow (a full-page navigation, not fetch). */
 export const CONNECT_GMAIL_URL = `${API_URL}/api/v1/auth/google/login`;
 
@@ -83,6 +91,8 @@ export const api = {
   updateMe: (body: MeUpdate) =>
     request<Me>("/me", { method: "PATCH", body: JSON.stringify(body) }),
   disconnectGmail: () => request<Me>("/me/gmail", { method: "DELETE" }),
+  /** Re-read the user's subscription from Stripe ("I've subscribed, check again"). */
+  refreshAccess: () => post<Me>("/me/access/refresh"),
   appShell: (runtime: AppRuntime = "v1") =>
     request<AppShell>(`/app-shell?runtime=${runtime}`),
   listWorkspaces: () => request<WorkspaceSummary[]>("/workspaces"),
@@ -124,7 +134,18 @@ export const adminApi = {
   createSeed: (prompt: string, thread_count: number) =>
     post<DemoSeedRead>("/admin/demo/seeds", { prompt, thread_count }),
   cleanupDemo: () => post<{ removed: number }>("/admin/demo/cleanup"),
+  access: () => request<AdminAccessState>("/admin/access"),
+  grantAccess: (body: AdminGrantCreate) =>
+    post<AdminGrant>("/admin/access/grants", body),
+  revokeAccess: (id: string) =>
+    post<AdminGrant>(`/admin/access/grants/${id}/revoke`),
+  syncStripe: () => post<{ synced: number }>("/admin/access/stripe-sync"),
 };
+
+/** The app answers 402 to a signed-in user without a subscription, trial or free access. */
+export function isNoAccess(e: unknown): boolean {
+  return e instanceof ApiError && e.status === 402;
+}
 
 /** Send the user to sign in when the session is missing or expired. */
 export function handleAuthError(e: unknown): boolean {

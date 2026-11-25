@@ -19,11 +19,13 @@ from sqlalchemy import Date, cast, distinct, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import load_only
 
+from app.models.access import AccessGrant, BillingCustomer
 from app.models.auth import AuthSession
 from app.models.run import ProcessedMessage, Run, RunKind, RunStatus
 from app.models.usage import LLMCall, MailboxDailyStat
 from app.models.user import User
 from app.models.workspace import Workspace
+from app.services import access
 
 RANGES = (7, 30, 90)
 RUNS_PER_WORKSPACE = 50
@@ -251,6 +253,7 @@ class UserRow:
     cost_total: float
     gmail_connected: bool
     needs_reconnect: bool
+    access: str  # app/services/access.py: admin, subscription, grant, trial or none
 
 
 async def _last_active(session: AsyncSession, user_ids: list[uuid.UUID] | None = None) -> dict:
@@ -326,6 +329,7 @@ async def users_table(session: AsyncSession) -> list[UserRow]:
     received = await _received_per_day(session)
     costs = await _costs(session, LLMCall.user_id, [LLMCall.phase != "seed"])
     active = await _last_active(session)
+    access_of = await access.for_users(session, users)
     rows = [
         UserRow(
             id=u.id,
@@ -341,6 +345,7 @@ async def users_table(session: AsyncSession) -> list[UserRow]:
             cost_total=costs.get(u.id, (0.0, 0.0, 0.0))[2],
             gmail_connected=bool(u.refresh_token_enc),
             needs_reconnect=u.needs_reconnect,
+            access=access_of[u.id].status.value,
         )
         for u in users
     ]
@@ -560,6 +565,7 @@ async def user_detail(session: AsyncSession, user_id: uuid.UUID) -> UserDetail |
         cost_total=ct,
         gmail_connected=bool(u.refresh_token_enc),
         needs_reconnect=u.needs_reconnect,
+        access=(await access.for_user(session, u)).status.value,
     )
     return UserDetail(user=row, mailbox_daily=[(d, daily.get(d)) for d in span], workspaces=ws_rows)
 
@@ -614,3 +620,96 @@ async def workspace_detail(
     )
     daily = [(d, *cost.get(d, (0.0, 0, 0)), int(emails.get(d, 0))) for d in span]
     return WorkspaceDetail(workspace=row, owner_email=owner or "", days=days, daily=daily)
+
+
+# ------------------------------------------------------------------ access (/admin/access)
+
+
+@dataclass
+class GrantRow:
+    id: uuid.UUID
+    email: str
+    note: str
+    status: str  # active, expired or revoked
+    expires_at: datetime | None
+    revoked_at: datetime | None
+    created_at: datetime
+    granted_by: str | None  # the admin's login email
+    has_account: bool
+
+
+@dataclass
+class CustomerRow:
+    id: uuid.UUID
+    email: str  # the email on the Stripe customer
+    stripe_customer_id: str
+    status: str  # Stripe's subscription status (trialing, active…), or none / deleted
+    trial_ends_at: datetime | None
+    active: bool  # gives access today
+    has_account: bool
+    updated_at: datetime
+
+
+def grant_status(g: AccessGrant, now: datetime) -> str:
+    if g.revoked_at is not None:
+        return "revoked"
+    return "active" if access.grant_active(g, now) else "expired"
+
+
+def customer_status(c: BillingCustomer) -> str:
+    if c.deleted:
+        return "deleted"
+    return c.subscription_status or "no subscription"
+
+
+async def _emails_with_accounts(session: AsyncSession, emails: set[str]) -> set[str]:
+    if not emails:
+        return set()
+    lower = func.lower(User.email)
+    return set(await session.scalars(select(lower).where(lower.in_(emails))))
+
+
+async def grant_rows(session: AsyncSession, grants: list[AccessGrant]) -> list[GrantRow]:
+    now = datetime.now(UTC)
+    accounts = await _emails_with_accounts(session, {g.email for g in grants})
+    admin_ids = {g.created_by for g in grants if g.created_by}
+    admins: dict[uuid.UUID, str] = {}
+    if admin_ids:
+        found = await session.execute(select(User.id, User.email).where(User.id.in_(admin_ids)))
+        admins = dict(found.all())
+    return [
+        GrantRow(
+            id=g.id,
+            email=g.email,
+            note=g.note,
+            status=grant_status(g, now),
+            expires_at=g.expires_at,
+            revoked_at=g.revoked_at,
+            created_at=g.created_at,
+            granted_by=admins.get(g.created_by) if g.created_by else None,
+            has_account=g.email in accounts,
+        )
+        for g in grants
+    ]
+
+
+async def access_overview(session: AsyncSession) -> tuple[list[GrantRow], list[CustomerRow]]:
+    """Free-access grants (newest first) and Stripe customers (most recently changed first)."""
+    customers = list(
+        await session.scalars(select(BillingCustomer).order_by(BillingCustomer.updated_at.desc()))
+    )
+    accounts = await _emails_with_accounts(session, {c.email for c in customers})
+    customer_rows = [
+        CustomerRow(
+            id=c.id,
+            email=c.email,
+            stripe_customer_id=c.stripe_customer_id,
+            status=customer_status(c),
+            trial_ends_at=c.trial_ends_at,
+            active=access.customer_access(c) != access.AccessStatus.NONE,
+            has_account=c.email in accounts,
+            updated_at=c.updated_at,
+        )
+        for c in customers
+    ]
+    return await grant_rows(session, await access.list_grants(session)), customer_rows

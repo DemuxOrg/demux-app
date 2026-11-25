@@ -4,6 +4,10 @@
  * - Sign up asks for first name, last name, email and password (`additionalFields`:
  *   `firstName` / `lastName` → `first_name` / `last_name`, which greet the user and are
  *   editable on the profile page through the backend's PATCH /me).
+ * - Only an email with access may sign up: a Stripe subscription or reserved trial, free
+ *   access from /admin/access, or ADMIN_EMAILS. `databaseHooks.user.create.before` asks
+ *   the API (`assertSignupAllowed`, lib/access.ts) before any row is written, whatever
+ *   the path that creates the user. The email-code plugin cannot create users.
  * - Sign up creates an unverified user and emails a code (valid 10 minutes). Entering
  *   the code verifies the email and signs the user in. Unverified users cannot sign in:
  *   trying sends a fresh code.
@@ -19,6 +23,7 @@ import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
 import { emailOTP } from "better-auth/plugins";
 import { Pool } from "pg";
+import { assertSignupAllowed } from "./access";
 import { OTP_MINUTES, sendOtpEmail } from "./email";
 
 const timestamps = {
@@ -80,6 +85,17 @@ export const auth = betterAuth({
   verification: {
     modelName: "auth_verifications",
     fields: { expiresAt: "expires_at", ...timestamps },
+  },
+
+  databaseHooks: {
+    user: {
+      create: {
+        // Paying customers, free access and admins only (see lib/access.ts).
+        before: async (user) => {
+          await assertSignupAllowed(user.email);
+        },
+      },
+    },
   },
 
   emailAndPassword: {

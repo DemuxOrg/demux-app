@@ -22,6 +22,13 @@ Everything goes through the `Makefile` at the repo root: `make up` / `make down`
 - **Gmail** is a separate connection: the **backend owns the Google OAuth flow and Gmail tokens**; the Gmail address may differ from the login email. The frontend never sees Google tokens. Don't use better-auth social providers for Gmail tokens.
 - In `ENV=test` with no cookie, `get_current_user` returns a dev user with Gmail connected.
 
+## Access (paywall)
+- Only an email with access may sign up or use the app: a Stripe subscription (`trialing` = the 14-day free trial, `active`, `past_due`), free access from `/admin/access`, or an admin. One rule: `app/services/access.py`. See `docs/ACCESS.md`.
+- Sign-up: better-auth's `user.create.before` hook calls `POST /internal/signup-check` (`INTERNAL_API_SECRET`, frontend `src/lib/access.ts`). Throw 402/503 from that hook, never 403 (better-auth turns a 403 into a fake success).
+- New user-facing routes depend on `get_entitled_user` (402 `subscription_required`), like the `/workspaces` router. `/me` stays open. The worker only syncs users with access.
+- Stripe is read-only here: the API's own webhook (`/billing/stripe/webhook`) re-reads the customer and fills `billing_customers`. The landing page (`DemuxUI`) owns checkout.
+- Tests: the two test users have free access (`conftest.py`); use the `no_access` fixture to test the gate.
+
 ## UI
 `frontend/theme.md` is the design system and wins over code: read it before changing UI, change it first. Generated apps get the same tokens through `backend/app/agent/shell.py`.
 
