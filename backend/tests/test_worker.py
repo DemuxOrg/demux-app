@@ -1,10 +1,14 @@
 """Worker: claiming (one run per workspace) and executing runs against the DB."""
 
+from decimal import Decimal
+
+import pytest
 from sqlalchemy import func, select
 
-from app.models import Change, ProcessedMessage, Run, RunKind, RunStatus, Workspace
+from app.agent.context import BudgetExceeded
+from app.models import Change, LLMCall, ProcessedMessage, Run, RunKind, RunStatus, Workspace
 from app.services import runs
-from app.services.workspaces import create_workspace
+from app.services.workspaces import create_workspace, delete_workspace
 from app.worker import execute_run
 from tests.helpers import GOOD_APP, SMALL_MAILBOX, ScriptedLLM, dt
 from tests.test_flows import DESIGN_TURNS, build_llm
@@ -140,3 +144,44 @@ async def test_no_scheduled_sync_without_gmail(session, dev_user):
     assert ws.id in await runs.workspaces_due_for_sync(session, 10)
     await unlink_gmail(session, dev_user)
     assert ws.id not in await runs.workspaces_due_for_sync(session, 10)
+
+
+def _llm_call(user_id, cost: float, phase: str = "design", **ids) -> LLMCall:
+    zero = Decimal(0)
+    return LLMCall(
+        user_id=user_id,
+        phase=phase,
+        model="m",
+        provider="p",
+        input_price=zero,
+        cached_input_price=zero,
+        output_price=zero,
+        cost_usd=Decimal(str(cost)),
+        status="ok",
+        **ids,
+    )
+
+
+async def test_daily_budget_survives_deleting_a_workspace(session, session_factory, dev_user):
+    """Runs are deleted with their workspace; today's spend must not be."""
+    ws1 = await create_workspace(session, dev_user.id, "first")
+    run1 = await runs.active_run(session, ws1.id)
+    run1.cost_usd = Decimal("14.5")
+    session.add(_llm_call(dev_user.id, 14.5, run_id=run1.id, workspace_id=ws1.id))
+    await session.flush()
+    await delete_workspace(session, dev_user.id, ws1.id)
+
+    ws2 = await create_workspace(session, dev_user.id, "second")
+    run2 = await runs.active_run(session, ws2.id)
+    session.add(_llm_call(dev_user.id, 1.0, run_id=run2.id, workspace_id=ws2.id))
+    await session.flush()
+    persister = runs.DbPersister(session_factory, ws2.id, run2.id, dev_user.id)
+    with pytest.raises(BudgetExceeded, match="Today"):
+        await persister.add_usage(10, 10, 1.0)
+
+
+async def test_daily_budget_ignores_demo_seeds(session, dev_user):
+    session.add(_llm_call(dev_user.id, 20.0, phase="seed"))
+    session.add(_llm_call(dev_user.id, 1.25))
+    await session.flush()
+    assert await runs.spent_today(session, dev_user.id) == pytest.approx(1.25)

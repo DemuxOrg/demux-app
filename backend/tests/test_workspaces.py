@@ -1,6 +1,15 @@
 """Workspaces API: CRUD, the 2-workspace limit, active-run 409, undo, and user isolation."""
 
-from app.models import Run, RunStatus, Snapshot, Workspace
+import asyncio
+import uuid
+
+from sqlalchemy import delete, func, select
+from sqlalchemy.ext.asyncio import async_sessionmaker
+
+from app.auth.crypto import encrypt
+from app.core.errors import ConflictError
+from app.models import Run, RunStatus, Snapshot, User, Workspace
+from app.services.workspaces import MAX_WORKSPACES_PER_USER, create_workspace
 
 URL = "/api/v1/workspaces"
 BODY = {"prompt": "Track invoices from my email"}
@@ -108,3 +117,41 @@ async def test_app_shell_lists_palettes(client):
     for p in shell["palettes"]:
         assert len(p["series"]) == 5 and p["series"][0] == p["accent"]
         assert f':root[data-palette="{p["id"]}"]' in shell["head"]
+
+
+async def test_concurrent_creates_respect_the_limit(engine):
+    """Parallel requests each in their own transaction (committed data, cleaned up)."""
+    factory = async_sessionmaker(engine, expire_on_commit=False)
+    email = f"race-{uuid.uuid4().hex[:8]}@demux.local"
+    async with factory() as s:
+        user = User(
+            email=email, email_verified=True, gmail_email=email, refresh_token_enc=encrypt("t")
+        )
+        s.add(user)
+        await s.commit()
+    go = asyncio.Event()
+
+    async def attempt(i: int) -> None:
+        async with factory() as s:
+            await go.wait()
+            try:
+                await create_workspace(s, user.id, f"prompt {i}")
+                await asyncio.sleep(0.2)  # a slow request keeps its transaction open
+                await s.commit()
+            except ConflictError:
+                await s.rollback()
+
+    try:
+        tasks = [asyncio.create_task(attempt(i)) for i in range(5)]
+        await asyncio.sleep(0.05)
+        go.set()
+        await asyncio.gather(*tasks)
+        async with factory() as s:
+            n = await s.scalar(
+                select(func.count()).select_from(Workspace).where(Workspace.user_id == user.id)
+            )
+        assert n == MAX_WORKSPACES_PER_USER
+    finally:
+        async with factory() as s:
+            await s.execute(delete(User).where(User.id == user.id))
+            await s.commit()

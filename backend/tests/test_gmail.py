@@ -5,7 +5,7 @@ import base64
 import httpx
 import pytest
 
-from app.mail.base import ReconnectRequired
+from app.mail.base import MailboxError, ReconnectRequired
 from app.mail.gmail import GmailMailbox
 from tests.helpers import dt
 
@@ -93,3 +93,14 @@ async def test_persistent_401_means_reconnect():
     with pytest.raises(ReconnectRequired):
         await box.get_thread("aaa111")
     await box.aclose()
+
+
+async def test_rejected_query_is_a_mailbox_error():
+    """A query Gmail cannot parse (400) reaches the agent as a tool error, not a crash."""
+
+    def bad_request(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(400, json={"error": {"message": "Invalid query"}})
+
+    box = GmailMailbox(Tokens(), transport=httpx.MockTransport(bad_request))
+    with pytest.raises(MailboxError):
+        await box.search("from:(", max_results=5)

@@ -18,6 +18,7 @@ from app.agent.context import BudgetExceeded, WorkspaceState
 from app.core.config import settings
 from app.core.errors import ConflictError
 from app.models.run import Change, Run, RunKind, RunStatus
+from app.models.usage import LLMCall
 from app.models.workspace import Workspace, provisional_name
 from app.services import store
 from app.services.store import ChangeRow
@@ -100,11 +101,19 @@ async def list_changes(
 
 
 async def spent_today(session: AsyncSession, user_id: uuid.UUID) -> float:
+    """What the user's workspace runs cost today, from `llm_calls`.
+
+    Counted from the metering rows, which outlive deleted runs and workspaces, so the
+    total covers everything the user spent today. Demo-inbox seeds (/admin) are billed
+    to the admin but are not workspace runs.
+    """
     midnight = datetime.now(UTC).replace(hour=0, minute=0, second=0, microsecond=0)
     total = await session.scalar(
-        select(func.coalesce(func.sum(Run.cost_usd), 0))
-        .join(Workspace, Workspace.id == Run.workspace_id)
-        .where(Workspace.user_id == user_id, Run.created_at >= midnight)
+        select(func.coalesce(func.sum(LLMCall.cost_usd), 0)).where(
+            LLMCall.user_id == user_id,
+            LLMCall.created_at >= midnight,
+            LLMCall.phase != "seed",
+        )
     )
     return float(total or 0)
 

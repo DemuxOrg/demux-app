@@ -177,6 +177,16 @@ async def run_agent(
                 raise
             except ToolError as e:
                 result, failed = {"error": str(e)}, True
+            except (TypeError, ValueError, KeyError, AttributeError) as e:
+                # Arguments come from the model (and, through the emails it reads, from
+                # anyone): a wrong type must be feedback it can fix, not a failed run.
+                logger.warning(
+                    "tool %s rejected its arguments run=%s (%s)",
+                    call.name,
+                    ctx.run_id,
+                    type(e).__name__,
+                )
+                result, failed = {"error": "invalid arguments: check the types and retry"}, True
             if failed:
                 error_streak = error_streak + 1 if last_error_tool == call.name else 1
                 last_error_tool = call.name

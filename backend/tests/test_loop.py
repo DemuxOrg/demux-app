@@ -160,3 +160,25 @@ async def test_sync_may_only_change_learned_section():
     )
     assert "only change" in tool_results(llm.calls[1])[0]["error"]
     assert ctx.state.guide.endswith("new rule")
+
+
+@pytest.mark.parametrize(
+    "call",
+    [
+        ("search_mail", {"query": "x", "max_results": "lots"}),
+        ("read_records", {"record_type": ["order"]}),
+        (
+            "save_records",
+            {
+                "record_type": "order",
+                "records": [{"id": "a", "fields": {}, "source_message_ids": [{"x": 1}]}],
+            },
+        ),
+    ],
+)
+async def test_malformed_tool_arguments_are_reported_to_the_model(call):
+    ctx, _box, _p = make_ctx(phase="edit")
+    llm = ScriptedLLM([[call], [("finish", {"summary": "ok"})]])
+    result = await run(ctx, llm)
+    assert result.finished
+    assert "invalid arguments" in tool_results(llm.calls[1])[-1]["error"]
