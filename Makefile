@@ -14,11 +14,11 @@ setup: install  ## install deps and create env files if missing
 	[ -f .env ] || cp .env.example .env
 	cd backend && uv run python scripts/ensure_keys.py ../.env
 	[ -f frontend/.env.local ] || cp frontend/.env.local.example frontend/.env.local
-	cd backend && uv run python scripts/ensure_keys.py ../frontend/.env.local BETTER_AUTH_SECRET
+	cd backend && uv run python scripts/ensure_keys.py ../frontend/.env.local BETTER_AUTH_SECRET INTERNAL_API_SECRET@../.env
 
 # ---- Docker stack (only Docker + make needed) ----
 
-env:  ## create .env from .env.example if missing, then fill SECRET_KEY / TOKEN_ENCRYPTION_KEY / BETTER_AUTH_SECRET
+env:  ## create .env from .env.example if missing, then fill SECRET_KEY / TOKEN_ENCRYPTION_KEY / BETTER_AUTH_SECRET / INTERNAL_API_SECRET
 	@[ -f .env ] || (cp .env.example .env && echo "created .env from .env.example")
 	@docker compose build -q backend
 	@# The container only reads .env on stdin and prints the updated file, so it never needs

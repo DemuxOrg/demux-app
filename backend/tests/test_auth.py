@@ -13,6 +13,7 @@ from app.auth.crypto import decrypt, encrypt
 from app.auth.session import STATE_COOKIE, check_state, make_state
 from app.core.config import Env, settings
 from app.mail.base import ReconnectRequired
+from app.models.access import AccessGrant
 from app.models.auth import AuthSession
 from app.models.user import User
 
@@ -20,8 +21,9 @@ COOKIE = "demux.session_token"
 
 
 async def _signed_in_user(session, email, *, verified=True, expires_in=timedelta(days=1), **kw):
+    """A user with a live session cookie and free access (as if they had paid)."""
     user = User(email=email, email_verified=verified, **kw)
-    session.add(user)
+    session.add_all([user, AccessGrant(email=email)])
     await session.flush()
     token = uuid.uuid4().hex
     session.add(
@@ -59,6 +61,7 @@ async def test_session_cookie_resolves_user(client, session):
         "gmail_connected": False,
         "needs_reconnect": False,
         "is_admin": False,
+        "access": {"status": "grant", "ends_at": None, "subscribe_url": None},
     }
 
 

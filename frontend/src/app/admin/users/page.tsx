@@ -1,10 +1,12 @@
 "use client";
 
-/** Admin users table (theme.md §7.14): sortable, most expensive first by default. */
+/** Admin users table (theme.md §7.14): sortable, most expensive first by default, with
+ * each user's access (subscribed, trial, free access, admin, none). */
 import Link from "next/link";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
+  AccessPill,
   Card,
   Empty,
   ErrorNote,
@@ -27,6 +29,7 @@ type Key =
   | "emails_received_per_day"
   | "cost_7d"
   | "cost_30d"
+  | "access"
   | "needs_reconnect";
 
 const COLUMNS: { key: Key; label: string; numeric?: boolean }[] = [
@@ -38,6 +41,7 @@ const COLUMNS: { key: Key; label: string; numeric?: boolean }[] = [
   { key: "emails_received_per_day", label: "Received / day", numeric: true },
   { key: "cost_7d", label: "Cost 7d", numeric: true },
   { key: "cost_30d", label: "Cost 30d", numeric: true },
+  { key: "access", label: "Access" },
   { key: "needs_reconnect", label: "Gmail" },
 ];
 
@@ -88,7 +92,7 @@ export default function AdminUsersPage() {
             <Empty>No accounts yet.</Empty>
           ) : (
             <div className="-mx-[22px] overflow-x-auto px-[22px]">
-              <table className="w-full min-w-[980px] text-sm">
+              <table className="w-full min-w-[1080px] text-sm">
                 <thead>
                   <tr className="text-[13px] text-ink-3">
                     {COLUMNS.map((c) => {
@@ -173,6 +177,9 @@ export default function AdminUsersPage() {
                       </td>
                       <td className="tabular pr-4 text-right font-medium">
                         {usd(u.cost_30d)}
+                      </td>
+                      <td className="pr-4">
+                        <AccessPill access={u.access} />
                       </td>
                       <td>
                         <GmailPill

@@ -4,6 +4,7 @@ Importing this package registers every model on `Base.metadata`, which Alembic n
 for autogenerate. Add new models here.
 """
 
+from app.models.access import AccessGrant, BillingCustomer
 from app.models.admin import AdminAudit, DemoSeed, DemoSeedStatus
 from app.models.auth import AuthAccount, AuthSession, AuthVerification
 from app.models.run import Change, ProcessedMessage, Run, RunKind, RunStatus, Snapshot
@@ -12,7 +13,9 @@ from app.models.user import User
 from app.models.workspace import Workspace, WorkspaceStatus
 
 __all__ = [
+    "AccessGrant",
     "AdminAudit",
+    "BillingCustomer",
     "DemoSeed",
     "DemoSeedStatus",
     "LLMCall",

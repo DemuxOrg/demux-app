@@ -109,13 +109,16 @@ HTTP request
 | `schemas/workspace.py` | Pydantic request/response shapes (`WorkspaceCreate`, `WorkspaceRead`). API boundary only. |
 | `services/workspaces.py` | list / create / get / delete workspaces, and the **max 2 per user** rule. |
 | `services/users.py` | The user's first and last name (`PATCH /me`, from the profile page). |
-| `api/deps.py` | `get_current_user`: resolves the better-auth session cookie to a verified user (dev user with Gmail in `ENV=test`). |
+| `api/deps.py` | `get_current_user`: resolves the better-auth session cookie to a verified user (dev user with Gmail in `ENV=test`). `get_entitled_user`: 402 without access. `get_stripe`: the Stripe client. |
 | `api/routes/auth.py` | Gmail connection (`/auth/google/login?next=` → Google → `/callback`, needs a signed-in user, returns to the page it started from) and `GET` / `PATCH /me`. |
 | `auth/session.py`, `auth/google.py` | Session-cookie lookup in `auth_sessions`; Gmail OAuth, encrypted tokens, refresh. |
 | `models/auth.py` | Tables written by better-auth (sessions, password accounts, email codes); owned by Alembic. |
 | `api/routes/health.py` | `GET /api/v1/health` — runs `SELECT 1`, returns 503 if the DB is down. |
 | `api/routes/workspaces.py` | `GET/POST /api/v1/workspaces`, `GET/DELETE /api/v1/workspaces/{id}`. |
-| `api/routes/admin.py`, `services/admin.py`, `schemas/admin.py` | `/api/v1/admin`: usage overview, users, user and workspace detail (staff only, see CLAUDE.md § Admin). |
+| `api/routes/admin.py`, `services/admin.py`, `schemas/admin.py` | `/api/v1/admin`: usage overview, users, user and workspace detail, access (free-access grants, Stripe customers) (staff only, see CLAUDE.md § Admin). |
+| `services/access.py`, `models/access.py` | Who may sign up and use Demux: the access rule, free-access grants, `billing_customers` (see `docs/ACCESS.md`). |
+| `services/billing.py`, `billing/stripe_api.py` | Mirrors Stripe customers and subscriptions (read-only REST client, webhook signature check). |
+| `api/routes/billing.py`, `schemas/billing.py` | Server-to-server: the Stripe webhook and the sign-up check the frontend asks before creating an account. Not in the OpenAPI schema. |
 | `models/usage.py` | `llm_calls` (one row per LLM call, priced at call time) and `mailbox_daily_stats` (messages received per user per day, counted from ids). |
 | `models/admin.py`, `services/admin_audit.py` | `admin_audit` (who viewed what) and `demo_seeds`. |
 | `services/demo.py`, `mail/demo_inbox.py` | Demo inbox: the LLM writes synthetic threads for a persona, IMAP appends them to `TEST_GMAIL`. Run by the worker. |
