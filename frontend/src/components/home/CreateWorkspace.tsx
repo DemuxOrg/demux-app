@@ -89,20 +89,31 @@ export function CreateWorkspace() {
             <Reveal index={3} className="w-full max-w-[760px]">
               <PromptCard disabled={full} onBuild={build} />
             </Reveal>
-            <Reveal
-              as="p"
-              index={4}
-              className="-mt-1 flex items-center gap-2 text-center text-[13px] text-ink-on-sky"
-            >
-              {full ? (
-                "You're using both workspaces. Delete one to build another."
-              ) : (
-                <>
-                  <Lock size={14} aria-hidden /> Read-only. Demux never sends or
-                  changes an email.
-                </>
-              )}
-            </Reveal>
+            {full ? (
+              <Reveal
+                index={4}
+                className="w-full max-w-[760px] rounded-[20px] bg-surface px-5 py-4 shadow-panel"
+              >
+                <div role="status">
+                  <p className="text-[15px] font-semibold text-ink">
+                    Workspace limit reached
+                  </p>
+                  <p className="mt-1 text-sm text-ink-2">
+                    You can have {MAX_WORKSPACES} workspaces. Delete one to
+                    create a new one.
+                  </p>
+                </div>
+              </Reveal>
+            ) : (
+              <Reveal
+                as="p"
+                index={4}
+                className="-mt-1 flex items-center gap-2 text-center text-[13px] text-ink-on-sky"
+              >
+                <Lock size={14} aria-hidden /> Read-only. Demux never sends or
+                changes an email.
+              </Reveal>
+            )}
             {problem && (
               <p
                 role="alert"

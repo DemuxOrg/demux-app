@@ -61,9 +61,9 @@ function DrawerPanel({
     >
       <div className="dmx-drawer-item -mt-1.5 flex h-11 items-center justify-between gap-2">
         <Link
-          href="/workspaces"
+          href="/workspaces/new"
           onClick={onNavigate}
-          aria-label="Demux home"
+          aria-label="Demux home: create a workspace"
           className="rounded-full px-2 py-1.5"
         >
           <Lockup size={28} />

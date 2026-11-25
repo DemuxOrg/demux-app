@@ -9,20 +9,15 @@
  *
  * - Building: top bar (name, Building chip) + the build progress card.
  * - Failed: the reason and "Try again".
- * - Ready: top bar (name, rename; sync status, Sync now, Undo, ⋯), the generated app in
- *   a white panel, and the Activity | Chat drawer beside it.
+ * - Ready: top bar (name, rename; sync status, Undo, Chat, ⋯), the generated app in a
+ *   white panel, and the chat drawer beside it. There is no sync button: the worker
+ *   syncs every workspace on its own.
  *
- * Polls GET /workspaces/{id} every 2 s while a run is active, every 20 s otherwise;
+ * Polls GET /workspaces/{id} every 2 s while a run is active, every 20 s otherwise, and
+ * at once when the page comes back into view (phones pause timers in the background);
  * refetches data / app only when their versions change.
  */
-import {
-  ChevronLeft,
-  PanelRightOpen,
-  Pencil,
-  RefreshCw,
-  Undo2,
-  X,
-} from "lucide-react";
+import { ChevronLeft, MessageSquare, Pencil, Undo2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   startTransition,
@@ -31,20 +26,17 @@ import {
   useRef,
   useState,
 } from "react";
-import { ActivityFeed } from "@/components/ActivityFeed";
 import { AppFrame } from "@/components/AppFrame";
 import { LogoMark } from "@/components/brand/Logo";
 import { ChatPanel } from "@/components/ChatPanel";
-import { DetailsDrawer } from "@/components/DetailsDrawer";
 import { StepTransition } from "@/components/motion/PageTransition";
-import { RunTimeline } from "@/components/RunTimeline";
 import { rememberWorkspace, useShell } from "@/components/shell/AppShell";
 import { StatusChip, SyncStatus } from "@/components/StatusChip";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
 import { BuildFlow } from "@/components/workspace/BuildFlow";
 import { MoreMenu } from "@/components/workspace/MoreMenu";
-import { SidePanel, type SideTab } from "@/components/workspace/SidePanel";
+import { SidePanel } from "@/components/workspace/SidePanel";
 import {
   api,
   ApiError,
@@ -53,7 +45,6 @@ import {
   type AppDoc,
   type AppRuntime,
   type AppShell,
-  type ChangeRead,
   type DataDoc,
   type RunRead,
   type WorkspaceDetail as Detail,
@@ -95,23 +86,18 @@ export function WorkspaceDetail({ id }: { id: string }) {
   );
   const [app, setApp] = useState<AppDoc | null>(null);
   const [data, setData] = useState<DataDoc | null>(null);
-  const [changes, setChanges] = useState<ChangeRead[]>([]);
   const [runs, setRuns] = useState<RunRead[]>([]);
-  const [tab, setTab] = useState<SideTab>("activity");
   const [panelOpen, setPanelOpen] = usePanelOpen();
   const [error, setError] = useState<string | null>(null); // loading errors
   const [actionError, setActionError] = useState<string | null>(null); // until next action
   const [appError, setAppError] = useState<string | null>(null);
-  const [details, setDetails] = useState(false);
   const [renaming, setRenaming] = useState(false);
   const [name, setName] = useState("");
   const [busyAction, setBusyAction] = useState<string | null>(null);
   const seen = useRef({ data: -1, app: -1, active: "" });
 
   const loadSide = useCallback(async () => {
-    const [c, r] = await Promise.all([api.listChanges(id), api.listRuns(id)]);
-    setChanges(c);
-    setRuns(r);
+    setRuns(await api.listRuns(id));
   }, [id]);
 
   const refresh = useCallback(async () => {
@@ -185,6 +171,19 @@ export function WorkspaceDetail({ id }: { id: string }) {
     };
   }, [refresh, active]);
 
+  // Phones pause timers while the tab is in the background: catch up on return.
+  useEffect(() => {
+    const onShow = () => {
+      if (document.visibilityState === "visible") void refresh();
+    };
+    document.addEventListener("visibilitychange", onShow);
+    window.addEventListener("pageshow", onShow);
+    return () => {
+      document.removeEventListener("visibilitychange", onShow);
+      window.removeEventListener("pageshow", onShow);
+    };
+  }, [refresh]);
+
   const onAppError = useCallback((m: string | null) => setAppError(m), []);
 
   async function act(
@@ -210,7 +209,6 @@ export function WorkspaceDetail({ id }: { id: string }) {
   }
 
   async function sendMessage(text: string) {
-    setTab("chat");
     setPanelOpen(true);
     if (!(await act("message", () => api.sendMessage(id, text)))) {
       throw new Error("not sent"); // keeps the text in the box
@@ -321,29 +319,10 @@ export function WorkspaceDetail({ id }: { id: string }) {
           {ready && (
             <>
               {!ws.active_run && (
-                <span className="mr-1 hidden xl:inline-flex">
+                <span className="mr-1 inline-flex">
                   <SyncStatus lastSyncedAt={ws.last_synced_at} />
                 </span>
               )}
-              <Button
-                variant="secondary"
-                onClick={() => act("sync", () => api.syncNow(id))}
-                disabled={active}
-                aria-label="Sync now"
-              >
-                <RefreshCw
-                  size={16}
-                  aria-hidden
-                  className={
-                    ws.active_run?.kind === "sync" || busyAction === "sync"
-                      ? "animate-dmx-spin"
-                      : ""
-                  }
-                />
-                <span className="hidden md:inline">
-                  {ws.active_run?.kind === "sync" ? "Syncing…" : "Sync now"}
-                </span>
-              </Button>
               <Button
                 variant="secondary"
                 onClick={() => act("undo", () => api.undo(id))}
@@ -360,18 +339,14 @@ export function WorkspaceDetail({ id }: { id: string }) {
                   onClick={() => setPanelOpen(true)}
                   aria-controls="side-panel"
                   aria-expanded={false}
-                  aria-label="Show activity and chat"
+                  aria-label="Show chat"
                   className="animate-dmx-rise"
                 >
-                  <PanelRightOpen size={16} aria-hidden />
-                  <span className="hidden md:inline">Activity</span>
+                  <MessageSquare size={16} aria-hidden />
+                  <span className="hidden md:inline">Chat</span>
                 </Button>
               )}
-              <MoreMenu
-                onRename={startRename}
-                onDetails={() => setDetails(true)}
-                onDelete={remove}
-              />
+              <MoreMenu onRename={startRename} onDelete={remove} />
             </>
           )}
         </div>
@@ -508,36 +483,13 @@ export function WorkspaceDetail({ id }: { id: string }) {
                 )}
               </section>
 
-              <SidePanel
-                open={panelOpen}
-                onClose={() => setPanelOpen(false)}
-                tab={tab}
-                onTab={setTab}
-                activity={
-                  <>
-                    {ws.active_run && ws.active_run.kind !== "build" && (
-                      <div className="border-b border-[rgb(12_26_46/0.08)] py-4">
-                        <RunTimeline events={ws.active_run.events} />
-                      </div>
-                    )}
-                    <ActivityFeed changes={changes} runs={runs} />
-                  </>
-                }
-                chat={
-                  <ChatPanel runs={runs} workspace={ws} onSend={sendMessage} />
-                }
-              />
+              <SidePanel open={panelOpen} onClose={() => setPanelOpen(false)}>
+                <ChatPanel runs={runs} workspace={ws} onSend={sendMessage} />
+              </SidePanel>
             </div>
           )}
         </StepTransition>
       </main>
-      {details && (
-        <DetailsDrawer
-          workspace={ws}
-          runs={runs}
-          onClose={() => setDetails(false)}
-        />
-      )}
     </div>
   );
 }
