@@ -4,7 +4,8 @@
 #   1. builds the backend and frontend images and pushes them to the Scaleway Container
 #      Registry, tagged with the commit SHA;
 #   2. points the three Serverless Containers at the new images (worker first: it runs
-#      the database migrations on start), and waits until each one is `ready`;
+#      the database migrations on start, via backend/scripts/start_worker.sh; then the
+#      API and frontend together), and waits until each one is `ready`;
 #   3. checks https://api.usedemux.com/api/v1/health and https://app.usedemux.com/login.
 #
 # Rollback: Actions → Deploy → Run workflow, and pick an older commit or branch.
@@ -13,8 +14,9 @@
 #
 # Needs repository secrets SCW_ACCESS_KEY, SCW_SECRET_KEY (API key of the IAM application
 # `github-deploy`, with ContainerRegistryFullAccess + ContainersFullAccess on project
-# demux), SCW_DEFAULT_PROJECT_ID and SCW_DEFAULT_ORGANIZATION_ID. Container settings and secrets stay on Scaleway:
-# this workflow only changes the image.
+# demux), SCW_DEFAULT_PROJECT_ID and SCW_DEFAULT_ORGANIZATION_ID. Container settings and
+# secrets stay on Scaleway: this workflow only changes the images (and the worker's
+# start command).
 name: Deploy
 
 on:
@@ -99,17 +101,15 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Update one container's image, then wait until Scaleway reports it `ready`.
-          # Output is discarded: it lists the container's environment variables.
-          deploy() {
-            local id="$1" name="$2" image="$3" status
-            echo "::group::$name → $image"
-            scw container container update "$id" image="$image" -o json >/dev/null
-            sleep 20  # let the status leave `ready` before polling
-            for _ in $(seq 1 60); do
+          # Wait until Scaleway reports a container `ready` (a healthy deploy takes about
+          # a minute). Gives up after 5 minutes: a container that crashes on start stays
+          # `updating` while Scaleway retries it, so waiting longer only delays the error.
+          wait_ready() {
+            local id="$1" name="$2" status=""
+            for _ in $(seq 1 30); do
               status=$(scw container container get "$id" -o json | jq -r .status)
               case "$status" in
-                ready) echo "$name is ready"; echo "::endgroup::"; return 0 ;;
+                ready) echo "$name is ready"; return 0 ;;
                 error)
                   echo "::error::$name failed to deploy: $(scw container container get "$id" -o json | jq -r .error_message)"
                   return 1 ;;
@@ -117,14 +117,35 @@ jobs:
               echo "$name: $status"
               sleep 10
             done
-            echo "::error::$name is still '$status' after 10 minutes"
+            echo "::error::$name is still '$status' after 5 minutes. Its logs: scw container container logs $id region=$SCW_DEFAULT_REGION"
             return 1
           }
 
-          # Worker first: its start command runs `alembic upgrade head`.
-          deploy "$WORKER_ID" worker "$REGISTRY/backend:$TAG"
-          deploy "$API_ID" api "$REGISTRY/backend:$TAG"
-          deploy "$FRONTEND_ID" frontend "$REGISTRY/frontend:$TAG"
+          # Output of `update` is discarded: it lists the container's environment variables.
+
+          # 1. Worker first: its start script runs `alembic upgrade head`. The command is
+          #    set on every deploy so the container always matches the image; it must stay
+          #    free of quotes and spaces (Scaleway mangled an inline `sh -c '…'` command).
+          echo "::group::worker → backend:$TAG"
+          scw container container update "$WORKER_ID" image="$REGISTRY/backend:$TAG" \
+            command.0=sh command.1=/app/scripts/start_worker.sh -o json >/dev/null
+          stored=$(scw container container get "$WORKER_ID" -o json | jq -c .command)
+          if [ "$stored" != '["sh","/app/scripts/start_worker.sh"]' ]; then
+            echo "::error::worker command was stored as $stored"
+            exit 1
+          fi
+          sleep 20  # let the status leave `ready` before polling
+          wait_ready "$WORKER_ID" worker
+          echo "::endgroup::"
+
+          # 2. API and frontend together (neither depends on the other).
+          echo "::group::api → backend:$TAG, frontend → frontend:$TAG"
+          scw container container update "$API_ID" image="$REGISTRY/backend:$TAG" -o json >/dev/null
+          scw container container update "$FRONTEND_ID" image="$REGISTRY/frontend:$TAG" -o json >/dev/null
+          sleep 20
+          wait_ready "$API_ID" api
+          wait_ready "$FRONTEND_ID" frontend
+          echo "::endgroup::"
 
       - name: Check production answers
         run: |
