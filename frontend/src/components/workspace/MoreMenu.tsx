@@ -1,16 +1,14 @@
 "use client";
 
-/** The ⋯ menu in the workspace top bar: Rename, Details, Delete. */
-import { Info, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+/** The ⋯ menu in the workspace top bar: Rename, Delete. */
+import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export function MoreMenu({
   onRename,
-  onDetails,
   onDelete,
 }: {
   onRename: () => void;
-  onDetails: () => void;
   onDelete: () => void;
 }) {
   const [open, setOpen] = useState(false);
@@ -61,14 +59,6 @@ export function MoreMenu({
             className={`${item} text-ink-2 hover:bg-surface-2 hover:text-ink`}
           >
             <Pencil size={16} aria-hidden /> Rename
-          </button>
-          <button
-            role="menuitem"
-            type="button"
-            onClick={pick(onDetails)}
-            className={`${item} text-ink-2 hover:bg-surface-2 hover:text-ink`}
-          >
-            <Info size={16} aria-hidden /> Details
           </button>
           <button
             role="menuitem"

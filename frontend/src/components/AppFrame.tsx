@@ -9,6 +9,11 @@
  * - srcdoc = fixed shell from the backend (CSP meta, base CSS, bridge) + agent HTML.
  * - The palette goes in by message (`demux:palette`, before the data), so changing it
  *   recolours the running app without reloading it or losing its UI state.
+ * - Palette and data are sent on every `load` of the frame's document, not once per
+ *   app: browsers can reload an iframe on their own (iOS Safari does after memory
+ *   pressure or when a tab comes back), and a reloaded app with no data stays blank.
+ *   The iframe's own load event also can't be missed, unlike a message sent before
+ *   this page started listening. Rendering is idempotent (checked by appcheck).
  * - Every message is checked with `event.source === iframe.contentWindow`.
  * - openSource accepts only Gmail-like hex ids; openLink only https URLs, after a
  *   confirm dialog owned by this (parent) page.
@@ -34,7 +39,7 @@ export function AppFrame({
   onError: (message: string | null) => void;
 }) {
   const frameRef = useRef<HTMLIFrameElement>(null);
-  // The frame reports ready per document; `readyFor` remembers which one.
+  // The frame's document has loaded; `readyFor` remembers which one.
   const [readyFor, setReadyFor] = useState<string | null>(null);
   const [pendingLink, setPendingLink] = useState<string | null>(null);
 
@@ -76,8 +81,7 @@ export function AppFrame({
         return;
       const msg = event.data;
       if (!msg || typeof msg.type !== "string") return;
-      if (msg.type === "demux:ready") setReadyFor(docKey);
-      else if (msg.type === "demux:rendered") onError(null);
+      if (msg.type === "demux:rendered") onError(null);
       else if (msg.type === "demux:error")
         onError(String(msg.message ?? "Unknown error").slice(0, 500));
       else if (msg.type === "demux:openSource") {
@@ -100,7 +104,17 @@ export function AppFrame({
     }
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
-  }, [onError, docKey]);
+  }, [onError]);
+
+  function onLoad() {
+    if (ready) {
+      // The same app's document loaded again: send it everything again.
+      postPalette();
+      postData();
+    } else {
+      setReadyFor(docKey); // the effects above send palette, then data
+    }
+  }
 
   return (
     <div className="relative h-full w-full">
@@ -110,6 +124,7 @@ export function AppFrame({
         title="Workspace app"
         sandbox="allow-scripts"
         srcDoc={srcDoc}
+        onLoad={onLoad}
         referrerPolicy="no-referrer"
         className="h-full w-full border-0 bg-surface"
       />
