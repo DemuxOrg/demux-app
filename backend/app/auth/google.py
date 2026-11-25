@@ -104,6 +104,10 @@ async def link_gmail(
     session: AsyncSession, user: User, google_sub: str, gmail_email: str, tokens: TokenSet
 ) -> User:
     """Attach a Gmail account to a signed-in Demux user (replacing any previous one)."""
+    if user.google_sub != google_sub and not tokens.refresh_token:
+        # A refresh token of the previous Google account must never be kept for a new
+        # one: the worker would keep reading the old mailbox under the new address.
+        user.refresh_token_enc = None
     user.google_sub = google_sub
     user.gmail_email = gmail_email
     user.access_token_enc = encrypt(tokens.access_token)

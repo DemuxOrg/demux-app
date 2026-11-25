@@ -60,6 +60,8 @@ async def create_workspace(
     *,
     enqueue_build: bool = True,
 ) -> Workspace:
+    # Serialize creates per user so concurrent requests can't all pass the limit check.
+    await session.execute(select(User.id).where(User.id == user_id).with_for_update(key_share=True))
     user = await session.get(User, user_id)
     if user is not None:
         require_gmail(user, "before creating a workspace")
