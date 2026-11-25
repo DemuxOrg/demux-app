@@ -157,12 +157,15 @@ async def fail_stale_running(session: AsyncSession) -> int:
 
 
 async def workspaces_due_for_sync(session: AsyncSession, interval_min: int) -> list[uuid.UUID]:
+    """Ready workspaces not synced for `interval_min`, of users who still have access (a
+    lapsed subscription pauses syncing, and so LLM spend; the workspace is kept)."""
     from app.models.user import User
     from app.models.workspace import WorkspaceStatus
+    from app.services import access
 
     cutoff = datetime.now(UTC) - timedelta(minutes=interval_min)
-    rows = await session.scalars(
-        select(Workspace.id)
+    rows = await session.execute(
+        select(Workspace.id, Workspace.user_id)
         .join(User, User.id == Workspace.user_id)
         .where(
             Workspace.status == WorkspaceStatus.READY,
@@ -173,7 +176,9 @@ async def workspaces_due_for_sync(session: AsyncSession, interval_min: int) -> l
             ~exists().where(Run.workspace_id == Workspace.id, Run.status.in_(ACTIVE)),
         )
     )
-    return list(rows)
+    due = rows.all()
+    allowed = await access.users_with_access(session, {user_id for _, user_id in due})
+    return [ws_id for ws_id, user_id in due if user_id in allowed]
 
 
 async def prune_empty_syncs(

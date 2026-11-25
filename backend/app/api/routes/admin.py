@@ -1,4 +1,5 @@
-"""`/api/v1/admin`: usage, costs and the demo inbox, for Demux staff only.
+"""`/api/v1/admin`: usage, costs, the demo inbox and access (free-access grants, Stripe
+customers), for Demux staff only.
 
 Every route depends on `get_admin_user` (router level): 401 without a session, the same
 404 as an unknown URL for anyone who is not an admin, and one `admin_audit` row per
@@ -6,13 +7,20 @@ request. Response shapes are in `app/schemas/admin.py` (privacy rules there).
 """
 
 import uuid
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, Query, status
 
-from app.api.deps import AdminUser, SessionDep, get_admin_user
+from app.api.deps import AdminUser, SessionDep, StripeDep, get_admin_user
+from app.api.routes.billing import StripeUnavailableError
+from app.billing.stripe_api import StripeError
 from app.core.config import settings
 from app.core.errors import NotFoundError, ValidationError
 from app.schemas.admin import (
+    AdminAccessState,
+    AdminCustomer,
+    AdminGrant,
+    AdminGrantCreate,
     AdminOverview,
     AdminUserDetail,
     AdminUserRow,
@@ -28,9 +36,10 @@ from app.schemas.admin import (
     DemoInboxState,
     DemoSeedCreate,
     DemoSeedRead,
+    StripeSync,
 )
+from app.services import access, billing, demo
 from app.services import admin as service
-from app.services import demo
 
 router = APIRouter(prefix="/admin", tags=["admin"], dependencies=[Depends(get_admin_user)])
 
@@ -126,3 +135,45 @@ async def create_seed(body: DemoSeedCreate, admin: AdminUser, session: SessionDe
 @router.post("/demo/cleanup", response_model=DemoCleanup)
 async def cleanup() -> DemoCleanup:
     return DemoCleanup(removed=await demo.remove_demo_threads())
+
+
+@router.get("/access", response_model=AdminAccessState)
+async def access_state(session: SessionDep) -> AdminAccessState:
+    grants, customers = await service.access_overview(session)
+    return AdminAccessState(
+        stripe_configured=bool(settings.STRIPE_SECRET_KEY),
+        webhook_configured=bool(settings.STRIPE_WEBHOOK_SECRET),
+        grants=[AdminGrant.model_validate(g) for g in grants],
+        customers=[AdminCustomer.model_validate(c) for c in customers],
+    )
+
+
+@router.post("/access/grants", response_model=AdminGrant, status_code=status.HTTP_201_CREATED)
+async def create_grant(body: AdminGrantCreate, admin: AdminUser, session: SessionDep) -> AdminGrant:
+    """Give an email free access (or renew it). They sign up with that email."""
+    expires_at = body.expires_at
+    if expires_at is not None:
+        expires_at = expires_at if expires_at.tzinfo else expires_at.replace(tzinfo=UTC)
+        if expires_at <= datetime.now(UTC):
+            raise ValidationError("The end date must be in the future.")
+    g = await access.grant(session, admin, body.email, body.note, expires_at)
+    return AdminGrant.model_validate((await service.grant_rows(session, [g]))[0])
+
+
+@router.post("/access/grants/{grant_id}/revoke", response_model=AdminGrant)
+async def revoke_grant(grant_id: uuid.UUID, session: SessionDep) -> AdminGrant:
+    g = await access.revoke(session, grant_id)
+    if g is None:
+        raise NotFoundError("Grant not found.")
+    return AdminGrant.model_validate((await service.grant_rows(session, [g]))[0])
+
+
+@router.post("/access/stripe-sync", response_model=StripeSync)
+async def stripe_sync(session: SessionDep, stripe: StripeDep) -> StripeSync:
+    """Re-read every Stripe customer (first deploy, or after a webhook outage)."""
+    if stripe is None:
+        raise ValidationError("Stripe is not configured: set STRIPE_SECRET_KEY.")
+    try:
+        return StripeSync(synced=await billing.sync_all(session, stripe))
+    except StripeError as e:
+        raise StripeUnavailableError(f"Could not read Stripe: {e}") from e

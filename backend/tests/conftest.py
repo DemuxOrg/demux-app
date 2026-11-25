@@ -7,6 +7,8 @@ Responsible for:
   commits only release a SAVEPOINT).
 - `client`: an httpx AsyncClient talking to the app in-process, as the dev user.
 - `other_client`: same, but authenticated as a different user (for isolation tests).
+- Both test users have free access (an `access_grants` row each), like a paying
+  customer; tests of the access gate itself remove it (`no_access`).
 """
 
 import os
@@ -37,7 +39,9 @@ from app.auth.crypto import encrypt  # noqa: E402
 from app.db.base import Base  # noqa: E402
 from app.db.session import get_session  # noqa: E402
 from app.main import app  # noqa: E402
-from app.models import User  # noqa: E402
+from app.models import AccessGrant, User  # noqa: E402
+
+TEST_EMAILS = ("dev@demux.local", "other@demux.local")
 
 
 @pytest.fixture(autouse=True)
@@ -67,6 +71,21 @@ async def session(engine) -> AsyncIterator[AsyncSession]:
         ) as s:
             yield s
         await outer.rollback()
+
+
+@pytest_asyncio.fixture(autouse=True)
+async def _test_users_have_access(session):
+    session.add_all([AccessGrant(email=e, note="tests") for e in TEST_EMAILS])
+    await session.flush()
+
+
+@pytest_asyncio.fixture
+async def no_access(session):
+    """The test users lose their free access: they are signed in but have not paid."""
+    from sqlalchemy import delete
+
+    await session.execute(delete(AccessGrant).where(AccessGrant.email.in_(TEST_EMAILS)))
+    await session.flush()
 
 
 @pytest.fixture(autouse=True)

@@ -16,6 +16,14 @@ from app.models.run import RunKind, RunStatus
 from app.models.workspace import WorkspaceStatus
 
 
+class AccessInfo(BaseModel):
+    """Why the user may (or may not) use Demux (app/services/access.py)."""
+
+    status: Literal["admin", "subscription", "grant", "trial", "none"]
+    ends_at: datetime | None = None  # trial end or free-access expiry
+    subscribe_url: str | None = None  # "trial" / "none": where to subscribe
+
+
 class Me(BaseModel):
     email: str  # login email (better-auth)
     name: str
@@ -25,6 +33,7 @@ class Me(BaseModel):
     gmail_connected: bool
     needs_reconnect: bool
     is_admin: bool = False  # may open /admin
+    access: AccessInfo  # "none": the app answers 402 and shows the subscribe screen
 
 
 PersonName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]

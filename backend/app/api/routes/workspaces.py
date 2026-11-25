@@ -1,19 +1,20 @@
 """`/api/v1/workspaces` endpoints (build spec §8).
 
 Each handler parses input, calls a service with the current user's id, and returns a
-schema. Unknown or foreign ids are 404.
+schema. Unknown or foreign ids are 404. Users without access (no subscription, trial or
+free access) get 402 `subscription_required` from every `/workspaces` route.
 """
 
 import uuid
 from datetime import datetime
 from typing import Literal
 
-from fastapi import APIRouter, Query, Response, status
+from fastapi import APIRouter, Depends, Query, Response, status
 from sqlalchemy import exists, select
 
 from app.agent.palettes import PALETTES, valid_palette
 from app.agent.shell import app_runtime, shell_head
-from app.api.deps import CurrentUser, SessionDep
+from app.api.deps import CurrentUser, SessionDep, get_entitled_user
 from app.models.run import Change, Run, RunKind
 from app.models.workspace import Workspace
 from app.schemas.workspace import (
@@ -39,7 +40,10 @@ from app.services import setup as setup_service
 from app.services import store
 from app.services import workspaces as service
 
-router = APIRouter(prefix="/workspaces", tags=["workspaces"])
+# Only users with access (subscription, trial, free access, admin): 402 otherwise.
+router = APIRouter(
+    prefix="/workspaces", tags=["workspaces"], dependencies=[Depends(get_entitled_user)]
+)
 shell_router = APIRouter(tags=["workspaces"])
 
 

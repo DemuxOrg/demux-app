@@ -11,6 +11,8 @@ from datetime import date, datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.schemas.billing import EmailAddress
+
 
 class _Out(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -78,6 +80,7 @@ class AdminUserRow(_Out):
     cost_total: float
     gmail_connected: bool
     needs_reconnect: bool
+    access: str  # admin, subscription, grant (free access), trial or none
 
 
 class AdminRun(_Out):
@@ -170,3 +173,47 @@ class DemoSeedCreate(BaseModel):
 
 class DemoCleanup(_Out):
     removed: int
+
+
+class AdminGrant(_Out):
+    """Free access given to one login email (beta users, friends)."""
+
+    id: uuid.UUID
+    email: str
+    note: str  # typed by the admin ("Beta tester")
+    status: str  # active, expired or revoked
+    expires_at: datetime | None
+    revoked_at: datetime | None
+    created_at: datetime
+    granted_by: str | None  # the admin's login email
+    has_account: bool
+
+
+class AdminCustomer(_Out):
+    """A Stripe customer as the access rule sees it. Ids, statuses and dates only."""
+
+    id: uuid.UUID
+    email: str  # the email on the Stripe customer
+    stripe_customer_id: str
+    status: str  # Stripe's subscription status (trialing, active…), or none / deleted
+    trial_ends_at: datetime | None  # when the free trial ends (first charge)
+    active: bool  # gives access today
+    has_account: bool
+    updated_at: datetime
+
+
+class AdminAccessState(_Out):
+    stripe_configured: bool  # STRIPE_SECRET_KEY set
+    webhook_configured: bool  # STRIPE_WEBHOOK_SECRET set
+    grants: list[AdminGrant]
+    customers: list[AdminCustomer]
+
+
+class AdminGrantCreate(BaseModel):
+    email: EmailAddress
+    note: str = Field(default="", max_length=200)
+    expires_at: datetime | None = None  # None: until revoked
+
+
+class StripeSync(_Out):
+    synced: int  # live Stripe customers read

@@ -7,6 +7,7 @@ import { use } from "react";
 import { EditsList, RunsTable } from "@/components/admin/RunsTable";
 import { CHART_COLORS, TimeChart } from "@/components/admin/TimeChart";
 import {
+  AccessPill,
   Card,
   Empty,
   ErrorNote,
@@ -102,10 +103,13 @@ export default function AdminUserPage({
           </>
         }
         right={
-          <GmailPill
-            connected={u.gmail_connected}
-            needsReconnect={u.needs_reconnect}
-          />
+          <span className="flex flex-wrap items-center gap-2">
+            <AccessPill access={u.access} />
+            <GmailPill
+              connected={u.gmail_connected}
+              needsReconnect={u.needs_reconnect}
+            />
+          </span>
         }
       />
       <Tiles>

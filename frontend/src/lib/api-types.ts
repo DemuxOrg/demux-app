@@ -96,6 +96,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/me/access/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Refresh Access
+         * @description Re-read this user's Stripe customers now (after subscribing on the landing page).
+         */
+        post: operations["refresh_access_api_v1_me_access_refresh_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/workspaces": {
         parameters: {
             query?: never;
@@ -447,10 +467,99 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/access": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Access State */
+        get: operations["access_state_api_v1_admin_access_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/access/grants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Grant
+         * @description Give an email free access (or renew it). They sign up with that email.
+         */
+        post: operations["create_grant_api_v1_admin_access_grants_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/access/grants/{grant_id}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Revoke Grant */
+        post: operations["revoke_grant_api_v1_admin_access_grants__grant_id__revoke_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/access/stripe-sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Stripe Sync
+         * @description Re-read every Stripe customer (first deploy, or after a webhook outage).
+         */
+        post: operations["stripe_sync_api_v1_admin_access_stripe_sync_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * AccessInfo
+         * @description Why the user may (or may not) use Demux (app/services/access.py).
+         */
+        AccessInfo: {
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "admin" | "subscription" | "grant" | "trial" | "none";
+            /** Ends At */
+            ends_at?: string | null;
+            /** Subscribe Url */
+            subscribe_url?: string | null;
+        };
         /** ActiveRun */
         ActiveRun: {
             /**
@@ -469,6 +578,45 @@ export interface components {
             created_at: string;
             setup?: components["schemas"]["SetupState"] | null;
         };
+        /** AdminAccessState */
+        AdminAccessState: {
+            /** Stripe Configured */
+            stripe_configured: boolean;
+            /** Webhook Configured */
+            webhook_configured: boolean;
+            /** Grants */
+            grants: components["schemas"]["AdminGrant"][];
+            /** Customers */
+            customers: components["schemas"]["AdminCustomer"][];
+        };
+        /**
+         * AdminCustomer
+         * @description A Stripe customer as the access rule sees it. Ids, statuses and dates only.
+         */
+        AdminCustomer: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Email */
+            email: string;
+            /** Stripe Customer Id */
+            stripe_customer_id: string;
+            /** Status */
+            status: string;
+            /** Trial Ends At */
+            trial_ends_at: string | null;
+            /** Active */
+            active: boolean;
+            /** Has Account */
+            has_account: boolean;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
         /** AdminEdit */
         AdminEdit: {
             /**
@@ -485,6 +633,48 @@ export interface components {
             created_at: string;
             /** Status */
             status: string;
+        };
+        /**
+         * AdminGrant
+         * @description Free access given to one login email (beta users, friends).
+         */
+        AdminGrant: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Email */
+            email: string;
+            /** Note */
+            note: string;
+            /** Status */
+            status: string;
+            /** Expires At */
+            expires_at: string | null;
+            /** Revoked At */
+            revoked_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Granted By */
+            granted_by: string | null;
+            /** Has Account */
+            has_account: boolean;
+        };
+        /** AdminGrantCreate */
+        AdminGrantCreate: {
+            /** Email */
+            email: string;
+            /**
+             * Note
+             * @default
+             */
+            note: string;
+            /** Expires At */
+            expires_at?: string | null;
         };
         /** AdminOverview */
         AdminOverview: {
@@ -604,6 +794,8 @@ export interface components {
             gmail_connected: boolean;
             /** Needs Reconnect */
             needs_reconnect: boolean;
+            /** Access */
+            access: string;
         };
         /** AdminWorkspace */
         AdminWorkspace: {
@@ -906,6 +1098,7 @@ export interface components {
              * @default false
              */
             is_admin: boolean;
+            access: components["schemas"]["AccessInfo"];
         };
         /** MeUpdate */
         MeUpdate: {
@@ -1059,6 +1252,11 @@ export interface components {
                 [key: string]: string;
             } | null;
             layout?: components["schemas"]["LayoutChoice"] | null;
+        };
+        /** StripeSync */
+        StripeSync: {
+            /** Synced */
+            synced: number;
         };
         /** ValidationError */
         ValidationError: {
@@ -1303,6 +1501,26 @@ export interface operations {
         };
     };
     disconnect_gmail_api_v1_me_gmail_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Me"];
+                };
+            };
+        };
+    };
+    refresh_access_api_v1_me_access_refresh_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -2008,6 +2226,110 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DemoCleanup"];
+                };
+            };
+        };
+    };
+    access_state_api_v1_admin_access_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminAccessState"];
+                };
+            };
+        };
+    };
+    create_grant_api_v1_admin_access_grants_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminGrantCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminGrant"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    revoke_grant_api_v1_admin_access_grants__grant_id__revoke_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                grant_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminGrant"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    stripe_sync_api_v1_admin_access_stripe_sync_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StripeSync"];
                 };
             };
         };

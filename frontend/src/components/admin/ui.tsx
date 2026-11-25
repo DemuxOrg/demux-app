@@ -319,6 +319,20 @@ export function GmailPill({
   return <Pill tone="neutral">Not connected</Pill>;
 }
 
+const ACCESS: Record<string, [Tone, string]> = {
+  admin: ["neutral", "Admin"],
+  subscription: ["success", "Subscribed"],
+  grant: ["info", "Free access"],
+  trial: ["info", "Trial"],
+  none: ["warning", "No access"],
+};
+
+/** Why a user may use Demux (backend/app/services/access.py). */
+export function AccessPill({ access }: { access: string }) {
+  const [tone, label] = ACCESS[access] ?? ["neutral", access];
+  return <Pill tone={tone}>{label}</Pill>;
+}
+
 export function Loading({ label = "Loading" }: { label?: string }) {
   return (
     <div className="flex items-center gap-3 py-16 text-[15px] font-medium text-ink-2">

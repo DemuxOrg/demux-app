@@ -6,6 +6,9 @@
  *
  * - Data: the user (`/me`) and the workspace list, polled every 15 s. Pages read them
  *   with `useShell()` and call `reload()` after they change something the sidebar shows.
+ * - No access (no subscription, trial or free access: `/me` says so and the workspace
+ *   list is 402): the shell shows `NoAccess` instead of the sidebar and the page. The
+ *   poll keeps running, so the app opens again on its own once they subscribe.
  * - Layout, like Notion: from 768px the sidebar sits beside the page and pushes it, so
  *   closing it gives the page the full width. Below 768px it floats over the page with a
  *   scrim. The close button is on the right of the sidebar header; while the sidebar is
@@ -32,10 +35,12 @@ import {
 import {
   api,
   handleAuthError,
+  isNoAccess,
   type Me,
   type WorkspaceSummary,
 } from "@/lib/api";
 import { Drawer } from "./Drawer";
+import { NoAccess } from "./NoAccess";
 
 export const MAX_WORKSPACES = 2;
 const POLL_MS = 15000;
@@ -77,13 +82,21 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [me, setMe] = useState<Me | null>(null);
   const [workspaces, setWorkspaces] = useState<WorkspaceSummary[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [locked, setLocked] = useState(false);
 
   const reload = useCallback(async () => {
     try {
-      const [m, ws] = await Promise.all([api.me(), api.listWorkspaces()]);
+      const [m, ws] = await Promise.all([
+        api.me(),
+        api.listWorkspaces().catch((e: unknown) => {
+          if (isNoAccess(e)) return null;
+          throw e;
+        }),
+      ]);
       startTransition(() => {
         setMe(m);
-        setWorkspaces(ws);
+        setWorkspaces(ws ?? []);
+        setLocked(ws === null || m.access.status === "none");
         setLoadError(null);
       });
     } catch (e) {
@@ -163,6 +176,13 @@ export function AppShell({ children }: { children: ReactNode }) {
     () => ({ me, workspaces, loadError, reload }),
     [me, workspaces, loadError, reload],
   );
+
+  if (locked && me)
+    return (
+      <ShellContext.Provider value={shell}>
+        <NoAccess me={me} />
+      </ShellContext.Provider>
+    );
 
   return (
     <ShellContext.Provider value={shell}>

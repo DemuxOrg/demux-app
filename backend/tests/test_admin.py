@@ -57,6 +57,11 @@ ALLOWED_FIELDS = {
     # demo inbox (synthetic data written by admins; `error` is our own failure message)
     "configured", "inbox_email", "model", "seeds", "thread_count", "threads_created",
     "messages_created", "error", "finished_at", "removed",
+    # access: login / Stripe billing emails (like the users table), the note the admin
+    # typed, statuses, dates and Stripe ids. Never card or payment details.
+    "access", "grants", "customers", "stripe_configured", "webhook_configured", "note",
+    "expires_at", "revoked_at", "granted_by", "has_account", "stripe_customer_id",
+    "trial_ends_at", "active", "updated_at", "synced",
 }  # fmt: skip
 
 # Never allowed, whatever the schema says.
@@ -81,6 +86,7 @@ def admin_paths() -> list[tuple[str, str]]:
         if path.startswith("/api/v1/admin"):
             concrete = path.replace("{user_id}", str(uuid.uuid4()))
             concrete = concrete.replace("{workspace_id}", str(uuid.uuid4()))
+            concrete = concrete.replace("{grant_id}", str(uuid.uuid4()))
             out += [(method.upper(), concrete) for method in ops]
     return out
 

@@ -6,8 +6,10 @@ signed-in user connects Gmail: the browser goes to Google and back to
 the frontend page the flow started from (`?next=`, from a fixed list). The frontend never
 sees Google tokens.
 
-`/me` reads the signed-in user; `PATCH /me` edits their first and last name;
-`DELETE /me/gmail` disconnects their Gmail.
+`/me` reads the signed-in user, including their access (subscription, trial, free
+access, or none); `PATCH /me` edits their first and last name; `DELETE /me/gmail`
+disconnects their Gmail; `POST /me/access/refresh` re-reads their subscription from
+Stripe (the "Check again" button after subscribing).
 """
 
 import logging
@@ -15,8 +17,9 @@ from urllib.parse import urlencode
 
 from fastapi import APIRouter, Request
 from fastapi.responses import RedirectResponse
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import CurrentUser, SessionDep, get_current_user, is_admin
+from app.api.deps import CurrentUser, SessionDep, StripeDep, get_current_user, is_admin
 from app.auth import google
 from app.auth.session import (
     STATE_COOKIE,
@@ -28,8 +31,8 @@ from app.auth.session import (
 from app.core.config import settings
 from app.core.errors import AppError, UnauthorizedError
 from app.models.user import User
-from app.schemas.workspace import Me, MeUpdate
-from app.services import users
+from app.schemas.workspace import AccessInfo, Me, MeUpdate
+from app.services import access, billing, users
 
 logger = logging.getLogger(__name__)
 
@@ -119,7 +122,8 @@ async def google_callback(
     return resp
 
 
-def _me(user: User) -> Me:
+async def _me(session: AsyncSession, user: User) -> Me:
+    a = await access.for_user(session, user)
     return Me(
         email=user.email,
         name=user.name,
@@ -129,18 +133,23 @@ def _me(user: User) -> Me:
         gmail_connected=google.gmail_connected(user),
         needs_reconnect=user.needs_reconnect,
         is_admin=is_admin(user),
+        access=AccessInfo(
+            status=a.status.value,
+            ends_at=a.ends_at,
+            subscribe_url=a.subscribe_url,
+        ),
     )
 
 
 @router.get("/me", response_model=Me)
-async def me(user: CurrentUser) -> Me:
-    return _me(user)
+async def me(user: CurrentUser, session: SessionDep) -> Me:
+    return await _me(session, user)
 
 
 @router.patch("/me", response_model=Me)
 async def update_me(body: MeUpdate, user: CurrentUser, session: SessionDep) -> Me:
     await users.rename(session, user, body.first_name, body.last_name)
-    return _me(user)
+    return await _me(session, user)
 
 
 @router.delete("/me/gmail", response_model=Me)
@@ -148,4 +157,12 @@ async def disconnect_gmail(user: CurrentUser, session: SessionDep) -> Me:
     """Disconnect the signed-in user's Gmail. Their workspaces stay; syncing pauses."""
     await google.unlink_gmail(session, user)
     logger.info("gmail disconnected: user=%s", user.id)
-    return _me(user)
+    return await _me(session, user)
+
+
+@router.post("/me/access/refresh", response_model=Me)
+async def refresh_access(user: CurrentUser, session: SessionDep, stripe: StripeDep) -> Me:
+    """Re-read this user's Stripe customers now (after subscribing on the landing page)."""
+    if stripe is not None:
+        await billing.sync_email(session, stripe, access.normalize_email(user.email))
+    return await _me(session, user)

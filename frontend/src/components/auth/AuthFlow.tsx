@@ -7,6 +7,9 @@
  *   unverified user and emails a code → "Check your email" → the right code verifies the email and signs in.
  * - Sign in: email + password. An unverified account gets a fresh code (better-auth
  *   sends it) and goes to the code step.
+ * - Only an email with access can create an account (a subscription, free access or an
+ *   admin; lib/access.ts). A refused email gets a link to start a trial on the landing page.
+ *   `/login?mode=sign-up` opens on Create your account (linked from the landing page).
  * The sign-in email can differ from the Gmail connected later.
  */
 import { ArrowRight, Eye, EyeOff, Lock } from "lucide-react";
@@ -16,6 +19,7 @@ import { StepTransition } from "@/components/motion/PageTransition";
 import { Reveal, RevealText } from "@/components/motion/Reveal";
 import { Button } from "@/components/ui/Button";
 import { Field } from "@/components/ui/Field";
+import { LANDING_URL } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 import { CODE_LENGTH, CodeInput } from "./CodeInput";
 
@@ -36,7 +40,12 @@ const MESSAGES: Record<string, string> = {
   INVALID_OTP: "That code isn't right. Check the latest email from Demux.",
   OTP_EXPIRED: "That code expired. Send a new one.",
   TOO_MANY_ATTEMPTS: "Too many tries with this code. Send a new one.",
+  SUBSCRIPTION_REQUIRED:
+    "There's no Demux subscription for this email. Use the email you subscribed with, or subscribe first.",
 };
+
+/** Sign-up refused because the email has no subscription: offer the landing page. */
+const NEEDS_SUBSCRIPTION = "SUBSCRIPTION_REQUIRED";
 
 function message(error: {
   code?: string;
@@ -71,13 +80,19 @@ export function AuthFlow() {
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [needsSubscription, setNeedsSubscription] = useState(false);
   const [resendIn, setResendIn] = useState(0);
   const [notice, setNotice] = useState<string | null>(null);
 
-  // Already signed in (e.g. back button): go straight to the workspaces.
+  // Already signed in (e.g. back button): go straight to the workspaces. Otherwise
+  // `?mode=sign-up` (the landing page's "Create your account" link) opens on sign-up.
   useEffect(() => {
     authClient.getSession().then(({ data }) => {
       if (data?.session) enterApp();
+      else if (
+        new URLSearchParams(window.location.search).get("mode") === "sign-up"
+      )
+        setMode("sign-up");
     });
   }, []);
 
@@ -89,6 +104,7 @@ export function AuthFlow() {
 
   function goTo(next: Step) {
     setError(null);
+    setNeedsSubscription(false);
     setNotice(null);
     startTransition(() => setStep(next));
   }
@@ -103,6 +119,7 @@ export function AuthFlow() {
     e.preventDefault();
     setBusy(true);
     setError(null);
+    setNeedsSubscription(false);
     const address = email.trim().toLowerCase();
     if (mode === "sign-up") {
       const first = firstName.trim();
@@ -117,6 +134,7 @@ export function AuthFlow() {
       setBusy(false);
       if (error) {
         setError(message(error));
+        setNeedsSubscription(error.code === NEEDS_SUBSCRIPTION);
         if (error.code?.startsWith("USER_ALREADY_EXISTS")) setMode("sign-in");
         return;
       }
@@ -194,7 +212,7 @@ export function AuthFlow() {
                     />
                     <p className="text-base text-ink-2">
                       {signUp
-                        ? "Use any email. It doesn't have to be the Gmail you'll connect."
+                        ? "Use the email you subscribed or were invited with. It doesn't have to be the Gmail you'll connect."
                         : "Welcome back. Use the email and password you signed up with."}
                     </p>
                   </div>
@@ -268,6 +286,17 @@ export function AuthFlow() {
                     className="rounded-sm bg-danger-bg px-4 py-3 text-sm text-danger"
                   >
                     {error}
+                    {needsSubscription && (
+                      <>
+                        {" "}
+                        <a
+                          href={LANDING_URL}
+                          className="rounded font-medium text-violet underline hover:text-violet-ink"
+                        >
+                          Start a free trial at usedemux.com
+                        </a>
+                      </>
+                    )}
                   </p>
                 )}
 
@@ -296,6 +325,7 @@ export function AuthFlow() {
                       type="button"
                       onClick={() => {
                         setError(null);
+                        setNeedsSubscription(false);
                         setMode(signUp ? "sign-in" : "sign-up");
                       }}
                       className="rounded font-medium text-violet hover:text-violet-ink hover:underline"
