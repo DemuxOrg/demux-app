@@ -9,15 +9,15 @@
  *
  * - Building: top bar (name, Building chip) + the build progress card.
  * - Failed: the reason and "Try again".
- * - Ready: top bar (name, rename; sync status, Undo, Chat, ⋯), the generated app in a
- *   white panel, and the chat drawer beside it. There is no sync button: the worker
- *   syncs every workspace on its own.
+ * - Ready: top bar (name, rename; sync status, ⋯) and the generated app in a white
+ *   panel. No Undo and no chat in the MVP. There is no sync button: the worker syncs
+ *   every workspace on its own.
  *
  * Polls GET /workspaces/{id} every 2 s while a run is active, every 20 s otherwise, and
  * at once when the page comes back into view (phones pause timers in the background);
  * refetches data / app only when their versions change.
  */
-import { ChevronLeft, MessageSquare, Pencil, Undo2, X } from "lucide-react";
+import { ChevronLeft, Pencil, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   startTransition,
@@ -28,7 +28,6 @@ import {
 } from "react";
 import { AppFrame } from "@/components/AppFrame";
 import { LogoMark } from "@/components/brand/Logo";
-import { ChatPanel } from "@/components/ChatPanel";
 import { StepTransition } from "@/components/motion/PageTransition";
 import { rememberWorkspace, useShell } from "@/components/shell/AppShell";
 import { StatusChip, SyncStatus } from "@/components/StatusChip";
@@ -36,7 +35,6 @@ import { Button, ButtonLink } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
 import { BuildFlow } from "@/components/workspace/BuildFlow";
 import { MoreMenu } from "@/components/workspace/MoreMenu";
-import { SidePanel } from "@/components/workspace/SidePanel";
 import {
   api,
   ApiError,
@@ -46,35 +44,8 @@ import {
   type AppRuntime,
   type AppShell,
   type DataDoc,
-  type RunRead,
   type WorkspaceDetail as Detail,
 } from "@/lib/api";
-
-const PANEL_KEY = "demux.sidePanelOpen";
-
-function usePanelOpen(): [boolean, (open: boolean) => void] {
-  // The panel only renders after the workspace loads in the browser, so reading
-  // storage in the initializer cannot cause a hydration mismatch.
-  // Default: open on desktop, closed on small screens where the panel covers the app.
-  const [open, setOpen] = useState(() => {
-    if (typeof window === "undefined") return true;
-    if (!window.matchMedia("(min-width: 1024px)").matches) return false;
-    try {
-      return localStorage.getItem(PANEL_KEY) !== "false";
-    } catch {
-      return true; // storage unavailable
-    }
-  });
-  const set = useCallback((v: boolean) => {
-    setOpen(v);
-    try {
-      localStorage.setItem(PANEL_KEY, String(v));
-    } catch {
-      /* ignore */
-    }
-  }, []);
-  return [open, set];
-}
 
 export function WorkspaceDetail({ id }: { id: string }) {
   const router = useRouter();
@@ -86,27 +57,18 @@ export function WorkspaceDetail({ id }: { id: string }) {
   );
   const [app, setApp] = useState<AppDoc | null>(null);
   const [data, setData] = useState<DataDoc | null>(null);
-  const [runs, setRuns] = useState<RunRead[]>([]);
-  const [panelOpen, setPanelOpen] = usePanelOpen();
   const [error, setError] = useState<string | null>(null); // loading errors
   const [actionError, setActionError] = useState<string | null>(null); // until next action
   const [appError, setAppError] = useState<string | null>(null);
   const [renaming, setRenaming] = useState(false);
   const [name, setName] = useState("");
   const [busyAction, setBusyAction] = useState<string | null>(null);
-  const seen = useRef({ data: -1, app: -1, active: "" });
-
-  const loadSide = useCallback(async () => {
-    setRuns(await api.listRuns(id));
-  }, [id]);
+  const seen = useRef({ data: -1, app: -1 });
 
   const refresh = useCallback(async () => {
     try {
       const w = await api.getWorkspace(id);
       startTransition(() => setWs(w));
-      const activeKey = w.active_run
-        ? `${w.active_run.id}:${w.active_run.events.length}`
-        : "";
       const jobs: Promise<unknown>[] = [];
       if (w.data_version !== seen.current.data) {
         seen.current.data = w.data_version;
@@ -115,10 +77,6 @@ export function WorkspaceDetail({ id }: { id: string }) {
       if (w.app_version !== seen.current.app) {
         seen.current.app = w.app_version;
         jobs.push(api.getApp(id).then(setApp));
-      }
-      if (activeKey !== seen.current.active || jobs.length) {
-        seen.current.active = activeKey;
-        jobs.push(loadSide());
       }
       await Promise.all(jobs);
       setError(null);
@@ -132,7 +90,7 @@ export function WorkspaceDetail({ id }: { id: string }) {
         e instanceof Error ? e.message : "Couldn't load this workspace.",
       );
     }
-  }, [id, loadSide]);
+  }, [id]);
 
   useEffect(() => {
     api
@@ -209,7 +167,6 @@ export function WorkspaceDetail({ id }: { id: string }) {
   }
 
   async function sendMessage(text: string) {
-    setPanelOpen(true);
     if (!(await act("message", () => api.sendMessage(id, text)))) {
       throw new Error("not sent"); // keeps the text in the box
     }
@@ -322,29 +279,6 @@ export function WorkspaceDetail({ id }: { id: string }) {
                 <span className="mr-1 inline-flex">
                   <SyncStatus lastSyncedAt={ws.last_synced_at} />
                 </span>
-              )}
-              <Button
-                variant="secondary"
-                onClick={() => act("undo", () => api.undo(id))}
-                disabled={!ws.can_undo || active}
-                title="Put back the version before the last change"
-                aria-label="Undo"
-              >
-                <Undo2 size={16} aria-hidden />
-                <span className="hidden md:inline">Undo</span>
-              </Button>
-              {!panelOpen && (
-                <Button
-                  variant="secondary"
-                  onClick={() => setPanelOpen(true)}
-                  aria-controls="side-panel"
-                  aria-expanded={false}
-                  aria-label="Show chat"
-                  className="animate-dmx-rise"
-                >
-                  <MessageSquare size={16} aria-hidden />
-                  <span className="hidden md:inline">Chat</span>
-                </Button>
               )}
               <MoreMenu onRename={startRename} onDelete={remove} />
             </>
@@ -482,10 +416,6 @@ export function WorkspaceDetail({ id }: { id: string }) {
                   </div>
                 )}
               </section>
-
-              <SidePanel open={panelOpen} onClose={() => setPanelOpen(false)}>
-                <ChatPanel runs={runs} workspace={ws} onSend={sendMessage} />
-              </SidePanel>
             </div>
           )}
         </StepTransition>
