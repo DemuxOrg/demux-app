@@ -82,29 +82,29 @@ Title Case, naming what it tracks rather than repeating the request (for example
 when the request cannot be served (CANNOT_BUILD).
 - Then make 3-4 search_mail calls with different simple wordings (plain words joined \
 with OR). Note which ones return relevant threads.
-- Only if the request is ambiguous: call ask_user once, right after your searches, with \
-1-3 multiple-choice questions. Ask only when the answer changes which emails count, \
-which record types you create or which fields you track, and the mailbox cannot tell \
-you. Ground each question in what you found (for example "I found loans from three \
-branches and two e-book apps. Should e-book loans count?"), give 2-4 short options and \
-mark the one you recommend. Never ask about colours, layout or presentation (the user \
-picks those separately), never ask what the emails answer, and ask nothing when the \
-request is clear: most requests are. ask_user waits for the user and returns the \
-answers: follow them, and write them into the guide (Purpose, fields, What to ignore).
+- Then find the gaps in the request, right after your searches. List for yourself \
+what the request leaves open that would change the workspace and that the mailbox \
+cannot settle: which things or emails count (scope: which senders, kinds, accounts), \
+what to track about each one (fields), how the user wants them split or grouped (by \
+status, by date, by person, by project), what counts as done, late or urgent, and what \
+they want to see first. Then call ask_user once with one multiple-choice question per \
+real gap. How many depends on the request: none when it already answers them (a \
+precise request asks nothing), 1-2 for a fairly clear one, 3-5 for a vague one (two or \
+three words such as "my orders" or "work stuff"). Each question is specific to this \
+request and names concrete things you found or the request implies, for example "I \
+found loans from three branches and two e-book apps. Should e-book loans count?" or \
+"Do you want to follow each loan until it is returned, or only see what is due soon?". \
+Give 2-4 short options that really differ, and mark the one you would pick (the user \
+can also type their own answer). Never ask a generic question that would fit any \
+request, never ask about colours, themes or visual style, and never ask what the \
+emails already answer. ask_user waits for the user and returns the answers (your \
+recommended options when they do not answer): follow them, write them into the guide \
+(Purpose, fields, What to ignore), and fill any gap you did not ask about with the most \
+likely reading.
 - Then read_thread on 3-5 varied threads, both obvious and borderline ones. \
 You have a budget of 8 searches and 10 thread reads; a sample is enough.
-- Then write_guide, then propose_views, then set_queries, then finish. Always use the \
-tools: never put the guide or the summary in a plain text answer.
-- propose_views offers the user 2-5 layouts for this workspace; they pick while the \
-emails are read and the app is built from their choice. Each layout names one kit \
-block: Board (columns by a closed-set field such as status or stage), DataTable \
-(sortable list), Timeline (records along a date), Calendar (a month view of a date), \
-Gallery (cards), ListDetail (a list and the selected record), Dashboard (totals and \
-charts). Give each a short title tied to the data ("Board by status", "Timeline by due \
-date", "Totals per month") and one line naming the fields it uses. Propose only what the \
-fields support (a date for Timeline and Calendar, a closed set for Board, amounts or \
-statuses to count for Dashboard) and what the request suggests. Mark the 1-3 you \
-recommend, and as primary the one that best answers the request.
+- Then write_guide, then set_queries, then finish. Always use the tools: never put the \
+guide or the summary in a plain text answer.
 - Decide the record types the request needs and no more. A thing gets its own record \
 type only if emails state facts about it directly and the user asked to see it; \
 otherwise it is a field. Things the user wants grouped, counted or totalled are computed \
@@ -170,8 +170,8 @@ is rendered with React again every time the data changes; keep UI state in useSt
 Use the kit's blocks for the layouts (DataTable, Board, Timeline, Calendar, Gallery, \
 ListDetail, StatRow, Chart, Dashboard, ViewTabs) and its layout pieces (Page, Section, \
 Stack, Row, Grid); never draw tables, cards, charts or boards yourself.
-- The kit is already styled with the Demux design system and the palette the user \
-chose. Write no CSS, no class names and no colour values (no hex, rgb(), hsl() or colour \
+- The kit is already styled with the Demux design system and the workspace's \
+palette. Write no CSS, no class names and no colour values (no hex, rgb(), hsl() or colour \
 names: the check rejects them). Status colours come from StatusBadge / Badge tone.
 - Field values are rendered as JSX text, which escapes them. Never \
 dangerouslySetInnerHTML or innerHTML.
@@ -194,11 +194,13 @@ React app made from the Demux component kit that shows the workspace's records.
 How to build it:
 - One <Page> titled with the workspace <name> and a one-line description of what it \
 tracks.
-- <layout> lists the layouts the user chose while the workspace was built: build each \
-one with the block it names and the fields it mentions, in that order, inside ViewTabs \
-(the first one opens first). One layout → no ViewTabs. No <layout> → choose from the \
-request: Board for stages or statuses, DataTable for lists to scan and sort, Timeline or \
-Calendar for dates, StatRow / Chart / Dashboard for totals and trends.
+- Choose the layout from the request and <clarifications> (the user's answers to the \
+questions asked while the workspace was built: they decide what counts, how records \
+are split and what the user wants to see first). Board for stages or statuses, \
+DataTable for lists to scan and sort, Timeline or Calendar for dates, StatRow / Chart / \
+Dashboard for totals and trends. When two or three views each answer a different need, \
+put them in ViewTabs with the one that best answers the request first; otherwise one \
+view, no ViewTabs.
 - When the records have statuses, amounts or dates worth counting, start with a \
 StatRow of 2-4 numbers the user cares about (computed in JS: counts per status, totals, \
 "due this week").
@@ -228,10 +230,9 @@ Demux component kit).
 {APP_CONTRACT}
 How to work:
 - Make the smallest change that satisfies the request.
-- Colours come from the look the user chose when the workspace was built (<palette>); \
-you cannot change it. Never write colour values into the app. If asked for other \
-colours, change nothing for that part and say in one sentence that the look was set \
-when the workspace was built.
+- Colours come from the workspace's palette (<palette>); you cannot change it. Never \
+write colour values into the app. If asked for other colours, change nothing for that \
+part and say in one sentence that colours cannot be changed.
 - Appearance (layout, sorting, columns, a new chart or view) → write_app with the full \
 new app, built with the kit. If <current_app> is an old app (not a \
 <script type="text/jsx"> kit app), rewrite it as a kit app that keeps what it showed.
@@ -278,28 +279,13 @@ def data_block(data: dict[str, Any], max_chars: int) -> tuple[str, bool]:
     return json.dumps(compact, ensure_ascii=False, separators=(",", ":")), True
 
 
-def layout_block(layout: dict[str, Any] | None) -> str:
-    """The layouts the user chose during setup, the one that opens first on top."""
-    views = [v for v in (layout or {}).get("views", []) if isinstance(v, dict)]
-    if not views:
-        return ""
-    primary = (layout or {}).get("primary")
-    views.sort(key=lambda v: v.get("id") != primary)
-    lines = [
-        f"{i}. {v.get('title', '')} ({v.get('block', '')})"
-        + (f": {v['description']}" if v.get("description") else "")
-        for i, v in enumerate(views, 1)
-    ]
-    return "<layout>\n" + "\n".join(lines) + "\n</layout>\n\n"
-
-
 def app_input(
     prompt: str,
     guide: str,
     data: dict[str, Any],
     max_chars: int,
     name: str = "",
-    layout: dict[str, Any] | None = None,
+    config: dict[str, Any] | None = None,
 ) -> str:
     block, compacted = data_block(data, max_chars)
     note = (
@@ -310,7 +296,7 @@ def app_input(
     )
     return (
         f"<name>{name}</name>\n\n<request>\n{prompt}\n</request>\n\n"
-        f"{layout_block(layout)}<guide>\n{guide}\n</guide>\n\n"
+        f"{clarifications_block(config)}<guide>\n{guide}\n</guide>\n\n"
         f"<data>\n{block}\n</data>{note}"
     )
 

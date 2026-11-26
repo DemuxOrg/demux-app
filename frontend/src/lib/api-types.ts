@@ -164,8 +164,7 @@ export interface paths {
         put?: never;
         /**
          * Update Setup
-         * @description The user's answer to a setup step while the workspace is built: the look, the
-         *     answers to the clarifying questions, or the layouts.
+         * @description The user's answers to the clarifying questions while the workspace is built.
          */
         post: operations["update_setup_api_v1_workspaces__workspace_id__setup_post"];
         delete?: never;
@@ -1051,32 +1050,6 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
-        /** LayoutChoice */
-        LayoutChoice: {
-            /** Views */
-            views: string[];
-            /** Primary */
-            primary: string;
-        };
-        /** LayoutOption */
-        LayoutOption: {
-            /** Id */
-            id: string;
-            /** Block */
-            block: string;
-            /** Title */
-            title: string;
-            /**
-             * Description
-             * @default
-             */
-            description: string;
-            /**
-             * Recommended
-             * @default false
-             */
-            recommended: boolean;
-        };
         /** Me */
         Me: {
             /** Email */
@@ -1214,11 +1187,9 @@ export interface components {
         };
         /**
          * SetupState
-         * @description Where a build's setup with the user stands (frontend/theme.md §7.10).
+         * @description Where a build's clarifying questions stand (frontend/theme.md §7.10).
          */
         SetupState: {
-            /** Palette */
-            palette: ("violet" | "ocean" | "teal" | "rose" | "graphite") | null;
             /**
              * Questions State
              * @enum {string}
@@ -1228,30 +1199,16 @@ export interface components {
             questions: components["schemas"]["SetupQuestion"][];
             /** Answered */
             answered: boolean;
-            /**
-             * Layout State
-             * @enum {string}
-             */
-            layout_state: "waiting" | "choosing" | "chosen" | "timed_out" | "auto" | "none";
-            /** Layout Options */
-            layout_options: components["schemas"]["LayoutOption"][];
-            /** Layout Primary */
-            layout_primary: string | null;
-            /** Layout Chosen */
-            layout_chosen: boolean;
         };
         /**
          * SetupUpdate
-         * @description One setup step's answer: the look, the answers to the questions, or the layouts.
+         * @description The user's answers to the clarifying questions, by question id.
          */
         SetupUpdate: {
-            /** Palette */
-            palette?: ("violet" | "ocean" | "teal" | "rose" | "graphite") | null;
             /** Answers */
-            answers?: {
+            answers: {
                 [key: string]: string;
-            } | null;
-            layout?: components["schemas"]["LayoutChoice"] | null;
+            };
         };
         /** StripeSync */
         StripeSync: {

@@ -1,49 +1,36 @@
 "use client";
 
 /**
- * Build flow card (theme.md §7.10): five steps from Build to a ready workspace.
+ * Build flow card (theme.md §7.10): three steps from Build to a ready workspace.
  *
- *   1 Your look · 2 A few questions · 3 Your layout · 4 Reading your emails · 5 Building
+ *   1 Your request · 2 Reading your emails · 3 Building your workspace
  *
- * Steps 1-3 are the user's turn and run while Demux already works in the background
- * (the design agent asks questions after its first searches and proposes layouts from
- * the guide; see docs/UI_GENERATION_PLAN.md §3). The total is always five: a step that
- * is not needed ticks off. Answers go to POST /workspaces/{id}/setup; the build waits
+ * Step 1 is the user's turn only when the design agent finds gaps in the request: after
+ * its first searches it asks one multiple-choice question per gap (none for a precise
+ * request, up to five for a vague one). Without questions the step ticks off on its own.
+ * The total is always three. Answers go to POST /workspaces/{id}/setup; the build waits
  * for them (2 minutes at most, then uses the preselected answers).
  */
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { LogoMark } from "@/components/brand/Logo";
 import { RevealText } from "@/components/motion/Reveal";
 import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
-import { LayoutThumb } from "@/components/workspace/LayoutThumb";
-import { PaletteTiles } from "@/components/workspace/PaletteTiles";
 import {
   api,
   ApiError,
   handleAuthError,
   type ActiveRun,
-  type PaletteId,
-  type PaletteInfo,
   type SetupQuestion,
 } from "@/lib/api";
 
 const STEPS = [
-  "Your look",
-  "A few questions",
-  "Your layout",
+  "Your request",
   "Reading your emails",
   "Building your workspace",
 ] as const;
-
-const TITLES = [
-  "How should your workspace look?",
-  "A few questions",
-  "What should your workspace show?",
-  "Reading your emails",
-  "Almost there",
-] as const;
+const TOTAL = STEPS.length;
 
 type Answer = { choice: number; other: string };
 
@@ -56,27 +43,19 @@ export function BuildFlow({
   workspaceId,
   prompt,
   run,
-  palettes,
-  palette,
   recordCounts,
   onChanged,
 }: {
   workspaceId: string;
   prompt: string;
   run: ActiveRun | null;
-  palettes: PaletteInfo[];
-  palette: PaletteId;
   recordCounts: Record<string, number>;
   onChanged: () => Promise<void> | void;
 }) {
   const setup = run?.setup ?? null;
   const events = run?.events ?? [];
-  // The user's own progress, ahead of the next poll.
-  const [sent, setSent] = useState({
-    look: false,
-    answers: false,
-    layout: false,
-  });
+  // The user's answers went out, ahead of the next poll.
+  const [sent, setSent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -84,17 +63,12 @@ export function BuildFlow({
     (e) => e.phase === "process" || e.phase === "app",
   );
   const qState = setup?.questions_state ?? (designDone ? "none" : "deciding");
-  const lState = setup?.layout_state ?? (designDone ? "none" : "waiting");
+  const asking = qState === "asking" && !!setup?.questions.length;
 
-  const lookDone = sent.look || !!setup?.palette;
   const questionsDone =
-    sent.answers ||
+    sent ||
     !!setup?.answered ||
     ["none", "answered", "timed_out"].includes(qState);
-  const layoutDone =
-    sent.layout ||
-    !!setup?.layout_chosen ||
-    ["chosen", "timed_out", "auto", "none"].includes(lState);
 
   let progress: { done: number; total: number } | null = null;
   for (let i = events.length - 1; i >= 0 && !progress; i--) {
@@ -105,34 +79,29 @@ export function BuildFlow({
   const readingDone =
     !!progress && progress.total > 0 && progress.done >= progress.total;
 
-  const step = !lookDone
-    ? 1
-    : !questionsDone
-      ? 2
-      : !layoutDone
-        ? 3
-        : !readingDone
-          ? 4
-          : 5;
-  const timedOut =
-    (qState === "timed_out" && !sent.answers && !setup?.answered) ||
-    (lState === "timed_out" && !sent.layout && !setup?.layout_chosen);
+  const step = !questionsDone ? 1 : !readingDone ? 2 : 3;
+  const title =
+    step === 1
+      ? asking
+        ? "A few questions"
+        : "Understanding your request"
+      : step === 2
+        ? "Reading your emails"
+        : "Almost there";
+  const timedOut = qState === "timed_out" && !sent && !setup?.answered;
 
-  async function send(
-    body: Parameters<typeof api.updateSetup>[1],
-    mark: keyof typeof sent,
-  ) {
+  async function send(answers: Record<string, string>) {
     setBusy(true);
     setError(null);
     try {
-      await api.updateSetup(workspaceId, body);
-      setSent((s) => ({ ...s, [mark]: true }));
+      await api.updateSetup(workspaceId, { answers });
+      setSent(true);
       await onChanged();
     } catch (e) {
       if (handleAuthError(e)) return;
-      // 409: the build already moved on (it used the recommended answer).
+      // 409: the build already moved on (it used the recommended answers).
       if (e instanceof ApiError && e.status === 409) {
-        setSent((s) => ({ ...s, [mark]: true }));
+        setSent(true);
         await onChanged();
       } else
         setError(
@@ -148,72 +117,49 @@ export function BuildFlow({
       <div className="flex items-center justify-between gap-3">
         <LogoMark size={40} className="animate-dmx-breathe" />
         <p className="text-[13px] font-medium text-ink-3 tabular">
-          Step {step} of 5 · {STEPS[step - 1]}
+          Step {step} of {TOTAL} · {STEPS[step - 1]}
         </p>
       </div>
 
       <StepBar step={step} progress={progress} />
 
-      <div key={step} className="animate-dmx-rise">
+      <div key={`${step}:${asking}`} className="animate-dmx-rise">
         <RevealText
           as="h1"
-          text={TITLES[step - 1]}
+          text={title}
           className="mt-6 text-[28px] leading-[1.12] font-medium tracking-[-0.03em] sm:text-[30px]"
         />
         <p className="mt-2 truncate text-sm text-ink-3" title={prompt}>
           “{prompt}”
         </p>
-        {timedOut && step > 2 && (
+        {timedOut && step > 1 && (
           <p className="mt-2 text-[13px] text-ink-3">
             We went ahead with the recommended answers.
           </p>
         )}
 
         <div className="mt-6">
-          {step === 1 && (
-            <LookStep
-              palettes={palettes}
-              initial={setup?.palette ?? palette}
-              busy={busy}
-              onContinue={(p) => send({ palette: p }, "look")}
-            />
-          )}
-          {step === 2 &&
-            (qState === "asking" && setup?.questions.length ? (
+          {step === 1 &&
+            (asking && setup ? (
               <QuestionsStep
                 questions={setup.questions}
                 busy={busy}
-                onContinue={(answers) => send({ answers }, "answers")}
+                onContinue={send}
               />
             ) : (
               <Waiting label="Looking at your emails" />
             ))}
-          {step === 3 &&
-            (lState === "choosing" && setup?.layout_options.length ? (
-              <LayoutStep
-                options={setup.layout_options}
-                primary={setup.layout_primary}
-                palette={
-                  palettes.find((p) => p.id === (setup.palette ?? palette)) ??
-                  palettes[0]
-                }
-                busy={busy}
-                onContinue={(layout) => send({ layout }, "layout")}
-              />
-            ) : (
-              <Waiting label="Preparing options from your emails" />
-            ))}
-          {step === 4 && (
+          {step === 2 && (
             <ReadingStep progress={progress} recordCounts={recordCounts} />
           )}
-          {step === 5 && (
+          {step === 3 && (
             <div className="flex flex-col gap-1.5">
               <p className="text-base font-medium text-ink">
                 Building your workspace
               </p>
               <p className="text-sm text-ink-2" aria-live="polite">
                 {[...events].reverse().find((e) => e.phase === "app")?.label ??
-                  "Putting your layouts together"}
+                  "Putting your workspace together"}
               </p>
             </div>
           )}
@@ -224,7 +170,7 @@ export function BuildFlow({
             {error}
           </p>
         )}
-        {step >= 4 && (
+        {step >= 2 && (
           <p className="mt-6 text-[13px] text-ink-3">
             That&apos;s everything we need from you. You can close this page;
             your workspace will be ready here.
@@ -251,14 +197,14 @@ function StepBar({
     <div
       role="progressbar"
       aria-valuemin={1}
-      aria-valuemax={5}
+      aria-valuemax={TOTAL}
       aria-valuenow={step}
-      aria-valuetext={`Step ${step} of 5: ${STEPS[step - 1]}`}
-      className="mt-5 grid grid-cols-5 gap-1"
+      aria-valuetext={`Step ${step} of ${TOTAL}: ${STEPS[step - 1]}`}
+      className="mt-5 grid grid-cols-3 gap-1"
     >
       {STEPS.map((s, i) => {
         const n = i + 1;
-        const demux = n >= 4;
+        const demux = n >= 2;
         return (
           <span
             key={s}
@@ -271,7 +217,7 @@ function StepBar({
               demux ? (
                 <span
                   className="block h-full animate-dmx-flow rounded-full bg-brand-flow transition-[width] duration-500 ease-dmx"
-                  style={{ width: n === 4 ? `${pct}%` : "100%" }}
+                  style={{ width: n === 2 ? `${pct}%` : "100%" }}
                 />
               ) : (
                 <span className="block h-full w-full rounded-full bg-violet-line" />
@@ -314,40 +260,7 @@ function Footer({
   );
 }
 
-/* ------------------------------------------------------------------ 1 · look */
-
-function LookStep({
-  palettes,
-  initial,
-  busy,
-  onContinue,
-}: {
-  palettes: PaletteInfo[];
-  initial: PaletteId;
-  busy: boolean;
-  onContinue: (p: PaletteId) => void;
-}) {
-  const [value, setValue] = useState<PaletteId>(initial);
-  if (!palettes.length) return <Waiting label="Loading the looks" />;
-  return (
-    <>
-      <PaletteTiles
-        palettes={palettes}
-        value={value}
-        onChange={setValue}
-        label="Look"
-        className="grid grid-cols-2 gap-2.5 min-[420px]:grid-cols-3 sm:grid-cols-5"
-      />
-      <Footer
-        note="This sets the colours of your workspace."
-        busy={busy}
-        onClick={() => onContinue(value)}
-      />
-    </>
-  );
-}
-
-/* ------------------------------------------------------------------ 2 · questions */
+/* ------------------------------------------------------------------ 1 · questions */
 
 function QuestionsStep({
   questions,
@@ -435,143 +348,16 @@ function QuestionsStep({
           );
         })}
       </div>
-      <Footer busy={busy} onClick={submit} />
-    </>
-  );
-}
-
-/* ------------------------------------------------------------------ 3 · layout */
-
-function LayoutStep({
-  options,
-  primary,
-  palette,
-  busy,
-  onContinue,
-}: {
-  options: {
-    id: string;
-    block: string;
-    title: string;
-    description: string;
-    recommended: boolean;
-  }[];
-  primary: string | null;
-  palette: PaletteInfo | undefined;
-  busy: boolean;
-  onContinue: (layout: { views: string[]; primary: string }) => void;
-}) {
-  const [chosen, setChosen] = useState<string[]>(() => {
-    const rec = options.filter((o) => o.recommended).map((o) => o.id);
-    return rec.length ? rec : [options[0].id];
-  });
-  const [first, setFirst] = useState<string>(primary ?? options[0].id);
-  const opensFirst = chosen.includes(first) ? first : chosen[0];
-
-  function toggle(id: string) {
-    setChosen((c) =>
-      c.includes(id)
-        ? c.length === 1
-          ? c
-          : c.filter((x) => x !== id)
-        : [...c, id],
-    );
-  }
-
-  return (
-    <>
-      <fieldset className="m-0 border-0 p-0">
-        <legend className="sr-only">Layouts</legend>
-        <div className="grid grid-cols-1 gap-2.5 min-[520px]:grid-cols-2">
-          {options.map((o) => {
-            const selected = chosen.includes(o.id);
-            return (
-              <label
-                key={o.id}
-                className={`relative flex cursor-pointer flex-col gap-2.5 rounded-md bg-surface transition-[translate,box-shadow,border-color] duration-[250ms] ease-dmx hover:-translate-y-0.5 hover:shadow-glass has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-violet/25 ${
-                  selected
-                    ? "border-2 border-violet p-[11px]"
-                    : "border border-line p-3"
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={selected}
-                  onChange={() => toggle(o.id)}
-                  className="sr-only"
-                />
-                <LayoutThumb block={o.block} palette={palette} />
-                <span className="flex items-start gap-2">
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-[15px] font-semibold text-ink">
-                      {o.title}
-                    </span>
-                    {o.description && (
-                      <span className="mt-0.5 block text-[13px] text-ink-3">
-                        {o.description}
-                      </span>
-                    )}
-                  </span>
-                  <span
-                    aria-hidden
-                    className={`mt-0.5 grid size-5 shrink-0 place-items-center rounded-[6px] border ${
-                      selected
-                        ? "border-violet bg-violet text-white"
-                        : "border-pending-line"
-                    }`}
-                  >
-                    {selected && <Check size={13} strokeWidth={3} />}
-                  </span>
-                </span>
-                {o.recommended && (
-                  <span className="absolute top-2 left-2 rounded-tag bg-surface/90 px-[7px] py-[3px] text-xs text-ink-2">
-                    Recommended
-                  </span>
-                )}
-              </label>
-            );
-          })}
-        </div>
-      </fieldset>
-      {chosen.length === 1 && options.length > 1 && (
-        <p className="mt-2 text-[13px] text-ink-3">Pick at least one.</p>
-      )}
-      {chosen.length > 1 && (
-        <label className="mt-4 flex flex-wrap items-center gap-2.5">
-          <span className="text-[13px] font-medium text-ink-2">
-            Opens first
-          </span>
-          <select
-            value={opensFirst}
-            onChange={(e) => setFirst(e.target.value)}
-            className="h-10 cursor-pointer rounded-full border border-line bg-surface px-3.5 text-sm text-ink-2 outline-none focus:border-violet-line focus:ring-[3px] focus:ring-violet/25"
-          >
-            {options
-              .filter((o) => chosen.includes(o.id))
-              .map((o) => (
-                <option key={o.id} value={o.id}>
-                  {o.title}
-                </option>
-              ))}
-          </select>
-        </label>
-      )}
       <Footer
+        note="We picked our best guess for each. Change what doesn't fit."
         busy={busy}
-        onClick={() =>
-          onContinue({
-            views: options
-              .filter((o) => chosen.includes(o.id))
-              .map((o) => o.id),
-            primary: opensFirst,
-          })
-        }
+        onClick={submit}
       />
     </>
   );
 }
 
-/* ------------------------------------------------------------------ 4 · reading */
+/* ------------------------------------------------------------------ 2 · reading */
 
 function ReadingStep({
   progress,

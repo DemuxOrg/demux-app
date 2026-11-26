@@ -1,8 +1,15 @@
 "use client";
 
-/** The signature prompt card (theme.md §7.2) with example chips (§7.3) and Build. */
+/**
+ * The signature prompt card (theme.md §7.2) with example chips (§7.3) and Build.
+ *
+ * `cacheComponents` keeps this page alive, hidden, after Build opens the new workspace,
+ * so its state would still hold the old prompt and the busy Build button when the user
+ * comes back to Create. Once a build has started, the card empties itself as the page
+ * is hidden (effects are torn down then), so it is fresh the next time it shows.
+ */
 import { ArrowRight } from "lucide-react";
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { LogoMark } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/Button";
 
@@ -18,13 +25,26 @@ export function PromptCard({
   const id = useId();
   const [prompt, setPrompt] = useState("");
   const [busy, setBusy] = useState(false);
+  const built = useRef(false);
+
+  useEffect(
+    () => () => {
+      if (!built.current) return;
+      built.current = false;
+      setPrompt("");
+      setBusy(false);
+    },
+    [],
+  );
 
   async function submit(e?: React.FormEvent) {
     e?.preventDefault();
     if (!prompt.trim() || disabled || busy) return;
     setBusy(true);
     const ok = await onBuild(prompt.trim());
-    if (!ok) setBusy(false); // on success the page navigates away
+    // On success the page navigates away and stays busy until it is hidden (above).
+    if (ok) built.current = true;
+    else setBusy(false);
   }
 
   return (

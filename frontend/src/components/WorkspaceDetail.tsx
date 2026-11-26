@@ -15,7 +15,10 @@
  *
  * Polls GET /workspaces/{id} every 2 s while a run is active, every 20 s otherwise, and
  * at once when the page comes back into view (phones pause timers in the background);
- * refetches data / app only when their versions change.
+ * refetches data / app only when their versions change. A version counts as loaded only
+ * once its fetch succeeded, and a failed app-frame fetch is retried, so a dropped
+ * request never leaves the page spinning. If loading still takes long, the spinner
+ * offers a reload.
  */
 import { ChevronLeft, Pencil, X } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -40,6 +43,7 @@ import {
   ApiError,
   CONNECT_GMAIL_URL,
   handleAuthError,
+  loadAppShell,
   type AppDoc,
   type AppRuntime,
   type AppShell,
@@ -71,12 +75,22 @@ export function WorkspaceDetail({ id }: { id: string }) {
       startTransition(() => setWs(w));
       const jobs: Promise<unknown>[] = [];
       if (w.data_version !== seen.current.data) {
-        seen.current.data = w.data_version;
-        jobs.push(api.getData(id).then(setData));
+        const version = w.data_version;
+        jobs.push(
+          api.getData(id).then((d) => {
+            setData(d);
+            seen.current.data = version;
+          }),
+        );
       }
       if (w.app_version !== seen.current.app) {
-        seen.current.app = w.app_version;
-        jobs.push(api.getApp(id).then(setApp));
+        const version = w.app_version;
+        jobs.push(
+          api.getApp(id).then((a) => {
+            setApp(a);
+            seen.current.app = version;
+          }),
+        );
       }
       await Promise.all(jobs);
       setError(null);
@@ -92,23 +106,26 @@ export function WorkspaceDetail({ id }: { id: string }) {
     }
   }, [id]);
 
-  useEffect(() => {
-    api
-      .appShell("v1")
-      .then((s) => setShells((x) => ({ ...x, v1: s })))
-      .catch(() => undefined);
-  }, []);
-
   const runtime = app?.runtime;
+  const [shellRetry, setShellRetry] = useState(0);
   useEffect(() => {
     if (!runtime || shells[runtime]) return;
-    api
-      .appShell(runtime)
-      .then((s) => setShells((x) => ({ ...x, [runtime]: s })))
-      .catch(() => undefined);
-  }, [runtime, shells]);
+    let live = true;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    loadAppShell(runtime).then(
+      (s) => {
+        if (live) setShells((x) => ({ ...x, [runtime]: s }));
+      },
+      () => {
+        if (live) timer = setTimeout(() => setShellRetry((n) => n + 1), 3000);
+      },
+    );
+    return () => {
+      live = false;
+      clearTimeout(timer);
+    };
+  }, [runtime, shells, shellRetry]);
   const shell = runtime ? shells[runtime] : undefined;
-  const palettes = shells.v1?.palettes ?? shells.v2?.palettes ?? [];
 
   useEffect(() => rememberWorkspace(id), [id]);
 
@@ -187,9 +204,9 @@ export function WorkspaceDetail({ id }: { id: string }) {
       return;
     try {
       await api.deleteWorkspace(id);
-      void reloadList();
-      const next = workspaces?.filter((w) => w.id !== id).at(-1);
-      router.push(next ? `/workspaces/${next.id}` : "/workspaces/new");
+      const others = workspaces?.some((w) => w.id !== id);
+      await reloadList(); // the list no longer shows it
+      router.push(others ? "/workspaces" : "/workspaces/new");
     } catch (e) {
       setActionError(
         e instanceof ApiError ? e.message : "Couldn't delete this workspace.",
@@ -209,7 +226,7 @@ export function WorkspaceDetail({ id }: { id: string }) {
   if (!ws)
     return (
       <div className="grid min-h-dvh place-items-center" aria-label="Loading">
-        <Spinner size={28} />
+        <SlowLoad size={28} />
       </div>
     );
 
@@ -325,8 +342,6 @@ export function WorkspaceDetail({ id }: { id: string }) {
                   workspaceId={id}
                   prompt={ws.prompt}
                   run={ws.active_run ?? null}
-                  palettes={palettes}
-                  palette={ws.palette}
                   recordCounts={ws.record_counts}
                   onChanged={refresh}
                 />
@@ -383,7 +398,7 @@ export function WorkspaceDetail({ id }: { id: string }) {
                     className="grid h-full place-items-center"
                     aria-label="Loading the app"
                   >
-                    <Spinner size={24} />
+                    <SlowLoad size={24} />
                   </div>
                 )}
                 {appError && (
@@ -420,6 +435,34 @@ export function WorkspaceDetail({ id }: { id: string }) {
           )}
         </StepTransition>
       </main>
+    </div>
+  );
+}
+
+/** A spinner that, if loading takes longer than it should, offers to reload the page. */
+function SlowLoad({ size }: { size: number }) {
+  const [slow, setSlow] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setSlow(true), 15000);
+    return () => clearTimeout(timer);
+  }, []);
+  return (
+    <div className="flex flex-col items-center gap-4 px-4 text-center">
+      <Spinner size={size} />
+      {slow && (
+        <div className="flex animate-dmx-rise flex-col items-center gap-3">
+          <p className="text-sm text-ink-2">
+            This is taking longer than usual.
+          </p>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => window.location.reload()}
+          >
+            Reload
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

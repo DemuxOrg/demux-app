@@ -30,8 +30,12 @@ DESIGN_MAX_SEARCHES = 8
 EDIT_MAX_MESSAGES = 12
 MAX_SUMMARY_CHARS = 300
 SETUP_POLL_SECONDS = 1.5
-# Blocks a proposed layout may name (the kit's, app-kit/src/catalog.md).
-LAYOUT_BLOCKS = ["Board", "DataTable", "Timeline", "Calendar", "Gallery", "ListDetail", "Dashboard"]
+MAX_QUESTIONS = 5
+# Questions are about what the workspace tracks, never about its look (frontend/theme.md
+# §7.10): those are the fixed, generic questions users found useless.
+_LOOK_QUESTION = re.compile(
+    r"\b(colou?rs?|palettes?|themes?|fonts?|dark mode|light mode|visual style)\b", re.I
+)
 
 
 class ToolError(Exception):
@@ -363,8 +367,8 @@ async def _ask_user(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
     if ctx.asked_user:
         raise ToolError("you already asked: ask_user can be called once")
     raw = args.get("questions")
-    if not isinstance(raw, list) or not 1 <= len(raw) <= 3:
-        raise ToolError("questions must be a list of 1 to 3 questions")
+    if not isinstance(raw, list) or not 1 <= len(raw) <= MAX_QUESTIONS:
+        raise ToolError(f"questions must be a list of 1 to {MAX_QUESTIONS} questions")
     items = []
     for i, q in enumerate(raw, 1):
         if not isinstance(q, dict):
@@ -372,6 +376,11 @@ async def _ask_user(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
         options = [_clip(o, 80) for o in q.get("options") or [] if _clip(o, 80)]
         if not _clip(q.get("question"), 300) or not 2 <= len(options) <= 4:
             raise ToolError("each question needs text and 2 to 4 short options")
+        if _LOOK_QUESTION.search(" ".join([str(q.get("question")), *options])):
+            raise ToolError(
+                "ask only about what the workspace should track or show first, never about "
+                "colours, themes or visual style: drop that question"
+            )
         rec = q.get("recommended", 0)
         rec = rec if isinstance(rec, int) and 0 <= rec < len(options) else 0
         items.append(
@@ -416,43 +425,6 @@ async def _ask_user(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
     )
 
 
-async def _propose_views(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
-    raw = args.get("options")
-    if not isinstance(raw, list) or not 2 <= len(raw) <= 5:
-        raise ToolError("options must be a list of 2 to 5 layouts")
-    options = []
-    for i, o in enumerate(raw, 1):
-        block = o.get("block") if isinstance(o, dict) else None
-        if block not in LAYOUT_BLOCKS:
-            raise ToolError(f"each layout's block must be one of: {', '.join(LAYOUT_BLOCKS)}")
-        title = _clip(o.get("title"), 60)
-        if not title:
-            raise ToolError("each layout needs a short title, e.g. 'Board by status'")
-        options.append(
-            {
-                "id": f"v{i}",
-                "block": block,
-                "title": title,
-                "description": _clip(o.get("description"), 140),
-                "recommended": bool(o.get("recommended")),
-            }
-        )
-    if not any(o["recommended"] for o in options):
-        options[0]["recommended"] = True
-    primary = args.get("primary", 0)
-    primary = primary if isinstance(primary, int) and 0 <= primary < len(options) else 0
-    if not options[primary]["recommended"]:
-        primary = next(i for i, o in enumerate(options) if o["recommended"])
-    ctx.proposed_views = True
-    await ctx.persister.set_setup("layout_options", options)
-    await ctx.persister.set_setup("layout_primary", options[primary]["id"])
-    await ctx.persister.set_setup("layout_state", "choosing")
-    return ToolOutput(
-        {"ok": True, "note": "The user picks from these while the emails are read."},
-        f"Proposed {_plural(len(options), 'layout')}",
-    )
-
-
 async def _request_backfill(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
     ctx.backfill_requested = True
     return ToolOutput({"ok": True}, "Scheduled a re-read of all emails")
@@ -476,8 +448,6 @@ async def _finish(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
                 f"not done yet: call {' and '.join(missing)} before finish "
                 "(or finish with 'CANNOT_BUILD: <reason>' if the request cannot be served)"
             )
-        if not ctx.proposed_views:
-            raise ToolError("not done yet: call propose_views (2-5 layouts) before finish")
     if ctx.phase == "app" and not ctx.app_written:
         raise ToolError("the app is not saved yet: call write_app until it returns ok")
     ctx.finish_summary = summary[:MAX_SUMMARY_CHARS]
@@ -616,19 +586,26 @@ TOOLS: dict[str, Tool] = {
         ),
         Tool(
             "ask_user",
-            "Ask the user 1-3 multiple-choice questions when the request is ambiguous, once. "
-            "Waits for the answers (or uses your recommended options) and returns them.",
+            "Ask the user multiple-choice questions that fill the gaps in their request, "
+            "once: one question per open point that changes the workspace (none for a "
+            "precise request, up to 5 for a vague one). Waits for the answers (or uses your "
+            "recommended options) and returns them.",
             {
                 "type": "object",
                 "properties": {
                     "questions": {
                         "type": "array",
                         "minItems": 1,
-                        "maxItems": 3,
+                        "maxItems": MAX_QUESTIONS,
                         "items": {
                             "type": "object",
                             "properties": {
-                                "question": {"type": "string"},
+                                "question": {
+                                    "type": "string",
+                                    "description": "Grounded in what you found, e.g. 'I found "
+                                    "loans from three branches and two e-book apps. Should "
+                                    "e-book loans count?'",
+                                },
                                 "options": {
                                     "type": "array",
                                     "items": {"type": "string"},
@@ -647,43 +624,6 @@ TOOLS: dict[str, Tool] = {
                 "required": ["questions"],
             },
             _ask_user,
-        ),
-        Tool(
-            "propose_views",
-            "Offer the user 2-5 layouts for this workspace, each built from one kit block. "
-            "The user picks while the emails are read; the app is built from their choice.",
-            {
-                "type": "object",
-                "properties": {
-                    "options": {
-                        "type": "array",
-                        "minItems": 2,
-                        "maxItems": 5,
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "block": {"type": "string", "enum": LAYOUT_BLOCKS},
-                                "title": {
-                                    "type": "string",
-                                    "description": "Tied to the data, e.g. 'Board by status'.",
-                                },
-                                "description": {
-                                    "type": "string",
-                                    "description": "One line: the fields it uses.",
-                                },
-                                "recommended": {"type": "boolean"},
-                            },
-                            "required": ["block", "title", "description", "recommended"],
-                        },
-                    },
-                    "primary": {
-                        "type": "integer",
-                        "description": "Index of the recommended layout to open first.",
-                    },
-                },
-                "required": ["options", "primary"],
-            },
-            _propose_views,
         ),
         Tool(
             "request_backfill",
@@ -712,7 +652,6 @@ PHASE_TOOLS: dict[str, list[str]] = {
         "ask_user",
         "read_thread",
         "write_guide",
-        "propose_views",
         "set_queries",
         "finish",
     ],
@@ -725,7 +664,7 @@ PHASE_TOOLS: dict[str, list[str]] = {
         "finish",
     ],
     "app": ["read_records", "write_app", "finish"],
-    "edit": [t for t in TOOLS if t not in ("ask_user", "propose_views")],
+    "edit": [t for t in TOOLS if t != "ask_user"],
 }
 
 

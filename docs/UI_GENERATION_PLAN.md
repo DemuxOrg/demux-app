@@ -2,6 +2,8 @@
 
 Status (2026-11-21): phases 0–5 are built; phase 6 (evals) is partly done (one real build checked, see §9). Implementation order is in §9. Where this file and `frontend/theme.md` disagree on UI, theme.md wins.
 
+**Change (2026-11-26):** the build no longer has a look step (palette tiles) or a layout step (`propose_views`). Users found them generic: the same palette and layout questions on every build. The build screen has three steps (theme.md §7.10): the design agent asks one multiple-choice question per gap in the prompt (none for a precise prompt, up to five for a vague one, never about colours or style), then emails are read and the app is built. The answers reach the app phase as `<clarifications>`, so they also shape the interface. Workspaces keep the default `violet` palette. §3, §4 (“chosen once, during the build”), §6 and §7 below describe the earlier flow.
+
 ## 1. Why
 
 Today the app phase writes about 300 lines of vanilla JS from scratch on every build and every edit (`backend/app/agent/prompts.py`, `APP` / `APP_CONTRACT`). The prompt forces the `--dmx-*` tokens and base classes (`frontend/theme.md` §10.3), so every app looks like Demux, and quality depends on how well a 27B model draws a whole UI in one go. Colours are a prompt rule only: nothing in `appcheck.py` enforces them.

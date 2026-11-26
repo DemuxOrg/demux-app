@@ -282,7 +282,7 @@ height 30px, px 12, radius full, 13px/500, 7px dot.
 - **Updated tag:** bg `violet-soft`, text `violet-ink`, 5px violet dot, "Updated 2 min ago".
 
 ### 7.8 Cards
-- **Workspace card (list):** glass, radius 20, padding 16/18, `shadow-glass`. Title 16/600, meta 13 `ink-2` with live dot ("Synced 3 min ago · 14 invoices"), chevron right.
+- **Workspace card (list):** glass, radius 20, padding 16/18, `shadow-glass`, hover lift (§9, `dmx-lift`). Title 16/600, meta 13 `ink-2` with live dot ("Synced 3 min ago · 14 invoices"), chevron right.
 - **Empty slot:** min-h 72, radius 20, 1.5px dashed `rgba(12,26,46,.22)`, centered 14px `ink-on-sky` ("One more slot free").
 - **Record card (board):** white, radius 12, padding 12/14, 1px `line`. Title 15/600 · client row 13 `ink-3` with 6px dot · tag.
 - **Just-updated record:** bg `violet-tint`, border `violet-line`, `box-shadow: 0 0 0 3px rgba(106,61,240,.08)`, plus the Updated tag. The highlight stays until the user has seen it (page focus + 10s), then fades over 600ms.
@@ -296,36 +296,35 @@ Vertical list with dividers `line-on-glass`, padding 14px 0:
 3. Change: `from` pill (neutral) → arrow 14px `ink-3` → `to` pill (status color), or one sentence 13px `ink-2`
 4. Source link: mail icon 14px + "Sender · “subject or quote”" 13px `ink-2`. Hover: underline + `violet-ink`. Opens the email (`demux.openSource`).
 
-### 7.10 Build flow (setup steps + progress)
-One card takes the user from Build to a ready workspace. It asks for up to three things while Demux works in the background, then shows the work. There are always five steps, in this order:
+### 7.10 Build flow (questions + progress)
+One card takes the user from Build to a ready workspace. Demux asks only what the prompt leaves open, while it already works in the background, then shows the work. There are always three steps, in this order:
 
 | # | Step (label) | Whose turn | Title (title-lg) |
 |---|---|---|---|
-| 1 | Your look | user | How should your workspace look? |
-| 2 | A few questions | user, only if the prompt is ambiguous | A few questions |
-| 3 | Your layout | user | What should your workspace show? |
-| 4 | Reading your emails | Demux | Reading your emails |
-| 5 | Building your workspace | Demux | Almost there |
+| 1 | Your request | Demux, then the user if the prompt has gaps | "Understanding your request", then "A few questions" once there are questions |
+| 2 | Reading your emails | Demux | Reading your emails |
+| 3 | Building your workspace | Demux | Almost there |
+
+There is no look step and no layout step: Demux never asks for colours, themes or a layout picked from a fixed list. Every question is written by the agent for this prompt.
 
 **Card:** white, radius 30, padding 36/36/24, max-width 620, `shadow-float`. Top to bottom:
-1. **Header row:** logo mark 40px with "breathe" on the left; on the right "Step 3 of 5 · Your layout", 13/500 `ink-3`, tabular.
-2. **Step bar:** 5 equal segments, 6px tall, gap 4, radius full, track `#EEF1F6`. Done or skipped: `violet`. Active and the user's turn (1–3): `violet-line`. Active and Demux's turn (4–5): brand gradient with `flow` (the build card's one gradient, principle 4 in §1). Step 4 fills to threads read ÷ threads found (minimum 6%); step 5 is full and flowing. One `role="progressbar"` with `aria-valuenow` = step, `aria-valuemax` = 5 and `aria-valuetext="Step 3 of 5: Your layout"`; the segments are `aria-hidden`.
-3. **Title:** the step's title (table above), `reveal-text` on each step change. Focus moves to it.
+1. **Header row:** logo mark 40px with "breathe" on the left; on the right "Step 1 of 3 · Your request", 13/500 `ink-3`, tabular.
+2. **Step bar:** 3 equal segments, 6px tall, gap 4, radius full, track `#EEF1F6`. Done or skipped: `violet`. Active and the user's turn (1): `violet-line`. Active and Demux's turn (2–3): brand gradient with `flow` (the build card's one gradient, principle 4 in §1). Step 2 fills to threads read ÷ threads found (minimum 6%); step 3 is full and flowing. One `role="progressbar"` with `aria-valuenow` = step, `aria-valuemax` = 3 and `aria-valuetext="Step 1 of 3: Your request"`; the segments are `aria-hidden`.
+3. **Title:** the step's title (table above), `reveal-text` on each change. Focus moves to it.
 4. **Prompt:** quoted, 14px `ink-3`, one line, truncated (full text in `title`).
 5. **Body:** per step, below.
-6. **Footer row:** a note on the left (13px `ink-3`); on steps 1–3 the primary **Continue →** on the right (the card's only violet button).
+6. **Footer row:** a note on the left (13px `ink-3`); while there are questions, the primary **Continue →** on the right (the card's only violet button).
 
 **Step bodies**
-- **1 · Your look.** `role="radiogroup"` of the five palettes (§10.3), one row (3 + 2 below 560px, 2 per row at 390px), gap 10. Tile: white, radius 16, 1px `line`, padding 10, hover lift. Inside, a preview drawn in that palette with no real data: a 64px `surface-2` well (radius 12) holding an accent pill, an accent-soft tag and three short bars in series 1–3. Under it the palette name 14/500 ink. Selected: 2px `violet` border and a 20px violet check badge at the top right (selection is Demux's own violet whatever the tile's palette). Violet is preselected. Footer note: "This sets the colours of your workspace."
-- **2 · A few questions.** Shown when the agent has asked; until it decides: 22px spinner + "Looking at your emails" 15/500 `ink-2`, and no Continue. If there are no questions, the step ticks off on its own and the card moves to step 3. Otherwise 1–3 `<fieldset>`s, gap 24. Each: `<legend>` 16/600 ink (the agent's question; it may start with what it found, e.g. "I found orders from Amazon, Zalando and Uber Eats. Should food deliveries count?"), then radio rows: min-height 44px, radius 12, 1px `line`, padding 0 14, 15/500 `ink-2`, 18px radio. Selected: `violet-soft` background, `violet-line` border, `violet-ink` text. The recommended option is preselected and carries a "Recommended" tag (§7.7) on the right. The last row, "Other…", shows a text input (40px, radius 12, §7.4 rules) when chosen.
-- **3 · Your layout.** Until the options are ready: spinner + "Preparing options from your emails". Then a `<fieldset>` of checkbox tiles, 2 per row (1 below 520px), gap 10: white, radius 16, 1px `line`, padding 12, hover lift. Each tile: a static 64px thumbnail of its block kind (board, table, timeline, calendar, totals, chart, gallery) drawn in the **chosen palette**, the agent's title 15/600 ("Board by status"), one line 13px `ink-3`, a 20px checkbox at the top right. Recommended tiles are preselected and tagged "Recommended". Selected: 2px `violet` border. The last ticked tile cannot be unticked (helper 13px `ink-3`: "Pick at least one"). Under the grid: label "Opens first" 13/500 `ink-2` and a 40px pill select of the ticked layouts, set to the recommended one.
-- **4 · Reading your emails.** Line 16/500 ink "48 of 120 threads read" (tabular; "Collecting matching emails" until the count is known) and a live line 14px `ink-2` "14 shipments found so far" (the main record type, named from the guide). Footer note, from here on: "That's everything we need from you. You can close this page; your workspace will be ready here."
-- **5 · Almost there.** Line 16/500 ink "Building your workspace", live line 14px `ink-2` from the latest event ("Adjusting the interface to your data"). When the workspace is ready, the page moves to it with `page`.
+- **1 · Your request.** While the agent searches the mailbox and looks for gaps: 22px spinner + "Looking at your emails" 15/500 `ink-2`, and no Continue. A precise prompt has no gaps: the step ticks off on its own and the card moves to step 2. Otherwise the agent asks **one question per gap** (1–2 for a fairly clear prompt, up to 5 for a vague one), all on one card: `<fieldset>`s, gap 24. Each: `<legend>` 16/600 ink (the agent's question, specific to this prompt and usually starting with what it found, e.g. "I found orders from Amazon, Zalando and Uber Eats. Should food deliveries count?" or "Do you want to follow each order until it arrives, or only see what is late?"), then radio rows: min-height 44px, radius 12, 1px `line`, padding 0 14, 15/500 `ink-2`, 18px radio. Selected: `violet-soft` background, `violet-line` border, `violet-ink` text. The agent's best guess is preselected and carries a "Recommended" tag (§7.7) on the right. The last row, "Other…", shows a text input (40px, radius 12, §7.4 rules) when chosen. Footer note: "We picked our best guess for each. Change what doesn't fit."
+- **2 · Reading your emails.** Line 16/500 ink "48 of 120 threads read" (tabular; "Collecting matching emails" until the count is known) and a live line 14px `ink-2` "14 shipments found so far" (the main record type, named from the guide). Footer note, from here on: "That's everything we need from you. You can close this page; your workspace will be ready here."
+- **3 · Almost there.** Line 16/500 ink "Building your workspace", live line 14px `ink-2` from the latest event ("Adjusting the interface to your data"). When the workspace is ready, the page moves to it with `page`.
 
 **Behaviour**
-- Steps only move forward, with the `step` motion (§9). The total is always 5: a skipped step fills like a done one.
-- Answers are saved as soon as the user presses Continue, even if Demux does not need them yet.
-- A step Demux is waiting on (2 or 3) left unanswered for 2 minutes: the build continues with the preselected answers, and the card says so under the title, 13px `ink-3`: "We went ahead with the recommended answers."
+- Steps only move forward, with the `step` motion (§9). The total is always 3: a skipped step fills like a done one.
+- Answers are saved as soon as the user presses Continue.
+- Questions left unanswered for 2 minutes: the build continues with the preselected answers, and the card says so under the title, 13px `ink-3`: "We went ahead with the recommended answers."
+- The answers shape the workspace: what counts, what is tracked, how records are grouped and what the interface shows first.
 - Opening the page mid-build (a reload, another tab, coming back later) resumes at the current step, with answered steps shown as done.
 - Failure and "can't build" keep the existing copy (§11) inside the same card.
 - `prefers-reduced-motion`: no `breathe`, `flow` or `reveal-text`; segments fill without animation.
@@ -341,7 +340,7 @@ The only navigation in the signed-in app. Notion-like: from 768px it is a column
 - **Below 768px:** scrim `rgb(12 26 46 / .18)` (no blur: the sidebar has its own view-transition name, which makes it a backdrop root); a click on it, Escape, or choosing a page closes the sidebar. From 768px choosing a page keeps it open.
 - **Click outside closes it** at every width: a press anywhere outside the panel (the page, the top bar, inside a workspace's app) closes an open sidebar; the open button brings it back.
 - **Contents, top to bottom:**
-  1. Header row (44px): lockup (28px mark, "Demux", opens Create: `/workspaces/new`) on the left, close button on the right.
+  1. Header row (44px): lockup (28px mark, "Demux", opens the workspaces list: `/workspaces`, §8.0) on the left, close button on the right.
   2. **Create workspace** row (44px, radius full, `plus` in a 28px `violet-soft` circle, 15/500 ink). Hidden once both workspaces are used; the list then says "You're using both workspaces. Delete one to build another."
   3. **Workspaces** disclosure: header button 13/500 `ink-3` with a `chevron-down` that turns −90° when collapsed, "1 of 2" on the right (tabular). Rows: 44px, radius full, 7px dot (live green when ready, pulsing violet while building, danger when failed) + name 14/500 truncated, "Building" / "Failed" 12px on the right. Selected row: `violet-soft` bg, `violet-ink` text. Empty: "No workspaces yet" 13px `ink-3`.
   4. Footer, pinned to the bottom with a `line-soft` divider: the **account row**.
@@ -380,7 +379,7 @@ Desktop first (min 1280px). Mobile layout is out of MVP scope, but every page mu
 Every signed-in page (`/workspaces…`, `/profile`) lives inside one shell: the sky and the sidebar (§7.13). Pages change beside it; the sidebar never re-mounts.
 
 0. **Login** (`/login`): sky + lockup top left. Centered white card (max 440, radius 30, `shadow-float`): mark 46px, title-lg "Sign in to Demux" / "Create your account", first name + last name side by side (sign-up only, both required; they become "Hello, [first name]"), email + password fields (labels 13/500 `ink-2`, inputs 48px, radius 12), full-width primary, a text link to switch. Sign-up only works for an email with access (a Stripe subscription, including its 14-day free trial, free access, or an admin); the subtitle says "Use the email you subscribed or were invited with." and a refused email gets the danger note with an inline violet link "Start a free trial at usedemux.com". `/login?mode=sign-up` opens on Create your account (the landing page links there after checkout). Then **Check your email**: 6 code boxes (56px tall, radius 12, one real `<input autocomplete="one-time-code">`), primary "Verify", "Resend code" (30 s cooldown) and "Use a different email". Trust line under the card.
-0. **Landing** (`/workspaces`): opens the workspace used last in this browser, else the newest one, else **Create**.
+0. **Workspaces** (`/workspaces`, where sign-in lands; the sidebar lockup opens it): with no workspace yet it opens **Create**. Otherwise a centered column (max 760, top padding like Create): title-lg "Your workspaces" (`reveal-text`) and "Open one to see it." 16 `ink-on-sky`, then one workspace card per row (§7.8), gap 10. Each card is a link: name 16/600 truncated, meta 13 `ink-2` with the sidebar's dot ("Synced 3 min ago · 14 invoices", "Building", "Failed"), the prompt on one line 14 `ink-3` (truncated, full text in `title`), and a chevron right that nudges on hover. The workspace opened last in this browser carries a "Last opened" tag (§7.7) after its name. While a slot is free, an empty slot (§7.8) under the cards links to Create: `plus` 16px + "Create workspace". This page loads only the list (names, statuses, counts): a workspace's app and data load once it is opened, and pointing at or focusing a card starts loading the app frame so it opens faster. Opening `/workspaces` never jumps into a workspace on its own.
 1. **Create, connect** (`/workspaces/new` while no Gmail is connected or it needs a reconnect): centered white card (max 520, radius 30, `shadow-float`): breathing mark 56px, title-lg "Connect your Gmail", one sentence, primary "Connect with Google →", trust line. Google's errors show in the card.
 2. **Create, prompt** (`/workspaces/new` once Gmail is connected): centered, top third: title-xl "Hello, [first name]" (the first name from sign-up or the profile page; just "Hello" for older accounts without one), then "What do you want to track?" 22/500 `ink-on-sky`, the prompt card (max 760), the read-only line with a lock icon. With both workspaces used, the prompt is disabled and a limit notice replaces the read-only line: a white card (max 760, radius 20, `shadow-panel`, padding 16/20) with "Workspace limit reached" 15/600 ink and "You can have 2 workspaces. Delete one to create a new one." 14 `ink-2`. Build opens the new workspace in the same area.
 3. **Workspace, building** (`/workspaces/[id]`, status `building`): sky + top bar (name, Building chip). Centered build flow card (§7.10). Nothing else.
@@ -572,7 +571,7 @@ Generated apps are white-surface UIs in a sandboxed iframe. **How they look come
 }
 ```
 
-**Palettes.** A palette sets the accent family and the chart series order, nothing else. The shell sets it on the root (`<html data-palette="teal">`, or live through the bridge message `demux:palette`); missing or unknown means `violet`. It is stored per workspace (`workspaces.palette`). The user chooses it once, while the workspace is built (§7.10 step 1); it does not change afterwards, and Undo does not touch it.
+**Palettes.** A palette sets the accent family and the chart series order, nothing else. The shell sets it on the root (`<html data-palette="teal">`, or live through the bridge message `demux:palette`); missing or unknown means `violet`. It is stored per workspace (`workspaces.palette`, `violet` by default). The build no longer asks for it (§7.10); it does not change afterwards, and Undo does not touch it.
 
 | Palette | `--dmx-accent` | `-accent-hover` | `-accent-ink` | `-accent-soft` | `-accent-line` | `-accent-tint` |
 |---|---|---|---|---|---|---|
@@ -612,7 +611,7 @@ Why these five: their hues stay away from the status colours (§3.4). There is n
 - **No raw colours in generated code:** no hex, `rgb()`, `hsl()` or named colours, only `var(--dmx-*)`. The app check rejects them.
 - No sky gradient and no brand gradient inside generated apps. The accent marks the selected or updated state, the main control, and series 1 of charts and category dots, nothing else. Status colours only for status.
 - Charts: at most 5 series, in `--dmx-series-1…5` order; anything beyond is grouped into "Other" (`--dmx-series-other`). Flat fills: no gradients, 3D or shadows. Tabular numbers on axes and labels.
-- The look is decided with the user during the build, not changed later: there is no palette switcher in the workspace, and a chat request for other colours gets one sentence saying the look was set when the workspace was built.
+- The palette is not chosen by the user and not changed later: there is no palette step in the build and no switcher in the workspace, and a chat request for other colours gets one sentence saying colours cannot be changed.
 - Agent prompt rule: "Style only through the kit (v2) or the base classes and `--dmx-*` variables (v1). Never write a colour value. One accent (`--dmx-accent`). Status colours only for status."
 
 **Component kit (v2 apps).** New apps compose the kit: shadcn-based blocks (`Board`, `DataTable`, `Dashboard`, `StatCard`, `Chart`, `Timeline`, `Calendar`, `Gallery`, `ListDetail`, `RecordSheet`, `ViewTabs`, `FilterBar`, `EmptyState`) and primitives, restyled to this file rather than shadcn's defaults:
@@ -649,15 +648,14 @@ Inline stroke SVG or `lucide-react`. Stroke 2px (2.2–2.4 on filled buttons), r
 | Prompt placeholder | Describe what you want to keep track of… |
 | Primary action | Build |
 | Trust line | Read-only. Demux never sends or changes an email. |
-| Workspace list | Workspaces · 1 of 2 |
+| Workspace list | Workspaces · 1 of 2 · Your workspaces · Open one to see it. · Last opened · Create workspace |
 | Limit reached | Workspace limit reached · You can have 2 workspaces. Delete one to create a new one. (sidebar: You're using both workspaces. Delete one to build another.) |
-| Build steps | Your look · A few questions · Your layout · Reading your emails · Building your workspace |
-| Step counter | Step 3 of 5 · Your layout |
-| Step 1 | How should your workspace look? · Violet · Ocean · Teal · Rose · Graphite · This sets the colours of your workspace. · Continue |
-| Step 2 | A few questions · Looking at your emails · Recommended · Other… · Continue |
-| Step 3 | What should your workspace show? · Preparing options from your emails · Recommended · Pick at least one · Opens first · Continue |
-| Step 4 | Reading your emails · Collecting matching emails · 48 of 120 threads read · 14 shipments found so far |
-| Step 5 | Almost there · Building your workspace |
+| Build steps | Your request · Reading your emails · Building your workspace |
+| Step counter | Step 1 of 3 · Your request |
+| Step 1 | Understanding your request · Looking at your emails · A few questions · Recommended · Other… · We picked our best guess for each. Change what doesn't fit. · Continue |
+| Step 2 | Reading your emails · Collecting matching emails · 48 of 120 threads read · 14 shipments found so far |
+| Step 3 | Almost there · Building your workspace |
+| Slow load | This is taking longer than usual. · Reload |
 | Your part done | That's everything we need from you. You can close this page; your workspace will be ready here. |
 | No answer in time | We went ahead with the recommended answers. |
 | Build failed | We couldn't build this workspace. [reason] · Try again |

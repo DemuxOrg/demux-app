@@ -49,26 +49,6 @@ DESIGN_TURNS = [
     [("search_mail", {"query": "order"})],
     [
         ("write_guide", {"text": GUIDE}),
-        (
-            "propose_views",
-            {
-                "options": [
-                    {
-                        "block": "DataTable",
-                        "title": "All orders",
-                        "description": "every order",
-                        "recommended": True,
-                    },
-                    {
-                        "block": "Board",
-                        "title": "Board by status",
-                        "description": "status",
-                        "recommended": False,
-                    },
-                ],
-                "primary": 0,
-            },
-        ),
         ("set_queries", {"queries": ["order"]}),
     ],
     [("finish", {"summary": "Tracks orders."})],

@@ -173,16 +173,8 @@ async def rename_workspace(
 async def update_setup(
     workspace_id: uuid.UUID, body: SetupUpdate, session: SessionDep, user: CurrentUser
 ):
-    """The user's answer to a setup step while the workspace is built: the look, the
-    answers to the clarifying questions, or the layouts."""
-    run = await setup_service.update_setup(
-        session,
-        user.id,
-        workspace_id,
-        palette=body.palette,
-        answers=body.answers,
-        layout=body.layout.model_dump() if body.layout else None,
-    )
+    """The user's answers to the clarifying questions while the workspace is built."""
+    run = await setup_service.update_setup(session, user.id, workspace_id, answers=body.answers)
     return _active(run)
 
 

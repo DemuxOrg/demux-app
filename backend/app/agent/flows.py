@@ -254,7 +254,7 @@ async def build(ctx: RunContext, cfg: FlowConfig) -> str:
         tools=tools_for("design"),
         ctx=ctx,
         max_steps=16,
-        done_when=lambda c: bool(c.state.guide.strip() and c.state.queries and c.proposed_views),
+        done_when=lambda c: bool(c.state.guide.strip() and c.state.queries),
     )
     summary = (result.summary or "").strip()
     if summary.upper().startswith("CANNOT_BUILD"):
@@ -264,16 +264,14 @@ async def build(ctx: RunContext, cfg: FlowConfig) -> str:
     if not ctx.state.queries:
         raise PhaseFailed("design ended without searches")
 
-    # Setup steps the design phase did not need are marked, so the build screen moves on.
+    # No questions were needed: mark it, so the build screen moves on.
     setup = await ctx.persister.get_setup()
     if "questions_state" not in setup:
         await ctx.persister.set_setup("questions_state", "none")
-    if not setup.get("layout_options"):
-        await ctx.persister.set_setup("layout_state", "none")
 
-    # 2. the app is written from the guide (and the layouts the user picks) while the
-    # emails are being read
-    app_task = asyncio.create_task(_layout_then_app(ctx, cfg))
+    # 2. the app is written from the guide (and the user's answers) while the emails are
+    # being read
+    app_task = asyncio.create_task(build_app(ctx, cfg))
     try:
         await _event(ctx, "process", "Collecting matching emails")
         threads = await collect_threads(
@@ -314,39 +312,6 @@ async def build(ctx: RunContext, cfg: FlowConfig) -> str:
     return f"{counts} {summary}"[:300]
 
 
-async def choose_layout(ctx: RunContext) -> None:
-    """Wait for the layouts the user picks (setup step 3), or use the recommended ones."""
-    from app.agent.tools import wait_setup
-
-    setup = await ctx.persister.get_setup()
-    options = [o for o in setup.get("layout_options") or [] if isinstance(o, dict)]
-    if not options:
-        return
-    choice = await wait_setup(ctx, "layout")
-    ids = {o["id"] for o in options}
-    if isinstance(choice, dict) and [v for v in choice.get("views") or [] if v in ids]:
-        chosen = [v for v in choice["views"] if v in ids]
-        primary = choice.get("primary")
-        state = "chosen"
-    else:
-        chosen = [o["id"] for o in options if o.get("recommended")] or [options[0]["id"]]
-        primary = setup.get("layout_primary")
-        state = "timed_out" if ctx.setup_wait > 0 else "auto"
-    if primary not in chosen:
-        primary = chosen[0]
-    ctx.state.config["layout"] = {
-        "views": [o for o in options if o["id"] in chosen],
-        "primary": primary,
-    }
-    await ctx.persister.save_config(ctx.state)
-    await ctx.persister.set_setup("layout_state", state)
-
-
-async def _layout_then_app(ctx: RunContext, cfg: FlowConfig) -> None:
-    await choose_layout(ctx)
-    await build_app(ctx, cfg)
-
-
 async def build_app(ctx: RunContext, cfg: FlowConfig, problems: list[str] | None = None) -> None:
     child = ctx.child("app")
     await _event(ctx, "app", "Building the interface")
@@ -356,7 +321,7 @@ async def build_app(ctx: RunContext, cfg: FlowConfig, problems: list[str] | None
         ctx.state.data,
         ctx.inline_max_chars,
         name=ctx.state.name,
-        layout=ctx.state.config.get("layout"),
+        config=ctx.state.config,
     )
     if problems:
         user += (

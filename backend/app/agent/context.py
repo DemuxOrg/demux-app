@@ -102,7 +102,6 @@ class RunContext:
     # for their answers (0 = do not wait, use the recommended ones: CLI and eval).
     setup_wait: float = 0.0
     asked_user: bool = False
-    proposed_views: bool = False
 
     def child(self, phase: str, **overrides: Any) -> "RunContext":
         """A context for one concurrent phase: shares state, mailbox, persister and the

@@ -122,6 +122,23 @@ export const api = {
     post<ActiveRun>(`/workspaces/${id}/setup`, body),
 };
 
+const shells = new Map<AppRuntime, Promise<AppShell>>();
+
+/**
+ * The iframe shell of an app runtime, fetched once per page load and shared by every
+ * workspace (v2 inlines the component kit, about 1 MB). A failed fetch is forgotten, so
+ * the next call tries again.
+ */
+export function loadAppShell(runtime: AppRuntime): Promise<AppShell> {
+  let shell = shells.get(runtime);
+  if (!shell) {
+    shell = api.appShell(runtime);
+    shells.set(runtime, shell);
+    shell.catch(() => shells.delete(runtime));
+  }
+  return shell;
+}
+
 /** Staff-only endpoints (/admin pages). Non-admins get 404 from every one of them. */
 export const adminApi = {
   overview: (days: AdminRange) =>
