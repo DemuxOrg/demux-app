@@ -240,7 +240,7 @@ Tailwind recipes assume the tokens in §10.
 | Variant | Spec | Tailwind |
 |---|---|---|
 | **Primary** (Build, Send, Join) | height 48px (height 44px in panels), px 20–22, radius full, `violet` bg, white 16px/500, optional trailing arrow 18px | `inline-flex items-center gap-2 h-12 px-[22px] rounded-full bg-violet text-white text-base font-medium hover:bg-violet-hover` |
-| **Secondary on sky** (Undo, Chat) | height 44px, px 16, radius full, `glass-strong` bg, ink 14px/500, leading icon 16px | `inline-flex items-center gap-2 h-11 px-4 rounded-full bg-white/60 text-ink text-sm font-medium hover:bg-white/90` |
+| **Secondary on sky** | height 44px, px 16, radius full, `glass-strong` bg, ink 14px/500, leading icon 16px | `inline-flex items-center gap-2 h-11 px-4 rounded-full bg-white/60 text-ink text-sm font-medium hover:bg-white/90` |
 | **Icon button on sky** (back, more, account) | 44 × 44px circle, `glass-strong`, icon 18–20px ink, `aria-label` required | `grid place-items-center size-11 rounded-full bg-white/60 hover:bg-white/90` |
 | **Ghost icon** (rename) | 44 × 44px circle, transparent, icon 16px `ink-on-sky` | `grid place-items-center size-11 rounded-full hover:bg-white/60` |
 | **Send (square)** | 44 × 44px, radius 14, violet, white arrow-up | `grid place-items-center size-11 rounded-[14px] bg-violet` |
@@ -257,6 +257,7 @@ States for all buttons:
 - Row: logo mark 46px + `<textarea>` (prompt style 22px, no border, `caret-color: #6A3DF0`, placeholder `ink-3`: "Describe what you want to keep track of…").
 - Footer row: two example chips on the left ("Unpaid invoices and who I owe", "Job applications by stage"; short enough to share one row with Build from 640px), primary **Build →** on the right.
 - Focus: no ring and no movement on the card; the violet caret is the focus cue.
+- Keyboard: Enter builds, Shift+Enter adds a new line.
 
 ### 7.3 Chips (example prompts)
 height 36px, px 14, radius full, bg `surface-3`, 1px `#E3E8F0` border, `ink-2` 14px/500. Hover: bg `violet-soft`, text `violet-ink`, border `#DCD2FD`. Clicking one fills the prompt.
@@ -288,7 +289,7 @@ height 30px, px 12, radius full, 13px/500, 7px dot.
 - **Board column:** bg `surface-2`, radius 16, padding 12, gap 8. Header 13/500 `ink-2` + dot + count in `ink-3`.
 
 ### 7.9 Activity item (side panel)
-*Hidden for now: the side panel shows Chat only (§8.4). Kept for when Activity returns.*
+*Hidden for now, like the side panel itself (§8.4). Kept for when they return.*
 Vertical list with dividers `line-on-glass`, padding 14px 0:
 1. Time, 12px `ink-2` (newest item gets a 6px violet dot)
 2. Record title, 15/600
@@ -330,7 +331,7 @@ One card takes the user from Build to a ready workspace. It asks for up to three
 - `prefers-reduced-motion`: no `breathe`, `flow` or `reveal-text`; segments fill without animation.
 
 ### 7.11 Top bar (app)
-Padding 18px top, sits on sky (no bar background). Left padding is `var(--dmx-gutter)`: 80px while the sidebar is closed (room for its open button, §7.13), 24px while it is open beside the page; the padding eases with the sidebar (360ms `ease-dmx-out`). Workspace page: workspace name (title-sm) + rename (ghost icon) or status chip on the left; sync status, Undo, Chat, More (⋯: Rename, Delete) on the right. No sync button: workspaces sync on their own (every few minutes, and the page refreshes when it comes back into view). No workspace details are shown to users. No back button and no avatar: workspaces and the account live in the sidebar. The create and profile pages have no top bar.
+Padding 18px top, sits on sky (no bar background). Left padding is `var(--dmx-gutter)`: 80px while the sidebar is closed (room for its open button, §7.13), 24px while it is open beside the page; the padding eases with the sidebar (360ms `ease-dmx-out`). Workspace page: workspace name (title-sm) + rename (ghost icon) or status chip on the left; sync status and More (⋯: Rename, Delete) on the right. No Undo and no Chat in the MVP. No sync button: workspaces sync on their own (every few minutes, and the page refreshes when it comes back into view). No workspace details are shown to users. No back button and no avatar: workspaces and the account live in the sidebar. The create and profile pages have no top bar.
 
 ### 7.13 App sidebar (navigation)
 The only navigation in the signed-in app. Notion-like: from 768px it is a column beside the page and **pushes** it (the page shrinks while it is open and takes the full width when it closes); below 768px it floats over the page with a scrim. Open by default from 768px, closed below; the user's toggle then holds while they move between pages (not across reloads).
@@ -383,10 +384,9 @@ Every signed-in page (`/workspaces…`, `/profile`) lives inside one shell: the 
 1. **Create, connect** (`/workspaces/new` while no Gmail is connected or it needs a reconnect): centered white card (max 520, radius 30, `shadow-float`): breathing mark 56px, title-lg "Connect your Gmail", one sentence, primary "Connect with Google →", trust line. Google's errors show in the card.
 2. **Create, prompt** (`/workspaces/new` once Gmail is connected): centered, top third: title-xl "Hello, [first name]" (the first name from sign-up or the profile page; just "Hello" for older accounts without one), then "What do you want to track?" 22/500 `ink-on-sky`, the prompt card (max 760), the read-only line with a lock icon. With both workspaces used, the prompt is disabled and a limit notice replaces the read-only line: a white card (max 760, radius 20, `shadow-panel`, padding 16/20) with "Workspace limit reached" 15/600 ink and "You can have 2 workspaces. Delete one to create a new one." 14 `ink-2`. Build opens the new workspace in the same area.
 3. **Workspace, building** (`/workspaces/[id]`, status `building`): sky + top bar (name, Building chip). Centered build flow card (§7.10). Nothing else.
-4. **Result** (`/workspaces/[id]`, status `ready`): sky + top bar (§7.11). Body = row, gap 16, padding 0 16 16, full viewport height: **app panel** (white, radius 26, `shadow-panel`, flex 999 1 640px; the sandboxed iframe lives here) + **side panel** (glass, radius 26, flex 1 1 320px, max 380px) with the chat and the ask input pinned to the bottom (no tabs: Activity is hidden for now).
+4. **Result** (`/workspaces/[id]`, status `ready`): sky + top bar (§7.11). Body: padding 0 16 16, full viewport height: the **app panel** alone (white, radius 26, `shadow-panel`, full width; the sandboxed iframe lives here). The chat side panel is removed for the MVP (`ChatPanel` and `SidePanel` are kept for when it returns).
    - Display error banner (inside the app panel, top): bg `#FDECEA`, text `#A8321F`, "This workspace hit a display error", violet "Fix it" button.
    - Reconnect banner (under the top bar): glass card, ink text, primary button "Reconnect Gmail".
-   - The side panel is a **drawer**: a ghost button in its header slides it closed (width → 0 over 300ms, the app panel takes the space); a secondary "Chat" button appears in the top bar to reopen it. Open by default from 1024px (remembered per browser), closed below 1024px where it floats over the app (`bg-white/95`).
 5. **Profile** (`/profile`, from the account card): centered column (max 640), title-lg "Profile" + "Your name and the Gmail Demux reads." `ink-on-sky`, then two white cards (radius 26, `shadow-panel`, padding 24/28): **Your name** (first + last name fields side by side, both required, primary "Save" (small) on the right, "✓ Saved" `violet-ink` beside it after saving) and **Account** (sign-in email, read-only; "Gmail Demux reads" with a quiet button "Use another account" / "Connect Gmail" / "Reconnect Gmail" that goes through Google and comes back here, and, while a Gmail is connected, a quiet "Disconnect" beside it. Disconnect asks first, inline in the same row: "Disconnect [gmail]? Your workspaces stay but stop updating." with quiet "Cancel" and a `danger` text "Disconnect" button; then the row reads "Not connected"; the read-only trust line).
 
 5b. **No access** (any signed-in page, when the user has no subscription, trial or free access any more): the shell shows this instead of the sidebar and page. Sky + lockup top left, like Login. Centered white card (max 480, radius 30, `shadow-float`): mark 46px, title-lg "Your Demux access has ended", one sentence that the workspaces are kept, "Signed in as [email]" 13px `ink-3`, the screen's one primary **Subscribe →** (to the landing page's pricing card), then a row with quiet text buttons "I've subscribed, check again" (spinner while checking; "Still no active subscription for [email]." in a `violet-soft` note if nothing changed) and "Log out". The 15 s poll unlocks the app on its own once a subscription arrives.
@@ -662,7 +662,6 @@ Inline stroke SVG or `lucide-react`. Stroke 2px (2.2–2.4 on filled buttons), r
 | No answer in time | We went ahead with the recommended answers. |
 | Build failed | We couldn't build this workspace. [reason] · Try again |
 | Sync status | Synced 3 min ago · Syncing… |
-| Actions | Undo · Chat · Ask for a change… |
 | Record updated | Updated 2 min ago |
 | Live label | Live from your inbox |
 | Display error | This workspace hit a display error · Fix it |

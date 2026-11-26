@@ -42,7 +42,11 @@ export function PromptCard({
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submit();
+            // Enter builds; Shift+Enter adds a new line. Not while an IME is composing.
+            if (e.key !== "Enter" || e.shiftKey || e.nativeEvent.isComposing)
+              return;
+            e.preventDefault();
+            void submit();
           }}
           rows={3}
           maxLength={4000}
