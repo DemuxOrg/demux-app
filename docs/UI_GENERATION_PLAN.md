@@ -154,3 +154,15 @@ Each phase ships on its own.
 **Not changed.** The sandbox (`allow-scripts` only), the CSP (no network), the bridge, the headless check, older apps (v1/v2 keep their shells and palettes).
 
 **To do.** Run the eval scenarios through the designer and compare against the kit (failed checks, cost, time, and screenshots side by side); try `UI_REASONING_EFFORT` and GLM-5.3 if the router serves it.
+
+## 12. Live build and question moments (2026-11-27)
+
+Replaces the build progress card (§8) and changes how clarifying questions are collected (§6). The spec is `frontend/theme.md` §7.10 (live build) and §7.15 (question moment).
+
+**What the user sees.** The build is the loading screen: a strip of real facts ("Reading your emails · 48 of 120 threads · 14 invoices found", a reading bar, Cancel) above the app panel, which shows the logo until the first record, then the preview app (`DEFAULT_APP`, served by `GET /app` with `provisional: true` while no app is saved) filling in. Records are paced one by one on the client (`useRecordDrip`, 300 ms per change) and marked in the app (`changedClass`, `CountUp` in the studio runtime). The generated app replaces the preview once, through a hidden second frame and a 300 ms crossfade (`LiveFrame`); the same frame stays when the build ends.
+
+**Question moments.** One question at a time on a dimmed screen: first the **look** (unless the prompt names one: `app/agent/look.py`, plain code), then each clarifying question in the agent's order. One `POST /setup` per answer (`answers` merge, `answered_at` per answer; `look` for the look). The look's answer goes to the interface designer as `<look>`; Demux's palettes are not used. There is no layout moment (§7 was removed when the designer took over the structure).
+
+**The agent doesn't wait for the screen.** `ask_user` returns at once; the agent may keep exploring, and `get_answers` (required before `write_guide`) waits until every question is answered or the user has been idle `SETUP_WAIT_SECONDS` since the question or their last answer. The designer waits for the look the same way, while the emails are read in parallel.
+
+**Cost rules.** No new LLM call (look detection is code, pacing and diffs are client-side), no new transport (the 2 s poll while a run is active), at most ~3 frame posts a second, one app swap per build.
