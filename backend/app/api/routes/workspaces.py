@@ -108,9 +108,9 @@ def _change(c: Change) -> ChangeRead:
 
 
 @shell_router.get("/app-shell", response_model=AppShell)
-async def app_shell(runtime: Literal["v1", "v2"] = "v1") -> AppShell:
-    """The fixed <head> content (CSP, base CSS, bridge) every app iframe is wrapped in,
-    and the palettes it knows (for the palette tiles)."""
+async def app_shell(runtime: Literal["v1", "v2", "v3"] = "v1") -> AppShell:
+    """The fixed <head> content (CSP, fonts, bridge, and the runtime's libraries) every
+    app iframe of that runtime is wrapped in, and the palettes v1 and v2 apps use."""
     return AppShell(
         head=shell_head(runtime),
         palettes=[

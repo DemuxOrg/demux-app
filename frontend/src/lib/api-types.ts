@@ -335,8 +335,8 @@ export interface paths {
         };
         /**
          * App Shell
-         * @description The fixed <head> content (CSP, base CSS, bridge) every app iframe is wrapped in,
-         *     and the palettes it knows (for the palette tiles).
+         * @description The fixed <head> content (CSP, fonts, bridge, and the runtime's libraries) every
+         *     app iframe of that runtime is wrapped in, and the palettes v1 and v2 apps use.
          */
         get: operations["app_shell_api_v1_app_shell_get"];
         put?: never;
@@ -858,7 +858,7 @@ export interface components {
              * Runtime
              * @enum {string}
              */
-            runtime: "v1" | "v2";
+            runtime: "v1" | "v2" | "v3";
         };
         /** AppShell */
         AppShell: {
@@ -1971,7 +1971,7 @@ export interface operations {
     app_shell_api_v1_app_shell_get: {
         parameters: {
             query?: {
-                runtime?: "v1" | "v2";
+                runtime?: "v1" | "v2" | "v3";
             };
             header?: never;
             path?: never;

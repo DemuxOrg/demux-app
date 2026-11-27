@@ -4,7 +4,7 @@ the answers, and the setup API (frontend/theme.md §7.10)."""
 import pytest
 
 from app.agent.context import MemoryPersister, RunContext, WorkspaceState
-from app.agent.prompts import app_input, edit_input
+from app.agent.prompts import edit_input, interface_input
 from app.agent.tools import TOOLS, ToolError
 from app.mail.fake import FakeMailbox
 from app.models import Run, RunKind, RunStatus
@@ -104,13 +104,13 @@ async def test_ask_user_refuses_questions_about_the_look(question):
     assert "questions" not in p.setup and not ctx.asked_user
 
 
-def test_app_phase_sees_the_clarifications():
+def test_interface_designer_sees_the_clarifications():
     config = {"clarifications": [{"question": "E-books?", "answer": "No"}]}
-    text = app_input("p", "g", {}, 10_000, name="Loans", config=config)
+    text = interface_input("Loans", "p", "g", {}, config)
     assert "<name>Loans</name>" in text
     assert "<clarifications>\n- E-books? → No\n</clarifications>" in text
     assert text.index("<clarifications>") < text.index("<guide>")
-    assert "<clarifications>" not in app_input("p", "g", {}, 10_000, name="Loans")
+    assert "<clarifications>" not in interface_input("Loans", "p", "g", {})
 
 
 def test_edit_sees_the_clarifications():

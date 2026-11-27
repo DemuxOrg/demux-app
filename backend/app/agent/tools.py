@@ -14,8 +14,8 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
 
-from app.agent.appcheck import check_app
 from app.agent.context import RunContext
+from app.agent.llm import LLMError
 from app.mail.base import MailboxError, ReconnectRequired
 from app.mail.clean import clean_message
 from app.services.store import DataError, apply_delete, apply_save, public_fields
@@ -333,20 +333,30 @@ async def _set_queries(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
     )
 
 
-async def _write_app(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
-    html = str(args.get("html", ""))
-    if not html.strip():
-        raise ToolError("html is required")
-    problems = await check_app(html, ctx.state.data)
+async def _change_interface(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
+    change = " ".join(str(args.get("change", "")).split())
+    if not change:
+        raise ToolError("change is required: what to change in the interface")
+    if ctx.designer is None:
+        raise ToolError("the interface cannot be changed in this run")
+    try:
+        problems = await ctx.designer.change(ctx, change[:2000], ctx.user_message)
+    except LLMError as e:
+        return ToolOutput(
+            {"ok": False, "error": f"the interface designer is unavailable: {e}"},
+            "Interface designer unavailable",
+        )
     if problems:
         return ToolOutput(
-            {"ok": False, "problems": problems, "note": "The app was NOT saved. Fix and retry."},
-            "App check failed, fixing",
+            {
+                "ok": False,
+                "problems": problems[:5],
+                "note": "The interface designer could not produce a working app; the "
+                "current app is unchanged. Tell the user.",
+            },
+            "Interface change failed",
         )
-    ctx.state.app_html = html
-    ctx.app_written = True
-    await ctx.persister.save_app(ctx.state)
-    return ToolOutput({"ok": True}, "Wrote the app")
+    return ToolOutput({"ok": True}, None)
 
 
 async def wait_setup(ctx: RunContext, key: str) -> Any:
@@ -448,8 +458,6 @@ async def _finish(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
                 f"not done yet: call {' and '.join(missing)} before finish "
                 "(or finish with 'CANNOT_BUILD: <reason>' if the request cannot be served)"
             )
-    if ctx.phase == "app" and not ctx.app_written:
-        raise ToolError("the app is not saved yet: call write_app until it returns ok")
     ctx.finish_summary = summary[:MAX_SUMMARY_CHARS]
     return ToolOutput({"ok": True}, None)
 
@@ -578,11 +586,16 @@ TOOLS: dict[str, Tool] = {
             _set_queries,
         ),
         Tool(
-            "write_app",
-            "Write the app (one HTML fragment per the app contract). It is checked in a "
-            "headless browser; problems are returned and the app is only saved when it passes.",
-            {"type": "object", "properties": {"html": {"type": "string"}}, "required": ["html"]},
-            _write_app,
+            "change_interface",
+            "Hand a change of the interface to the interface designer, who rewrites the app "
+            "and checks it. Describe what to change in the user's words, plus any data change "
+            "the interface should show (a new field or record type).",
+            {
+                "type": "object",
+                "properties": {"change": {"type": "string"}},
+                "required": ["change"],
+            },
+            _change_interface,
         ),
         Tool(
             "ask_user",
@@ -663,7 +676,6 @@ PHASE_TOOLS: dict[str, list[str]] = {
         "write_guide",
         "finish",
     ],
-    "app": ["read_records", "write_app", "finish"],
     "edit": [t for t in TOOLS if t != "ask_user"],
 }
 

@@ -53,6 +53,18 @@ class Settings(BaseSettings):
     LLM_CALL_TIMEOUT_S: float = 60
     LLM_MAX_TOKENS: int = 8000
     LLM_TEMPERATURE: float = 0.2
+    # The interface designer (docs/UI_GENERATION_PLAN.md §11): this model designs and
+    # writes every workspace app (UX and code); the models above never write interface
+    # code. Its answers are long, so it gets more tokens and time. No fallback by default,
+    # so a build never quietly falls back to a weaker designer: set the same model on
+    # another provider (e.g. "zai-org/GLM-5.2:novita") to get one.
+    UI_MODEL: str = "zai-org/GLM-5.2:deepinfra"
+    UI_FALLBACK_MODEL: str = ""
+    UI_MAX_TOKENS: int = 24000
+    UI_CALL_TIMEOUT_S: float = 300
+    UI_TEMPERATURE: float = 0.7
+    UI_REASONING_EFFORT: str = ""  # "": the provider's default
+    UI_MAX_ATTEMPTS: int = 3  # first design + fixes after failed app checks
     MAX_USD_PER_RUN: float = 3.0
     MAX_USD_PER_DAY: float = 15.0
 

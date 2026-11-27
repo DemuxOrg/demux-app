@@ -14,6 +14,7 @@ from app.agent import prompts
 from app.agent.appcheck import check_app
 from app.agent.context import RunContext
 from app.agent.default_app import DEFAULT_APP
+from app.agent.designer import Designer, designer_from_settings
 from app.agent.llm import ChatModel, LLMError
 from app.agent.loop import PhaseFailed, run_agent
 from app.agent.tools import tools_for
@@ -40,6 +41,12 @@ class FlowConfig:
     inline_max_chars: int = 120_000
     batch_max_chars: int = 45_000
     process_concurrency: int = 8
+    # Designs and writes every interface (UI_MODEL); None: the same chat model as "ui".
+    designer: Designer | None = None
+
+    def __post_init__(self) -> None:
+        if self.designer is None:
+            self.designer = Designer(llm=self.llm, model="ui")
 
     @classmethod
     def from_settings(cls, llm: ChatModel) -> "FlowConfig":
@@ -53,6 +60,7 @@ class FlowConfig:
             inline_max_chars=settings.DATA_INLINE_MAX_CHARS,
             batch_max_chars=settings.BATCH_MAX_CHARS,
             process_concurrency=settings.PROCESS_CONCURRENCY,
+            designer=designer_from_settings(llm),
         )
 
 
@@ -269,8 +277,8 @@ async def build(ctx: RunContext, cfg: FlowConfig) -> str:
     if "questions_state" not in setup:
         await ctx.persister.set_setup("questions_state", "none")
 
-    # 2. the app is written from the guide (and the user's answers) while the emails are
-    # being read
+    # 2. the interface designer writes the app from the guide (and the user's answers)
+    # while the emails are being read
     app_task = asyncio.create_task(build_app(ctx, cfg))
     try:
         await _event(ctx, "process", "Collecting matching emails")
@@ -313,39 +321,21 @@ async def build(ctx: RunContext, cfg: FlowConfig) -> str:
 
 
 async def build_app(ctx: RunContext, cfg: FlowConfig, problems: list[str] | None = None) -> None:
+    """The interface designer designs the app (or, with `problems`, fixes the current one
+    against the real data). If it cannot, the build still ends with the default app."""
     child = ctx.child("app")
-    await _event(ctx, "app", "Building the interface")
-    user = prompts.app_input(
-        ctx.state.prompt,
-        ctx.state.guide,
-        ctx.state.data,
-        ctx.inline_max_chars,
-        name=ctx.state.name,
-        config=ctx.state.config,
-    )
-    if problems:
-        user += (
-            "\n\n<current_app>\n" + (ctx.state.app_html or "") + "\n</current_app>\n\n"
-            "The current app fails these checks with the data above. Fix it:\n- "
-            + "\n- ".join(problems)
-        )
+    assert cfg.designer is not None
     try:
-        await run_agent(
-            llm=cfg.llm,
-            model=cfg.build_model,
-            system=prompts.APP,
-            user=user,
-            tools=tools_for("app"),
-            ctx=child,
-            max_steps=6,
-            done_when=lambda c: c.app_written,
-        )
-    except (PhaseFailed, LLMError) as e:
-        logger.warning("app phase failed: %s", type(e).__name__)
+        left = await cfg.designer.design(child, problems)
+    except LLMError as e:
+        logger.warning("interface designer failed: %s", e.code)
+        left = ["the interface designer is unavailable"]
+    if left:
+        logger.warning("interface not designed run=%s problems=%s", ctx.run_id, len(left))
     if not child.app_written and (problems or not ctx.state.app_html):
         ctx.state.app_html = DEFAULT_APP
         await ctx.persister.save_app(ctx.state)
-        await _event(ctx, "app", "Used the default table view (ask in chat to change it)")
+        await _event(ctx, "app", "Used a simple list view (ask in chat to change it)")
     ctx.app_written = ctx.app_written or child.app_written
 
 
@@ -391,6 +381,8 @@ async def edit(ctx: RunContext, cfg: FlowConfig, message: str, recent: list[str]
     await ctx.persister.snapshot()
     try:
         ctx.phase = "edit"
+        ctx.designer = cfg.designer
+        ctx.user_message = message
         await _event(ctx, "edit", "Working on your request")
         for recs in ctx.state.data.values():
             for rec in recs.values():
@@ -409,7 +401,6 @@ async def edit(ctx: RunContext, cfg: FlowConfig, message: str, recent: list[str]
                 ctx.state.app_html,
                 recent,
                 ctx.inline_max_chars,
-                palette=ctx.state.palette,
                 config=ctx.state.config,
             ),
             tools=tools_for("edit"),

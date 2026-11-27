@@ -115,7 +115,7 @@ Always use the pair: soft background + dark foreground.
 | `neutral` | `#EEF2F7` | `#33445C` | Unpaid, Booked, Waiting for approval |
 | `live` dot | `#2FB36B` | — | "Synced 3 min ago", "Live from your inbox" |
 
-**Category dots** (columns, clients), 6–7px circles: `#5EA7F4` blue · `#9A8BF7` lavender · `#E0679A` pink · `#2FB36B` green · `#F5A524` amber · `#9A7BF7` purple. Dots are always paired with a text label: never color alone. Inside generated apps, dots and chart series follow the palette's series order (§10.3).
+**Category dots** (columns, clients), 6–7px circles: `#5EA7F4` blue · `#9A8BF7` lavender · `#E0679A` pink · `#2FB36B` green · `#F5A524` amber · `#9A7BF7` purple. Dots are always paired with a text label: never color alone. Inside v1/v2 generated apps, dots and chart series follow the palette's series order (§10.3); studio apps choose their own.
 
 ### 3.5 Dark surfaces (marketing/video only, not the MVP app)
 From the board in the launch video: board `#16171A`, column `#1F2024`, card `#2A2B30`, tag `#36373D`, text `#ECEDEF` / `#F3F4F6`, muted `#A3A7AF`, faint `#8E929B`, success text `#6BDB8C` on `rgba(52,199,89,0.16)`, live dot `#34C759`.
@@ -551,9 +551,16 @@ const instrumentSans = Instrument_Sans({
 Put the grain from §4.2 on the page shell component (the element that has `bg-sky`, with `position: relative`).
 
 ### 10.3 Generated apps (sandboxed iframe)
-Generated apps are white-surface UIs in a sandboxed iframe. **How they look comes from the fixed shell (`backend/app/agent/shell.py`), never from the agent's code:** the agent chooses components and fields; the shell decides colour, type and spacing. The plan behind this section is `docs/UI_GENERATION_PLAN.md`.
+**Studio apps (v3, every new app) do not follow this design system.** The interface designer (the UI model, `UI_MODEL`, GLM-5.2) designs each workspace's experience and look from scratch: its own palette, type pairing, layout, light or dark, charts and motion, chosen for that workspace's subject. Demux's own UI around it (sky, sidebar, top bar, the white app panel at radius 26) does not change. The plan is `docs/UI_GENERATION_PLAN.md` §11.
 
-**Shell.** The iframe's CSP allows `font-src data:` only, so Google Fonts cannot load inside it. The shell inlines Instrument Sans latin 400/500/600 as base64 `@font-face` (system stack as fallback), the tokens below as CSS variables, the palettes, and the component kit (v2 apps) or the base classes (v1 apps). The iframe and the headless app check use the same shell.
+- **What the shell gives a studio app:** the studio runtime (React 19, Recharts, an `Icon` set from lucide, the data helpers), Tailwind v4 compiled in the iframe, and embedded fonts: Inter (`font-sans`), Space Grotesk (`font-display`), Fraunces (`font-serif`), Instrument Serif (`font-editorial`), JetBrains Mono (`font-mono`). No Demux tokens, palettes or base classes. The reference the designer reads is `app-kit/src/studio.md`.
+- **What stays fixed:** the sandbox and CSP (no network, no navigation, inline scripts only), the app check (it must render, show the data, survive empty data, render the same twice), and the bridge (`openEmail` / `demux.openSource`, `demux.openLink`).
+- **Quality bar the designer is held to** (its prompt, `INTERFACE` in `backend/app/agent/prompts.py`): high-end and specific to the workspace, never a generic white dashboard; the answer to the request first and at a glance; a deliberate palette with consistent meaning and AA contrast; tabular numbers; every state designed (empty, one, many, missing fields); works from 390px wide without sideways scrolling.
+- **Changing the look later:** any request about what the workspace shows or how it looks, colours included, goes from the chat agent to the designer (`change_interface`).
+
+Everything below applies to **older apps only**: kit apps (v2) and plain HTML apps (v1), built before the designer. They keep working, styled by the shell; the first interface change to one of them has the designer rewrite it as a studio app.
+
+**Shell (v1, v2).** The iframe's CSP allows `font-src data:` only, so Google Fonts cannot load inside it. The shell inlines Instrument Sans latin 400/500/600 as base64 `@font-face` (system stack as fallback), the tokens below as CSS variables, the palettes, and the component kit (v2 apps) or the base classes (v1 apps). The iframe and the headless app check use the same shell.
 
 **Fixed tokens**, identical in every palette:
 ```css
@@ -606,15 +613,14 @@ Series colours are 2.0–3.2:1 on white, so they never carry meaning alone: alwa
 Why these five: their hues stay away from the status colours (§3.4). There is no green, orange or red palette, because it would read as success, warning or danger. Ocean (207°) sits close to info (215°); its Updated tag keeps the dot and the "Updated" text, so it still reads differently from an info pill. Graphite is the quietest: its highlight is grey, close to the neutral pill.
 
 **Rules**
-- Palettes exist **only inside generated apps**. Demux's own UI (sidebar, top bar, cards, build flow) stays violet whatever the workspace's palette.
+- Palettes exist **only inside v1 and v2 apps**. Demux's own UI (sidebar, top bar, cards, build flow) stays violet whatever the workspace's palette.
 - A palette changes the accent family and the series order only. Neutrals, status pairs, type, radii and spacing never change.
-- **No raw colours in generated code:** no hex, `rgb()`, `hsl()` or named colours, only `var(--dmx-*)`. The app check rejects them.
+- **No raw colours in v1 and v2 code:** no hex, `rgb()`, `hsl()` or named colours, only `var(--dmx-*)`. The app check rejects them (studio apps are exempt).
 - No sky gradient and no brand gradient inside generated apps. The accent marks the selected or updated state, the main control, and series 1 of charts and category dots, nothing else. Status colours only for status.
 - Charts: at most 5 series, in `--dmx-series-1…5` order; anything beyond is grouped into "Other" (`--dmx-series-other`). Flat fills: no gradients, 3D or shadows. Tabular numbers on axes and labels.
-- The palette is not chosen by the user and not changed later: there is no palette step in the build and no switcher in the workspace, and a chat request for other colours gets one sentence saying colours cannot be changed.
-- Agent prompt rule: "Style only through the kit (v2) or the base classes and `--dmx-*` variables (v1). Never write a colour value. One accent (`--dmx-accent`). Status colours only for status."
+- The palette is not chosen by the user: there is no palette step in the build and no switcher in the workspace. A chat request for other colours has the designer rewrite the app as a studio app.
 
-**Component kit (v2 apps).** New apps compose the kit: shadcn-based blocks (`Board`, `DataTable`, `Dashboard`, `StatCard`, `Chart`, `Timeline`, `Calendar`, `Gallery`, `ListDetail`, `RecordSheet`, `ViewTabs`, `FilterBar`, `EmptyState`) and primitives, restyled to this file rather than shadcn's defaults:
+**Component kit (v2 apps).** Kit apps compose the kit: shadcn-based blocks (`Board`, `DataTable`, `Dashboard`, `StatCard`, `Chart`, `Timeline`, `Calendar`, `Gallery`, `ListDetail`, `RecordSheet`, `ViewTabs`, `FilterBar`, `EmptyState`) and primitives, restyled to this file rather than shadcn's defaults:
 - Buttons: §7.1 pill shapes, in the palette's accent; one primary per app.
 - Records: §7.8 record card, board column and just-updated highlight (in the palette's accent); §7.7 tags and status pills. A click opens the record in a side sheet (all fields, "Open email"); cards also carry a 28px mail icon button (`ink-3`, accent-soft on hover, label "Open email").
 - Tables: header 13/500 `ink-3`, cells padded 10/12 with `line-soft` dividers, row hover `surface-2`, tabular numbers.
@@ -679,5 +685,5 @@ Inline stroke SVG or `lucide-react`. Stroke 2px (2.2–2.4 on filled buttons), r
 | Tinted blue shadows, large and soft | Black, hard or multiple stacked shadows |
 | Generous whitespace, left-aligned dense content | Bento grids, feature-icon rows, filler sections |
 | Real names, amounts and dates in examples | Lorem ipsum, "John Doe", invented % stats |
-| Generated apps coloured only through `--dmx-*` and one of the five palettes | Raw hex/rgb in generated code, a sixth "custom" palette, or a palette colour in Demux's own UI |
+| Studio apps with a look designed for their workspace; v1/v2 apps coloured only through `--dmx-*` and one of the five palettes | A generic white admin dashboard as a studio app, raw hex/rgb in v1/v2 code, or a workspace's colours leaking into Demux's own UI |
 | Build steps that ask one thing each, with the recommended answer preselected | Extra steps added mid-build, or a question without a default |

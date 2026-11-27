@@ -10,8 +10,8 @@ from app.models import Change, LLMCall, ProcessedMessage, Run, RunKind, RunStatu
 from app.services import runs
 from app.services.workspaces import create_workspace, delete_workspace
 from app.worker import execute_run
-from tests.helpers import GOOD_APP, SMALL_MAILBOX, ScriptedLLM, dt
-from tests.test_flows import DESIGN_TURNS, build_llm
+from tests.helpers import SMALL_MAILBOX, ScriptedLLM, dt
+from tests.test_flows import DESIGN_TURNS, GOOD_STUDIO_APP, build_llm
 
 
 async def test_claim_one_run_per_workspace(session, dev_user):
@@ -44,7 +44,7 @@ async def test_execute_build_then_sync(session, session_factory, dev_user):
     await session.refresh(run)
     await session.refresh(ws)
     assert run.status == RunStatus.DONE, run.error
-    assert ws.status == "ready" and ws.app_html == GOOD_APP and ws.data["order"]
+    assert ws.status == "ready" and ws.app_html == GOOD_STUDIO_APP and ws.data["order"]
     assert ws.data_version >= 1 and ws.app_version == 1
     assert run.input_tokens > 0 and float(run.cost_usd) > 0
     assert any(e["label"].startswith("Saved") for e in run.events)

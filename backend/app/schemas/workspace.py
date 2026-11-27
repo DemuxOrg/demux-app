@@ -128,7 +128,9 @@ class WorkspaceDetail(BaseModel):
 class AppDoc(BaseModel):
     html: str | None
     version: int
-    runtime: Literal["v1", "v2"]  # v2: a kit app (the shell for ?runtime=v2)
+    # v3: a studio app designed by the UI model; v2: a kit app; v1: plain HTML + JS.
+    # The shell for each is GET /app-shell?runtime=…
+    runtime: Literal["v1", "v2", "v3"]
 
 
 class PaletteInfo(BaseModel):

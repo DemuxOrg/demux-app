@@ -51,7 +51,9 @@ Open <http://localhost:3000> (backend status should say *ok*) and <http://localh
 
 | Path | Responsible for |
 |---|---|
-| `app-kit/src/` | The component kit: shadcn-style primitives (`ui/`), blocks such as Board, DataTable, Timeline, Calendar, Chart, Dashboard (`blocks/`), data helpers (`lib/data.ts`), the runtime that compiles the app's JSX and renders it (`index.tsx`), and `catalog.md`, the agent's reference. `make kit` builds it. |
+| `app-kit/src/studio.tsx`, `studio.md`, `runtime.tsx` | The studio runtime of v3 apps (the ones the interface designer writes): React, Recharts, `Icon`, data helpers as globals, plus the JSX compile + render shared with the kit. `studio.md` is the designer's reference. |
+| `backend/app/agent/designer.py` | The interface designer: the UI model (`UI_MODEL`) designs and writes every app, checked and fixed in a loop. Builds call it; edits reach it through `change_interface`. |
+| `app-kit/src/` | The component kit (older v2 apps): shadcn-style primitives (`ui/`), blocks such as Board, DataTable, Timeline, Calendar, Chart, Dashboard (`blocks/`), data helpers (`lib/data.ts`), the runtime that compiles the app's JSX and renders it (`index.tsx`), and `catalog.md`, the agent's reference. `make kit` builds it. |
 | `backend/app/agent/kit/` | The built kit (`kit.js`, `kit.css`, `catalog.md`), committed: the shell inlines it into every v2 app. |
 | `backend/app/agent/shell.py` | The fixed iframe shell: CSP, fonts, tokens, palettes, bridge; v1 (old HTML apps) or v2 (kit apps) by `app_runtime`. |
 | `backend/app/agent/palettes.py` | The five palettes (theme.md §10.3). |

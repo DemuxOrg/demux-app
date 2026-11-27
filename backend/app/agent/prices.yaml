@@ -8,6 +8,12 @@ models:
   "openai/gpt-oss-120b:groq": {input: 0.15, output: 0.75}
   "Qwen/Qwen3.8-27B:cerebras": {input: 0.99, output: 1.49}
   "zai-org/GLM-5.3:deepinfra": {input: 0.9, output: 4.0}
+  # GLM-5.2 (UI_MODEL): provider prices read 2026-11-26 from the providers' listings
+  # (DeepInfra; Novita / Together / Fireworks), not from the router.
+  "zai-org/GLM-5.2:deepinfra": {input: 0.75, output: 2.4}
+  "zai-org/GLM-5.2:novita": {input: 1.4, cached_input: 0.26, output: 4.4}
+  "zai-org/GLM-5.2:together": {input: 1.4, output: 4.4}
+  "zai-org/GLM-5.2:fireworks-ai": {input: 1.4, cached_input: 0.14, output: 4.4}
   "zai-org/GLM-5.3-Flash:deepinfra": {input: 0.15, output: 0.5}
   "deepseek-ai/DeepSeek-V4-Pro:deepinfra": {input: 1.3, output: 2.6}
   "deepseek-ai/DeepSeek-V4.1-Flash:deepinfra": {input: 0.2, output: 0.6}

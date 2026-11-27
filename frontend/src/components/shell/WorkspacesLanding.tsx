@@ -114,7 +114,7 @@ function WorkspaceCard({
   // Ready workspaces open into their app: start loading the frame they all share.
   const warm = label
     ? undefined
-    : () => void loadAppShell("v2").catch(() => undefined);
+    : () => void loadAppShell("v3").catch(() => undefined);
 
   return (
     <Link
