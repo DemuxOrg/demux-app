@@ -99,6 +99,37 @@ async def test_get_answers_waits_while_the_user_keeps_answering(monkeypatch):
     assert p.setup["questions_state"] == "answered"
 
 
+async def test_get_answers_wait_is_capped_even_if_answers_keep_arriving(monkeypatch):
+    """Re-sending one answer restarts the idle deadline, but the whole wait is capped
+    (SETUP_MAX_WAITS idle windows), so a build can't hold a worker slot forever."""
+    import asyncio
+    import time
+    from datetime import UTC, datetime
+
+    from app.agent import tools
+
+    monkeypatch.setattr(tools, "SETUP_POLL_SECONDS", 0.02)
+    monkeypatch.setattr(tools, "SETUP_MAX_WAITS", 3)
+    ctx, p = _ctx(wait=0.2)
+    await TOOLS["ask_user"].handler(ctx, QUESTIONS)
+
+    async def keep_answering_q1():
+        while True:  # well within the idle window each time, q2 never answered
+            p.setup["answers"] = {"q1": "Yes"}
+            p.setup["answered_at"] = {"q1": datetime.now(UTC).isoformat()}
+            await asyncio.sleep(0.05)
+
+    task = asyncio.create_task(keep_answering_q1())
+    started = time.monotonic()
+    try:
+        out = await asyncio.wait_for(TOOLS["get_answers"].handler(ctx, {}), timeout=5)
+    finally:
+        task.cancel()
+    assert time.monotonic() - started < 1.5  # cap: 3 x 0.2 s
+    assert [a["from"] for a in out.result["answers"]] == ["user", "recommended (no answer)"]
+    assert p.setup["questions_state"] == "timed_out"
+
+
 async def test_ask_user_takes_up_to_five_questions_for_a_vague_request():
     ctx, p = _ctx()
     many = {

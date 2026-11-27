@@ -32,6 +32,9 @@ EDIT_MAX_MESSAGES = 12
 MAX_SUMMARY_CHARS = 500
 SETUP_POLL_SECONDS = 1.5
 MAX_QUESTIONS = 5
+# The longest a build waits for the user in all, in idle windows (SETUP_WAIT_SECONDS):
+# one per question moment, the look and up to MAX_QUESTIONS questions (wait_until).
+SETUP_MAX_WAITS = MAX_QUESTIONS + 1
 # Questions are about what the workspace tracks, never about its look (frontend/theme.md
 # §7.10): those are the fixed, generic questions users found useless.
 _LOOK_QUESTION = re.compile(
@@ -370,11 +373,18 @@ async def wait_until(
     """Wait for the user (the setup API writes into the run's input) until `done(setup)`,
     or until they have been idle for `ctx.setup_wait` seconds: the deadline restarts at
     each time `activity(setup)` returns (ISO timestamps of the question and of each
-    answer), so a user who is answering is never cut off. Returns the last setup seen."""
+    answer), so a user who is answering is never cut off. Returns the last setup seen.
+
+    The whole wait is still capped (`SETUP_MAX_WAITS` idle windows, one per question
+    moment): an answer can be sent again while it is asked, and each one restarts the
+    idle deadline, so without a cap a build could hold a worker slot forever."""
     started = datetime.now(UTC)
+    cap = max(0.0, ctx.setup_wait) * SETUP_MAX_WAITS
     while True:
         setup = await ctx.persister.get_setup()
         if done(setup):
+            return setup
+        if (datetime.now(UTC) - started).total_seconds() >= cap:
             return setup
         last = started
         for stamp in activity(setup):
