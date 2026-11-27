@@ -176,6 +176,7 @@ import {
 } from "lucide-react";
 import * as React from "react";
 import * as Recharts from "recharts";
+import { changedClass, CountUp } from "./lib/changes";
 import { openEmail, records, types } from "./lib/data";
 import { installRuntime } from "./runtime";
 
@@ -274,6 +275,9 @@ export const STUDIO = {
   records,
   types,
   openEmail,
+  // live changes
+  changedClass,
+  CountUp,
 };
 
 const w = window as unknown as Record<string, unknown>;

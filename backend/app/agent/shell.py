@@ -178,6 +178,8 @@ BRIDGE_JS = """
       return;
     }
     if (d.type !== 'demux:data') return;
+    // Keys ("type/id") of records that just changed, for changedClass (theme.md §10.3).
+    window.__demuxChanged = Array.isArray(d.changed) ? d.changed.slice(0, 200) : [];
     draw(d.data);
   });
   window.addEventListener('error', function(ev){

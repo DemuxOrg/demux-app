@@ -21,12 +21,12 @@ function TypeList({ data, type }) {
     <section className="rounded-2xl bg-white ring-1 ring-slate-200 shadow-sm">
       <div className="flex flex-wrap items-center gap-3 border-b border-slate-100 px-5 py-4">
         <h2 className="text-base font-semibold text-slate-900">{label(type)}</h2>
-        <span className="text-sm text-slate-500 tabular-nums">{list.length}</span>
+        <CountUp value={list.length} className="text-sm text-slate-500" />
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search" className="ml-auto h-9 w-48 rounded-full bg-slate-100 px-4 text-sm outline-none focus:ring-2 focus:ring-slate-300" />
       </div>
       <ul className="divide-y divide-slate-100">
         {shown.map((r) => (
-          <li key={r.id} className="flex flex-wrap items-start gap-x-6 gap-y-1 px-5 py-3 text-sm">
+          <li key={r.id} className={cx("flex flex-wrap items-start gap-x-6 gap-y-1 px-5 py-3 text-sm", changedClass(type, r.id))}>
             {fields.map((f) => (
               <div key={f} className="min-w-[8rem]">
                 <div className="text-xs text-slate-500">{label(f)}</div>

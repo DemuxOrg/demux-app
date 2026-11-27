@@ -258,3 +258,94 @@ async def test_studio_shell_styles_tailwind_classes_and_embeds_fonts():
     family = styles[1].split(",")[0].strip('"')
     assert family == "Fraunces" and styles[2] == "36px"  # font-serif text-4xl
     assert styles[3] is True
+
+
+LIVE_APP = studio_app("""
+function App({ data }) {
+  const loans = records(data, "loan");
+  return (
+    <div>
+      <CountUp value={loans.length} className="total" />
+      {loans.map((l) => (
+        <p key={l.id} data-id={l.id} className={cx("row", changedClass("loan", l.id))}>{l.title}</p>
+      ))}
+    </div>
+  );
+}
+""")
+
+
+async def _live_page(p, reduced: bool = False):
+    browser = await p.chromium.launch()
+    ctx = await browser.new_context(reduced_motion="reduce" if reduced else "no-preference")
+    page = await ctx.new_page()
+    await page.set_content(build_srcdoc(LIVE_APP), wait_until="load")
+    return browser, page
+
+
+SEND = "([d, c]) => window.postMessage({type: 'demux:data', data: d, changed: c}, '*')"
+CLASSES = "() => Object.fromEntries([...document.querySelectorAll('.row')].map(e => [e.dataset.id, e.className]))"
+
+
+async def test_changed_records_are_marked_then_cleared():
+    """The page sends the keys it just changed; exactly those rows get demux-new /
+    demux-updated, and the marks clear after ~1.6 s (theme.md §10.3)."""
+    from playwright.async_api import async_playwright
+
+    first = {"loan": {"a": {"title": "A"}, "b": {"title": "B"}}}
+    second = {"loan": {"a": {"title": "A2"}, "b": {"title": "B"}, "c": {"title": "C"}}}
+    async with async_playwright() as p:
+        browser, page = await _live_page(p)
+        await page.evaluate(SEND, [first, ["loan/a", "loan/b"]])  # first data: no marks
+        await page.wait_for_timeout(300)
+        assert all("demux" not in c for c in (await page.evaluate(CLASSES)).values())
+        await page.evaluate(SEND, [second, ["loan/a", "loan/c"]])
+        await page.wait_for_timeout(150)
+        classes = await page.evaluate(CLASSES)
+        total = await page.text_content(".total")
+        await page.wait_for_timeout(1900)
+        later = await page.evaluate(CLASSES)
+        final_total = await page.text_content(".total")
+        await browser.close()
+    assert "demux-updated" in classes["a"] and "demux-new" in classes["c"]
+    assert "demux" not in classes["b"]
+    assert total is not None and final_total == "3"
+    assert all("demux" not in c for c in later.values())
+
+
+async def test_reduced_motion_marks_nothing():
+    from playwright.async_api import async_playwright
+
+    async with async_playwright() as p:
+        browser, page = await _live_page(p, reduced=True)
+        await page.evaluate(SEND, [{"loan": {"a": {"title": "A"}}}, []])
+        await page.wait_for_timeout(200)
+        await page.evaluate(
+            SEND, [{"loan": {"a": {"title": "A"}, "b": {"title": "B"}}}, ["loan/b"]]
+        )
+        await page.wait_for_timeout(150)
+        classes = await page.evaluate(CLASSES)
+        total = await page.text_content(".total")
+        await browser.close()
+    assert all("demux" not in c for c in classes.values()) and total == "2"
+
+
+async def test_count_up_passes_through_in_between_values():
+    from playwright.async_api import async_playwright
+
+    async with async_playwright() as p:
+        browser, page = await _live_page(p)
+        many = {"loan": {str(i): {"title": str(i)} for i in range(40)}}
+        await page.evaluate(SEND, [{"loan": {}}, []])
+        await page.wait_for_timeout(200)
+        await page.evaluate(SEND, [many, []])
+        await page.wait_for_timeout(120)
+        midway = int(await page.text_content(".total"))
+        await page.wait_for_timeout(600)
+        done = int(await page.text_content(".total"))
+        await browser.close()
+    assert 0 < midway < 40 and done == 40
+
+
+async def test_preview_app_passes_the_checks():
+    assert await check_app(DEFAULT_APP, DATA) == []

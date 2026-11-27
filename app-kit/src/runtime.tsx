@@ -10,6 +10,7 @@ import * as React from "react";
 import { flushSync } from "react-dom";
 import { createRoot, type Root } from "react-dom/client";
 import { transform } from "sucrase";
+import { CHANGES_CSS, noteData } from "./lib/changes";
 
 function compileApps(): void {
   const scripts = Array.from(document.querySelectorAll('script[type="text/jsx"]'));
@@ -65,8 +66,26 @@ export function installRuntime({
   let root: Root | null = null;
   let lastError: unknown = null;
   let renders = 0;
+  let expiry: ReturnType<typeof setTimeout> | undefined;
+
+  const style = document.createElement("style");
+  style.textContent = CHANGES_CSS;
+  document.head.appendChild(style);
 
   function render(data: unknown): void {
+    // The keys the page just changed (bridge: `demux:data` … `changed`), consumed once.
+    const changed = w.__demuxChanged;
+    w.__demuxChanged = undefined;
+    const hold = noteData(data, changed);
+    clearTimeout(expiry);
+    if (hold > 0)
+      expiry = setTimeout(() => {
+        try {
+          render(data); // the marks expired: render without them
+        } catch {
+          /* the next data message renders again */
+        }
+      }, hold + 20);
     const app = typeof App !== "undefined" ? App : (w.App as unknown);
     if (typeof app !== "function") throw new Error("The app must define function App({ data })");
     let el = document.getElementById("demux-root");

@@ -60,6 +60,21 @@ Fields come from email: any of them can be missing, null or of an unexpected typ
 Dates are ISO strings (`2026-03-02` or `2026-03-02T10:00:00Z`). Money is a number with a
 separate currency field (ISO code); format it with `Intl.NumberFormat`.
 
+## Live changes
+
+Records arrive and change while the user watches (during the build and every sync).
+
+- `changedClass(type, id)`: `"demux-new"`, `"demux-updated"` or `""` for about 1.6 s after
+  that record arrived or changed. Put it on each record's row or card:
+  `<li className={cx("…", changedClass("invoice", r.id))}>`. Both classes are styled for you
+  (a soft ring in the current text colour, and a short rise for new records); don't
+  restyle them.
+- `<CountUp value={total} format={(n) => money(n)} />`: a number that counts up from its
+  previous value when it changes (400 ms, tabular). Use it for headline numbers. `format`
+  gets the in-between values too, so it must accept any number.
+
+Both do nothing when the user prefers reduced motion.
+
 ## Icon names
 
 activity, alarm-clock, archive, arrow-down, arrow-down-right, arrow-left, arrow-right, arrow-up, arrow-up-right, at-sign, award, baby, banknote, bed, bell, book, book-open, bookmark, box, briefcase, building-2, bus, calendar, calendar-check, calendar-clock, calendar-days, car, chart-bar, chart-line, chart-pie, check, check-check, chevron-down, chevron-left, chevron-right, chevron-up, chevrons-up-down, circle-alert, circle-check, circle-dashed, circle-dot, circle-x, clipboard, clipboard-list, clock, cloud, code, coffee, coins, compass, copy, credit-card, database, dollar-sign, dumbbell, ellipsis, euro, external-link, eye, eye-off, file, file-text, film, filter, flag, flame, folder, gift, globe, graduation-cap, hash, heart, heart-pulse, history, hotel, hourglass, house, image, inbox, info, key, landmark, laptop, layers, layout-dashboard, layout-grid, layout-list, leaf, link, list, list-checks, list-todo, loader-circle, lock, mail, mail-open, map, map-pin, maximize-2, menu, message-square, minus, monitor, moon, music, package, package-check, paperclip, pencil, percent, phone, piggy-bank, pill, pin, plane, plus, receipt, refresh-cw, repeat, rocket, rotate-ccw, scale, search, send, settings, share-2, shield, shield-check, ship, shirt, shopping-bag, shopping-cart, sigma, sliders-horizontal, smartphone, sparkles, square-kanban, star, stethoscope, store, sun, table, tag, target, ticket, timer, train, trending-down, trending-up, triangle-alert, trophy, truck, user, user-check, users, utensils, wallet, wrench, x, zap

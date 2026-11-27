@@ -186,6 +186,9 @@ control when they each answer a different need. Do not default to a table.
 - Make it usable: search and filters when there may be more than about 10 records, \
 sensible sorting, grouping, counts, a detail view showing every field of a record with \
 an "Open email" action (openEmail(record)), and hover, focus and selected states.
+- Records arrive and change live (during the build and every sync): put \
+changedClass(type, record.id) on each record's row or card, and use <CountUp> for \
+headline numbers.
 - Design every state: empty data (a friendly empty state that says the workspace fills \
 in as emails are read), one record, many records, missing fields.
 
