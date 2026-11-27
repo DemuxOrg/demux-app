@@ -138,6 +138,9 @@ From the board in the launch video: board `#16171A`, column `#1F2024`, card `#2A
 | **white on any sky** | **2.5** | **✗ never put white text on the sky** |
 | status pairs (§3.4) | 5.4–8.8 | ✓ |
 | generated-app palettes (§10.3) | 5.5–14.4 | ✓ |
+| white on the question scrim (§7.15; worst case: over a white page) | 8.7 | ✓ |
+| white on a question option row (white 10% on the scrim) | 6.5 | ✓ |
+| white 70% on the question scrim (helper line) | 5.2 | ✓ |
 
 ---
 
@@ -296,54 +299,26 @@ Vertical list with dividers `line-on-glass`, padding 14px 0:
 3. Change: `from` pill (neutral) → arrow 14px `ink-3` → `to` pill (status color), or one sentence 13px `ink-2`
 4. Source link: mail icon 14px + "Sender · “subject or quote”" 13px `ink-2`. Hover: underline + `violet-ink`. Opens the email (`demux.openSource`).
 
-### 7.10 Build flow (questions + progress)
-One card takes the user from Build to a ready workspace. Demux asks only what the prompt leaves open, while it already works in the background, then shows the work. There are always three steps, in this order:
+### 7.10 Live build
+The build **is** the loading screen: the workspace fills in on screen while Demux reads the emails. When Demux needs something from the user, a question moment (§7.15) asks it, one question at a time, and the build carries on underneath. No progress card, no step counter, no replay.
 
-| # | Step (label) | Whose turn | Title (title-lg) |
-|---|---|---|---|
-| 1 | Your request | Demux, then the user if the prompt has gaps | "Understanding your request", then "A few questions" once there are questions |
-| 2 | Reading your emails | Demux | Reading your emails |
-| 3 | Building your workspace | Demux | Almost there |
+**Layout:** the top bar (§7.11: name + Building chip), then the **strip**, then the **app panel** (white, radius 26, `shadow-panel`, full width, padding 0 16 16 around it). When the workspace is ready, the strip fades out (200ms) and the panel grows to full bleed (§8.4, 360ms `ease-dmx-out`); the app frame is the same one, never reloaded unless the app itself changed.
 
-There is no look step and no layout step: Demux never asks for colours, themes or a layout picked from a fixed list. Every question is written by the agent for this prompt.
+**Strip:** glass (§7.8 glass), radius 20, min-height 52, padding 0 8 0 18, between the top bar and the panel (gap 12). One line of real facts, 14/500 ink, tabular, truncated; under it a 4px bar (radius full, track `track`) filled with the brand gradient and `flow` (the screen's one gradient, principle 4) to threads read ÷ threads found (minimum 4%). On the right: quiet text button **Cancel** (13/500 `ink-3`, `danger` on hover), which asks inline exactly as before ("Stop this build? The workspace is removed and your prompt goes back in the box." · Keep building · Stop build) and on Stop deletes the workspace and opens Create with the prompt in the box.
+- Lines, in order: "Looking through your mail" → "Reading your emails · 48 of 120 threads · 14 invoices found" (the largest record type, named from the data) → "Building the interface" (emails done, app not yet) → "Checking it against your data" (the designer's final check).
+- Once nothing more is needed from the user (questions answered or timed out, look chosen), a second line 13px `ink-3`: "That's everything we need from you. You can close this page; your workspace will be ready here."
+- After a moment timed out: "We went ahead with the recommended answers." 13px `ink-3` for 4 s.
 
-Small and quiet: a short checklist, not an illustration. Steps 2 and 3 really run **at the same time** (the interface is designed while the emails are read), so both rows can be working at once.
-
-**Card:** white, radius 24, padding 28/28/24, max-width 520, `shadow-float`. Top to bottom:
-1. **Title row:** logo mark 28px with "breathe", then the step's title (table above) 20/600 ink, `reveal-text` on each change (focus moves to it), and on the right a quiet text button **Cancel** (13/500 `ink-3`, 44px hit target, `danger` on hover). It is there at every step, questions included.
-2. **Prompt:** quoted, 14px `ink-3`, one line, truncated (full text in `title`), 6px under the title.
-3. **Body** (20px under the prompt): the questions while it is the user's turn (step 1 below); otherwise **the checklist** and **the thinking line**.
-4. **Footer row:** a note on the left (13px `ink-3`); while there are questions, the primary **Continue →** on the right (the card's only violet button).
-
-**Checklist:** three rows, 36px tall, gap 2: a 16px status (empty circle `pending-line` waiting, spinner working, violet check done), the label 14/500 (`ink-3` waiting, ink otherwise), and on the right 13px `ink-3` tabular detail.
-1. **Understanding your request:** detail "Your turn" while there are questions.
-2. **Reading your emails:** "48 of 80" once the count is known.
-3. **Designing your interface:** "Fixing a check", "Checking it with your data" when the designer says so; nothing while it simply works.
-The list is the step's `role="progressbar"`: `aria-valuenow` = step, `aria-valuemax` = 3, `aria-valuetext="Step 2 of 3: Reading your emails"`.
-
-**Thinking line:** under the list, 13px: a verb in -ing with an ellipsis, `ink-2`, changing every 2.8s from the current phase's list, its letters rippling in opacity (`ripple`; never gradient text, principle 5), then the latest real event in `ink-3` ("· Saved 3 expense records"). `aria-live="polite"` announces only the real events, never the verbs. The verbs are flavour; facts come only from the run's events.
-- Your request: Reading your request · Searching your inbox · Sampling threads · Spotting patterns
-- Reading: Untangling threads · Sorting · Matching replies · Cross-checking dates · Tallying amounts
-- Designing (once reading is done): Sketching the layout · Choosing a palette · Setting the numbers · Polishing
-
-When the workspace is ready, the page moves to it with `page`.
-
-**Cancel** asks first, inline: the bottom of the card becomes a `danger-bg` strip (radius 12, padding 12/16): "Stop this build? The workspace is removed and your prompt goes back in the box." 14px `danger`, with quiet **Keep building** and a `danger` text button **Stop build** (spinner while it works). Stopping deletes the workspace (the worker stops its run within 2 s, so it stops spending) and opens Create with the prompt already in the prompt card, ready to reword. Escape or Keep building closes the strip.
-
-**Step bodies**
-- **1 · Your request.** While the agent searches the mailbox and looks for gaps: 22px spinner + "Looking at your emails" 15/500 `ink-2`, and no Continue. A precise prompt has no gaps: the step ticks off on its own and the card moves to step 2. Otherwise the agent asks **one question per gap** (1–2 for a fairly clear prompt, up to 5 for a vague one), all on one card: `<fieldset>`s, gap 24. Each: `<legend>` 16/600 ink (the agent's question, specific to this prompt and usually starting with what it found, e.g. "I found orders from Amazon, Zalando and Uber Eats. Should food deliveries count?" or "Do you want to follow each order until it arrives, or only see what is late?"), then radio rows: min-height 44px, radius 12, 1px `line`, padding 0 14, 15/500 `ink-2`, 18px radio. Selected: `violet-soft` background, `violet-line` border, `violet-ink` text. The agent's best guess is preselected and carries a "Recommended" tag (§7.7) on the right. The last row, "Other…", shows a text input (40px, radius 12, §7.4 rules) when chosen. Footer note: "We picked our best guess for each. Change what doesn't fit."
-- **1 · Your request, Demux's turn.** Row 1 working, rows 2–3 waiting, the thinking line.
-- **2 · Reading your emails.** Rows 2 and 3 working side by side. Footer note, from here on: "That's everything we need from you. You can close this page; your workspace will be ready here."
-- **3 · Almost there.** Row 2 checked; row 3 still works (or the interface is being checked against the data).
+**App panel:**
+- **Before the first record:** centred, the logo mark 56px with `breathe` and the strip's phase line 15/500 `ink-2` under it. No empty table.
+- **From the first record:** the sandboxed app frame (§10.3) with the **preview app** (`DEFAULT_APP`, one searchable list per record type) filling in.
+- **The swap:** when the generated app is saved, it loads in a hidden second frame; once it reports rendered, it crossfades in over 300ms and the preview frame is dropped. One swap per build, never a blank frame. If the final check rewrites the app, it swaps the same way.
+- **Records arrive one by one:** the worker saves in batches, the screen paces them out: one change every 300ms (faster when more than 10 wait, so the screen is never more than ~3 s behind), each new or changed record briefly highlighted (§10.3 `changedClass`). The pacing pauses while a question moment is open and resumes where it stopped. A hidden tab doesn't tick; on return it jumps to the latest data without animation. Opening or reloading the page mid-build shows the current data as it is, never a replay.
 
 **Behaviour**
-- Steps only move forward, with the `step` motion (§9). The total is always 3: a skipped step fills like a done one.
-- Answers are saved as soon as the user presses Continue.
-- Questions left unanswered for 2 minutes: the build continues with the preselected answers, and the card says so under the title, 13px `ink-3`: "We went ahead with the recommended answers."
-- The answers shape the workspace: what counts, what is tracked, how records are grouped and what the interface shows first.
-- Opening the page mid-build (a reload, another tab, coming back later) resumes at the current step, with answered steps shown as done.
-- Failure and "can't build" keep the existing copy (§11) inside the same card.
-- `prefers-reduced-motion`: no `breathe`, `ripple` or `reveal-text`; the verbs change without the ripple.
+- Opening the page mid-build (a reload, another tab, coming back later) shows the build where it is, and reopens the first pending question moment.
+- Failure and "can't build" keep the existing failed card (§11).
+- `prefers-reduced-motion`: no `breathe`, `flow`, highlight, crossfade or panel growth; content changes in place.
 
 ### 7.11 Top bar (app)
 Padding 18px top, sits on sky (no bar background). Used while a workspace is building or failed; a ready workspace has the floating bar instead (below). Left padding is `var(--dmx-gutter)`: 80px while the sidebar is closed (room for its open button, §7.13), 24px while it is open beside the page; the padding eases with the sidebar (360ms `ease-dmx-out`). Workspace page: workspace name (title-sm) + rename (ghost icon) or status chip on the left; sync status and More (⋯: Rename, Delete) on the right. No Undo and no Chat in the MVP. No sync button: workspaces sync on their own (every few minutes, and the page refreshes when it comes back into view). No workspace details are shown to users. No back button and no avatar: workspaces and the account live in the sidebar. The create and profile pages have no top bar.
@@ -365,6 +340,32 @@ The only navigation in the signed-in app. Notion-like: from 768px it is a column
   4. Footer, pinned to the bottom with a `line-soft` divider: the **account row**.
 - **Account row:** like Claude's: 36px avatar (initial on `violet-soft` / `violet-ink`), full name 14/600 and login email 13 `ink-3` (both truncated), `chevrons-up-down` 16px. Opens a card above it (`pop` from the bottom): "Signed in as" + login email, the Gmail line ("Reading from [gmail]" / "Gmail not connected" / "Gmail needs reconnecting"), "1 of 2 workspaces", a **Profile** row (`user-round`, chevron that nudges) and, under it, a **Log out** row (`log-out`, spinner while signing out).
 - Selection and focus inside the sidebar use violet, as everywhere else. No brand gradient besides the logo.
+
+### 7.15 Question moment
+When the build needs something from the user, the screen dims and Demux asks **one question at a time**; the live build stays visible, dimmed and paused, underneath. The backend keeps working meanwhile: only the screen waits.
+
+**Order:** (1) **Look**, unless the prompt already says how the workspace should look (colours, light or dark, a style). (2) Each of the agent's clarifying questions, in its order (most important first). There is no layout moment: the interface designer decides the structure from the request and the answers. Moments that arrive while one is open wait their turn.
+
+**Sequence**
+1. The scrim fades in to `rgba(12,26,46,.78)` over 250ms (`dim`).
+2. The logo mark (56px) appears (`speak`).
+3. The question types itself out (`type`); any click or key finishes it at once.
+4. The options fade in (150ms).
+5. On answer: it is sent at once (one answer per request); the content fades out (200ms) and the next moment starts 300ms later, the scrim staying. After the last one the scrim fades out and the records resume.
+
+**Look:** "How should your workspace look?" Options, not palettes (Demux's palettes are never used for generated apps): **Let Demux decide** (Recommended), **Light and calm**, **Dark and focused**, **Bold and colourful**, and **Other…** to describe it ("navy and gold, with serif headings"). The answer goes to the interface designer as the look to follow. A prompt that already names a look (a colour about the look, "dark mode", "a minimal theme") gets no look moment: the designer follows the prompt.
+
+**Visual design:** no card, no close button, no title bar. The logo and the question sit directly on the dimmed screen, centred, max-width 600: question white 24/500 (19px below 640px), options 16px under it.
+- Option rows: min-height 44, radius 12, background `rgba(255,255,255,.10)`, 1px `rgba(255,255,255,.18)`, white 15/500 text, a 18px radio. Selected: white background, ink text. The recommended option is preselected and tagged "Recommended" (tag: `rgba(255,255,255,.16)`, white 12px; on the selected white row: `tag` / `ink-2`). "Other…" opens a text input (white, radius 12, 44px, ink text).
+- One violet **Continue →** (§7.1), right-aligned under the options.
+- Under it, 13px white at 70%: "If you don't answer, Demux goes with the recommended option."
+- Contrast: §3.6 (white 8.7, rows 6.5, helper 5.2, in the worst case).
+
+**Behaviour**
+- If the build stops waiting (the question timed out), the moment closes on its own and the strip says "We went ahead with the recommended answers." for 4 s.
+- A reload mid-build reopens the first pending moment.
+- **Accessibility:** `role="dialog"`, `aria-modal="true"`, labelled by the full question text (the typing is `aria-hidden`). Focus goes to the preselected option and stays in the dialog. Keys 1–5 pick an option, Enter continues, Esc continues with the current selection.
+- `prefers-reduced-motion`: no typing, no `speak`, no fades: everything appears at once.
 
 ### 7.14 Admin pages (internal, `/admin`)
 Demux staff only (admins: `ADMIN_EMAILS` or `users.is_admin`; everyone else gets the app's 404). Dense, plain and quiet: they are for reading numbers, not for showing off.
@@ -401,7 +402,7 @@ Every signed-in page (`/workspaces…`, `/profile`) lives inside one shell: the 
 0. **Workspaces** (`/workspaces`, where sign-in lands; the sidebar lockup opens it): with no workspace yet it opens **Create**. Otherwise a centered column (max 760, top padding like Create): title-lg "Your workspaces" (`reveal-text`) and "Open one to see it." 16 `ink-on-sky`, then one workspace card per row (§7.8), gap 10. Each card is a link: name 16/600 truncated, meta 13 `ink-2` with the sidebar's dot ("Synced 3 min ago · 14 invoices", "Building", "Failed"), the prompt on one line 14 `ink-3` (truncated, full text in `title`), and a chevron right that nudges on hover. The workspace opened last in this browser carries a "Last opened" tag (§7.7) after its name. While a slot is free, an empty slot (§7.8) under the cards links to Create: `plus` 16px + "Create workspace". This page loads only the list (names, statuses, counts): a workspace's app and data load once it is opened, and pointing at or focusing a card starts loading the app frame so it opens faster. Opening `/workspaces` never jumps into a workspace on its own.
 1. **Create, connect** (`/workspaces/new` while no Gmail is connected or it needs a reconnect): centered white card (max 520, radius 30, `shadow-float`): breathing mark 56px, title-lg "Connect your Gmail", one sentence, primary "Connect with Google →", trust line. Google's errors show in the card.
 2. **Create, prompt** (`/workspaces/new` once Gmail is connected): centered, top third: title-xl "Hello, [first name]" (the first name from sign-up or the profile page; just "Hello" for older accounts without one), then "What do you want to track?" 22/500 `ink-on-sky`, the prompt card (max 760; after a cancelled build it opens with that build's prompt in it), the read-only line with a lock icon. With both workspaces used, the prompt is disabled and a limit notice replaces the read-only line: a white card (max 760, radius 20, `shadow-panel`, padding 16/20) with "Workspace limit reached" 15/600 ink and "You can have 2 workspaces. Delete one to create a new one." 14 `ink-2`. Build opens the new workspace in the same area.
-3. **Workspace, building** (`/workspaces/[id]`, status `building`): sky + top bar (name, Building chip). Centered build flow card (§7.10). Nothing else.
+3. **Workspace, building** (`/workspaces/[id]`, status `building`): the live build (§7.10): top bar, strip, and the app panel filling in; question moments (§7.15) over it when Demux needs an answer.
 4. **Result** (`/workspaces/[id]`, status `ready`): the app **full bleed**: the sandboxed iframe fills the page beside the sidebar, edge to edge, no padding, no radius, no sky around it, so the app's own colours never sit inside Demux's blue. Demux's controls float over it: the sidebar's open button (top left, §7.13) and the floating bar (top right, §7.11). The chat side panel is removed for the MVP (`ChatPanel` and `SidePanel` are kept for when it returns).
    - Display error banner (floating under the bar, top): bg `#FDECEA`, text `#A8321F`, "This workspace hit a display error", violet "Fix it" button.
    - Reconnect banner (floating under the bar): glass card, ink text, primary button "Reconnect Gmail".
@@ -427,7 +428,12 @@ entering the screen.
 | `pulse` | opacity 1 → .35 → 1, 1.6s ease-in-out | Building dot |
 | `breathe` | scale 1 → 1.045 → 1, 2.4s ease-in-out | Logo on the build card |
 | `flow` | background-position 0 → 200px, 1.8s linear | A gradient that moves while Demux works (`background-size: 200px 100%`; the 200px tile runs violet → magenta → coral → magenta → violet so it loops without a seam). No current use |
-| `ripple` | each letter: opacity 1 → .45 → 1, 1.6s ease-in-out infinite, 40ms stagger | The build card's thinking line (§7.10) |
+| `dim` | scrim opacity 0 → 1 (`rgba(12,26,46,.78)`), 250ms `ease-dmx`; out 250ms | Question moment (§7.15) |
+| `speak` | fade + scale .92 → 1, 220ms `ease-dmx-out`, no bounce | The logo mark appearing in a question moment |
+| `type` | the question's characters appear ~18ms apart, at most 1.2s in total; a click or key completes it | Question moment text |
+| Record arrives | new: fade + 4px rise, 240ms `ease-dmx-out`, then the Record update highlight; changed: the highlight only (§10.3 `changedClass`) | Records during a build and later syncs |
+| Count up | a changing number counts from the previous value over 400ms, tabular | Totals in generated apps (§10.3 `CountUp`) |
+| Frame swap | the new app frame fades in over 300ms above the old one, which is then removed | The generated app replacing the preview (§7.10) |
 | `blink` | opacity steps, 1.1s | Text caret (marketing demos only) |
 | `reveal` | fade + 16px rise, 700ms `ease-dmx-out`, stagger 80ms | Blocks entering a screen in reading order: title → card → helper line → list (`<Reveal index>`) |
 | `reveal-text` | each word: fade + 0.4em rise + 8px blur → sharp, 800ms `ease-dmx-out`, stagger 45ms | Page titles only (title-xl / title-lg), at most one per screen (`<RevealText>`) |
@@ -575,6 +581,7 @@ Put the grain from §4.2 on the page shell component (the element that has `bg-s
 **Studio apps (v3, every new app) do not follow this design system.** The interface designer (the UI model, `UI_MODEL`, GLM-5.2) designs each workspace's experience and look from scratch: its own palette, type pairing, layout, light or dark, charts and motion, chosen for that workspace's subject. The app is shown full bleed (§8.4): Demux draws no frame around it, only its sidebar beside it and two floating controls over its top corners, which the designer's prompt tells it to keep clear. The plan is `docs/UI_GENERATION_PLAN.md` §11.
 
 - **What the shell gives a studio app:** the studio runtime (React 19, Recharts, an `Icon` set from lucide, the data helpers), Tailwind v4 compiled in the iframe, and embedded fonts: Inter (`font-sans`), Space Grotesk (`font-display`), Fraunces (`font-serif`), Instrument Serif (`font-editorial`), JetBrains Mono (`font-mono`). No Demux tokens, palettes or base classes. The reference the designer reads is `app-kit/src/studio.md`.
+- **Live changes:** the runtime knows which records just arrived or changed (the page sends their keys with the data). `changedClass(type, id)` returns `"demux-new"`, `"demux-updated"` or `""` for about 1.6 s after a change; the shell styles both classes (a soft ring in the current text colour that fades, plus a 4px rise for new ones), so it works on any look. `<CountUp value format>` counts a changing number up from its previous value. Both do nothing under reduced motion. The designer uses them on record rows/cards and headline numbers.
 - **What stays fixed:** the sandbox and CSP (no network, no navigation, inline scripts only), the app check (it must render, show the data, survive empty data, render the same twice), and the bridge (`openEmail` / `demux.openSource`, `demux.openLink`).
 - **Quality bar the designer is held to** (its prompt, `INTERFACE` in `backend/app/agent/prompts.py`): high-end and specific to the workspace, never a generic white dashboard; the answer to the request first and at a glance; a deliberate palette with consistent meaning and AA contrast; tabular numbers; every state designed (empty, one, many, missing fields); works from 390px wide without sideways scrolling.
 - **Changing the look later:** any request about what the workspace shows or how it looks, colours included, goes from the chat agent to the designer (`change_interface`).
@@ -639,7 +646,7 @@ Why these five: their hues stay away from the status colours (§3.4). There is n
 - **No raw colours in v1 and v2 code:** no hex, `rgb()`, `hsl()` or named colours, only `var(--dmx-*)`. The app check rejects them (studio apps are exempt).
 - No sky gradient and no brand gradient inside generated apps. The accent marks the selected or updated state, the main control, and series 1 of charts and category dots, nothing else. Status colours only for status.
 - Charts: at most 5 series, in `--dmx-series-1…5` order; anything beyond is grouped into "Other" (`--dmx-series-other`). Flat fills: no gradients, 3D or shadows. Tabular numbers on axes and labels.
-- The palette is not chosen by the user: there is no palette step in the build and no switcher in the workspace. A chat request for other colours has the designer rewrite the app as a studio app.
+- The palette is not chosen by the user: there is no palette step in the build and no switcher in the workspace (the build's look question, §7.15, goes to the interface designer, never to a palette). A chat request for other colours has the designer rewrite the app as a studio app.
 
 **Component kit (v2 apps).** Kit apps compose the kit: shadcn-based blocks (`Board`, `DataTable`, `Dashboard`, `StatCard`, `Chart`, `Timeline`, `Calendar`, `Gallery`, `ListDetail`, `RecordSheet`, `ViewTabs`, `FilterBar`, `EmptyState`) and primitives, restyled to this file rather than shadcn's defaults:
 - Buttons: §7.1 pill shapes, in the palette's accent; one primary per app.
@@ -660,7 +667,7 @@ Inline stroke SVG or `lucide-react`. Stroke 2px (2.2–2.4 on filled buttons), r
 
 - **Tone:** plain, short, concrete. Say what happened, with a real noun and a number. Sentence case. No exclamation marks.
 - **Never write:** "AI-powered", "magic", "supercharge", "seamless", "unlock", "revolutionize", "✨", "Oops!".
-- **Product vocabulary (fixed):** *workspace* (never "view" or "dashboard"), *prompt*, *build* (first run), *sync* (later runs), *record*, *field*, *message* (one email), *thread* (a conversation), *layout* (a board, table, timeline… inside a workspace; never "view" or "widget"), *look* (the workspace's palette, named by its palette name). "Live apps" is marketing-only.
+- **Product vocabulary (fixed):** *workspace* (never "view" or "dashboard"), *prompt*, *build* (first run), *sync* (later runs), *record*, *field*, *message* (one email), *thread* (a conversation), *layout* (a board, table, timeline… inside a workspace; never "view" or "widget"), *look* (how a workspace's app looks: light or dark, its colours and type; the user's answer or the prompt, else the designer's choice). "Live apps" is marketing-only.
 
 | Context | Copy |
 |---|---|
@@ -677,11 +684,9 @@ Inline stroke SVG or `lucide-react`. Stroke 2px (2.2–2.4 on filled buttons), r
 | Trust line | Read-only. Demux never sends or changes an email. |
 | Workspace list | Workspaces · 1 of 2 · Your workspaces · Open one to see it. · Last opened · Create workspace |
 | Limit reached | Workspace limit reached · You can have 2 workspaces. Delete one to create a new one. (sidebar: You're using both workspaces. Delete one to build another.) |
-| Build steps | Your request · Reading your emails · Building your workspace |
-| Step counter | Step 1 of 3 · Your request |
-| Step 1 | Understanding your request · Looking at your emails · A few questions · Recommended · Other… · We picked our best guess for each. Change what doesn't fit. · Continue |
-| Step 2 | Reading your emails · Collecting matching emails · 48 of 120 threads read · 14 shipments found so far |
-| Step 3 | Almost there · Building your workspace |
+| Live build strip | Looking through your mail · Reading your emails · 48 of 120 threads · 14 invoices found · Building the interface · Checking it against your data · Cancel |
+| Question moment | How should your workspace look? · Let Demux decide · Light and calm · Dark and focused · Bold and colourful · Other… · Recommended · Continue · If you don't answer, Demux goes with the recommended option. |
+| Cancel a build | Stop this build? The workspace is removed and your prompt goes back in the box. · Keep building · Stop build |
 | Slow load | This is taking longer than usual. · Reload |
 | Your part done | That's everything we need from you. You can close this page; your workspace will be ready here. |
 | No answer in time | We went ahead with the recommended answers. |
