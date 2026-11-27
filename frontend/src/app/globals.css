@@ -100,15 +100,14 @@
   --animate-dmx-breathe: dmx-breathe 2.4s ease-in-out infinite;
   --animate-dmx-flow: dmx-flow 1.8s linear infinite;
   --animate-dmx-rise: dmx-rise 0.32s var(--ease-dmx) both;
-  /* The build card's thinking line (theme.md §7.10). */
-  --animate-dmx-ripple: dmx-ripple 1.6s ease-in-out infinite;
-  @keyframes dmx-ripple {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.45;
+  /* Question moments (theme.md §7.15): the scrim, the logo, the options, the exit. */
+  --animate-dmx-dim: dmx-fade 250ms var(--ease-dmx) both;
+  --animate-dmx-speak: dmx-speak 220ms var(--ease-dmx-out) both;
+  --animate-dmx-options: dmx-fade 150ms var(--ease-dmx) both;
+  @keyframes dmx-speak {
+    from {
+      opacity: 0;
+      transform: scale(0.92);
     }
   }
   @keyframes dmx-spin {
