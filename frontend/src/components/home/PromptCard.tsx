@@ -12,6 +12,7 @@ import { ArrowRight } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { LogoMark } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/Button";
+import { clearDraftPrompt, useDraftPrompt } from "@/lib/draft";
 
 const EXAMPLES = ["Unpaid invoices and who I owe", "Job applications by stage"];
 
@@ -23,7 +24,14 @@ export function PromptCard({
   onBuild: (prompt: string) => Promise<boolean>;
 }) {
   const id = useId();
-  const [prompt, setPrompt] = useState("");
+  // What the user typed; until they type, a cancelled build's prompt (theme.md §7.10).
+  const [typed, setTyped] = useState<string | null>(null);
+  const draft = useDraftPrompt();
+  const prompt = typed ?? draft;
+  const setPrompt = (value: string) => {
+    if (draft) clearDraftPrompt();
+    setTyped(value);
+  };
   const [busy, setBusy] = useState(false);
   const built = useRef(false);
 
@@ -31,7 +39,7 @@ export function PromptCard({
     () => () => {
       if (!built.current) return;
       built.current = false;
-      setPrompt("");
+      setTyped(null);
       setBusy(false);
     },
     [],
@@ -41,6 +49,7 @@ export function PromptCard({
     e?.preventDefault();
     if (!prompt.trim() || disabled || busy) return;
     setBusy(true);
+    clearDraftPrompt();
     const ok = await onBuild(prompt.trim());
     // On success the page navigates away and stays busy until it is hidden (above).
     if (ok) built.current = true;

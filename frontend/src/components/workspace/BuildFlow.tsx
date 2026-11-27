@@ -10,13 +10,25 @@
  * request, up to five for a vague one). Without questions the step ticks off on its own.
  * The total is always three. Answers go to POST /workspaces/{id}/setup; the build waits
  * for them (2 minutes at most, then uses the preselected answers).
+ *
+ * Otherwise the card is a small checklist (reading the emails and designing the
+ * interface run side by side, so both rows can be working) and one thinking line.
+ *
+ * Cancel (every step) asks first, inline; `onCancel` stops the build (theme.md §7.10).
  */
 import { ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Spinner } from "@/components/ui/Spinner";
 import { LogoMark } from "@/components/brand/Logo";
 import { RevealText } from "@/components/motion/Reveal";
 import { Button } from "@/components/ui/Button";
-import { Spinner } from "@/components/ui/Spinner";
+import { Checklist, ThinkingLine } from "@/components/build/BuildParts";
+import {
+  designerTrack,
+  latestEvent,
+  readingProgress,
+  readingTrack,
+} from "@/components/build/model";
 import {
   api,
   ApiError,
@@ -25,32 +37,21 @@ import {
   type SetupQuestion,
 } from "@/lib/api";
 
-const STEPS = [
-  "Your request",
-  "Reading your emails",
-  "Building your workspace",
-] as const;
-const TOTAL = STEPS.length;
-
 type Answer = { choice: number; other: string };
-
-function plural(n: number, noun: string): string {
-  const word = noun.replace(/_/g, " ");
-  return `${n} ${n === 1 || word.endsWith("s") ? word : `${word}s`}`;
-}
 
 export function BuildFlow({
   workspaceId,
   prompt,
   run,
-  recordCounts,
   onChanged,
+  onCancel,
 }: {
   workspaceId: string;
   prompt: string;
   run: ActiveRun | null;
-  recordCounts: Record<string, number>;
   onChanged: () => Promise<void> | void;
+  /** Stop the build: deletes the workspace and goes back to Create. */
+  onCancel: () => Promise<void>;
 }) {
   const setup = run?.setup ?? null;
   const events = run?.events ?? [];
@@ -58,6 +59,7 @@ export function BuildFlow({
   const [sent, setSent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirming, setConfirming] = useState(false);
 
   const designDone = events.some(
     (e) => e.phase === "process" || e.phase === "app",
@@ -70,16 +72,11 @@ export function BuildFlow({
     !!setup?.answered ||
     ["none", "answered", "timed_out"].includes(qState);
 
-  let progress: { done: number; total: number } | null = null;
-  for (let i = events.length - 1; i >= 0 && !progress; i--) {
-    const e = events[i];
-    if (e.phase === "process" && e.total != null && e.done != null)
-      progress = { done: e.done, total: e.total };
-  }
-  const readingDone =
-    !!progress && progress.total > 0 && progress.done >= progress.total;
+  const progress = readingProgress(events);
+  const reading = readingTrack(events, progress);
+  const designer = designerTrack(events);
 
-  const step = !questionsDone ? 1 : !readingDone ? 2 : 3;
+  const step = !questionsDone ? 1 : reading !== "done" ? 2 : 3;
   const title =
     step === 1
       ? asking
@@ -113,128 +110,143 @@ export function BuildFlow({
   }
 
   return (
-    <section className="w-full rounded-2xl bg-surface px-6 pt-7 pb-6 shadow-float sm:px-9 sm:pt-8">
-      <div className="flex items-center justify-between gap-3">
-        <LogoMark size={40} className="animate-dmx-breathe" />
-        <p className="text-[13px] font-medium text-ink-3 tabular">
-          Step {step} of {TOTAL} · {STEPS[step - 1]}
-        </p>
-      </div>
-
-      <StepBar step={step} progress={progress} />
-
+    <section className="w-full rounded-[24px] bg-surface px-6 pt-7 pb-6 shadow-float sm:px-7">
       <div key={`${step}:${asking}`} className="animate-dmx-rise">
-        <RevealText
-          as="h1"
-          text={title}
-          className="mt-6 text-[28px] leading-[1.12] font-medium tracking-[-0.03em] sm:text-[30px]"
-        />
-        <p className="mt-2 truncate text-sm text-ink-3" title={prompt}>
+        <div className="flex items-center gap-3">
+          <LogoMark size={28} className="animate-dmx-breathe" />
+          <RevealText
+            as="h1"
+            text={title}
+            className="min-w-0 flex-1 text-xl leading-[1.2] font-semibold tracking-[-0.015em]"
+          />
+          <button
+            type="button"
+            onClick={() => setConfirming(true)}
+            aria-expanded={confirming}
+            className="-mr-2 h-11 shrink-0 rounded-full px-2 text-[13px] font-medium text-ink-3 transition-colors hover:text-danger"
+          >
+            Cancel
+          </button>
+        </div>
+        <p className="mt-1.5 truncate text-sm text-ink-3" title={prompt}>
           “{prompt}”
         </p>
         {timedOut && step > 1 && (
-          <p className="mt-2 text-[13px] text-ink-3">
+          <p className="mt-1.5 text-[13px] text-ink-3">
             We went ahead with the recommended answers.
           </p>
         )}
+      </div>
 
-        <div className="mt-6">
-          {step === 1 &&
-            (asking && setup ? (
-              <QuestionsStep
-                questions={setup.questions}
-                busy={busy}
-                onContinue={send}
-              />
-            ) : (
-              <Waiting label="Looking at your emails" />
-            ))}
-          {step === 2 && (
-            <ReadingStep progress={progress} recordCounts={recordCounts} />
-          )}
-          {step === 3 && (
-            <div className="flex flex-col gap-1.5">
-              <p className="text-base font-medium text-ink">
-                Building your workspace
-              </p>
-              <p className="text-sm text-ink-2" aria-live="polite">
-                {[...events].reverse().find((e) => e.phase === "app")?.label ??
-                  "Putting your workspace together"}
-              </p>
-            </div>
-          )}
-        </div>
-
-        {error && (
-          <p role="alert" className="mt-4 text-sm text-danger">
-            {error}
-          </p>
-        )}
-        {step >= 2 && (
-          <p className="mt-6 text-[13px] text-ink-3">
-            That&apos;s everything we need from you. You can close this page;
-            your workspace will be ready here.
-          </p>
+      <div className="mt-5">
+        {step === 1 && asking && setup ? (
+          <QuestionsStep
+            questions={setup.questions}
+            busy={busy}
+            onContinue={send}
+          />
+        ) : (
+          <>
+            <Checklist
+              step={step}
+              rows={[
+                { state: questionsDone ? "done" : "working", detail: "" },
+                {
+                  state: step === 1 ? "waiting" : reading,
+                  detail:
+                    progress && reading !== "waiting"
+                      ? `${reading === "done" ? progress.total : progress.done} of ${progress.total}`
+                      : "",
+                },
+                {
+                  state: step === 1 ? "waiting" : designer.state,
+                  detail: designer.label,
+                },
+              ]}
+            />
+            <ThinkingLine
+              phase={
+                step === 1 ? "request" : step === 2 ? "reading" : "designing"
+              }
+              fact={latestEvent(events)}
+            />
+          </>
         )}
       </div>
+
+      {error && (
+        <p role="alert" className="mt-4 text-sm text-danger">
+          {error}
+        </p>
+      )}
+      {step >= 2 && !confirming && (
+        <p className="mt-5 text-[13px] text-ink-3">
+          That&apos;s everything we need from you. You can close this page; your
+          workspace will be ready here.
+        </p>
+      )}
+      {confirming && (
+        <CancelStrip onKeep={() => setConfirming(false)} onStop={onCancel} />
+      )}
     </section>
   );
 }
 
-/* ------------------------------------------------------------------ step bar */
-
-function StepBar({
-  step,
-  progress,
+/** "Stop this build?", inline (theme.md §7.10). */
+function CancelStrip({
+  onKeep,
+  onStop,
 }: {
-  step: number;
-  progress: { done: number; total: number } | null;
+  onKeep: () => void;
+  onStop: () => Promise<void>;
 }) {
-  const pct = progress?.total
-    ? Math.max(6, Math.round((progress.done / progress.total) * 100))
-    : 6;
+  const [stopping, setStopping] = useState(false);
+  const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onKeep();
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onKeep]);
+
+  async function stop() {
+    setStopping(true);
+    setFailed(false);
+    try {
+      await onStop();
+    } catch {
+      setFailed(true);
+      setStopping(false);
+    }
+  }
+
   return (
     <div
-      role="progressbar"
-      aria-valuemin={1}
-      aria-valuemax={TOTAL}
-      aria-valuenow={step}
-      aria-valuetext={`Step ${step} of ${TOTAL}: ${STEPS[step - 1]}`}
-      className="mt-5 grid grid-cols-3 gap-1"
+      role="alertdialog"
+      aria-labelledby="cancel-build"
+      className="mt-5 flex animate-dmx-rise flex-wrap items-center gap-x-3 gap-y-2 rounded-sm bg-danger-bg px-4 py-3"
     >
-      {STEPS.map((s, i) => {
-        const n = i + 1;
-        const demux = n >= 2;
-        return (
-          <span
-            key={s}
-            aria-hidden
-            className="h-1.5 overflow-hidden rounded-full bg-track"
-          >
-            {n < step ? (
-              <span className="block h-full w-full rounded-full bg-violet" />
-            ) : n === step ? (
-              demux ? (
-                <span
-                  className="block h-full animate-dmx-flow rounded-full bg-brand-flow transition-[width] duration-500 ease-dmx"
-                  style={{ width: n === 2 ? `${pct}%` : "100%" }}
-                />
-              ) : (
-                <span className="block h-full w-full rounded-full bg-violet-line" />
-              )
-            ) : null}
-          </span>
-        );
-      })}
-    </div>
-  );
-}
-
-function Waiting({ label }: { label: string }) {
-  return (
-    <div className="flex items-center gap-3 py-2" aria-live="polite">
-      <Spinner size={22} />
-      <p className="text-[15px] font-medium text-ink-2">{label}</p>
+      <p
+        id="cancel-build"
+        className="min-w-0 flex-1 basis-60 text-sm text-danger"
+      >
+        {failed
+          ? "Couldn't stop the build. Try again."
+          : "Stop this build? The workspace is removed and your prompt goes back in the box."}
+      </p>
+      <div className="ml-auto flex items-center gap-1">
+        <Button variant="quiet" size="sm" onClick={onKeep} autoFocus>
+          Keep building
+        </Button>
+        <button
+          type="button"
+          onClick={stop}
+          disabled={stopping}
+          className="inline-flex h-11 items-center gap-2 rounded-full px-3 text-sm font-medium text-danger hover:underline disabled:opacity-70"
+        >
+          {stopping && <Spinner size={16} />}
+          Stop build
+        </button>
+      </div>
     </div>
   );
 }
@@ -354,33 +366,5 @@ function QuestionsStep({
         onClick={submit}
       />
     </>
-  );
-}
-
-/* ------------------------------------------------------------------ 2 · reading */
-
-function ReadingStep({
-  progress,
-  recordCounts,
-}: {
-  progress: { done: number; total: number } | null;
-  recordCounts: Record<string, number>;
-}) {
-  const main = Object.entries(recordCounts)
-    .filter(([t]) => !t.startsWith("_"))
-    .sort((a, b) => b[1] - a[1])[0];
-  return (
-    <div className="flex flex-col gap-1.5">
-      <p className="text-base font-medium text-ink tabular">
-        {progress
-          ? `${progress.done} of ${plural(progress.total, "thread")} read`
-          : "Collecting matching emails"}
-      </p>
-      <p className="text-sm text-ink-2" aria-live="polite">
-        {main
-          ? `${plural(main[1], main[0])} found so far`
-          : "Looking for the first records"}
-      </p>
-    </div>
   );
 }

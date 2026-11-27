@@ -11,7 +11,7 @@
 1. **One idea per screen.** Each screen has one focal element and one primary action. If a screen needs two primary buttons, it needs two screens.
 2. **Sky behind, white in front.** The sky gradient is only a backdrop. Content always sits on white (or translucent white) surfaces.
 3. **The logo colors mean "Demux is acting".** Violet, magenta and coral mark actions, focus, selection, live updates and build progress. They are never decoration.
-4. **The full logo gradient appears at most once per screen.** Today that is only the logo and the build progress bar.
+4. **The full logo gradient appears at most once per screen.** Today that is only the logo.
 5. **Calm, not "AI".** No sparkles, no glow orbs, no gradient text, no neon, no emoji, no "AI-powered" badges, no bento grids of feature icons, no left-border accent cards.
 6. **Real content.** Concrete names, amounts and dates. Never lorem ipsum, and never invented stats in product UI.
 7. **Accessible as built.** Real `<button>`, `<a>`, `<input>` + `<label>`. Hit targets ≥ 44px. Text contrast ≥ 4.5:1 (§3.6).
@@ -157,7 +157,7 @@ From the board in the launch video: board `#16171A`, column `#1F2024`, card `#2A
 ```
 Vary the blob positions slightly between screens (mirror horizontally, for example) so pages don't look identical. Keep the same five colors.
 
-The sky is painted on a fixed layer behind the grain (`.dmx-sky` in the root layout) that slowly `drift`s (§9). The `body` keeps the plain `bg-sky` as its fallback.
+The sky is painted on a fixed, **still** layer behind the grain (`.dmx-sky` in the root layout). It never animates: a full-screen layer that moves forces the browser to repaint and re-blend the whole viewport (grain included) on every frame, which measured at 15–25 fps on every page. The `body` keeps the plain `bg-sky` as its fallback.
 
 ### 4.2 Grain (always on top of the sky, under content)
 Grain keeps the gradient from looking like a flat CSS wash.
@@ -307,18 +307,34 @@ One card takes the user from Build to a ready workspace. Demux asks only what th
 
 There is no look step and no layout step: Demux never asks for colours, themes or a layout picked from a fixed list. Every question is written by the agent for this prompt.
 
-**Card:** white, radius 30, padding 36/36/24, max-width 620, `shadow-float`. Top to bottom:
-1. **Header row:** logo mark 40px with "breathe" on the left; on the right "Step 1 of 3 · Your request", 13/500 `ink-3`, tabular.
-2. **Step bar:** 3 equal segments, 6px tall, gap 4, radius full, track `#EEF1F6`. Done or skipped: `violet`. Active and the user's turn (1): `violet-line`. Active and Demux's turn (2–3): brand gradient with `flow` (the build card's one gradient, principle 4 in §1). Step 2 fills to threads read ÷ threads found (minimum 6%); step 3 is full and flowing. One `role="progressbar"` with `aria-valuenow` = step, `aria-valuemax` = 3 and `aria-valuetext="Step 1 of 3: Your request"`; the segments are `aria-hidden`.
-3. **Title:** the step's title (table above), `reveal-text` on each change. Focus moves to it.
-4. **Prompt:** quoted, 14px `ink-3`, one line, truncated (full text in `title`).
-5. **Body:** per step, below.
-6. **Footer row:** a note on the left (13px `ink-3`); while there are questions, the primary **Continue →** on the right (the card's only violet button).
+Small and quiet: a short checklist, not an illustration. Steps 2 and 3 really run **at the same time** (the interface is designed while the emails are read), so both rows can be working at once.
+
+**Card:** white, radius 24, padding 28/28/24, max-width 520, `shadow-float`. Top to bottom:
+1. **Title row:** logo mark 28px with "breathe", then the step's title (table above) 20/600 ink, `reveal-text` on each change (focus moves to it), and on the right a quiet text button **Cancel** (13/500 `ink-3`, 44px hit target, `danger` on hover). It is there at every step, questions included.
+2. **Prompt:** quoted, 14px `ink-3`, one line, truncated (full text in `title`), 6px under the title.
+3. **Body** (20px under the prompt): the questions while it is the user's turn (step 1 below); otherwise **the checklist** and **the thinking line**.
+4. **Footer row:** a note on the left (13px `ink-3`); while there are questions, the primary **Continue →** on the right (the card's only violet button).
+
+**Checklist:** three rows, 36px tall, gap 2: a 16px status (empty circle `pending-line` waiting, spinner working, violet check done), the label 14/500 (`ink-3` waiting, ink otherwise), and on the right 13px `ink-3` tabular detail.
+1. **Understanding your request:** detail "Your turn" while there are questions.
+2. **Reading your emails:** "48 of 80" once the count is known.
+3. **Designing your interface:** "Fixing a check", "Checking it with your data" when the designer says so; nothing while it simply works.
+The list is the step's `role="progressbar"`: `aria-valuenow` = step, `aria-valuemax` = 3, `aria-valuetext="Step 2 of 3: Reading your emails"`.
+
+**Thinking line:** under the list, 13px: a verb in -ing with an ellipsis, `ink-2`, changing every 2.8s from the current phase's list, its letters rippling in opacity (`ripple`; never gradient text, principle 5), then the latest real event in `ink-3` ("· Saved 3 expense records"). `aria-live="polite"` announces only the real events, never the verbs. The verbs are flavour; facts come only from the run's events.
+- Your request: Reading your request · Searching your inbox · Sampling threads · Spotting patterns
+- Reading: Untangling threads · Sorting · Matching replies · Cross-checking dates · Tallying amounts
+- Designing (once reading is done): Sketching the layout · Choosing a palette · Setting the numbers · Polishing
+
+When the workspace is ready, the page moves to it with `page`.
+
+**Cancel** asks first, inline: the bottom of the card becomes a `danger-bg` strip (radius 12, padding 12/16): "Stop this build? The workspace is removed and your prompt goes back in the box." 14px `danger`, with quiet **Keep building** and a `danger` text button **Stop build** (spinner while it works). Stopping deletes the workspace (the worker stops its run within 2 s, so it stops spending) and opens Create with the prompt already in the prompt card, ready to reword. Escape or Keep building closes the strip.
 
 **Step bodies**
 - **1 · Your request.** While the agent searches the mailbox and looks for gaps: 22px spinner + "Looking at your emails" 15/500 `ink-2`, and no Continue. A precise prompt has no gaps: the step ticks off on its own and the card moves to step 2. Otherwise the agent asks **one question per gap** (1–2 for a fairly clear prompt, up to 5 for a vague one), all on one card: `<fieldset>`s, gap 24. Each: `<legend>` 16/600 ink (the agent's question, specific to this prompt and usually starting with what it found, e.g. "I found orders from Amazon, Zalando and Uber Eats. Should food deliveries count?" or "Do you want to follow each order until it arrives, or only see what is late?"), then radio rows: min-height 44px, radius 12, 1px `line`, padding 0 14, 15/500 `ink-2`, 18px radio. Selected: `violet-soft` background, `violet-line` border, `violet-ink` text. The agent's best guess is preselected and carries a "Recommended" tag (§7.7) on the right. The last row, "Other…", shows a text input (40px, radius 12, §7.4 rules) when chosen. Footer note: "We picked our best guess for each. Change what doesn't fit."
-- **2 · Reading your emails.** Line 16/500 ink "48 of 120 threads read" (tabular; "Collecting matching emails" until the count is known) and a live line 14px `ink-2` "14 shipments found so far" (the main record type, named from the guide). Footer note, from here on: "That's everything we need from you. You can close this page; your workspace will be ready here."
-- **3 · Almost there.** Line 16/500 ink "Building your workspace", live line 14px `ink-2` from the latest event ("Adjusting the interface to your data"). When the workspace is ready, the page moves to it with `page`.
+- **1 · Your request, Demux's turn.** Row 1 working, rows 2–3 waiting, the thinking line.
+- **2 · Reading your emails.** Rows 2 and 3 working side by side. Footer note, from here on: "That's everything we need from you. You can close this page; your workspace will be ready here."
+- **3 · Almost there.** Row 2 checked; row 3 still works (or the interface is being checked against the data).
 
 **Behaviour**
 - Steps only move forward, with the `step` motion (§9). The total is always 3: a skipped step fills like a done one.
@@ -327,10 +343,12 @@ There is no look step and no layout step: Demux never asks for colours, themes o
 - The answers shape the workspace: what counts, what is tracked, how records are grouped and what the interface shows first.
 - Opening the page mid-build (a reload, another tab, coming back later) resumes at the current step, with answered steps shown as done.
 - Failure and "can't build" keep the existing copy (§11) inside the same card.
-- `prefers-reduced-motion`: no `breathe`, `flow` or `reveal-text`; segments fill without animation.
+- `prefers-reduced-motion`: no `breathe`, `ripple` or `reveal-text`; the verbs change without the ripple.
 
 ### 7.11 Top bar (app)
-Padding 18px top, sits on sky (no bar background). Left padding is `var(--dmx-gutter)`: 80px while the sidebar is closed (room for its open button, §7.13), 24px while it is open beside the page; the padding eases with the sidebar (360ms `ease-dmx-out`). Workspace page: workspace name (title-sm) + rename (ghost icon) or status chip on the left; sync status and More (⋯: Rename, Delete) on the right. No Undo and no Chat in the MVP. No sync button: workspaces sync on their own (every few minutes, and the page refreshes when it comes back into view). No workspace details are shown to users. No back button and no avatar: workspaces and the account live in the sidebar. The create and profile pages have no top bar.
+Padding 18px top, sits on sky (no bar background). Used while a workspace is building or failed; a ready workspace has the floating bar instead (below). Left padding is `var(--dmx-gutter)`: 80px while the sidebar is closed (room for its open button, §7.13), 24px while it is open beside the page; the padding eases with the sidebar (360ms `ease-dmx-out`). Workspace page: workspace name (title-sm) + rename (ghost icon) or status chip on the left; sync status and More (⋯: Rename, Delete) on the right. No Undo and no Chat in the MVP. No sync button: workspaces sync on their own (every few minutes, and the page refreshes when it comes back into view). No workspace details are shown to users. No back button and no avatar: workspaces and the account live in the sidebar. The create and profile pages have no top bar.
+
+**Floating bar (ready workspace).** A generated app has its own look (often dark), so Demux puts no frame around it: no sky, no top bar. Its controls float over the app's top-right corner instead, as small as they can be: 12px from the top and right, `glass`, radius full, `shadow-glass`. Idle, that is only More (⋯, 44px), mirroring the sidebar's open button in the other corner; its menu starts with the sync status (13/500, above a `line-soft` divider), then Rename, Open in new tab, Delete. While a run is active the bar grows into a pill (padding 4px) with the status chip before ⋯. Rename turns the pill into the name field (§7.4, 260px). Banners (reconnect, action errors, display error) float under the pill, centered, max 560px. Nothing else is drawn over the app.
 
 ### 7.13 App sidebar (navigation)
 The only navigation in the signed-in app. Notion-like: from 768px it is a column beside the page and **pushes** it (the page shrinks while it is open and takes the full width when it closes); below 768px it floats over the page with a scrim. Open by default from 768px, closed below; the user's toggle then holds while they move between pages (not across reloads).
@@ -338,6 +356,7 @@ The only navigation in the signed-in app. Notion-like: from 768px it is a column
 - **Close button:** on the **right** of the sidebar header, ghost icon (§7.1) on white: 44px circle, `panel-left-close` 20px `ink-3`, `surface-2` hover.
 - **Open button:** shown only while the sidebar is closed: icon button on sky, `panel-left-open` 20px, fixed top 18px / left 24px. Both toggles carry `aria-expanded` + `aria-controls`, and focus moves to whichever one appears.
 - **Below 768px:** scrim `rgb(12 26 46 / .18)` (no blur: the sidebar has its own view-transition name, which makes it a backdrop root); a click on it, Escape, or choosing a page closes the sidebar. From 768px choosing a page keeps it open.
+- **On a ready workspace** the sidebar starts closed at every width, so the app has the whole window; the open button floats over the app's top-left corner. Once the user opens or closes it, their choice holds as everywhere else.
 - **Click outside closes it** at every width: a press anywhere outside the panel (the page, the top bar, inside a workspace's app) closes an open sidebar; the open button brings it back.
 - **Contents, top to bottom:**
   1. Header row (44px): lockup (28px mark, "Demux", opens the workspaces list: `/workspaces`, §8.0) on the left, close button on the right.
@@ -381,11 +400,12 @@ Every signed-in page (`/workspaces…`, `/profile`) lives inside one shell: the 
 0. **Login** (`/login`): sky + lockup top left. Centered white card (max 440, radius 30, `shadow-float`): mark 46px, title-lg "Sign in to Demux" / "Create your account", first name + last name side by side (sign-up only, both required; they become "Hello, [first name]"), email + password fields (labels 13/500 `ink-2`, inputs 48px, radius 12), full-width primary, a text link to switch. Sign-up only works for an email with access (a Stripe subscription, including its 14-day free trial, free access, or an admin); the subtitle says "Use the email you subscribed or were invited with." and a refused email gets the danger note with an inline violet link "Start a free trial at usedemux.com". `/login?mode=sign-up` opens on Create your account (the landing page links there after checkout). Then **Check your email**: 6 code boxes (56px tall, radius 12, one real `<input autocomplete="one-time-code">`), primary "Verify", "Resend code" (30 s cooldown) and "Use a different email". Trust line under the card.
 0. **Workspaces** (`/workspaces`, where sign-in lands; the sidebar lockup opens it): with no workspace yet it opens **Create**. Otherwise a centered column (max 760, top padding like Create): title-lg "Your workspaces" (`reveal-text`) and "Open one to see it." 16 `ink-on-sky`, then one workspace card per row (§7.8), gap 10. Each card is a link: name 16/600 truncated, meta 13 `ink-2` with the sidebar's dot ("Synced 3 min ago · 14 invoices", "Building", "Failed"), the prompt on one line 14 `ink-3` (truncated, full text in `title`), and a chevron right that nudges on hover. The workspace opened last in this browser carries a "Last opened" tag (§7.7) after its name. While a slot is free, an empty slot (§7.8) under the cards links to Create: `plus` 16px + "Create workspace". This page loads only the list (names, statuses, counts): a workspace's app and data load once it is opened, and pointing at or focusing a card starts loading the app frame so it opens faster. Opening `/workspaces` never jumps into a workspace on its own.
 1. **Create, connect** (`/workspaces/new` while no Gmail is connected or it needs a reconnect): centered white card (max 520, radius 30, `shadow-float`): breathing mark 56px, title-lg "Connect your Gmail", one sentence, primary "Connect with Google →", trust line. Google's errors show in the card.
-2. **Create, prompt** (`/workspaces/new` once Gmail is connected): centered, top third: title-xl "Hello, [first name]" (the first name from sign-up or the profile page; just "Hello" for older accounts without one), then "What do you want to track?" 22/500 `ink-on-sky`, the prompt card (max 760), the read-only line with a lock icon. With both workspaces used, the prompt is disabled and a limit notice replaces the read-only line: a white card (max 760, radius 20, `shadow-panel`, padding 16/20) with "Workspace limit reached" 15/600 ink and "You can have 2 workspaces. Delete one to create a new one." 14 `ink-2`. Build opens the new workspace in the same area.
+2. **Create, prompt** (`/workspaces/new` once Gmail is connected): centered, top third: title-xl "Hello, [first name]" (the first name from sign-up or the profile page; just "Hello" for older accounts without one), then "What do you want to track?" 22/500 `ink-on-sky`, the prompt card (max 760; after a cancelled build it opens with that build's prompt in it), the read-only line with a lock icon. With both workspaces used, the prompt is disabled and a limit notice replaces the read-only line: a white card (max 760, radius 20, `shadow-panel`, padding 16/20) with "Workspace limit reached" 15/600 ink and "You can have 2 workspaces. Delete one to create a new one." 14 `ink-2`. Build opens the new workspace in the same area.
 3. **Workspace, building** (`/workspaces/[id]`, status `building`): sky + top bar (name, Building chip). Centered build flow card (§7.10). Nothing else.
-4. **Result** (`/workspaces/[id]`, status `ready`): sky + top bar (§7.11). Body: padding 0 16 16, full viewport height: the **app panel** alone (white, radius 26, `shadow-panel`, full width; the sandboxed iframe lives here). The chat side panel is removed for the MVP (`ChatPanel` and `SidePanel` are kept for when it returns).
-   - Display error banner (inside the app panel, top): bg `#FDECEA`, text `#A8321F`, "This workspace hit a display error", violet "Fix it" button.
-   - Reconnect banner (under the top bar): glass card, ink text, primary button "Reconnect Gmail".
+4. **Result** (`/workspaces/[id]`, status `ready`): the app **full bleed**: the sandboxed iframe fills the page beside the sidebar, edge to edge, no padding, no radius, no sky around it, so the app's own colours never sit inside Demux's blue. Demux's controls float over it: the sidebar's open button (top left, §7.13) and the floating bar (top right, §7.11). The chat side panel is removed for the MVP (`ChatPanel` and `SidePanel` are kept for when it returns).
+   - Display error banner (floating under the bar, top): bg `#FDECEA`, text `#A8321F`, "This workspace hit a display error", violet "Fix it" button.
+   - Reconnect banner (floating under the bar): glass card, ink text, primary button "Reconnect Gmail".
+4b. **App alone** (`/workspaces/[id]/app`, from More → Open in new tab): only the app, full window, outside the app shell: no sidebar, no bar, no controls. The tab title is the workspace name. It refreshes like the workspace page. While the workspace is not ready, or when it can't be loaded, a centered white card (max 440, radius 30, `shadow-float`) on sky says so, with a secondary "Open in Demux" link. A display error shows the danger banner floating at the top, with an "Open in Demux" link (fixing happens there).
 5. **Profile** (`/profile`, from the account card): centered column (max 640), title-lg "Profile" + "Your name and the Gmail Demux reads." `ink-on-sky`, then two white cards (radius 26, `shadow-panel`, padding 24/28): **Your name** (first + last name fields side by side, both required, primary "Save" (small) on the right, "✓ Saved" `violet-ink` beside it after saving) and **Account** (sign-in email, read-only; "Gmail Demux reads" with a quiet button "Use another account" / "Connect Gmail" / "Reconnect Gmail" that goes through Google and comes back here, and, while a Gmail is connected, a quiet "Disconnect" beside it. Disconnect asks first, inline in the same row: "Disconnect [gmail]? Your workspaces stay but stop updating." with quiet "Cancel" and a `danger` text "Disconnect" button; then the row reads "Not connected"; the read-only trust line).
 
 5b. **No access** (any signed-in page, when the user has no subscription, trial or free access any more): the shell shows this instead of the sidebar and page. Sky + lockup top left, like Login. Centered white card (max 480, radius 30, `shadow-float`): mark 46px, title-lg "Your Demux access has ended", one sentence that the workspaces are kept, "Signed in as [email]" 13px `ink-3`, the screen's one primary **Subscribe →** (to the landing page's pricing card), then a row with quiet text buttons "I've subscribed, check again" (spinner while checking; "Still no active subscription for [email]." in a `violet-soft` note if nothing changed) and "Log out". The 15 s poll unlocks the app on its own once a subscription arrives.
@@ -406,9 +426,9 @@ entering the screen.
 | `spin` | rotate 360°, 0.9s linear infinite | Active step spinner, button loading |
 | `pulse` | opacity 1 → .35 → 1, 1.6s ease-in-out | Building dot |
 | `breathe` | scale 1 → 1.045 → 1, 2.4s ease-in-out | Logo on the build card |
-| `flow` | background-position 0 → 200px, 1.8s linear | Gradient inside the build step bar while Demux works (§7.10; `background-size: 200px 100%`; the 200px tile runs violet → magenta → coral → magenta → violet so it loops without a seam) |
+| `flow` | background-position 0 → 200px, 1.8s linear | A gradient that moves while Demux works (`background-size: 200px 100%`; the 200px tile runs violet → magenta → coral → magenta → violet so it loops without a seam). No current use |
+| `ripple` | each letter: opacity 1 → .45 → 1, 1.6s ease-in-out infinite, 40ms stagger | The build card's thinking line (§7.10) |
 | `blink` | opacity steps, 1.1s | Text caret (marketing demos only) |
-| `drift` | sky layer scale 1.06, translate ±2%, 40s `ease-in-out` alternate infinite | The sky backdrop on every app page. Slow enough that nobody notices it moving, only that the page isn't a flat image |
 | `reveal` | fade + 16px rise, 700ms `ease-dmx-out`, stagger 80ms | Blocks entering a screen in reading order: title → card → helper line → list (`<Reveal index>`) |
 | `reveal-text` | each word: fade + 0.4em rise + 8px blur → sharp, 800ms `ease-dmx-out`, stagger 45ms | Page titles only (title-xl / title-lg), at most one per screen (`<RevealText>`) |
 | `pop` | fade + scale .96 + 4px from the anchor, 200ms `ease-dmx-out`, origin at the trigger | Menus and popovers |
@@ -424,6 +444,7 @@ Rules:
 - Entrances play once, when the screen appears. Polling and live updates never replay them.
 - Never animate more than ~6 reveal steps on one screen; the whole sequence settles within 1s.
 - Hover motion is for things you can click. Static content never moves on hover.
+- Nothing large loops forever. Infinite animations stay small (a spinner, a 28px mark, a status dot): an endless full-screen or backdrop animation repaints the whole page every frame and makes everything else stutter.
 - Respect `prefers-reduced-motion: reduce`: every loop, entrance and lift is off and content shows in its final state. No bouncing, no confetti, no parallax, no scroll-jacking.
 
 ---
@@ -521,7 +542,7 @@ const instrumentSans = Instrument_Sans({
   @keyframes dmx-pulse { 50% { opacity: .35; } }
   @keyframes dmx-breathe { 50% { transform: scale(1.045); } }
   @keyframes dmx-flow { from { background-position: 0 0; } to { background-position: 200px 0; } }
-  /* + dmx-reveal, dmx-reveal-word, dmx-pop, dmx-drift (§9); see globals.css */
+  /* + dmx-reveal, dmx-reveal-word, dmx-pop (§9); see globals.css */
 }
 
 @layer base {
@@ -551,7 +572,7 @@ const instrumentSans = Instrument_Sans({
 Put the grain from §4.2 on the page shell component (the element that has `bg-sky`, with `position: relative`).
 
 ### 10.3 Generated apps (sandboxed iframe)
-**Studio apps (v3, every new app) do not follow this design system.** The interface designer (the UI model, `UI_MODEL`, GLM-5.2) designs each workspace's experience and look from scratch: its own palette, type pairing, layout, light or dark, charts and motion, chosen for that workspace's subject. Demux's own UI around it (sky, sidebar, top bar, the white app panel at radius 26) does not change. The plan is `docs/UI_GENERATION_PLAN.md` §11.
+**Studio apps (v3, every new app) do not follow this design system.** The interface designer (the UI model, `UI_MODEL`, GLM-5.2) designs each workspace's experience and look from scratch: its own palette, type pairing, layout, light or dark, charts and motion, chosen for that workspace's subject. The app is shown full bleed (§8.4): Demux draws no frame around it, only its sidebar beside it and two floating controls over its top corners, which the designer's prompt tells it to keep clear. The plan is `docs/UI_GENERATION_PLAN.md` §11.
 
 - **What the shell gives a studio app:** the studio runtime (React 19, Recharts, an `Icon` set from lucide, the data helpers), Tailwind v4 compiled in the iframe, and embedded fonts: Inter (`font-sans`), Space Grotesk (`font-display`), Fraunces (`font-serif`), Instrument Serif (`font-editorial`), JetBrains Mono (`font-mono`). No Demux tokens, palettes or base classes. The reference the designer reads is `app-kit/src/studio.md`.
 - **What stays fixed:** the sandbox and CSP (no network, no navigation, inline scripts only), the app check (it must render, show the data, survive empty data, render the same twice), and the bridge (`openEmail` / `demux.openSource`, `demux.openLink`).

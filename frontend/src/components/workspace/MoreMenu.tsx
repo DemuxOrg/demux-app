@@ -1,15 +1,21 @@
 "use client";
 
-/** The ⋯ menu in the workspace top bar: Rename, Delete. */
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+/** The ⋯ menu in the workspace bar: Rename, Open in new tab (the app alone), Delete. */
+import { ExternalLink, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 export function MoreMenu({
   onRename,
   onDelete,
+  newTabHref,
+  header,
 }: {
   onRename: () => void;
   onDelete: () => void;
+  /** The app alone (theme.md §8.4b); the item is hidden without it. */
+  newTabHref?: string;
+  /** A line above the items (the sync status, when the bar has no room for it). */
+  header?: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -50,8 +56,13 @@ export function MoreMenu({
       {open && (
         <div
           role="menu"
-          className="absolute right-0 z-40 mt-2 w-48 origin-top-right animate-dmx-pop rounded-lg border border-line bg-surface p-1.5 shadow-glass"
+          className="absolute right-0 z-40 mt-2 w-52 origin-top-right animate-dmx-pop rounded-lg border border-line bg-surface p-1.5 shadow-glass"
         >
+          {header && (
+            <div className="mb-1 border-b border-line-soft px-3 pt-2 pb-2.5">
+              {header}
+            </div>
+          )}
           <button
             role="menuitem"
             type="button"
@@ -60,6 +71,18 @@ export function MoreMenu({
           >
             <Pencil size={16} aria-hidden /> Rename
           </button>
+          {newTabHref && (
+            <a
+              role="menuitem"
+              href={newTabHref}
+              target="_blank"
+              rel="noopener"
+              onClick={() => setOpen(false)}
+              className={`${item} text-ink-2 hover:bg-surface-2 hover:text-ink`}
+            >
+              <ExternalLink size={16} aria-hidden /> Open in new tab
+            </a>
+          )}
           <button
             role="menuitem"
             type="button"
