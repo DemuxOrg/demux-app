@@ -5,11 +5,13 @@ schema. Unknown or foreign ids are 404. Users without access (no subscription, t
 free access) get 402 `subscription_required` from every `/workspaces` route.
 """
 
+import functools
+import hashlib
 import uuid
 from datetime import datetime
 from typing import Literal
 
-from fastapi import APIRouter, Depends, Query, Response, status
+from fastapi import APIRouter, Depends, Query, Request, Response, status
 from sqlalchemy import exists, select
 
 from app.agent.palettes import PALETTES, valid_palette
@@ -107,11 +109,11 @@ def _change(c: Change) -> ChangeRead:
     )
 
 
-@shell_router.get("/app-shell", response_model=AppShell)
-async def app_shell(runtime: Literal["v1", "v2", "v3"] = "v1") -> AppShell:
-    """The fixed <head> content (CSP, fonts, bridge, and the runtime's libraries) every
-    app iframe of that runtime is wrapped in, and the palettes v1 and v2 apps use."""
-    return AppShell(
+@functools.cache
+def _shell_response(runtime: str) -> tuple[bytes, str]:
+    """The shell's JSON body and its ETag, built once per runtime and process: it only
+    changes with the code (`make kit` + a restart), and it is ~1.6 MB."""
+    body = AppShell(
         head=shell_head(runtime),
         palettes=[
             PaletteInfo(
@@ -124,7 +126,22 @@ async def app_shell(runtime: Literal["v1", "v2", "v3"] = "v1") -> AppShell:
             )
             for p in PALETTES.values()
         ],
-    )
+    ).model_dump_json()
+    return body.encode(), f'"{hashlib.sha256(body.encode()).hexdigest()[:32]}"'
+
+
+@shell_router.get("/app-shell", response_model=AppShell)
+async def app_shell(request: Request, runtime: Literal["v1", "v2", "v3"] = "v1") -> Response:
+    """The fixed <head> content (CSP, fonts, bridge, and the runtime's libraries) every
+    app iframe of that runtime is wrapped in, and the palettes v1 and v2 apps use.
+
+    Cached by the browser and revalidated with its ETag on every use (`no-cache`): a
+    repeat visit gets a 304 instead of the ~600 KB (gzipped) body."""
+    body, etag = _shell_response(runtime)
+    headers = {"ETag": etag, "Cache-Control": "public, no-cache"}
+    if etag in request.headers.get("if-none-match", ""):
+        return Response(status_code=status.HTTP_304_NOT_MODIFIED, headers=headers)
+    return Response(body, media_type="application/json", headers=headers)
 
 
 @router.get("", response_model=list[WorkspaceSummary])

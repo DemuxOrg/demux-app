@@ -14,6 +14,7 @@ refreshed once. Never logs content.
 import asyncio
 import base64
 import logging
+import time
 from datetime import UTC, datetime
 from email.utils import getaddresses
 from typing import Any, Protocol
@@ -26,6 +27,7 @@ from app.mail.clean import html_to_text
 logger = logging.getLogger(__name__)
 
 API = "https://gmail.googleapis.com/gmail/v1/users/me"
+SLOW_MS = 5000  # requests slower than this are logged (endpoint and time only)
 
 
 class TokenProvider(Protocol):
@@ -81,7 +83,8 @@ class GmailMailbox:
         self,
         tokens: TokenProvider,
         *,
-        concurrency: int = 8,
+        # Gmail allows ~25 threads.get per second per user; 429s are retried below.
+        concurrency: int = 16,
         transport: httpx.AsyncBaseTransport | None = None,
     ):
         self._tokens = tokens
@@ -93,37 +96,46 @@ class GmailMailbox:
 
     async def _get(self, path: str, params: dict[str, Any] | list[tuple[str, Any]]) -> Any:
         async with self._sem:
-            for attempt in range(3):
-                token = await self._tokens.get(force_refresh=attempt == 1)
-                try:
-                    resp = await self._client.get(
-                        f"{API}{path}", params=params, headers={"Authorization": f"Bearer {token}"}
-                    )
-                except httpx.TransportError as e:
-                    if attempt == 2:
-                        raise MailboxError("Gmail is unreachable") from e
-                    await asyncio.sleep(1 + attempt)
-                    continue
-                if resp.status_code == 401:
-                    if attempt >= 1:
-                        raise ReconnectRequired("gmail rejected the token")
-                    continue
-                if resp.status_code == 404:
-                    raise MailboxError("not found")
-                if resp.status_code in (429, 500, 502, 503, 504):
+            started = time.monotonic()
+            try:
+                return await self._request(path, params)
+            finally:
+                ms = int((time.monotonic() - started) * 1000)
+                if ms > SLOW_MS:  # the endpoint only: never the query or ids
+                    logger.info("slow gmail request %s ms=%s", path.split("/")[1], ms)
+
+    async def _request(self, path: str, params: dict[str, Any] | list[tuple[str, Any]]) -> Any:
+        for attempt in range(3):
+            token = await self._tokens.get(force_refresh=attempt == 1)
+            try:
+                resp = await self._client.get(
+                    f"{API}{path}", params=params, headers={"Authorization": f"Bearer {token}"}
+                )
+            except httpx.TransportError as e:
+                if attempt == 2:
+                    raise MailboxError("Gmail is unreachable") from e
+                await asyncio.sleep(1 + attempt)
+                continue
+            if resp.status_code == 401:
+                if attempt >= 1:
+                    raise ReconnectRequired("gmail rejected the token")
+                continue
+            if resp.status_code == 404:
+                raise MailboxError("not found")
+            if resp.status_code in (429, 500, 502, 503, 504):
+                await asyncio.sleep(2 * (attempt + 1))
+                continue
+            if resp.status_code == 403:
+                if "ratelimit" in resp.text.lower().replace("_", ""):
                     await asyncio.sleep(2 * (attempt + 1))
                     continue
-                if resp.status_code == 403:
-                    if "ratelimit" in resp.text.lower().replace("_", ""):
-                        await asyncio.sleep(2 * (attempt + 1))
-                        continue
-                    raise ReconnectRequired("gmail access denied (scope missing?)")
-                if resp.status_code >= 400:
-                    # e.g. 400 for a query Gmail cannot parse: the caller reports it to
-                    # the agent instead of failing the whole run.
-                    raise MailboxError(f"Gmail rejected the request (HTTP {resp.status_code})")
-                return resp.json()
-            raise MailboxError(f"Gmail request failed ({path.split('/')[1]})")
+                raise ReconnectRequired("gmail access denied (scope missing?)")
+            if resp.status_code >= 400:
+                # e.g. 400 for a query Gmail cannot parse: the caller reports it to
+                # the agent instead of failing the whole run.
+                raise MailboxError(f"Gmail rejected the request (HTTP {resp.status_code})")
+            return resp.json()
+        raise MailboxError(f"Gmail request failed ({path.split('/')[1]})")
 
     async def search(
         self,
@@ -161,6 +173,17 @@ class GmailMailbox:
             if not page_token:
                 break
         return ids[:max_results]
+
+    async def search_ids_any(
+        self,
+        queries: list[str],
+        max_results: int = 25,
+        after: datetime | None = None,
+    ) -> list[str]:
+        """Threads matching any of `queries`, newest first, in one search: Gmail ranks the
+        union itself, so a build fetches only the threads it keeps."""
+        combined = " OR ".join(f"({q})" for q in queries if q.strip())
+        return await self.search_ids(combined, max_results, after)
 
     async def count_received(self, after: datetime, before: datetime, cap: int = 20_000) -> int:
         """Messages received in [after, before): ids only, sent mail and chats excluded."""

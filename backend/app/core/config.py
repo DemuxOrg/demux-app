@@ -55,12 +55,15 @@ class Settings(BaseSettings):
     LLM_TEMPERATURE: float = 0.2
     # The interface designer (docs/UI_GENERATION_PLAN.md §11): this model designs and
     # writes every workspace app (UX and code); the models above never write interface
-    # code. Its answers are long, so it gets more tokens and time. No fallback by default,
-    # so a build never quietly falls back to a weaker designer: set the same model on
-    # another provider (e.g. "zai-org/GLM-5.2:novita") to get one.
-    UI_MODEL: str = "zai-org/GLM-5.2:deepinfra"
-    UI_FALLBACK_MODEL: str = ""
-    UI_MAX_TOKENS: int = 24000
+    # code. Its answers are long, so it gets more tokens and time. The fallback is the same
+    # model on another provider, so a build never quietly falls back to a weaker designer.
+    # CoreWeave/Together serve GLM-5.2 at ~320-370 tok/s against ~90 on DeepInfra
+    # (measured 2026-11-27): the same designer, about 3.5x faster.
+    UI_MODEL: str = "zai-org/GLM-5.2:coreweave"
+    UI_FALLBACK_MODEL: str = "zai-org/GLM-5.2:together"
+    # GLM reasons before it writes (~19k tokens seen): 24k cut apps off mid-code and the
+    # retry cost minutes.
+    UI_MAX_TOKENS: int = 40000
     UI_CALL_TIMEOUT_S: float = 300
     UI_TEMPERATURE: float = 0.7
     UI_REASONING_EFFORT: str = ""  # "": the provider's default

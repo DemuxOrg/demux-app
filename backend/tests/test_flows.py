@@ -9,6 +9,7 @@ from app.agent.context import MemoryPersister, RunContext, WorkspaceState
 from app.agent.default_app import DEFAULT_APP
 from app.agent.loop import PhaseFailed
 from app.agent.shell import studio_app
+from app.agent.tools import DESIGN_MAX_READS
 from app.mail.fake import FakeMailbox
 from tests.helpers import (
     GOOD_STUDIO_ANSWER,
@@ -109,7 +110,7 @@ async def test_batches_are_cut_by_size():
 async def test_design_budget_stops_endless_reading():
     ctx, box, _ = make()
     tid = (await box.search("A-1001"))[0].thread_id
-    reads = [("read_thread", {"thread_id": tid})] * 12
+    reads = [("read_thread", {"thread_id": tid})] * (DESIGN_MAX_READS + 2)
     llm = build_llm(design=[[("search_mail", {"query": "order"})], reads, *DESIGN_TURNS[1:]])
     await flows.build(ctx, cfg(llm))
     errors = [r for r in tool_results(llm.calls_for("design")[2]) if "error" in r]
@@ -253,3 +254,26 @@ async def test_edit_with_backfill_rereads_known_threads():
     )
     assert await flows.edit(ctx, cfg(llm), "add a field", []) == "Added a field."
     assert "re-read" in inputs[0] and inputs[0].count("<thread ") == 6
+
+
+async def test_collect_uses_one_combined_search_and_falls_back():
+    """Builds fetch only the threads the combined search keeps; a rejected combined query
+    falls back to one search per query."""
+    ctx, box, _ = make()
+    ids = [t.thread_id for t in await box.search("order")]
+    calls: list = []
+
+    async def union(queries, max_results, after):
+        calls.append(queries)
+        return ids[:1]
+
+    box.search_ids_any = union
+    threads = await flows.collect_threads(ctx, ["order", "shipped"], ctx.window_start, 80)
+    assert calls == [["order", "shipped"]] and [t.thread_id for t in threads] == ids[:1]
+
+    async def rejected(queries, max_results, after):
+        raise flows.MailboxError("Gmail rejected the request (HTTP 400)")
+
+    box.search_ids_any = rejected
+    threads = await flows.collect_threads(ctx, ["order", "shipped"], ctx.window_start, 80)
+    assert {t.thread_id for t in threads} >= set(ids)

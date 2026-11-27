@@ -185,3 +185,29 @@ async def test_daily_budget_ignores_demo_seeds(session, dev_user):
     session.add(_llm_call(dev_user.id, 1.25))
     await session.flush()
     assert await runs.spent_today(session, dev_user.id) == pytest.approx(1.25)
+
+
+async def test_deleted_run_is_stopped(session, session_factory, dev_user):
+    """Cancelling a build deletes its workspace; the worker then stops the run's task
+    (no more LLM spend), and leaves the others alone."""
+    import asyncio
+
+    from app.worker import Worker
+
+    gone = await create_workspace(session, dev_user.id, "cancel me")
+    kept = await create_workspace(session, dev_user.id, "keep me")
+    gone_run = await runs.active_run(session, gone.id)
+    kept_run = await runs.active_run(session, kept.id)
+    worker = Worker()
+    worker.running = {
+        gone_run.id: asyncio.create_task(asyncio.sleep(60)),
+        kept_run.id: asyncio.create_task(asyncio.sleep(60)),
+    }
+    assert await worker.stop_deleted_runs(session_factory) == 0
+
+    await delete_workspace(session, dev_user.id, gone.id)
+    assert await worker.stop_deleted_runs(session_factory) == 1
+    await asyncio.sleep(0)
+    assert worker.running[gone_run.id].cancelled()
+    assert not worker.running[kept_run.id].done()
+    worker.running[kept_run.id].cancel()

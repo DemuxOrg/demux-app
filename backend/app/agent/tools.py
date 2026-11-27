@@ -22,13 +22,14 @@ from app.services.store import DataError, apply_delete, apply_save, public_field
 
 MAX_GUIDE_CHARS = 6000
 MAX_BODY_CHARS = 4000
-# Design phase: a sample is enough. Small bodies and a hard cap keep it fast and cheap.
-DESIGN_BODY_CHARS = 1200
-DESIGN_MAX_MESSAGES = 4
-DESIGN_MAX_READS = 10
-DESIGN_MAX_SEARCHES = 8
+# Design phase: a sample is enough. Capped bodies and reads keep it fast and cheap.
+# Worst case in context: KEEP_THREADS (8) threads x 8 messages x 1500 chars, ~24k tokens.
+DESIGN_BODY_CHARS = 1500
+DESIGN_MAX_MESSAGES = 8
+DESIGN_MAX_READS = 20
+DESIGN_MAX_SEARCHES = 12
 EDIT_MAX_MESSAGES = 12
-MAX_SUMMARY_CHARS = 300
+MAX_SUMMARY_CHARS = 500
 SETUP_POLL_SECONDS = 1.5
 MAX_QUESTIONS = 5
 # Questions are about what the workspace tracks, never about its look (frontend/theme.md
@@ -125,20 +126,20 @@ async def _read_thread(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
     thread_id = str(args.get("thread_id", ""))
     if thread_id not in ctx.known_threads:
         raise ToolError("unknown thread_id: only ids returned by search_mail or given in the input")
+    design = ctx.phase == "design"
+    if design:
+        if ctx.design_reads >= DESIGN_MAX_READS:
+            raise ToolError(
+                "read budget used up: you have a sample; now call write_guide, set_queries "
+                "and finish"
+            )
+        ctx.design_reads += 1
     try:
         thread = await ctx.mailbox.get_thread(thread_id)
     except ReconnectRequired:
         raise
     except MailboxError as e:
         raise ToolError(f"could not read thread: {e}") from e
-    design = ctx.phase == "design"
-    if design:
-        ctx.design_reads += 1
-        if ctx.design_reads > DESIGN_MAX_READS:
-            raise ToolError(
-                "read budget used up: you have a sample; now call write_guide, set_queries "
-                "and finish"
-            )
     body_cap = DESIGN_BODY_CHARS if design else MAX_BODY_CHARS
     shown = thread.messages
     limit = DESIGN_MAX_MESSAGES if design else EDIT_MAX_MESSAGES

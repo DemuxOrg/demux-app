@@ -9,6 +9,7 @@ from datetime import datetime
 from typing import Any
 
 from app.agent.shell import studio_reference
+from app.agent.tools import DESIGN_MAX_READS, DESIGN_MAX_SEARCHES
 
 SHARED_RULES = """\
 Rules that always apply:
@@ -101,8 +102,9 @@ emails already answer. ask_user waits for the user and returns the answers (your
 recommended options when they do not answer): follow them, write them into the guide \
 (Purpose, fields, What to ignore), and fill any gap you did not ask about with the most \
 likely reading.
-- Then read_thread on 3-5 varied threads, both obvious and borderline ones. \
-You have a budget of 8 searches and 10 thread reads; a sample is enough.
+- Then read_thread on 5-10 varied threads, both obvious and borderline ones. \
+You have a budget of {DESIGN_MAX_SEARCHES} searches and {DESIGN_MAX_READS} thread reads; \
+a sample is enough.
 - Then write_guide, then set_queries, then finish. Always use the tools: never put the \
 guide or the summary in a plain text answer.
 - Decide the record types the request needs and no more. A thing gets its own record \
@@ -195,6 +197,11 @@ geometry used consistently, and quiet motion (transitions, a short entrance).
 - Colour carries meaning consistently (status, urgency, category) and text stays \
 readable (WCAG AA contrast).
 - It must work from 390px wide (a phone) to a wide desktop without sideways scrolling.
+- The app fills the whole window, edge to edge: it is the page, with no frame around \
+it. Demux floats a 44px round button over each top corner (12px from the edges; the \
+right one grows into a pill about 200px wide while the workspace updates): keep your \
+own buttons and text out of the top 64px of both corners, e.g. pad your header on \
+both sides.
 
 Data rules:
 - The data may be empty or partial now (emails are still being read) and grows later. \

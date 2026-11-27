@@ -11,6 +11,7 @@ models:
   # GLM-5.2 (UI_MODEL): provider prices read 2026-11-26 from the providers' listings
   # (DeepInfra; Novita / Together / Fireworks), not from the router.
   "zai-org/GLM-5.2:deepinfra": {input: 0.75, output: 2.4}
+  "zai-org/GLM-5.2:coreweave": {input: 0.62, output: 2.42}  # router listing, 2026-11-27
   "zai-org/GLM-5.2:novita": {input: 1.4, cached_input: 0.26, output: 4.4}
   "zai-org/GLM-5.2:together": {input: 1.4, output: 4.4}
   "zai-org/GLM-5.2:fireworks-ai": {input: 1.4, cached_input: 0.14, output: 4.4}

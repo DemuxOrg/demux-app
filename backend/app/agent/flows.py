@@ -89,9 +89,21 @@ async def _thread_ids(ctx: RunContext, query: str, after, limit: int) -> list[st
     return [s.thread_id for s in await ctx.mailbox.search(query, max_results=limit, after=after)]
 
 
-async def collect_threads(ctx: RunContext, queries: list[str], after, limit: int) -> list[Thread]:
+async def _union_ids(ctx: RunContext, queries: list[str], after, limit: int) -> list[str]:
+    """The newest `limit` threads matching any query. One combined Gmail search when the
+    mailbox can do it (so only the kept threads are fetched), else one search per query."""
+    union = getattr(ctx.mailbox, "search_ids_any", None)
+    if union is not None and len(queries) > 1:
+        try:
+            return await union(queries, max_results=limit, after=after)
+        except MailboxError:
+            logger.info("combined search rejected, searching each query run=%s", ctx.run_id)
     found = await asyncio.gather(*(_thread_ids(ctx, q, after, limit) for q in queries))
-    ids = list(dict.fromkeys(tid for group in found for tid in group))
+    return list(dict.fromkeys(tid for group in found for tid in group))
+
+
+async def collect_threads(ctx: RunContext, queries: list[str], after, limit: int) -> list[Thread]:
+    ids = await _union_ids(ctx, queries, after, limit)
 
     async def get(tid: str) -> Thread | None:
         try:

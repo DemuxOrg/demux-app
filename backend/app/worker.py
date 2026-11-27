@@ -7,6 +7,8 @@
 - About once an hour, counts each user's received messages per finished day (Gmail ids
   only, never content) into `mailbox_daily_stats` for the admin pages.
 - Runs queued demo-inbox seeds from /admin (`app/services/demo.py`).
+- Stops a running run whose row is gone (its workspace was deleted, e.g. a cancelled
+  build), checked every tick, so it stops spending.
 - Logs ids, counts and costs only.
 """
 
@@ -16,7 +18,7 @@ import signal
 import uuid
 from datetime import UTC, datetime
 
-from sqlalchemy import update
+from sqlalchemy import select, update
 
 from app.agent import flows
 from app.agent.context import BudgetExceeded, RunContext, WorkspaceState
@@ -142,7 +144,9 @@ async def execute_run(
 
     async with session_factory() as s:
         run = await s.get(Run, run_id)
-        assert run is not None
+        if run is None:  # the workspace was deleted meanwhile (a cancelled build)
+            logger.info("run %s was deleted before it finished", run_id)
+            return
         run.status = status
         run.summary = summary
         run.error = error
@@ -189,6 +193,7 @@ async def count_mailboxes(mailbox_factory=gmail_for, session_factory=SessionLoca
 class Worker:
     def __init__(self) -> None:
         self.tasks: set[asyncio.Task] = set()
+        self.running: dict[uuid.UUID, asyncio.Task] = {}  # run id → its task
         self.stopping = asyncio.Event()
         self.last_schedule = 0.0
         self.last_mail_count = -3600.0
@@ -229,6 +234,23 @@ class Worker:
             self.tasks.add(task)
             task.add_done_callback(self.tasks.discard)
 
+    async def stop_deleted_runs(self, session_factory=SessionLocal) -> int:
+        """Stop runs whose row is gone: their workspace was deleted (the user cancelled a
+        build, or deleted a workspace mid-run), so finishing would only spend money on a
+        workspace nobody can see. Checked every tick (2 s). Returns how many stopped."""
+        live = [r for r, t in self.running.items() if not t.done()]
+        if not live:
+            return 0
+        async with session_factory() as s:
+            kept = set(await s.scalars(select(Run.id).where(Run.id.in_(live))))
+        stopped = 0
+        for run_id in live:
+            if run_id not in kept:
+                logger.info("run %s was deleted, stopping it", run_id)
+                self.running[run_id].cancel()
+                stopped += 1
+        return stopped
+
     async def claim(self) -> uuid.UUID | None:
         async with SessionLocal() as s:
             run = await runs.claim_next(s)
@@ -264,7 +286,10 @@ class Worker:
                     logger.info("claimed run %s", run_id)
                     task = asyncio.create_task(execute_run(run_id))
                     self.tasks.add(task)
+                    self.running[run_id] = task
                     task.add_done_callback(self.tasks.discard)
+                    task.add_done_callback(lambda _t, r=run_id: self.running.pop(r, None))
+                await self.stop_deleted_runs()
             except Exception:  # noqa: BLE001
                 logger.exception("worker tick failed")
             try:
