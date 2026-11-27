@@ -164,8 +164,7 @@ export interface paths {
         put?: never;
         /**
          * Update Setup
-         * @description The user's answer to a setup step while the workspace is built: the look, the
-         *     answers to the clarifying questions, or the layouts.
+         * @description One question moment's answer while the workspace is built (theme.md §7.15).
          */
         post: operations["update_setup_api_v1_workspaces__workspace_id__setup_post"];
         delete?: never;
@@ -336,8 +335,11 @@ export interface paths {
         };
         /**
          * App Shell
-         * @description The fixed <head> content (CSP, base CSS, bridge) every app iframe is wrapped in,
-         *     and the palettes it knows (for the palette tiles).
+         * @description The fixed <head> content (CSP, fonts, bridge, and the runtime's libraries) every
+         *     app iframe of that runtime is wrapped in, and the palettes v1 and v2 apps use.
+         *
+         *     Cached by the browser and revalidated with its ETag on every use (`no-cache`): a
+         *     repeat visit gets a 304 instead of the ~600 KB (gzipped) body.
          */
         get: operations["app_shell_api_v1_app_shell_get"];
         put?: never;
@@ -859,7 +861,12 @@ export interface components {
              * Runtime
              * @enum {string}
              */
-            runtime: "v1" | "v2";
+            runtime: "v1" | "v2" | "v3";
+            /**
+             * Provisional
+             * @default false
+             */
+            provisional: boolean;
         };
         /** AppShell */
         AppShell: {
@@ -1051,32 +1058,6 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
-        /** LayoutChoice */
-        LayoutChoice: {
-            /** Views */
-            views: string[];
-            /** Primary */
-            primary: string;
-        };
-        /** LayoutOption */
-        LayoutOption: {
-            /** Id */
-            id: string;
-            /** Block */
-            block: string;
-            /** Title */
-            title: string;
-            /**
-             * Description
-             * @default
-             */
-            description: string;
-            /**
-             * Recommended
-             * @default false
-             */
-            recommended: boolean;
-        };
         /** Me */
         Me: {
             /** Email */
@@ -1214,11 +1195,9 @@ export interface components {
         };
         /**
          * SetupState
-         * @description Where a build's setup with the user stands (frontend/theme.md §7.10).
+         * @description Where a build's clarifying questions stand (frontend/theme.md §7.10).
          */
         SetupState: {
-            /** Palette */
-            palette: ("violet" | "ocean" | "teal" | "rose" | "graphite") | null;
             /**
              * Questions State
              * @enum {string}
@@ -1229,29 +1208,34 @@ export interface components {
             /** Answered */
             answered: boolean;
             /**
-             * Layout State
+             * Answered Ids
+             * @default []
+             */
+            answered_ids: string[];
+            /**
+             * Look State
+             * @default none
              * @enum {string}
              */
-            layout_state: "waiting" | "choosing" | "chosen" | "timed_out" | "auto" | "none";
-            /** Layout Options */
-            layout_options: components["schemas"]["LayoutOption"][];
-            /** Layout Primary */
-            layout_primary: string | null;
-            /** Layout Chosen */
-            layout_chosen: boolean;
+            look_state: "asking" | "answered" | "timed_out" | "from_prompt" | "none";
+            /**
+             * Look From Prompt
+             * @default false
+             */
+            look_from_prompt: boolean;
         };
         /**
          * SetupUpdate
-         * @description One setup step's answer: the look, the answers to the questions, or the layouts.
+         * @description One question moment's answer (§7.15): clarifying answers by question id (merged
+         *     into those already given), and/or how the workspace should look.
          */
         SetupUpdate: {
-            /** Palette */
-            palette?: ("violet" | "ocean" | "teal" | "rose" | "graphite") | null;
             /** Answers */
             answers?: {
                 [key: string]: string;
             } | null;
-            layout?: components["schemas"]["LayoutChoice"] | null;
+            /** Look */
+            look?: string | null;
         };
         /** StripeSync */
         StripeSync: {
@@ -2014,7 +1998,7 @@ export interface operations {
     app_shell_api_v1_app_shell_get: {
         parameters: {
             query?: {
-                runtime?: "v1" | "v2";
+                runtime?: "v1" | "v2" | "v3";
             };
             header?: never;
             path?: never;

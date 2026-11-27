@@ -1,7 +1,8 @@
 """Checks run inside `write_app` before an app is stored (build spec §7.3).
 
-1. Static rules on the HTML text (size, `App` for kit apps or `render` for v1 apps, no
-   URLs, no forbidden APIs, no raw colours).
+1. Static rules on the HTML text (size, `App` for studio and kit apps or `render` for v1
+   apps, no URLs, no forbidden APIs; no raw colours in kit and v1 apps, which follow the
+   palette; studio apps (v3) bring their own look, so they may set colours and <style>).
 2. Headless smoke test (Playwright Chromium, all network blocked): load shell + app, post
    the data twice, then once more with `{}` on a fresh page. Fails on console errors,
    uncaught exceptions, an empty page, a non-idempotent render, or (when there is data)
@@ -151,15 +152,21 @@ _V2_RULES: list[tuple[re.Pattern[str], str]] = [
 ]
 _V2_APP = re.compile(r"function\s+App\s*\(|\b(?:const|let|var)\s+App\s*=")
 
+# Studio apps (v3): the same JSX rules, except that they style themselves (a <style> in
+# their JSX is fine; plain CSS outside JSX braces does not compile and fails the render).
+_V3_RULES = [rule for rule in _V2_RULES if "<style>" not in rule[1]]
+
 
 def static_problems(html: str) -> list[str]:
     problems: list[str] = []
     if len(html) > MAX_APP_CHARS:
         problems.append(f"app is {len(html)} chars; the limit is {MAX_APP_CHARS}")
-    if app_runtime(html) == "v2":
+    runtime = app_runtime(html)
+    if runtime in ("v2", "v3"):
         if not _V2_APP.search(html):
             problems.append("the app must define `function App({ data })` in its JSX script")
-        problems += [message for pattern, message in _V2_RULES if pattern.search(html)]
+        rules = _V3_RULES if runtime == "v3" else _V2_RULES
+        problems += [message for pattern, message in rules if pattern.search(html)]
     elif not re.search(
         r"function\s+render\s*\(|\b(window|globalThis|self)\s*\.\s*render\s*=", html
     ):
@@ -177,7 +184,7 @@ def static_problems(html: str) -> list[str]:
     for pattern, message in _STATIC_RULES:
         if pattern.search(html) and message not in problems:
             problems.append(message)
-    if colour := colour_problem(html):
+    if runtime != "v3" and (colour := colour_problem(html)):
         problems.append(colour)
     return problems
 

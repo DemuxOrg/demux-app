@@ -29,14 +29,20 @@ export function AppFrame({
   appVersion,
   palette,
   data,
+  changed,
   onError,
+  onRendered,
 }: {
   shellHead: string;
   html: string;
   appVersion: number;
   palette: string;
   data: unknown;
+  /** Keys ("type/id") of the records that just changed: the app marks them (§10.3). */
+  changed?: string[];
   onError: (message: string | null) => void;
+  /** The app rendered its data (used to swap frames without a blank, §7.10). */
+  onRendered?: () => void;
 }) {
   const frameRef = useRef<HTMLIFrameElement>(null);
   // The frame's document has loaded; `readyFor` remembers which one.
@@ -58,10 +64,14 @@ export function AppFrame({
 
   const postData = useCallback(() => {
     frameRef.current?.contentWindow?.postMessage(
-      { type: "demux:data", data },
+      { type: "demux:data", data, changed: changed ?? [] },
       "*",
     );
-  }, [data]);
+  }, [data, changed]);
+  const rendered = useRef(onRendered);
+  useEffect(() => {
+    rendered.current = onRendered;
+  }, [onRendered]);
 
   const docKey = `${appVersion}:${srcDoc.length}`;
   const ready = readyFor === docKey;
@@ -81,7 +91,10 @@ export function AppFrame({
         return;
       const msg = event.data;
       if (!msg || typeof msg.type !== "string") return;
-      if (msg.type === "demux:rendered") onError(null);
+      if (msg.type === "demux:rendered") {
+        onError(null);
+        rendered.current?.();
+      }
       else if (msg.type === "demux:error")
         onError(String(msg.message ?? "Unknown error").slice(0, 500));
       else if (msg.type === "demux:openSource") {

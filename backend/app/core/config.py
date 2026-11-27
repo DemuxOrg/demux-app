@@ -53,6 +53,23 @@ class Settings(BaseSettings):
     LLM_CALL_TIMEOUT_S: float = 60
     LLM_MAX_TOKENS: int = 8000
     LLM_TEMPERATURE: float = 0.2
+    # The interface designer (docs/UI_GENERATION_PLAN.md §11): this model designs and
+    # writes every workspace app (UX and code); the models above never write interface
+    # code. Its answers are long, so it gets more tokens and time. The fallback is the same
+    # model on another provider, so a build never quietly falls back to a weaker designer.
+    # Together serves GLM-5.2 at a steady ~365-390 tok/s; CoreWeave varied 225-335 (both
+    # measured 2026-11-27). Together costs more ($1.40/$4.40 vs $0.62/$2.42 per M).
+    UI_MODEL: str = "zai-org/GLM-5.2:together"
+    UI_FALLBACK_MODEL: str = "zai-org/GLM-5.2:coreweave"
+    # GLM reasons before it writes (~19k tokens seen): 24k cut apps off mid-code and the
+    # retry cost minutes.
+    UI_MAX_TOKENS: int = 40000
+    UI_CALL_TIMEOUT_S: float = 300
+    UI_TEMPERATURE: float = 0.7
+    # "none": GLM writes the app without hidden reasoning (~20k tokens fewer, about twice
+    # as fast). On Together "low" reasons as much as the default. Set "" to restore it.
+    UI_REASONING_EFFORT: str = "none"
+    UI_MAX_ATTEMPTS: int = 3  # first design + fixes after failed app checks
     MAX_USD_PER_RUN: float = 3.0
     MAX_USD_PER_DAY: float = 15.0
 

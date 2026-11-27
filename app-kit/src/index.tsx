@@ -2,16 +2,11 @@
  * Kit entry: inlined by the shell into every v2 app (backend/app/agent/shell.py).
  *
  * 1. Exposes the kit as globals, so app code uses <DataTable/>, records(), fmt… directly.
- * 2. Compiles the app's <script type="text/jsx"> with Sucrase and runs it as an inline
- *    script (the CSP allows inline scripts, not eval), which defines App.
- * 3. Defines render(data), which the shell's bridge calls: it renders <App data/> with
- *    React and throws if rendering failed, so the bridge reports demux:error.
+ * 2. Installs the runtime shared with the studio runtime (runtime.tsx): compiles the
+ *    app's JSX and defines render(data) for the shell's bridge.
  */
 import "./styles.css";
 import * as React from "react";
-import { flushSync } from "react-dom";
-import { createRoot, type Root } from "react-dom/client";
-import { transform } from "sucrase";
 import {
   FieldList,
   RecordCard,
@@ -42,6 +37,7 @@ import {
   types,
   uniq,
 } from "./lib/data";
+import { installRuntime } from "./runtime";
 import {
   Avatar,
   Badge,
@@ -142,92 +138,13 @@ const w = window as unknown as Record<string, unknown>;
 Object.assign(w, KIT);
 w.DemuxKit = KIT;
 
-/* ------------------------------------------------------------------ JSX */
+/* ------------------------------------------------------------------ runtime */
 
-function compileApps(): void {
-  const scripts = Array.from(document.querySelectorAll('script[type="text/jsx"]'));
-  for (const s of scripts) {
-    let code: string;
-    try {
-      code = transform(s.textContent ?? "", {
-        transforms: ["jsx", "typescript"],
-        production: true,
-        jsxPragma: "React.createElement",
-        jsxFragmentPragma: "React.Fragment",
-      }).code;
-    } catch (e) {
-      throw new Error(`The app's JSX does not compile: ${(e as Error).message}`);
-    }
-    const el = document.createElement("script");
-    el.textContent = code;
-    s.after(el);
-  }
-}
-
-if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", compileApps);
-else compileApps();
-
-/* ------------------------------------------------------------------ render */
-
-class ErrorBoundary extends React.Component<
-  { resetKey: number; children: React.ReactNode },
-  { error: Error | null; key: number }
-> {
-  state = { error: null as Error | null, key: this.props.resetKey };
-  static getDerivedStateFromError(error: Error) {
-    return { error };
-  }
-  static getDerivedStateFromProps(props: { resetKey: number }, state: { key: number }) {
-    return props.resetKey !== state.key ? { error: null, key: props.resetKey } : null;
-  }
-  render() {
-    if (this.state.error)
-      return (
-        <div className="rounded-card bg-danger-bg px-4 py-3 text-sm text-danger">
-          This workspace hit a display error.
-        </div>
-      );
-    return this.props.children;
-  }
-}
-
-declare const App: unknown;
-
-let root: Root | null = null;
-let lastError: unknown = null;
-let renders = 0;
-
-function render(data: unknown): void {
-  const app =
-    typeof App !== "undefined" ? App : (w.App as unknown);
-  if (typeof app !== "function") throw new Error("The app must define function App({ data })");
-  let el = document.getElementById("demux-root");
-  if (!el) {
-    el = document.createElement("div");
-    el.id = "demux-root";
-    document.body.appendChild(el);
-  }
-  root ??= createRoot(el, {
-    onUncaughtError: (e) => {
-      lastError = e;
-    },
-    onCaughtError: (e) => {
-      lastError = e;
-    },
-  });
-  lastError = null;
-  renders += 1;
-  const Component = app as React.ComponentType<{ data: unknown }>;
-  flushSync(() =>
-    root!.render(
-      <ErrorBoundary resetKey={renders}>
-        <RecordSheetProvider>
-          <Component data={data ?? {}} />
-        </RecordSheetProvider>
-      </ErrorBoundary>,
-    ),
-  );
-  if (lastError) throw lastError instanceof Error ? lastError : new Error(String(lastError));
-}
-
-w.render = render;
+installRuntime({
+  fallback: (
+    <div className="rounded-card bg-danger-bg px-4 py-3 text-sm text-danger">
+      This workspace hit a display error.
+    </div>
+  ),
+  wrap: (app) => <RecordSheetProvider>{app}</RecordSheetProvider>,
+});

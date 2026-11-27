@@ -25,7 +25,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={instrumentSans.variable}>
       <body className="bg-sky bg-grain min-h-dvh text-ink antialiased">
-        {/* The sky drifts on its own layer, under the grain (theme.md §4.1, §9). */}
+        {/* The sky, still, on its own layer under the grain (theme.md §4.1). */}
         <div aria-hidden className="dmx-sky" />
         <div className="relative z-10 flex min-h-dvh flex-col">{children}</div>
       </body>

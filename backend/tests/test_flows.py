@@ -8,8 +8,18 @@ from app.agent import flows
 from app.agent.context import MemoryPersister, RunContext, WorkspaceState
 from app.agent.default_app import DEFAULT_APP
 from app.agent.loop import PhaseFailed
+from app.agent.shell import studio_app
+from app.agent.tools import DESIGN_MAX_READS
 from app.mail.fake import FakeMailbox
-from tests.helpers import GOOD_APP, SMALL_MAILBOX, PhaseLLM, ScriptedLLM, dt, tool_results
+from tests.helpers import (
+    GOOD_STUDIO_ANSWER,
+    GOOD_STUDIO_JSX,
+    SMALL_MAILBOX,
+    PhaseLLM,
+    ScriptedLLM,
+    dt,
+    tool_results,
+)
 
 GUIDE = "# Purpose\nOrders.\n\n# Record types\n## order\n\n# What to ignore\n\n# Learned\n"
 
@@ -49,33 +59,14 @@ DESIGN_TURNS = [
     [("search_mail", {"query": "order"})],
     [
         ("write_guide", {"text": GUIDE}),
-        (
-            "propose_views",
-            {
-                "options": [
-                    {
-                        "block": "DataTable",
-                        "title": "All orders",
-                        "description": "every order",
-                        "recommended": True,
-                    },
-                    {
-                        "block": "Board",
-                        "title": "Board by status",
-                        "description": "status",
-                        "recommended": False,
-                    },
-                ],
-                "primary": 0,
-            },
-        ),
         ("set_queries", {"queries": ["order"]}),
     ],
     [("finish", {"summary": "Tracks orders."})],
 ]
 
 
-APP_TURNS = [[("write_app", {"html": GOOD_APP})], [("finish", {"summary": "table"})]]
+APP_TURNS = [GOOD_STUDIO_ANSWER]
+GOOD_STUDIO_APP = studio_app(GOOD_STUDIO_JSX)
 
 
 def build_llm(**over):
@@ -89,7 +80,7 @@ async def test_build_happy_path():
     summary = await flows.build(ctx, cfg(build_llm()))
     assert "Built from 6 threads" in summary
     assert len(ctx.state.data["order"]) >= 3
-    assert ctx.state.app_html == GOOD_APP and ctx.state.last_synced_at == ctx.now
+    assert ctx.state.app_html == GOOD_STUDIO_APP and ctx.state.last_synced_at == ctx.now
     assert len(p.processed) == 7  # every message of the 6 visible threads
     assert p.snapshots, "build takes a snapshot first"
     labels = [e["label"] for e in p.events]
@@ -119,7 +110,7 @@ async def test_batches_are_cut_by_size():
 async def test_design_budget_stops_endless_reading():
     ctx, box, _ = make()
     tid = (await box.search("A-1001"))[0].thread_id
-    reads = [("read_thread", {"thread_id": tid})] * 12
+    reads = [("read_thread", {"thread_id": tid})] * (DESIGN_MAX_READS + 2)
     llm = build_llm(design=[[("search_mail", {"query": "order"})], reads, *DESIGN_TURNS[1:]])
     await flows.build(ctx, cfg(llm))
     errors = [r for r in tool_results(llm.calls_for("design")[2]) if "error" in r]
@@ -165,19 +156,37 @@ async def test_failed_batch_is_skipped_and_build_continues():
     assert ctx.state.data["order"]
 
 
-async def test_app_phase_failure_falls_back_to_default_app():
+async def test_designer_failure_falls_back_to_default_app():
     ctx, _, p = make()
-    await flows.build(ctx, cfg(build_llm(app=["no tools"] * 8)))
-    assert ctx.state.app_html == DEFAULT_APP
-    assert any("default table view" in e["label"] for e in p.events)
-
-
-async def test_app_finish_before_saved_app_is_rejected():
-    ctx, _, _ = make()
-    llm = build_llm(app=[[("finish", {"summary": "done"})], *APP_TURNS])
+    llm = build_llm(app=["I would rather describe it in words."] * 3)
     await flows.build(ctx, cfg(llm))
-    assert "not saved yet" in tool_results(llm.calls_for("app")[1])[0]["error"]
-    assert ctx.state.app_html == GOOD_APP
+    assert ctx.state.app_html == DEFAULT_APP
+    assert len(llm.calls_for("app")) == 3  # first design + two fixes
+    assert any("simple list view" in e["label"] for e in p.events)
+
+
+async def test_app_is_fixed_against_the_real_data_after_reading():
+    ctx, _, p = make()
+    # Fine while the data is still empty, crashes once records exist.
+    broken = GOOD_STUDIO_ANSWER.replace("records(data, t)", "data.missing.x")
+    llm = build_llm(app=[broken, GOOD_STUDIO_ANSWER])
+    await flows.build(ctx, cfg(llm))
+    assert ctx.state.app_html == GOOD_STUDIO_APP
+    second = llm.calls_for("app")[1][-1]["content"]
+    assert "<current_app>" in second and "fails these checks" in second
+    assert "Adjusting the interface to your data" in [e["label"] for e in p.events]
+
+
+async def test_designer_fixes_a_rejected_app():
+    ctx, _, p = make()
+    broken = GOOD_STUDIO_ANSWER.replace("types(data)", "types(data.missing.x)")
+    llm = build_llm(app=[broken, GOOD_STUDIO_ANSWER])
+    await flows.build(ctx, cfg(llm))
+    assert ctx.state.app_html == GOOD_STUDIO_APP
+    fix_request = llm.calls_for("app")[1][-1]["content"]
+    assert fix_request.startswith("The app was rejected") and "render error" in fix_request
+    labels = [e["label"] for e in p.events]
+    assert "Interface check failed, fixing" in labels and "Interface ready" in labels
 
 
 async def _built():
@@ -245,3 +254,26 @@ async def test_edit_with_backfill_rereads_known_threads():
     )
     assert await flows.edit(ctx, cfg(llm), "add a field", []) == "Added a field."
     assert "re-read" in inputs[0] and inputs[0].count("<thread ") == 6
+
+
+async def test_collect_uses_one_combined_search_and_falls_back():
+    """Builds fetch only the threads the combined search keeps; a rejected combined query
+    falls back to one search per query."""
+    ctx, box, _ = make()
+    ids = [t.thread_id for t in await box.search("order")]
+    calls: list = []
+
+    async def union(queries, max_results, after):
+        calls.append(queries)
+        return ids[:1]
+
+    box.search_ids_any = union
+    threads = await flows.collect_threads(ctx, ["order", "shipped"], ctx.window_start, 80)
+    assert calls == [["order", "shipped"]] and [t.thread_id for t in threads] == ids[:1]
+
+    async def rejected(queries, max_results, after):
+        raise flows.MailboxError("Gmail rejected the request (HTTP 400)")
+
+    box.search_ids_any = rejected
+    threads = await flows.collect_threads(ctx, ["order", "shipped"], ctx.window_start, 80)
+    assert {t.thread_id for t in threads} >= set(ids)

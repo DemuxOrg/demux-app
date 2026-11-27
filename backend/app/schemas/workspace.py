@@ -9,7 +9,7 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
 
 from app.agent.palettes import PaletteId
 from app.models.run import RunKind, RunStatus
@@ -80,41 +80,34 @@ class SetupQuestion(BaseModel):
     recommended: int
 
 
-class LayoutOption(BaseModel):
-    id: str
-    block: str
-    title: str
-    description: str = ""
-    recommended: bool = False
-
-
 class SetupState(BaseModel):
-    """Where a build's setup with the user stands (frontend/theme.md §7.10)."""
+    """Where a build's clarifying questions stand (frontend/theme.md §7.10)."""
 
-    palette: PaletteId | None  # the look the user picked; None = not picked yet
     questions_state: Literal["deciding", "asking", "answered", "timed_out", "none"]
     questions: list[SetupQuestion]
     answered: bool  # the user sent answers (the build may not have read them yet)
-    layout_state: Literal["waiting", "choosing", "chosen", "timed_out", "auto", "none"]
-    layout_options: list[LayoutOption]
-    layout_primary: str | None
-    layout_chosen: bool  # the user sent a choice
+    answered_ids: list[str] = []  # questions answered so far (one moment each)
+    # The look moment (§7.15): "asking" until answered or timed out; "from_prompt" when
+    # the prompt says how it should look; "none" for builds from before the moment.
+    look_state: Literal["asking", "answered", "timed_out", "from_prompt", "none"] = "none"
+    look_from_prompt: bool = False
 
 
 Answer = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=300)]
 
 
-class LayoutChoice(BaseModel):
-    views: list[str] = Field(min_length=1, max_length=5)
-    primary: str
-
-
 class SetupUpdate(BaseModel):
-    """One setup step's answer: the look, the answers to the questions, or the layouts."""
+    """One question moment's answer (§7.15): clarifying answers by question id (merged
+    into those already given), and/or how the workspace should look."""
 
-    palette: PaletteId | None = None
-    answers: dict[str, Answer] | None = None
-    layout: LayoutChoice | None = None
+    answers: dict[str, Answer] | None = Field(default=None, min_length=1, max_length=5)
+    look: Answer | None = None
+
+    @model_validator(mode="after")
+    def _something(self) -> "SetupUpdate":
+        if not self.answers and self.look is None:
+            raise ValueError("Send answers or a look.")
+        return self
 
 
 class ActiveRun(BaseModel):
@@ -148,7 +141,12 @@ class WorkspaceDetail(BaseModel):
 class AppDoc(BaseModel):
     html: str | None
     version: int
-    runtime: Literal["v1", "v2"]  # v2: a kit app (the shell for ?runtime=v2)
+    # v3: a studio app designed by the UI model; v2: a kit app; v1: plain HTML + JS.
+    # The shell for each is GET /app-shell?runtime=…
+    runtime: Literal["v1", "v2", "v3"]
+    # True while the workspace has no app yet: the preview (one list per record type)
+    # is served so the build can show records filling in (theme.md §7.10).
+    provisional: bool = False
 
 
 class PaletteInfo(BaseModel):

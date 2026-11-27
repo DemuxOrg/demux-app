@@ -100,6 +100,16 @@
   --animate-dmx-breathe: dmx-breathe 2.4s ease-in-out infinite;
   --animate-dmx-flow: dmx-flow 1.8s linear infinite;
   --animate-dmx-rise: dmx-rise 0.32s var(--ease-dmx) both;
+  /* Question moments (theme.md §7.15): the scrim, the logo, the options, the exit. */
+  --animate-dmx-dim: dmx-fade 250ms var(--ease-dmx) both;
+  --animate-dmx-speak: dmx-speak 220ms var(--ease-dmx-out) both;
+  --animate-dmx-options: dmx-fade 150ms var(--ease-dmx) both;
+  @keyframes dmx-speak {
+    from {
+      opacity: 0;
+      transform: scale(0.92);
+    }
+  }
   @keyframes dmx-spin {
     to {
       transform: rotate(360deg);
@@ -163,14 +173,6 @@
       opacity: 0;
       transform: translateY(0.4em);
       filter: blur(8px);
-    }
-  }
-  @keyframes dmx-drift {
-    from {
-      transform: translate3d(-2%, -1%, 0) scale(1.06);
-    }
-    to {
-      transform: translate3d(2%, 1.5%, 0) scale(1.06);
     }
   }
 }
@@ -289,10 +291,11 @@
   }
 }
 
-/* The drifting sky layer (§4.1, §9 drift), fixed behind the grain. */
+/* The sky layer (§4.1), fixed behind the grain. Still on purpose: an animated
+   full-screen layer under a blended grain repaints the whole page every frame. */
 @utility dmx-sky {
   position: fixed;
-  inset: -6%;
+  inset: 0;
   z-index: -1;
   pointer-events: none;
   background-color: #8dbdee;
@@ -322,8 +325,6 @@
       rgb(72 152 242 / 0.85),
       rgb(72 152 242 / 0) 70%
     );
-  will-change: transform;
-  animation: dmx-drift 40s ease-in-out infinite alternate;
 }
 
 /*

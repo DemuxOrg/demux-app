@@ -5,6 +5,9 @@
  * generated app code never writes classes.
  */
 @import "tailwindcss";
+/* The studio runtime (v3) is not styled by the kit: keep its examples out of kit.css. */
+@source not "./studio.tsx";
+@source not "./studio.md";
 
 @theme inline {
   --color-*: initial;

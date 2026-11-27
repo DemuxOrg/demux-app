@@ -1,5 +1,5 @@
 /**
- * Compact live view of a running sync or edit (the full build uses <BuildFlow>):
+ * Compact live view of a running sync or edit (the build has its own live view, LiveBuild in WorkspaceDetail):
  * the current phase with a spinner, then its latest few events.
  */
 import { Spinner } from "@/components/ui/Spinner";

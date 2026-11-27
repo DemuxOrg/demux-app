@@ -2,6 +2,10 @@
 
 Status (2026-11-21): phases 0–5 are built; phase 6 (evals) is partly done (one real build checked, see §9). Implementation order is in §9. Where this file and `frontend/theme.md` disagree on UI, theme.md wins.
 
+**Change (2026-11-26):** the build no longer has a look step (palette tiles) or a layout step (`propose_views`). Users found them generic: the same palette and layout questions on every build. The build screen has three steps (theme.md §7.10): the design agent asks one multiple-choice question per gap in the prompt (none for a precise prompt, up to five for a vague one, never about colours or style), then emails are read and the app is built. The answers reach the app phase as `<clarifications>`, so they also shape the interface. Workspaces keep the default `violet` palette. §3, §4 (“chosen once, during the build”), §6 and §7 below describe the earlier flow.
+
+**Change (2026-11-27):** the component kit is no longer given to the model that writes apps. A dedicated UI model (GLM-5.2) designs the experience and the look of every new app; see §11. §4 (palettes) and §5 (the kit) now apply only to older v1/v2 apps.
+
 ## 1. Why
 
 Today the app phase writes about 300 lines of vanilla JS from scratch on every build and every edit (`backend/app/agent/prompts.py`, `APP` / `APP_CONTRACT`). The prompt forces the `--dmx-*` tokens and base classes (`frontend/theme.md` §10.3), so every app looks like Demux, and quality depends on how well a 27B model draws a whole UI in one go. Colours are a prompt rule only: nothing in `appcheck.py` enforces them.
@@ -126,3 +130,39 @@ Each phase ships on its own.
 - Show the workspace as soon as its interface exists and let it fill in while emails are read (the final check can still rebuild the interface, so it needs care).
 - User overrides on records (for example dragging a card to another column): the data is read-only from email today.
 - Leaving the build page early: skip the timeouts once nobody is watching (needs a presence signal).
+
+## 11. Generative interfaces: the interface designer (v3, 2026-11-27)
+
+**Why.** Composing a fixed kit made every workspace look the same (a white dashboard in one of five palettes), and Qwen3.8-27B is a weak designer. Now a model chosen for design quality designs every interface from scratch.
+
+**Who does what.**
+- **Qwen3.8-27B** (`BUILD_MODEL`) keeps the data work: questions, guide, Gmail searches, reading emails, edits to records. It never writes interface code.
+- **GLM-5.2** (`UI_MODEL`, the interface designer, `app/agent/designer.py`) designs the UX (what comes first, structure, navigation, interactions, states) and the UI (palette, type, layout, motion), and writes the app. Picked because it ranked first on Design Arena's single-turn web design board in June 2026; the setting can point at any OpenAI-compatible chat model.
+
+**Build.** While emails are read, the designer gets the facts only: the workspace name, the request, the user's answers to the questions (`<clarifications>`), the guide, and a data sample (6 records per type plus counts). Qwen writes no brief: the designer decides the experience itself. After reading, the app is checked against the real records; if it fails, the designer gets its app and the problems back. If the designer fails three times (or is unreachable) the build ends with the default app (a plain searchable list, also a studio app), and the user can ask for a redesign.
+
+**Edits.** The chat agent (Qwen) gets `change_interface(change)` instead of `write_app`. The designer receives the current app, the change and the user's message verbatim, and returns the whole new app. Qwen no longer sees app code in its prompt. A change to an older v1/v2 app makes the designer rebuild it as a studio app.
+
+**How it is called.** One plain chat without tools (any model can do it): the answer is one ```jsx block. `extract_app` takes the largest code block and drops harmless habits (imports of the globals, `export default`). The app is checked (`appcheck`: no network, no forbidden APIs, renders, shows the data, survives empty data, idempotent); problems go back to the model, up to `UI_MAX_ATTEMPTS` (3) answers in all. A cut-off answer (max tokens) asks for a shorter app. Calls use `UI_MAX_TOKENS` (40k: GLM reasons before it writes), `UI_CALL_TIMEOUT_S` (300 s), `UI_TEMPERATURE` (0.7) and `UI_FALLBACK_MODEL` (the same model on another provider, so a build never quietly falls back to a weaker designer). The default provider is Together (a steady ~375 tok/s; CoreWeave, the fallback, varied 225–335; DeepInfra ~90; measured 2026-11-27), with `UI_REASONING_EFFORT=none`: GLM writes without hidden reasoning, about half the tokens and twice as fast ("low" made no difference on Together). Set it to empty to restore reasoning. Every call goes through `MeteredLLM` in the `app` (build) or `edit` phase; prices are in `prices.yaml`.
+
+**Runtime v3 (studio).** The stored app is `<script type="text/jsx" data-runtime="v3">…</script>` (`studio_app()`); `app_runtime()` tells v3, v2 and v1 apart, and `/app-shell?runtime=v3` serves its shell. The shell inlines:
+- `kit/studio.js` (from `app-kit/src/studio.tsx`, about 310 KB gzipped): React 19 and its hooks, `cx`, Recharts (namespace and the common parts), `Icon` (about 180 lucide icons by name), `records`, `types`, `openEmail`, and the JSX compile + render shared with the kit (`runtime.tsx`).
+- `kit/tailwind.js`: Tailwind v4's browser build, which compiles the app's class names in the iframe (no eval, so the CSP is unchanged). `dark:` follows a `dark` class only.
+- Embedded fonts (`kit/fonts`, SIL OFL): Inter, Space Grotesk, Fraunces, Instrument Serif, JetBrains Mono, as `font-sans`, `font-display`, `font-serif`, `font-editorial`, `font-mono`.
+- No Demux tokens, palettes or base classes. `studio.md` is the designer's reference and is checked against the exports at build time.
+
+**Not changed.** The sandbox (`allow-scripts` only), the CSP (no network), the bridge, the headless check, older apps (v1/v2 keep their shells and palettes).
+
+**To do.** Run the eval scenarios through the designer and compare against the kit (failed checks, cost, time, and screenshots side by side); compare interface quality with and without reasoning (`UI_REASONING_EFFORT`), and try GLM-5.3 if the router serves it.
+
+## 12. Live build and question moments (2026-11-27)
+
+Replaces the build progress card (§8) and changes how clarifying questions are collected (§6). The spec is `frontend/theme.md` §7.10 (live build) and §7.15 (question moment).
+
+**What the user sees.** The build is the loading screen: a strip of real facts ("Reading your emails · 48 of 120 threads · 14 invoices found", a reading bar, Cancel) above the app panel, which shows the logo until the first record, then the preview app (`DEFAULT_APP`, served by `GET /app` with `provisional: true` while no app is saved) filling in. Records are paced one by one on the client (`useRecordDrip`, 300 ms per change) and marked in the app (`changedClass`, `CountUp` in the studio runtime). The generated app replaces the preview once, through a hidden second frame and a 300 ms crossfade (`LiveFrame`); the same frame stays when the build ends.
+
+**Question moments.** One question at a time on a dimmed screen: first the **look** (unless the prompt names one: `app/agent/look.py`, plain code), then each clarifying question in the agent's order. One `POST /setup` per answer (`answers` merge, `answered_at` per answer; `look` for the look). The look's answer goes to the interface designer as `<look>`; Demux's palettes are not used. There is no layout moment (§7 was removed when the designer took over the structure).
+
+**The agent doesn't wait for the screen.** `ask_user` returns at once; the agent may keep exploring, and `get_answers` (required before `write_guide`) waits until every question is answered or the user has been idle `SETUP_WAIT_SECONDS` since the question or their last answer. The designer waits for the look the same way, while the emails are read in parallel.
+
+**Cost rules.** No new LLM call (look detection is code, pacing and diffs are client-side), no new transport (the 2 s poll while a run is active), at most ~3 frame posts a second, one app swap per build.

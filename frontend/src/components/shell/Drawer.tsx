@@ -11,7 +11,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Suspense, useId, useState, type CSSProperties, type Ref } from "react";
 import { Lockup } from "@/components/brand/Logo";
-import { activityLabel } from "@/components/StatusChip";
+import { activityLabel, WorkspaceDot } from "@/components/StatusChip";
 import { Spinner } from "@/components/ui/Spinner";
 import type { WorkspaceSummary } from "@/lib/api";
 import { AccountMenu } from "./AccountMenu";
@@ -61,9 +61,9 @@ function DrawerPanel({
     >
       <div className="dmx-drawer-item -mt-1.5 flex h-11 items-center justify-between gap-2">
         <Link
-          href="/workspaces/new"
+          href="/workspaces"
           onClick={onNavigate}
-          aria-label="Demux home: create a workspace"
+          aria-label="Demux home: your workspaces"
           className="rounded-full px-2 py-1.5"
         >
           <Lockup size={28} />
@@ -216,16 +216,7 @@ function WorkspaceRow({
       title={w.name}
       className="flex h-11 items-center gap-3 rounded-full px-3 text-sm font-medium text-ink-2 transition-colors duration-150 ease-dmx hover:bg-surface-2 hover:text-ink aria-[current=page]:bg-violet-soft aria-[current=page]:text-violet-ink"
     >
-      <span
-        aria-hidden
-        className={`size-[7px] shrink-0 rounded-full ${
-          failed
-            ? "bg-danger"
-            : label
-              ? "animate-dmx-pulse bg-violet"
-              : "bg-live"
-        }`}
-      />
+      <WorkspaceDot status={w.status} />
       <span className="min-w-0 flex-1 truncate">{w.name}</span>
       {label && (
         <span

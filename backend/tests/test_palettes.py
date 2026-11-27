@@ -7,7 +7,6 @@ from pathlib import Path
 import pytest
 
 from app.agent.palettes import DEFAULT_PALETTE, PALETTE_IDS, PALETTES, palette_css
-from app.agent.prompts import edit_input
 from app.agent.shell import build_srcdoc
 from app.agent.tools import tools_for
 from tests.helpers import GOOD_APP
@@ -103,8 +102,6 @@ async def test_bridge_switches_palette_live():
     assert rose == ["rgb(192, 44, 108)", PALETTES["rose"].accent]
 
 
-def test_no_phase_can_change_the_palette_and_edit_sees_it():
-    for phase in ("design", "process", "app", "edit"):
+def test_no_phase_can_change_the_palette():
+    for phase in ("design", "process", "edit"):
         assert "set_palette" not in [t.name for t in tools_for(phase)]
-    text = edit_input("make it green", "p", "g", [], {}, None, [], 10_000, palette="ocean")
-    assert "<palette>ocean</palette>" in text

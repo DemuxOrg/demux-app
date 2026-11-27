@@ -119,6 +119,19 @@ async def test_app_shell_lists_palettes(client):
         assert f':root[data-palette="{p["id"]}"]' in shell["head"]
 
 
+async def test_app_shell_is_revalidated_with_its_etag(client):
+    """The ~1.6 MB shell is cached by the browser: a repeat visit gets a 304."""
+    first = await client.get("/api/v1/app-shell", params={"runtime": "v3"})
+    etag = first.headers["etag"]
+    assert first.status_code == 200 and "no-cache" in first.headers["cache-control"]
+    again = await client.get(
+        "/api/v1/app-shell", params={"runtime": "v3"}, headers={"If-None-Match": etag}
+    )
+    assert again.status_code == 304 and again.content == b""
+    other = await client.get("/api/v1/app-shell", params={"runtime": "v2"})
+    assert other.headers["etag"] != etag
+
+
 async def test_concurrent_creates_respect_the_limit(engine):
     """Parallel requests each in their own transaction (committed data, cleaned up)."""
     factory = async_sessionmaker(engine, expire_on_commit=False)

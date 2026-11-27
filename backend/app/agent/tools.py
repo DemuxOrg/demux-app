@@ -11,27 +11,32 @@ import re
 import time
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any
 
-from app.agent.appcheck import check_app
 from app.agent.context import RunContext
+from app.agent.llm import LLMError
 from app.mail.base import MailboxError, ReconnectRequired
 from app.mail.clean import clean_message
 from app.services.store import DataError, apply_delete, apply_save, public_fields
 
 MAX_GUIDE_CHARS = 6000
 MAX_BODY_CHARS = 4000
-# Design phase: a sample is enough. Small bodies and a hard cap keep it fast and cheap.
-DESIGN_BODY_CHARS = 1200
-DESIGN_MAX_MESSAGES = 4
-DESIGN_MAX_READS = 10
-DESIGN_MAX_SEARCHES = 8
+# Design phase: a sample is enough. Capped bodies and reads keep it fast and cheap.
+# Worst case in context: KEEP_THREADS (8) threads x 8 messages x 1500 chars, ~24k tokens.
+DESIGN_BODY_CHARS = 1500
+DESIGN_MAX_MESSAGES = 8
+DESIGN_MAX_READS = 20
+DESIGN_MAX_SEARCHES = 12
 EDIT_MAX_MESSAGES = 12
-MAX_SUMMARY_CHARS = 300
+MAX_SUMMARY_CHARS = 500
 SETUP_POLL_SECONDS = 1.5
-# Blocks a proposed layout may name (the kit's, app-kit/src/catalog.md).
-LAYOUT_BLOCKS = ["Board", "DataTable", "Timeline", "Calendar", "Gallery", "ListDetail", "Dashboard"]
+MAX_QUESTIONS = 5
+# Questions are about what the workspace tracks, never about its look (frontend/theme.md
+# §7.10): those are the fixed, generic questions users found useless.
+_LOOK_QUESTION = re.compile(
+    r"\b(colou?rs?|palettes?|themes?|fonts?|dark mode|light mode|visual style)\b", re.I
+)
 
 
 class ToolError(Exception):
@@ -121,20 +126,20 @@ async def _read_thread(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
     thread_id = str(args.get("thread_id", ""))
     if thread_id not in ctx.known_threads:
         raise ToolError("unknown thread_id: only ids returned by search_mail or given in the input")
+    design = ctx.phase == "design"
+    if design:
+        if ctx.design_reads >= DESIGN_MAX_READS:
+            raise ToolError(
+                "read budget used up: you have a sample; now call write_guide, set_queries "
+                "and finish"
+            )
+        ctx.design_reads += 1
     try:
         thread = await ctx.mailbox.get_thread(thread_id)
     except ReconnectRequired:
         raise
     except MailboxError as e:
         raise ToolError(f"could not read thread: {e}") from e
-    design = ctx.phase == "design"
-    if design:
-        ctx.design_reads += 1
-        if ctx.design_reads > DESIGN_MAX_READS:
-            raise ToolError(
-                "read budget used up: you have a sample; now call write_guide, set_queries "
-                "and finish"
-            )
     body_cap = DESIGN_BODY_CHARS if design else MAX_BODY_CHARS
     shown = thread.messages
     limit = DESIGN_MAX_MESSAGES if design else EDIT_MAX_MESSAGES
@@ -243,6 +248,8 @@ def _above_learned(text: str) -> str:
 
 
 async def _write_guide(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
+    if ctx.asked_user and not ctx.answers_collected:
+        raise ToolError("call get_answers first: the guide must follow the user's answers")
     text = str(args.get("text", "")).strip()
     if not text:
         raise ToolError("text is required")
@@ -329,29 +336,54 @@ async def _set_queries(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
     )
 
 
-async def _write_app(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
-    html = str(args.get("html", ""))
-    if not html.strip():
-        raise ToolError("html is required")
-    problems = await check_app(html, ctx.state.data)
+async def _change_interface(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
+    change = " ".join(str(args.get("change", "")).split())
+    if not change:
+        raise ToolError("change is required: what to change in the interface")
+    if ctx.designer is None:
+        raise ToolError("the interface cannot be changed in this run")
+    try:
+        problems = await ctx.designer.change(ctx, change[:2000], ctx.user_message)
+    except LLMError as e:
+        return ToolOutput(
+            {"ok": False, "error": f"the interface designer is unavailable: {e}"},
+            "Interface designer unavailable",
+        )
     if problems:
         return ToolOutput(
-            {"ok": False, "problems": problems, "note": "The app was NOT saved. Fix and retry."},
-            "App check failed, fixing",
+            {
+                "ok": False,
+                "problems": problems[:5],
+                "note": "The interface designer could not produce a working app; the "
+                "current app is unchanged. Tell the user.",
+            },
+            "Interface change failed",
         )
-    ctx.state.app_html = html
-    ctx.app_written = True
-    await ctx.persister.save_app(ctx.state)
-    return ToolOutput({"ok": True}, "Wrote the app")
+    return ToolOutput({"ok": True}, None)
 
 
-async def wait_setup(ctx: RunContext, key: str) -> Any:
-    """The user's answer under `key` (written by the setup API), or None after the wait."""
-    deadline = time.monotonic() + max(0.0, ctx.setup_wait)
+async def wait_until(
+    ctx: RunContext,
+    done: Callable[[dict[str, Any]], bool],
+    activity: Callable[[dict[str, Any]], list[str]] = lambda _s: [],
+) -> dict[str, Any]:
+    """Wait for the user (the setup API writes into the run's input) until `done(setup)`,
+    or until they have been idle for `ctx.setup_wait` seconds: the deadline restarts at
+    each time `activity(setup)` returns (ISO timestamps of the question and of each
+    answer), so a user who is answering is never cut off. Returns the last setup seen."""
+    started = datetime.now(UTC)
     while True:
-        value = (await ctx.persister.get_setup()).get(key)
-        if value or time.monotonic() >= deadline:
-            return value
+        setup = await ctx.persister.get_setup()
+        if done(setup):
+            return setup
+        last = started
+        for stamp in activity(setup):
+            try:
+                last = max(last, datetime.fromisoformat(stamp))
+            except (TypeError, ValueError):
+                continue
+        if (datetime.now(UTC) - last).total_seconds() >= max(0.0, ctx.setup_wait):
+            return setup
         await asyncio.sleep(SETUP_POLL_SECONDS)
 
 
@@ -363,8 +395,8 @@ async def _ask_user(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
     if ctx.asked_user:
         raise ToolError("you already asked: ask_user can be called once")
     raw = args.get("questions")
-    if not isinstance(raw, list) or not 1 <= len(raw) <= 3:
-        raise ToolError("questions must be a list of 1 to 3 questions")
+    if not isinstance(raw, list) or not 1 <= len(raw) <= MAX_QUESTIONS:
+        raise ToolError(f"questions must be a list of 1 to {MAX_QUESTIONS} questions")
     items = []
     for i, q in enumerate(raw, 1):
         if not isinstance(q, dict):
@@ -372,6 +404,11 @@ async def _ask_user(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
         options = [_clip(o, 80) for o in q.get("options") or [] if _clip(o, 80)]
         if not _clip(q.get("question"), 300) or not 2 <= len(options) <= 4:
             raise ToolError("each question needs text and 2 to 4 short options")
+        if _LOOK_QUESTION.search(" ".join([str(q.get("question")), *options])):
+            raise ToolError(
+                "ask only about what the workspace should track or show first, never about "
+                "colours, themes or visual style: drop that question"
+            )
         rec = q.get("recommended", 0)
         rec = rec if isinstance(rec, int) and 0 <= rec < len(options) else 0
         items.append(
@@ -384,16 +421,39 @@ async def _ask_user(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
         )
     ctx.asked_user = True
     await ctx.persister.set_setup("questions", items)
+    await ctx.persister.set_setup("questions_at", datetime.now(UTC).isoformat())
     await ctx.persister.set_setup("questions_state", "asking")
     await ctx.persister.add_event(
         {"t": time.time(), "phase": "design", "tool": "ask_user",
          "label": f"Asked you {_plural(len(items), 'question')}"}
     )  # fmt: skip
-    answers = await wait_setup(ctx, "answers")
-    answered = isinstance(answers, dict) and bool(answers)
+    return ToolOutput(
+        {
+            "ok": True,
+            "note": "Questions sent; the user answers them one at a time. Keep exploring "
+            "the mailbox if it helps, then call get_answers before write_guide.",
+        },
+        None,
+    )
+
+
+async def _get_answers(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
+    if not ctx.asked_user:
+        raise ToolError("you asked nothing: write the guide from the request")
+    if ctx.answers_collected:
+        raise ToolError("you already have the answers")
+    setup = await ctx.persister.get_setup()
+    items = setup.get("questions") or []
+    ids = {it["id"] for it in items}
+    setup = await wait_until(
+        ctx,
+        done=lambda s: ids <= set(s.get("answers") or {}),
+        activity=lambda s: [s.get("questions_at"), *(s.get("answered_at") or {}).values()],
+    )
+    answers = setup.get("answers") or {}
     pairs = []
     for it in items:
-        given = _clip(answers.get(it["id"]), 300) if answered else ""
+        given = _clip(answers.get(it["id"]), 300)
         pairs.append(
             {
                 "question": it["question"],
@@ -401,7 +461,9 @@ async def _ask_user(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
                 "from": "user" if given else "recommended (no answer)",
             }
         )
-    await ctx.persister.set_setup("questions_state", "answered" if answered else "timed_out")
+    complete = ids <= set(answers)
+    await ctx.persister.set_setup("questions_state", "answered" if complete else "timed_out")
+    ctx.answers_collected = True
     ctx.state.config["clarifications"] = [
         {"question": p["question"], "answer": p["answer"]} for p in pairs
     ]
@@ -412,44 +474,7 @@ async def _ask_user(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
             "note": "Follow these answers and write them into the guide (Purpose, fields or "
             "What to ignore).",
         },
-        "Got your answers" if answered else "Used the recommended answers",
-    )
-
-
-async def _propose_views(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
-    raw = args.get("options")
-    if not isinstance(raw, list) or not 2 <= len(raw) <= 5:
-        raise ToolError("options must be a list of 2 to 5 layouts")
-    options = []
-    for i, o in enumerate(raw, 1):
-        block = o.get("block") if isinstance(o, dict) else None
-        if block not in LAYOUT_BLOCKS:
-            raise ToolError(f"each layout's block must be one of: {', '.join(LAYOUT_BLOCKS)}")
-        title = _clip(o.get("title"), 60)
-        if not title:
-            raise ToolError("each layout needs a short title, e.g. 'Board by status'")
-        options.append(
-            {
-                "id": f"v{i}",
-                "block": block,
-                "title": title,
-                "description": _clip(o.get("description"), 140),
-                "recommended": bool(o.get("recommended")),
-            }
-        )
-    if not any(o["recommended"] for o in options):
-        options[0]["recommended"] = True
-    primary = args.get("primary", 0)
-    primary = primary if isinstance(primary, int) and 0 <= primary < len(options) else 0
-    if not options[primary]["recommended"]:
-        primary = next(i for i, o in enumerate(options) if o["recommended"])
-    ctx.proposed_views = True
-    await ctx.persister.set_setup("layout_options", options)
-    await ctx.persister.set_setup("layout_primary", options[primary]["id"])
-    await ctx.persister.set_setup("layout_state", "choosing")
-    return ToolOutput(
-        {"ok": True, "note": "The user picks from these while the emails are read."},
-        f"Proposed {_plural(len(options), 'layout')}",
+        "Got your answers" if complete else "Used the recommended answers",
     )
 
 
@@ -476,10 +501,6 @@ async def _finish(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
                 f"not done yet: call {' and '.join(missing)} before finish "
                 "(or finish with 'CANNOT_BUILD: <reason>' if the request cannot be served)"
             )
-        if not ctx.proposed_views:
-            raise ToolError("not done yet: call propose_views (2-5 layouts) before finish")
-    if ctx.phase == "app" and not ctx.app_written:
-        raise ToolError("the app is not saved yet: call write_app until it returns ok")
     ctx.finish_summary = summary[:MAX_SUMMARY_CHARS]
     return ToolOutput({"ok": True}, None)
 
@@ -608,27 +629,39 @@ TOOLS: dict[str, Tool] = {
             _set_queries,
         ),
         Tool(
-            "write_app",
-            "Write the app (one HTML fragment per the app contract). It is checked in a "
-            "headless browser; problems are returned and the app is only saved when it passes.",
-            {"type": "object", "properties": {"html": {"type": "string"}}, "required": ["html"]},
-            _write_app,
+            "change_interface",
+            "Hand a change of the interface to the interface designer, who rewrites the app "
+            "and checks it. Describe what to change in the user's words, plus any data change "
+            "the interface should show (a new field or record type).",
+            {
+                "type": "object",
+                "properties": {"change": {"type": "string"}},
+                "required": ["change"],
+            },
+            _change_interface,
         ),
         Tool(
             "ask_user",
-            "Ask the user 1-3 multiple-choice questions when the request is ambiguous, once. "
-            "Waits for the answers (or uses your recommended options) and returns them.",
+            "Ask the user multiple-choice questions that fill the gaps in their request, "
+            "once: one question per open point that changes the workspace (none for a "
+            "precise request, up to 5 for a vague one), most important first. Returns at "
+            "once; the user answers one at a time. Call get_answers before write_guide.",
             {
                 "type": "object",
                 "properties": {
                     "questions": {
                         "type": "array",
                         "minItems": 1,
-                        "maxItems": 3,
+                        "maxItems": MAX_QUESTIONS,
                         "items": {
                             "type": "object",
                             "properties": {
-                                "question": {"type": "string"},
+                                "question": {
+                                    "type": "string",
+                                    "description": "Grounded in what you found, e.g. 'I found "
+                                    "loans from three branches and two e-book apps. Should "
+                                    "e-book loans count?'",
+                                },
                                 "options": {
                                     "type": "array",
                                     "items": {"type": "string"},
@@ -649,48 +682,19 @@ TOOLS: dict[str, Tool] = {
             _ask_user,
         ),
         Tool(
-            "propose_views",
-            "Offer the user 2-5 layouts for this workspace, each built from one kit block. "
-            "The user picks while the emails are read; the app is built from their choice.",
-            {
-                "type": "object",
-                "properties": {
-                    "options": {
-                        "type": "array",
-                        "minItems": 2,
-                        "maxItems": 5,
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "block": {"type": "string", "enum": LAYOUT_BLOCKS},
-                                "title": {
-                                    "type": "string",
-                                    "description": "Tied to the data, e.g. 'Board by status'.",
-                                },
-                                "description": {
-                                    "type": "string",
-                                    "description": "One line: the fields it uses.",
-                                },
-                                "recommended": {"type": "boolean"},
-                            },
-                            "required": ["block", "title", "description", "recommended"],
-                        },
-                    },
-                    "primary": {
-                        "type": "integer",
-                        "description": "Index of the recommended layout to open first.",
-                    },
-                },
-                "required": ["options", "primary"],
-            },
-            _propose_views,
-        ),
-        Tool(
             "request_backfill",
             "After this edit, re-process every email already in the workspace with the new "
             "guide (use when new information is needed for all records).",
             {"type": "object", "properties": {}},
             _request_backfill,
+        ),
+        Tool(
+            "get_answers",
+            "After ask_user: wait for the user's answers (they answer one at a time; a user "
+            "who stops answering gets your recommended options) and return them. Call it "
+            "before write_guide.",
+            {"type": "object", "properties": {}},
+            _get_answers,
         ),
         Tool(
             "finish",
@@ -710,9 +714,9 @@ PHASE_TOOLS: dict[str, list[str]] = {
         "set_name",
         "search_mail",
         "ask_user",
+        "get_answers",
         "read_thread",
         "write_guide",
-        "propose_views",
         "set_queries",
         "finish",
     ],
@@ -724,8 +728,7 @@ PHASE_TOOLS: dict[str, list[str]] = {
         "write_guide",
         "finish",
     ],
-    "app": ["read_records", "write_app", "finish"],
-    "edit": [t for t in TOOLS if t not in ("ask_user", "propose_views")],
+    "edit": [t for t in TOOLS if t != "ask_user"],
 }
 
 
