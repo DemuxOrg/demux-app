@@ -16,6 +16,8 @@
  * - `data-drawer`: "auto" (open from 768px, closed below) until the user toggles, then
  *   "open" or "closed". The CSS lives in globals.css (`dmx-shell`, `dmx-sidebar`…). Pages
  *   pad their top bar by `var(--dmx-gutter)`: room for the open button, or not.
+ * - `useFullBleed()`: a page that shows a workspace's app edge to edge (theme.md §8.4)
+ *   starts with the sidebar closed at every width, until the user toggles it.
  * - A click anywhere outside the sidebar closes it, at every width (also a click into a
  *   workspace's app, whose iframe reports only as the window losing focus).
  */
@@ -36,9 +38,11 @@ import {
   api,
   handleAuthError,
   isNoAccess,
+  loadAppShell,
   type Me,
   type WorkspaceSummary,
 } from "@/lib/api";
+import { same } from "@/lib/useWorkspace";
 import { Drawer } from "./Drawer";
 import { NoAccess } from "./NoAccess";
 
@@ -53,6 +57,8 @@ type Shell = {
   /** Set when the last load failed for a reason other than a missing session. */
   loadError: string | null;
   reload: () => Promise<void>;
+  /** While true, an untouched ("auto") sidebar is closed at every width. */
+  setFullBleed: (on: boolean) => void;
 };
 
 const ShellContext = createContext<Shell | null>(null);
@@ -61,6 +67,15 @@ export function useShell(): Shell {
   const shell = useContext(ShellContext);
   if (!shell) throw new Error("useShell() needs <AppShell> above it");
   return shell;
+}
+
+/** The page shows an app edge to edge: start with the sidebar closed (theme.md §7.13). */
+export function useFullBleed(on: boolean) {
+  const { setFullBleed } = useShell();
+  useEffect(() => {
+    setFullBleed(on);
+    return () => setFullBleed(false);
+  }, [on, setFullBleed]);
 }
 
 function subscribeDesktop(onChange: () => void) {
@@ -94,8 +109,10 @@ export function AppShell({ children }: { children: ReactNode }) {
         }),
       ]);
       startTransition(() => {
-        setMe(m);
-        setWorkspaces(ws ?? []);
+        // Every 15 s: keep the same objects when nothing changed, so the sidebar and
+        // the page under it don't re-render for nothing.
+        setMe((prev) => (same(prev, m) ? prev : m));
+        setWorkspaces((prev) => (same(prev, ws ?? []) ? prev : (ws ?? [])));
         setLocked(ws === null || m.access.status === "none");
         setLoadError(null);
       });
@@ -107,18 +124,41 @@ export function AppShell({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // Once the app is idle, fetch the studio app shell (~600 KB gzipped, cached by the
+  // browser with its ETag) so opening a workspace doesn't wait for it.
+  useEffect(() => {
+    const warm = () => void loadAppShell("v3").catch(() => undefined);
+    if ("requestIdleCallback" in window) {
+      const handle = requestIdleCallback(warm, { timeout: 4000 });
+      return () => cancelIdleCallback(handle);
+    }
+    const timer = setTimeout(warm, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // A hidden tab doesn't poll; it catches up as soon as it is shown again.
   useEffect(() => {
     const first = setTimeout(reload, 0);
-    const timer = setInterval(reload, POLL_MS);
+    const timer = setInterval(() => {
+      if (!document.hidden) void reload();
+    }, POLL_MS);
+    const onShow = () => {
+      if (!document.hidden) void reload();
+    };
+    document.addEventListener("visibilitychange", onShow);
     return () => {
       clearTimeout(first);
       clearInterval(timer);
+      document.removeEventListener("visibilitychange", onShow);
     };
   }, [reload]);
 
   const desktop = useDesktop();
   const [drawer, setDrawer] = useState<"auto" | "open" | "closed">("auto");
-  const open = drawer === "open" || (drawer === "auto" && desktop);
+  const [fullBleed, setFullBleed] = useState(false);
+  // An untouched sidebar is closed beside a full-bleed app; a user's toggle holds.
+  const shown = drawer === "auto" && fullBleed ? "closed" : drawer;
+  const open = shown === "open" || (shown === "auto" && desktop);
   const openRef = useRef<HTMLButtonElement>(null);
   const sidebarRef = useRef<HTMLElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -173,7 +213,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, [desktop]);
 
   const shell = useMemo(
-    () => ({ me, workspaces, loadError, reload }),
+    () => ({ me, workspaces, loadError, reload, setFullBleed }),
     [me, workspaces, loadError, reload],
   );
 
@@ -186,7 +226,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <ShellContext.Provider value={shell}>
-      <div className="dmx-shell flex min-h-dvh flex-1" data-drawer={drawer}>
+      <div className="dmx-shell flex min-h-dvh flex-1" data-drawer={shown}>
         <div
           aria-hidden
           onClick={() => setOpen(false)}

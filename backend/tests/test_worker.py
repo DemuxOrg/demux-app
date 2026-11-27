@@ -10,8 +10,8 @@ from app.models import Change, LLMCall, ProcessedMessage, Run, RunKind, RunStatu
 from app.services import runs
 from app.services.workspaces import create_workspace, delete_workspace
 from app.worker import execute_run
-from tests.helpers import GOOD_APP, SMALL_MAILBOX, ScriptedLLM, dt
-from tests.test_flows import DESIGN_TURNS, build_llm
+from tests.helpers import SMALL_MAILBOX, ScriptedLLM, dt
+from tests.test_flows import DESIGN_TURNS, GOOD_STUDIO_APP, build_llm
 
 
 async def test_claim_one_run_per_workspace(session, dev_user):
@@ -44,7 +44,7 @@ async def test_execute_build_then_sync(session, session_factory, dev_user):
     await session.refresh(run)
     await session.refresh(ws)
     assert run.status == RunStatus.DONE, run.error
-    assert ws.status == "ready" and ws.app_html == GOOD_APP and ws.data["order"]
+    assert ws.status == "ready" and ws.app_html == GOOD_STUDIO_APP and ws.data["order"]
     assert ws.data_version >= 1 and ws.app_version == 1
     assert run.input_tokens > 0 and float(run.cost_usd) > 0
     assert any(e["label"].startswith("Saved") for e in run.events)
@@ -185,3 +185,29 @@ async def test_daily_budget_ignores_demo_seeds(session, dev_user):
     session.add(_llm_call(dev_user.id, 1.25))
     await session.flush()
     assert await runs.spent_today(session, dev_user.id) == pytest.approx(1.25)
+
+
+async def test_deleted_run_is_stopped(session, session_factory, dev_user):
+    """Cancelling a build deletes its workspace; the worker then stops the run's task
+    (no more LLM spend), and leaves the others alone."""
+    import asyncio
+
+    from app.worker import Worker
+
+    gone = await create_workspace(session, dev_user.id, "cancel me")
+    kept = await create_workspace(session, dev_user.id, "keep me")
+    gone_run = await runs.active_run(session, gone.id)
+    kept_run = await runs.active_run(session, kept.id)
+    worker = Worker()
+    worker.running = {
+        gone_run.id: asyncio.create_task(asyncio.sleep(60)),
+        kept_run.id: asyncio.create_task(asyncio.sleep(60)),
+    }
+    assert await worker.stop_deleted_runs(session_factory) == 0
+
+    await delete_workspace(session, dev_user.id, gone.id)
+    assert await worker.stop_deleted_runs(session_factory) == 1
+    await asyncio.sleep(0)
+    assert worker.running[gone_run.id].cancelled()
+    assert not worker.running[kept_run.id].done()
+    worker.running[kept_run.id].cancel()

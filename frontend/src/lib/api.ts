@@ -63,10 +63,15 @@ export class ApiError extends Error {
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_URL}/api/v1${path}`, {
+    // Fresh by default; a caller may choose otherwise (the app shell revalidates).
+    cache: "no-store",
     ...init,
     credentials: "include",
-    headers: { "Content-Type": "application/json", ...init?.headers },
-    cache: "no-store",
+    // Only requests with a body declare one: a GET with a JSON Content-Type is not a
+    // "simple" cross-origin request, so the browser would send a preflight OPTIONS first.
+    headers: init?.body
+      ? { "Content-Type": "application/json", ...init.headers }
+      : init?.headers,
   });
   if (!response.ok) {
     const body = await response.json().catch(() => null);
@@ -93,8 +98,9 @@ export const api = {
   disconnectGmail: () => request<Me>("/me/gmail", { method: "DELETE" }),
   /** Re-read the user's subscription from Stripe ("I've subscribed, check again"). */
   refreshAccess: () => post<Me>("/me/access/refresh"),
+  // ~600 KB gzipped: the browser keeps it and revalidates it with its ETag (a 304).
   appShell: (runtime: AppRuntime = "v1") =>
-    request<AppShell>(`/app-shell?runtime=${runtime}`),
+    request<AppShell>(`/app-shell?runtime=${runtime}`, { cache: "no-cache" }),
   listWorkspaces: () => request<WorkspaceSummary[]>("/workspaces"),
   createWorkspace: (prompt: string) =>
     post<WorkspaceSummary>("/workspaces", { prompt }),
@@ -121,6 +127,23 @@ export const api = {
   updateSetup: (id: string, body: SetupUpdate) =>
     post<ActiveRun>(`/workspaces/${id}/setup`, body),
 };
+
+const shells = new Map<AppRuntime, Promise<AppShell>>();
+
+/**
+ * The iframe shell of an app runtime, fetched once per page load and shared by every
+ * workspace (v2 inlines the component kit, about 1 MB). A failed fetch is forgotten, so
+ * the next call tries again.
+ */
+export function loadAppShell(runtime: AppRuntime): Promise<AppShell> {
+  let shell = shells.get(runtime);
+  if (!shell) {
+    shell = api.appShell(runtime);
+    shells.set(runtime, shell);
+    shell.catch(() => shells.delete(runtime));
+  }
+  return shell;
+}
 
 /** Staff-only endpoints (/admin pages). Non-admins get 404 from every one of them. */
 export const adminApi = {

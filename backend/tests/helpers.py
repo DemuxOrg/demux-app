@@ -22,7 +22,7 @@ class ScriptedLLM:
         self.turns = list(turns)
         self.calls: list[list[dict[str, Any]]] = []
 
-    async def chat(self, model, messages, tools) -> LLMReply:
+    async def chat(self, model, messages, tools, options=None) -> LLMReply:
         self.calls.append(json.loads(json.dumps(messages)))
         if not self.turns:
             raise AssertionError("ScriptedLLM ran out of turns")
@@ -85,6 +85,29 @@ function render(data) {
 """
 
 
+# A studio (v3) app, as the interface designer writes it (the JSX of one ```jsx block).
+GOOD_STUDIO_JSX = """
+function App({ data }) {
+  const names = types(data);
+  if (!names.length) return <p className="p-6 text-slate-500">Nothing yet</p>;
+  return (
+    <div className="p-6 font-sans">
+      {names.map((t) => (
+        <ul key={t}>
+          {records(data, t).map((r) => (
+            <li key={r.id}>
+              {Object.keys(r).filter((k) => !k.startsWith("_")).map((k) => String(r[k])).join(" | ")}
+            </li>
+          ))}
+        </ul>
+      ))}
+    </div>
+  );
+}
+"""
+GOOD_STUDIO_ANSWER = f"Here is the app.\n\n```jsx\n{GOOD_STUDIO_JSX.strip()}\n```\n"
+
+
 class PhaseLLM:
     """Scripted LLM for concurrent flows: one queue of turns per phase, chosen from the
     system prompt. A phase's last turn repeats when `repeat_last` is set for it."""
@@ -92,7 +115,7 @@ class PhaseLLM:
     MARKS = {
         "You design": "design",
         "You keep": "process",
-        "You build the interface": "app",
+        "You are a senior product designer": "app",
         "You change": "edit",
     }
 
@@ -106,7 +129,7 @@ class PhaseLLM:
     def calls_for(self, phase: str) -> list[list[dict[str, Any]]]:
         return [c for c, p in zip(self.calls, self.phases, strict=True) if p == phase]
 
-    async def chat(self, model, messages, tools) -> LLMReply:
+    async def chat(self, model, messages, tools, options=None) -> LLMReply:
         system = messages[0]["content"]
         phase = next(v for k, v in self.MARKS.items() if system.startswith(k))
         self.calls.append(json.loads(json.dumps(messages)))

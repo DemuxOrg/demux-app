@@ -24,6 +24,7 @@ from app.mail.base import ReconnectRequired
 logger = logging.getLogger(__name__)
 
 KEEP_THREADS = 8
+SLOW_TOOL_MS = 5000  # tool calls slower than this are logged (name and time only)
 TRANSCRIPT_DIR = Path(__file__).resolve().parents[2] / ".runs"
 
 
@@ -157,6 +158,9 @@ async def run_agent(
             continue
 
         finished = False
+        # A tool failing several times in one reply (e.g. parallel reads past the read
+        # budget) counts once: "3 in a row" means three replies the model saw the error in.
+        failed_this_reply: set[str] = set()
         for call in reply.tool_calls:
             if finished:
                 # Calls after finish are not executed but need a result for well-formed history.
@@ -170,7 +174,11 @@ async def run_agent(
                 if tool is None:
                     raise ToolError(f"unknown tool '{call.name}'; available: {', '.join(by_name)}")
                 args = parse_args(call.arguments)
+                started = time.monotonic()
                 output = await tool.handler(ctx, args)
+                ms = int((time.monotonic() - started) * 1000)
+                if ms > SLOW_TOOL_MS:
+                    logger.info("slow tool %s run=%s ms=%s", call.name, ctx.run_id, ms)
                 # A failed app check is feedback, not a tool error: max_steps bounds it.
                 result, label, failed = output.result, output.label, False
             except (ReconnectRequired, BudgetExceeded):
@@ -187,7 +195,10 @@ async def run_agent(
                     type(e).__name__,
                 )
                 result, failed = {"error": "invalid arguments: check the types and retry"}, True
-            if failed:
+            if failed and call.name in failed_this_reply:
+                pass
+            elif failed:
+                failed_this_reply.add(call.name)
                 error_streak = error_streak + 1 if last_error_tool == call.name else 1
                 last_error_tool = call.name
                 if error_streak >= 3:

@@ -1,9 +1,14 @@
-"""The fixed shell around every generated app: CSP, fonts, tokens, palettes, bridge script.
+"""The fixed shell around every generated app: CSP, fonts, bridge script, and per runtime
+the libraries (and, for older apps, Demux's tokens and palettes).
 
-Two runtimes (`app_runtime`):
-- v2 (kit apps, frontend/theme.md §10.3): the app is a `<script type="text/jsx">` that
-  defines `App({ data })` with the component kit (`kit/`, built from app-kit/). The shell
-  inlines the kit's CSS and JS; the kit compiles the JSX and renders App with React.
+Three runtimes (`app_runtime`):
+- v3 (studio apps, frontend/theme.md §10.3): designed by the UI model with their own look.
+  The app is a `<script type="text/jsx" data-runtime="v3">` defining `App({ data })`. The
+  shell inlines the studio runtime (`kit/studio.js`: React, Recharts, icons, data helpers),
+  Tailwind's browser build (`kit/tailwind.js`) and a few embedded fonts; no Demux tokens.
+- v2 (kit apps): a `<script type="text/jsx">` that defines `App({ data })` with the
+  component kit (`kit/`, built from app-kit/). The shell inlines the kit's CSS and JS; the
+  kit compiles the JSX and renders App with React.
 - v1 (apps written before the kit): plain HTML + JS defining `render(data)`, styled with
   the base classes below.
 
@@ -187,11 +192,61 @@ BRIDGE_JS = """
 
 
 _JSX_SCRIPT = re.compile(r"""<script\b[^>]*\btype\s*=\s*["']text/jsx["']""", re.I)
+_STUDIO_SCRIPT = re.compile(r"""<script\b[^>]*\bdata-runtime\s*=\s*["']v3["']""", re.I)
 
 
 def app_runtime(app_html: str | None) -> str:
-    """ "v2" for kit apps (a <script type="text/jsx">), else "v1"."""
-    return "v2" if app_html and _JSX_SCRIPT.search(app_html) else "v1"
+    """ "v3" for studio apps, "v2" for kit apps (a <script type="text/jsx">), else "v1"."""
+    if not app_html:
+        return "v1"
+    if _STUDIO_SCRIPT.search(app_html):
+        return "v3"
+    return "v2" if _JSX_SCRIPT.search(app_html) else "v1"
+
+
+def studio_app(jsx: str) -> str:
+    """The stored HTML of a studio (v3) app from its JSX source."""
+    return f'<script type="text/jsx" data-runtime="v3">\n{jsx.strip()}\n</script>'
+
+
+# Embedded fonts of studio apps (kit/fonts, from @fontsource; SIL Open Font License):
+# family, file, weight range, style. studio.md tells the UI model their Tailwind names.
+STUDIO_FONTS = [
+    ("Inter", "inter.woff2", "100 900", "normal"),
+    ("Space Grotesk", "space-grotesk.woff2", "300 700", "normal"),
+    ("Fraunces", "fraunces.woff2", "100 900", "normal"),
+    ("JetBrains Mono", "jetbrains-mono.woff2", "100 800", "normal"),
+    ("Instrument Serif", "instrument-serif.woff2", "400", "normal"),
+    ("Instrument Serif", "instrument-serif-italic.woff2", "400", "italic"),
+]
+
+# Read by Tailwind's browser build. `dark:` follows a `dark` class only, so the user's
+# system setting never flips an app the UI model designed in light colours.
+STUDIO_THEME = """
+@custom-variant dark (&:where(.dark, .dark *));
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Fraunces", ui-serif, Georgia, serif;
+  --font-editorial: "Instrument Serif", "Fraunces", ui-serif, Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+"""
+
+
+def _studio_font_faces() -> str:
+    faces = []
+    for family, file, weight, style in STUDIO_FONTS:
+        b64 = base64.b64encode((KIT_DIR / "fonts" / file).read_bytes()).decode("ascii")
+        faces.append(
+            f"@font-face{{font-family:'{family}';font-style:{style};font-weight:{weight};"
+            f"font-display:swap;src:url(data:font/woff2;base64,{b64}) format('woff2')}}"
+        )
+    return "".join(faces)
+
+
+def _inline_js(name: str) -> str:
+    return (KIT_DIR / name).read_text(encoding="utf-8").replace("</script", "<\\/script")
 
 
 @cache
@@ -204,8 +259,14 @@ def _kit() -> tuple[str, str]:
 
 @cache
 def kit_catalog() -> str:
-    """The kit reference the app and edit prompts include."""
+    """The kit reference (v2 apps)."""
     return (KIT_DIR / "catalog.md").read_text(encoding="utf-8")
+
+
+@cache
+def studio_reference() -> str:
+    """The studio runtime reference (v3) the UI model's prompt includes."""
+    return (KIT_DIR / "studio.md").read_text(encoding="utf-8")
 
 
 @cache
@@ -216,6 +277,13 @@ def shell_head(runtime: str = "v1") -> str:
         f'<meta http-equiv="Content-Security-Policy" content="{CSP}">'
         '<meta name="viewport" content="width=device-width,initial-scale=1">'
     )
+    if runtime == "v3":
+        return (
+            head + f"<style>{_studio_font_faces()}</style>"
+            f'<style type="text/tailwindcss">{STUDIO_THEME}</style>'
+            f"<script>{bridge}</script><script>{_inline_js('tailwind.js')}</script>"
+            f"<script>{_inline_js('studio.js')}</script>"
+        )
     if runtime == "v2":
         js, css = _kit()
         return (

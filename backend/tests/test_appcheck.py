@@ -4,6 +4,7 @@ import pytest
 
 from app.agent.appcheck import check_app, static_problems
 from app.agent.default_app import DEFAULT_APP
+from app.agent.shell import app_runtime, build_srcdoc, studio_app
 from tests.helpers import GOOD_APP
 
 DATA = {
@@ -176,3 +177,84 @@ async def test_kit_apps_render_in_the_headless_check():
     crashing = KIT_APP.replace('records(data, "loan")', "data.loan.missing.x")
     problems = await check_app(crashing, DATA)
     assert any("render error" in p for p in problems), problems
+
+
+# ------------------------------------------------------------------ studio apps (v3)
+
+STUDIO_APP = studio_app("""
+function App({ data }) {
+  const loans = records(data, "loan");
+  const [open, setOpen] = useState(null);
+  return (
+    <div className="min-h-screen bg-[#0b0f19] p-8 font-serif text-slate-100">
+      <style>{`@keyframes rise{from{opacity:0}to{opacity:1}}`}</style>
+      <h1 className="text-4xl" style={{ color: "#c7d2fe" }}>Loans</h1>
+      {loans.length === 0 && <p>No loans yet.</p>}
+      {loans.map((l) => (
+        <button key={l.id} onClick={() => setOpen(l.id)} className={cx("block", open === l.id && "text-indigo-300")}>
+          <Icon name="book-open" /> {l.title} · {l.status}
+        </button>
+      ))}
+      <ResponsiveContainer width="100%" height={120}>
+        <BarChart data={loans.map((l) => ({ name: l.title, n: 1 }))}><Bar dataKey="n" fill="#a5b4fc" /></BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+""")
+
+
+def test_studio_runtime_is_detected():
+    assert app_runtime(STUDIO_APP) == "v3"
+    assert app_runtime(KIT_APP) == "v2" and app_runtime(GOOD_APP) == "v1"
+    assert app_runtime(DEFAULT_APP) == "v3"
+
+
+def test_studio_apps_may_style_themselves():
+    assert static_problems(STUDIO_APP) == []
+
+
+@pytest.mark.parametrize(
+    "change,problem",
+    [
+        (("function App(", "function Main("), "function App"),
+        (("<h1", "<h1 dangerouslySetInnerHTML={{__html: x}}"), "dangerouslySetInnerHTML"),
+        (("function App", "import x from 'y';\nfunction App"), "import"),
+        (("const loans", "fetch('/x');\n  const loans"), "fetch"),
+        (('"min-h-screen', '"bg-[url(https://evil.example/x.png)] min-h-screen'), "external URLs"),
+        (("const loans", "localStorage.x = 1;\n  const loans"), "storage"),
+    ],
+)
+def test_studio_apps_keep_the_security_rules(change, problem):
+    app = STUDIO_APP.replace(*change)
+    assert any(problem in p for p in static_problems(app)), static_problems(app)
+
+
+async def test_studio_apps_render_in_the_headless_check():
+    assert await check_app(STUDIO_APP, DATA) == []
+    broken = STUDIO_APP.replace("<h1", "<h1 {")
+    assert any("does not compile" in p for p in await check_app(broken, DATA))
+
+
+async def test_studio_shell_styles_tailwind_classes_and_embeds_fonts():
+    from playwright.async_api import async_playwright
+
+    async with async_playwright() as p:
+        browser = await p.chromium.launch()
+        page = await browser.new_page()
+        await page.set_content(build_srcdoc(STUDIO_APP), wait_until="load")
+        await page.evaluate("(d) => window.postMessage({type: 'demux:data', data: d}, '*')", DATA)
+        await page.wait_for_timeout(400)
+        styles = await page.evaluate(
+            """() => {
+              const h1 = document.querySelector('h1');
+              const root = document.querySelector('#demux-root > div');
+              return [getComputedStyle(root).backgroundColor, getComputedStyle(h1).fontFamily,
+                      getComputedStyle(h1).fontSize, document.fonts.check('16px Fraunces')];
+            }"""
+        )
+        await browser.close()
+    assert styles[0] == "rgb(11, 15, 25)"  # bg-[#0b0f19]
+    family = styles[1].split(",")[0].strip('"')
+    assert family == "Fraunces" and styles[2] == "36px"  # font-serif text-4xl
+    assert styles[3] is True

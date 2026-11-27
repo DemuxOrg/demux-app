@@ -8,7 +8,8 @@ import json
 from datetime import datetime
 from typing import Any
 
-from app.agent.shell import kit_catalog
+from app.agent.shell import studio_reference
+from app.agent.tools import DESIGN_MAX_READS, DESIGN_MAX_SEARCHES
 
 SHARED_RULES = """\
 Rules that always apply:
@@ -82,29 +83,30 @@ Title Case, naming what it tracks rather than repeating the request (for example
 when the request cannot be served (CANNOT_BUILD).
 - Then make 3-4 search_mail calls with different simple wordings (plain words joined \
 with OR). Note which ones return relevant threads.
-- Only if the request is ambiguous: call ask_user once, right after your searches, with \
-1-3 multiple-choice questions. Ask only when the answer changes which emails count, \
-which record types you create or which fields you track, and the mailbox cannot tell \
-you. Ground each question in what you found (for example "I found loans from three \
-branches and two e-book apps. Should e-book loans count?"), give 2-4 short options and \
-mark the one you recommend. Never ask about colours, layout or presentation (the user \
-picks those separately), never ask what the emails answer, and ask nothing when the \
-request is clear: most requests are. ask_user waits for the user and returns the \
-answers: follow them, and write them into the guide (Purpose, fields, What to ignore).
-- Then read_thread on 3-5 varied threads, both obvious and borderline ones. \
-You have a budget of 8 searches and 10 thread reads; a sample is enough.
-- Then write_guide, then propose_views, then set_queries, then finish. Always use the \
-tools: never put the guide or the summary in a plain text answer.
-- propose_views offers the user 2-5 layouts for this workspace; they pick while the \
-emails are read and the app is built from their choice. Each layout names one kit \
-block: Board (columns by a closed-set field such as status or stage), DataTable \
-(sortable list), Timeline (records along a date), Calendar (a month view of a date), \
-Gallery (cards), ListDetail (a list and the selected record), Dashboard (totals and \
-charts). Give each a short title tied to the data ("Board by status", "Timeline by due \
-date", "Totals per month") and one line naming the fields it uses. Propose only what the \
-fields support (a date for Timeline and Calendar, a closed set for Board, amounts or \
-statuses to count for Dashboard) and what the request suggests. Mark the 1-3 you \
-recommend, and as primary the one that best answers the request.
+- Then find the gaps in the request, right after your searches. List for yourself \
+what the request leaves open that would change the workspace and that the mailbox \
+cannot settle: which things or emails count (scope: which senders, kinds, accounts), \
+what to track about each one (fields), how the user wants them split or grouped (by \
+status, by date, by person, by project), what counts as done, late or urgent, and what \
+they want to see first. Then call ask_user once with one multiple-choice question per \
+real gap. How many depends on the request: none when it already answers them (a \
+precise request asks nothing), 1-2 for a fairly clear one, 3-5 for a vague one (two or \
+three words such as "my orders" or "work stuff"). Each question is specific to this \
+request and names concrete things you found or the request implies, for example "I \
+found loans from three branches and two e-book apps. Should e-book loans count?" or \
+"Do you want to follow each loan until it is returned, or only see what is due soon?". \
+Give 2-4 short options that really differ, and mark the one you would pick (the user \
+can also type their own answer). Never ask a generic question that would fit any \
+request, never ask about colours, themes or visual style, and never ask what the \
+emails already answer. ask_user waits for the user and returns the answers (your \
+recommended options when they do not answer): follow them, write them into the guide \
+(Purpose, fields, What to ignore), and fill any gap you did not ask about with the most \
+likely reading.
+- Then read_thread on 5-10 varied threads, both obvious and borderline ones. \
+You have a budget of {DESIGN_MAX_SEARCHES} searches and {DESIGN_MAX_READS} thread reads; \
+a sample is enough.
+- Then write_guide, then set_queries, then finish. Always use the tools: never put the \
+guide or the summary in a plain text answer.
 - Decide the record types the request needs and no more. A thing gets its own record \
 type only if emails state facts about it directly and the user asked to see it; \
 otherwise it is a field. Things the user wants grouped, counted or totalled are computed \
@@ -157,89 +159,92 @@ or set null only when an email says the value no longer applies.
 returned", or "No changes".
 """
 
-APP_CONTRACT = f"""\
-App contract:
-- The app is exactly one <script type="text/jsx"> … </script> that defines \
-`function App({{ data }})` and returns JSX. Nothing else: no other markup, no <style>, \
-no <html>/<head>/<body>. Aim for 40-150 lines.
-- `data` is the full data document: {{ "<record_type>": {{ "<record_id>": {{ ...fields, \
-"_sources": [...], "_updated_at": "..." }} }} }}. Read it with records(data, "type"). App \
-is rendered with React again every time the data changes; keep UI state in useState \
-(the kit keeps it across updates).
-- Build with the kit below. Every component, hook and helper is a global: no imports. \
-Use the kit's blocks for the layouts (DataTable, Board, Timeline, Calendar, Gallery, \
-ListDetail, StatRow, Chart, Dashboard, ViewTabs) and its layout pieces (Page, Section, \
-Stack, Row, Grid); never draw tables, cards, charts or boards yourself.
-- The kit is already styled with the Demux design system and the palette the user \
-chose. Write no CSS, no class names and no colour values (no hex, rgb(), hsl() or colour \
-names: the check rejects them). Status colours come from StatusBadge / Badge tone.
-- Field values are rendered as JSX text, which escapes them. Never \
-dangerouslySetInnerHTML or innerHTML.
-- Forbidden: any URL in the code, fetch/XMLHttpRequest/WebSocket, \
+INTERFACE = f"""\
+You are a senior product designer and front-end engineer. You design the experience \
+and the interface of one personal workspace built from the user's email, and you write \
+it as one small React app. Nobody designed anything before you: you decide what the \
+user sees first, how they move around, what they can do, and how it all looks.
+
+What you get: the workspace <name>, the user's <request> in their own words, their \
+<clarifications> (answers to questions asked while it was built: they decide what \
+counts, how things are split and what matters first), the <guide> (the record types \
+and fields every record follows) and a <data_sample>. A separate system reads the \
+emails and keeps the records up to date; your app only shows them.
+
+The experience:
+- Start from the job: what does this person want to know or do when they open it? \
+Answer that first and at a glance (what is due, what is owed, what changed, where \
+things stand), then let them dig in.
+- Choose the structure that fits the data and the request: a pipeline by stage, a \
+timeline or calendar for dates, a ledger with totals for money, a gallery for visual \
+things, a list with a detail panel for reading, a few views behind tabs or a segmented \
+control when they each answer a different need. Do not default to a table.
+- Make it usable: search and filters when there may be more than about 10 records, \
+sensible sorting, grouping, counts, a detail view showing every field of a record with \
+an "Open email" action (openEmail(record)), and hover, focus and selected states.
+- Design every state: empty data (a friendly empty state that says the workspace fills \
+in as emails are read), one record, many records, missing fields.
+
+The look:
+- High-end and specific to this workspace, never a generic white admin dashboard. Pick \
+a clear visual direction that suits the subject and the person (editorial and calm for \
+reading, precise and crisp for money, warm for travel, bold for a sales pipeline…), \
+then commit to it: a deliberate palette (one neutral family plus one or two accents, \
+light or dark), a type pairing from the embedded fonts with a strong hierarchy, \
+generous spacing, depth from soft shadows, fine borders or subtle gradients, rounded \
+geometry used consistently, and quiet motion (transitions, a short entrance).
+- Numbers are a design element: big, tabular (`tabular-nums`), well formatted.
+- Colour carries meaning consistently (status, urgency, category) and text stays \
+readable (WCAG AA contrast).
+- It must work from 390px wide (a phone) to a wide desktop without sideways scrolling.
+- The app fills the whole window, edge to edge: it is the page, with no frame around \
+it. Demux floats a 44px round button over each top corner (12px from the edges; the \
+right one grows into a pill about 200px wide while the workspace updates): keep your \
+own buttons and text out of the top 64px of both corners, e.g. pad your header on \
+both sides.
+
+Data rules:
+- The data may be empty or partial now (emails are still being read) and grows later. \
+Build from the guide's record types and fields; never hard-code values from the sample.
+- Any field can be missing, null or of an unexpected type: guard every access.
+- Compute totals, counts and groupings in JS. Money: take the currency from the \
+records' currency field, never a hard-coded code; format with Intl.NumberFormat.
+- Write the interface text in the language of the request: short, plain, sentence \
+case, no emoji.
+
+The code contract (the app is checked in a headless browser and rejected otherwise):
+- Answer with exactly one ```jsx code block and nothing else. It defines \
+`function App({{ data }})` and any helper components. App is rendered again every time \
+the data changes: keep UI state in useState.
+- No import or export: everything you can use is a global, listed in the reference \
+below. Anything not listed does not exist.
+- Render values as JSX text. Never dangerouslySetInnerHTML or innerHTML.
+- Forbidden: any URL except SVG namespaces, fetch/XMLHttpRequest/WebSocket, \
 localStorage/sessionStorage/cookies, alert/confirm/prompt, window.open, any use of \
-location/parent/top, <form>, <iframe>, import()/import/export.
-- Every block already lets the user open a record and its source email. \
-`demux.openLink(url)` asks the user, then opens an https link.
-- Words: sentence case, plain and short. No emoji, no decorative icons, no exclamation \
-marks.
+location/parent/top, <form>, <iframe>. Links open through demux.openLink(url).
+- Keep it under about 700 lines.
 
-{kit_catalog()}
-"""
-
-APP = f"""\
-You build the interface of a personal workspace built from the user's email: a small \
-React app made from the Demux component kit that shows the workspace's records.
-
-{APP_CONTRACT}
-How to build it:
-- One <Page> titled with the workspace <name> and a one-line description of what it \
-tracks.
-- <layout> lists the layouts the user chose while the workspace was built: build each \
-one with the block it names and the fields it mentions, in that order, inside ViewTabs \
-(the first one opens first). One layout → no ViewTabs. No <layout> → choose from the \
-request: Board for stages or statuses, DataTable for lists to scan and sort, Timeline or \
-Calendar for dates, StatRow / Chart / Dashboard for totals and trends.
-- When the records have statuses, amounts or dates worth counting, start with a \
-StatRow of 2-4 numbers the user cares about (computed in JS: counts per status, totals, \
-"due this week").
-- Expecting more than about 10 records: add useFilters with search over the main text \
-fields and facets for 1-2 closed-set fields (status, category). Always render its bar: \
-as ViewTabs' toolbar, or just above the block when there is one layout.
-- Use the exact field and record type names from the guide. For a closed set of values \
-(statuses, stages), give Board its `columns` in the natural order of the workflow.
-- Compute derived values in JS with the helpers (aggregate, byMonth, countBy, sumBy, \
-daysUntil, sortBy); never expect them in the data. Money: format "money"; columns and \
-cards find the record's currency field themselves. For a total, take the currency from \
-the records (e.g. the first record's currency field), never a hard-coded code.
-- The data may be empty or partial now (emails are being read in parallel): rely on \
-the guide for record types and fields, never on the sample data. Blocks show their own \
-empty states.
-- Call write_app with the full script. If it returns problems, fix them all and call \
-write_app again. When it returns ok, call finish with one sentence describing the view.
+{studio_reference()}
 """
 
 EDIT = f"""\
 You change a personal workspace built from the user's email, at the user's request. \
 The workspace has: queries (Gmail searches defining its mail), a guide (rules used to \
-turn emails into records), data (the records) and an app (the interface, built with the \
-Demux component kit).
+turn emails into records), data (the records) and an app (the interface). A separate \
+interface designer owns the app: you never write interface code yourself.
 
 {SHARED_RULES}
-{APP_CONTRACT}
 How to work:
 - Make the smallest change that satisfies the request.
-- Colours come from the look the user chose when the workspace was built (<palette>); \
-you cannot change it. Never write colour values into the app. If asked for other \
-colours, change nothing for that part and say in one sentence that the look was set \
-when the workspace was built.
-- Appearance (layout, sorting, columns, a new chart or view) → write_app with the full \
-new app, built with the kit. If <current_app> is an old app (not a \
-<script type="text/jsx"> kit app), rewrite it as a kit app that keeps what it showed.
+- Anything about what the user sees (layout, views, sorting, columns, charts, colours, \
+fonts, wording, a display error) → change_interface with what to change, in the user's \
+words, plus anything you changed in the data that the interface should show (a new \
+field, a new record type). The designer rewrites the app and checks it.
 - New information wanted (a new field or record type) → update the guide with \
 write_guide (keep its template), then either fill it from mail yourself if it concerns \
 few records (search_mail, read_thread, save_records) or call request_backfill if it \
 concerns all records (every known email will be re-read with the new guide after you \
-finish), and update the app so it shows the new information.
+finish), then change_interface so the app shows the new information.
 - Wrong records → fix them (save_records / delete_records) and add a dated line under \
 "# Learned" in the guide so it does not happen again.
 - More or different mail → set_queries, and request_backfill if the existing records \
@@ -278,40 +283,87 @@ def data_block(data: dict[str, Any], max_chars: int) -> tuple[str, bool]:
     return json.dumps(compact, ensure_ascii=False, separators=(",", ":")), True
 
 
-def layout_block(layout: dict[str, Any] | None) -> str:
-    """The layouts the user chose during setup, the one that opens first on top."""
-    views = [v for v in (layout or {}).get("views", []) if isinstance(v, dict)]
-    if not views:
-        return ""
-    primary = (layout or {}).get("primary")
-    views.sort(key=lambda v: v.get("id") != primary)
-    lines = [
-        f"{i}. {v.get('title', '')} ({v.get('block', '')})"
-        + (f": {v['description']}" if v.get("description") else "")
-        for i, v in enumerate(views, 1)
-    ]
-    return "<layout>\n" + "\n".join(lines) + "\n</layout>\n\n"
+SAMPLE_RECORDS = 6
 
 
-def app_input(
+def data_sample(data: dict[str, Any], max_chars: int = 12_000) -> str:
+    """A few records per type for the interface designer: public fields plus the shape of
+    `_sources`, and how many records each type has."""
+    sample: dict[str, Any] = {}
+    counts = []
+    for t, recs in data.items():
+        if t.startswith("_") or not isinstance(recs, dict):
+            continue
+        counts.append(f"{t}: {len(recs)}")
+        sample[t] = {}
+        for rid, rec in list(recs.items())[:SAMPLE_RECORDS]:
+            item = {k: v for k, v in rec.items() if not k.startswith("_")}
+            sources = rec.get("_sources") or []
+            if sources:
+                item["_sources"] = sources[-1:]
+            sample[t][rid] = item
+    text = json.dumps(sample, ensure_ascii=False, separators=(",", ":"))
+    if len(text) > max_chars:
+        text = text[:max_chars] + " …(cut)"
+    head = "Records so far: " + (", ".join(counts) if counts else "none yet")
+    return f"{head}\n{text}"
+
+
+def _workspace_facts(
+    name: str, prompt: str, guide: str, data: dict[str, Any], config: dict[str, Any] | None
+) -> str:
+    return (
+        f"<name>{name}</name>\n\n<request>\n{prompt}\n</request>\n\n"
+        f"{clarifications_block(config)}<guide>\n{guide}\n</guide>\n\n"
+        f"<data_sample>\n{data_sample(data)}\n</data_sample>"
+    )
+
+
+def interface_input(
+    name: str,
     prompt: str,
     guide: str,
     data: dict[str, Any],
-    max_chars: int,
-    name: str = "",
-    layout: dict[str, Any] | None = None,
+    config: dict[str, Any] | None = None,
 ) -> str:
-    block, compacted = data_block(data, max_chars)
-    note = (
-        "\n(The data above was compacted: only ids and the first 4 fields. Use read_records "
-        "for full records.)"
-        if compacted
-        else ""
-    )
+    """What the interface designer gets to design a workspace's app from scratch."""
     return (
-        f"<name>{name}</name>\n\n<request>\n{prompt}\n</request>\n\n"
-        f"{layout_block(layout)}<guide>\n{guide}\n</guide>\n\n"
-        f"<data>\n{block}\n</data>{note}"
+        f"{_workspace_facts(name, prompt, guide, data, config)}\n\n"
+        "Design and write the workspace app."
+    )
+
+
+def interface_change_input(
+    name: str,
+    prompt: str,
+    guide: str,
+    data: dict[str, Any],
+    config: dict[str, Any] | None,
+    *,
+    current_app: str | None,
+    change: str,
+    user_message: str = "",
+) -> str:
+    """What the interface designer gets to change a workspace's existing app."""
+    from app.agent.shell import app_runtime
+
+    if not current_app:
+        app = "(none yet)"
+    elif app_runtime(current_app) == "v3":
+        app = current_app
+    else:
+        app = (
+            "(an older app built with a fixed component kit that is no longer available: "
+            "redesign it from scratch as your own app, keeping the information it showed)\n"
+            + current_app
+        )
+    said = f"<user_message>\n{user_message}\n</user_message>\n\n" if user_message else ""
+    return (
+        f"{_workspace_facts(name, prompt, guide, data, config)}\n\n"
+        f"<current_app>\n{app}\n</current_app>\n\n{said}"
+        f"<change>\n{change}\n</change>\n\n"
+        "Change the app as asked and return the whole new app. Keep everything the change "
+        "does not touch (structure, look, behaviour) as it is."
     )
 
 
@@ -333,7 +385,6 @@ def edit_input(
     app_html: str | None,
     recent_summaries: list[str],
     max_chars: int,
-    palette: str = "violet",
     config: dict[str, Any] | None = None,
 ) -> str:
     block, compacted = data_block(data, max_chars)
@@ -344,8 +395,7 @@ def edit_input(
         f"{clarifications_block(config)}"
         f"<queries>\n{json.dumps(queries, ensure_ascii=False)}\n</queries>\n\n"
         f"<guide>\n{guide}\n</guide>\n\n<data{note}>\n{block}\n</data>\n\n"
-        f"<current_app>\n{app_html or '(none)'}\n</current_app>\n\n"
-        f"<palette>{palette}</palette>\n\n"
+        f"<app>{'present (the interface designer has it)' if app_html else 'none yet'}</app>\n\n"
         f"<recent_runs>\n{history}\n</recent_runs>\n\n"
         f"<user_message>\n{message}\n</user_message>"
     )

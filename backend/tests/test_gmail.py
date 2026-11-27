@@ -104,3 +104,14 @@ async def test_rejected_query_is_a_mailbox_error():
     box = GmailMailbox(Tokens(), transport=httpx.MockTransport(bad_request))
     with pytest.raises(MailboxError):
         await box.search("from:(", max_results=5)
+
+
+async def test_search_ids_any_is_one_combined_search():
+    """A build ranks the union of its queries in one Gmail search (newest first)."""
+    seen: list = []
+    box = GmailMailbox(Tokens(), transport=httpx.MockTransport(handler(seen)))
+    ids = await box.search_ids_any(["from:shop", "", "subject:order"], max_results=80)
+    await box.aclose()
+    searches = [r for r in seen if r.url.path.endswith("/threads")]
+    assert ids == ["aaa111", "bbb222"]
+    assert [r.url.params["q"] for r in searches][-1] == "((from:shop) OR (subject:order))"

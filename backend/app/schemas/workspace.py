@@ -80,41 +80,21 @@ class SetupQuestion(BaseModel):
     recommended: int
 
 
-class LayoutOption(BaseModel):
-    id: str
-    block: str
-    title: str
-    description: str = ""
-    recommended: bool = False
-
-
 class SetupState(BaseModel):
-    """Where a build's setup with the user stands (frontend/theme.md §7.10)."""
+    """Where a build's clarifying questions stand (frontend/theme.md §7.10)."""
 
-    palette: PaletteId | None  # the look the user picked; None = not picked yet
     questions_state: Literal["deciding", "asking", "answered", "timed_out", "none"]
     questions: list[SetupQuestion]
     answered: bool  # the user sent answers (the build may not have read them yet)
-    layout_state: Literal["waiting", "choosing", "chosen", "timed_out", "auto", "none"]
-    layout_options: list[LayoutOption]
-    layout_primary: str | None
-    layout_chosen: bool  # the user sent a choice
 
 
 Answer = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=300)]
 
 
-class LayoutChoice(BaseModel):
-    views: list[str] = Field(min_length=1, max_length=5)
-    primary: str
-
-
 class SetupUpdate(BaseModel):
-    """One setup step's answer: the look, the answers to the questions, or the layouts."""
+    """The user's answers to the clarifying questions, by question id."""
 
-    palette: PaletteId | None = None
-    answers: dict[str, Answer] | None = None
-    layout: LayoutChoice | None = None
+    answers: dict[str, Answer] = Field(min_length=1, max_length=5)
 
 
 class ActiveRun(BaseModel):
@@ -148,7 +128,9 @@ class WorkspaceDetail(BaseModel):
 class AppDoc(BaseModel):
     html: str | None
     version: int
-    runtime: Literal["v1", "v2"]  # v2: a kit app (the shell for ?runtime=v2)
+    # v3: a studio app designed by the UI model; v2: a kit app; v1: plain HTML + JS.
+    # The shell for each is GET /app-shell?runtime=…
+    runtime: Literal["v1", "v2", "v3"]
 
 
 class PaletteInfo(BaseModel):

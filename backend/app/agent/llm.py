@@ -100,6 +100,19 @@ class LLMReply:
     model: str = ""  # the model that actually answered (may be the fallback)
     cached_input_tokens: int = 0  # part of input_tokens served from the provider's cache
     cost_usd: float | None = None  # set by MeteredLLM: exactly what was recorded
+    truncated: bool = False  # the answer stopped at the max_tokens limit
+
+
+@dataclass(frozen=True)
+class CallOptions:
+    """Per-call overrides of the LLM_* settings (the interface designer writes long
+    answers, slowly). `None` keeps the setting; `fallback_model=""` means no fallback."""
+
+    max_tokens: int | None = None
+    timeout_s: float | None = None
+    temperature: float | None = None
+    reasoning_effort: str | None = None
+    fallback_model: str | None = None
 
 
 class LLMError(Exception):
@@ -110,7 +123,11 @@ class LLMError(Exception):
 
 class ChatModel(Protocol):
     async def chat(
-        self, model: str, messages: list[dict[str, Any]], tools: list[dict[str, Any]]
+        self,
+        model: str,
+        messages: list[dict[str, Any]],
+        tools: list[dict[str, Any]],
+        options: CallOptions | None = None,
     ) -> LLMReply: ...
 
 
@@ -133,19 +150,32 @@ class OpenAICompatibleLLM:
         self._no_effort: set[str] = set()
 
     async def _once(
-        self, model: str, messages: list[dict[str, Any]], tools: list[dict[str, Any]]
+        self,
+        model: str,
+        messages: list[dict[str, Any]],
+        tools: list[dict[str, Any]],
+        opts: CallOptions,
     ) -> LLMReply:
         kwargs: dict[str, Any] = {
             "model": model,
             "messages": messages,
-            "temperature": settings.LLM_TEMPERATURE,
-            "max_tokens": settings.LLM_MAX_TOKENS,
+            "temperature": settings.LLM_TEMPERATURE
+            if opts.temperature is None
+            else opts.temperature,
+            "max_tokens": opts.max_tokens or settings.LLM_MAX_TOKENS,
         }
+        if opts.timeout_s:
+            kwargs["timeout"] = opts.timeout_s
         if tools:
             kwargs["tools"] = tools
             kwargs["tool_choice"] = "auto"
-        if settings.LLM_REASONING_EFFORT and model not in self._no_effort:
-            kwargs["reasoning_effort"] = settings.LLM_REASONING_EFFORT
+        effort = (
+            settings.LLM_REASONING_EFFORT
+            if opts.reasoning_effort is None
+            else opts.reasoning_effort
+        )
+        if effort and model not in self._no_effort:
+            kwargs["reasoning_effort"] = effort
         start = time.perf_counter()
         try:
             resp = await self._client.chat.completions.create(**kwargs)
@@ -159,7 +189,8 @@ class OpenAICompatibleLLM:
         latency = int((time.perf_counter() - start) * 1000)
         if not resp.choices:
             raise LLMError("The AI model returned an empty answer.", "empty_answer")
-        msg = resp.choices[0].message
+        choice = resp.choices[0]
+        msg = choice.message
         calls = [
             ToolCall(id=c.id, name=c.function.name, arguments=c.function.arguments or "{}")
             for c in (msg.tool_calls or [])
@@ -186,19 +217,28 @@ class OpenAICompatibleLLM:
             raw_message=raw,
             model=model,
             cached_input_tokens=(getattr(details, "cached_tokens", None) or 0) if details else 0,
+            truncated=choice.finish_reason == "length",
         )
 
     async def chat(
-        self, model: str, messages: list[dict[str, Any]], tools: list[dict[str, Any]]
+        self,
+        model: str,
+        messages: list[dict[str, Any]],
+        tools: list[dict[str, Any]],
+        options: CallOptions | None = None,
     ) -> LLMReply:
+        opts = options or CallOptions()
+        fallback = (
+            settings.LLM_FALLBACK_MODEL if opts.fallback_model is None else opts.fallback_model
+        )
         plan = [(model, 3)]
-        if settings.LLM_FALLBACK_MODEL and settings.LLM_FALLBACK_MODEL != model:
-            plan.append((settings.LLM_FALLBACK_MODEL, 2))
+        if fallback and fallback != model:
+            plan.append((fallback, 2))
         last = "unknown error"
         for candidate, attempts in plan:
             for attempt in range(attempts):
                 try:
-                    return await self._once(candidate, messages, tools)
+                    return await self._once(candidate, messages, tools, opts)
                 except (APITimeoutError, APIConnectionError) as e:
                     last = "timeout" if isinstance(e, APITimeoutError) else "connection"
                 except APIStatusError as e:
@@ -309,12 +349,20 @@ class MeteredLLM:
         self.inner = inner
 
     async def chat(
-        self, model: str, messages: list[dict[str, Any]], tools: list[dict[str, Any]]
+        self,
+        model: str,
+        messages: list[dict[str, Any]],
+        tools: list[dict[str, Any]],
+        options: CallOptions | None = None,
     ) -> LLMReply:
         scope = current_scope()
         start = time.perf_counter()
         try:
-            reply = await self.inner.chat(model, messages, tools)
+            reply = (
+                await self.inner.chat(model, messages, tools, options)
+                if options is not None
+                else await self.inner.chat(model, messages, tools)
+            )
         except LLMError as e:
             price = price_for(model)
             await _record(

@@ -4,7 +4,7 @@ import pytest
 
 from app.agent.context import BudgetExceeded, MemoryPersister, RunContext, WorkspaceState
 from app.agent.loop import KEEP_THREADS, PhaseFailed, run_agent
-from app.agent.tools import tools_for
+from app.agent.tools import DESIGN_MAX_READS, tools_for
 from app.mail.fake import FakeMailbox
 from tests.helpers import SMALL_MAILBOX, ScriptedLLM, dt, tool_results
 
@@ -91,6 +91,24 @@ async def test_three_consecutive_errors_fail_the_phase():
     llm = ScriptedLLM([[("read_thread", {"thread_id": "nope"})]] * 3)
     with pytest.raises(PhaseFailed, match="3 times"):
         await run(ctx, llm)
+
+
+async def test_errors_within_one_reply_count_once():
+    # Parallel reads past the design read budget: the model must see the error and move on.
+    ctx, box, _ = make_ctx(phase="design")
+    hits = await box.search("A-1001")
+    tid = hits[0].thread_id
+    reads = [("read_thread", {"thread_id": tid})] * (DESIGN_MAX_READS + 3)
+    done = [
+        ("write_guide", {"text": "Track orders."}),
+        ("set_queries", {"queries": ["order"]}),
+        ("finish", {"summary": "ok"}),
+    ]
+    llm = ScriptedLLM([[("search_mail", {"query": "A-1001"})], reads, done])
+    result = await run(ctx, llm, phase="design")
+    assert result.finished and result.summary == "ok"
+    errors = [r for r in tool_results(llm.calls[2]) if "error" in r]
+    assert len(errors) == 3 and "read budget" in errors[0]["error"]
 
 
 async def test_invalid_json_arguments_are_an_error():

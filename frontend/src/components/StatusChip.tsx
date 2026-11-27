@@ -16,6 +16,24 @@ export function activityLabel({ status, activeKind }: Props): string | null {
   return null;
 }
 
+/** The 7px dot of a workspace row: live green when ready, pulsing violet while
+ * building, danger when failed (theme.md §7.13). */
+export function WorkspaceDot({ status }: { status: WorkspaceStatus }) {
+  const label = activityLabel({ status });
+  return (
+    <span
+      aria-hidden
+      className={`size-[7px] shrink-0 rounded-full ${
+        label === "Failed"
+          ? "bg-danger"
+          : label
+            ? "animate-dmx-pulse bg-violet"
+            : "bg-live"
+      }`}
+    />
+  );
+}
+
 export function StatusChip(props: Props) {
   const label = activityLabel(props);
   if (!label) return null;
