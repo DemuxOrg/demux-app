@@ -164,7 +164,7 @@ export interface paths {
         put?: never;
         /**
          * Update Setup
-         * @description The user's answers to the clarifying questions while the workspace is built.
+         * @description One question moment's answer while the workspace is built (theme.md §7.15).
          */
         post: operations["update_setup_api_v1_workspaces__workspace_id__setup_post"];
         delete?: never;
@@ -337,6 +337,9 @@ export interface paths {
          * App Shell
          * @description The fixed <head> content (CSP, fonts, bridge, and the runtime's libraries) every
          *     app iframe of that runtime is wrapped in, and the palettes v1 and v2 apps use.
+         *
+         *     Cached by the browser and revalidated with its ETag on every use (`no-cache`): a
+         *     repeat visit gets a 304 instead of the ~600 KB (gzipped) body.
          */
         get: operations["app_shell_api_v1_app_shell_get"];
         put?: never;
@@ -859,6 +862,11 @@ export interface components {
              * @enum {string}
              */
             runtime: "v1" | "v2" | "v3";
+            /**
+             * Provisional
+             * @default false
+             */
+            provisional: boolean;
         };
         /** AppShell */
         AppShell: {
@@ -1199,16 +1207,35 @@ export interface components {
             questions: components["schemas"]["SetupQuestion"][];
             /** Answered */
             answered: boolean;
+            /**
+             * Answered Ids
+             * @default []
+             */
+            answered_ids: string[];
+            /**
+             * Look State
+             * @default none
+             * @enum {string}
+             */
+            look_state: "asking" | "answered" | "timed_out" | "from_prompt" | "none";
+            /**
+             * Look From Prompt
+             * @default false
+             */
+            look_from_prompt: boolean;
         };
         /**
          * SetupUpdate
-         * @description The user's answers to the clarifying questions, by question id.
+         * @description One question moment's answer (§7.15): clarifying answers by question id (merged
+         *     into those already given), and/or how the workspace should look.
          */
         SetupUpdate: {
             /** Answers */
-            answers: {
+            answers?: {
                 [key: string]: string;
-            };
+            } | null;
+            /** Look */
+            look?: string | null;
         };
         /** StripeSync */
         StripeSync: {

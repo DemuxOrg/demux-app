@@ -16,8 +16,9 @@ from app.agent.context import RunContext
 from app.agent.default_app import DEFAULT_APP
 from app.agent.designer import Designer, designer_from_settings
 from app.agent.llm import ChatModel, LLMError
+from app.agent.look import LOOK_DECIDE
 from app.agent.loop import PhaseFailed, run_agent
-from app.agent.tools import tools_for
+from app.agent.tools import tools_for, wait_until
 from app.mail.base import MailboxError, ReconnectRequired, Thread
 from app.mail.clean import clean_message
 
@@ -332,11 +333,33 @@ async def build(ctx: RunContext, cfg: FlowConfig) -> str:
     return f"{counts} {summary}"[:300]
 
 
+async def collect_look(ctx: RunContext) -> None:
+    """The look the user chose in the build's look moment (theme.md §7.15), for the
+    interface designer. Waits only while it is still asked and the user is active (the
+    emails are read meanwhile); a user who never answers leaves the look to the
+    designer. "Let Demux decide" is no constraint."""
+    setup = await ctx.persister.get_setup()
+    if setup.get("look_state") == "asking":
+        setup = await wait_until(
+            ctx,
+            done=lambda s: s.get("look_state") != "asking",
+            activity=lambda s: list((s.get("answered_at") or {}).values()),
+        )
+        if setup.get("look_state") == "asking":
+            await ctx.persister.set_setup("look_state", "timed_out")
+    look = str(setup.get("look") or "").strip()
+    if setup.get("look_state") == "answered" and look and look != LOOK_DECIDE:
+        ctx.state.config["look"] = look[:300]
+        await ctx.persister.save_config(ctx.state)
+
+
 async def build_app(ctx: RunContext, cfg: FlowConfig, problems: list[str] | None = None) -> None:
     """The interface designer designs the app (or, with `problems`, fixes the current one
     against the real data). If it cannot, the build still ends with the default app."""
     child = ctx.child("app")
     assert cfg.designer is not None
+    if not problems:
+        await collect_look(ctx)
     try:
         left = await cfg.designer.design(child, problems)
     except LLMError as e:

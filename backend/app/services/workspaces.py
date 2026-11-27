@@ -13,6 +13,7 @@ import uuid
 from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.agent.look import build_look_input
 from app.auth.google import gmail_connected
 from app.core.errors import AppError, ConflictError, NotFoundError
 from app.models.run import ProcessedMessage, RunKind
@@ -84,7 +85,7 @@ async def create_workspace(
     session.add(workspace)
     await session.flush()
     if enqueue_build:
-        await runs.enqueue(session, workspace.id, RunKind.BUILD)
+        await runs.enqueue(session, workspace.id, RunKind.BUILD, build_look_input(prompt))
     await session.refresh(workspace)
     return workspace
 
@@ -126,7 +127,7 @@ async def rebuild_workspace(
     user = await session.get(User, user_id)
     if user is not None:
         require_gmail(user, "first")
-    await runs.enqueue(session, workspace.id, RunKind.BUILD)
+    await runs.enqueue(session, workspace.id, RunKind.BUILD, build_look_input(workspace.prompt))
     workspace.status = WorkspaceStatus.BUILDING
     workspace.last_error = None
     workspace.data = {}

@@ -97,11 +97,14 @@ found loans from three branches and two e-book apps. Should e-book loans count?"
 "Do you want to follow each loan until it is returned, or only see what is due soon?". \
 Give 2-4 short options that really differ, and mark the one you would pick (the user \
 can also type their own answer). Never ask a generic question that would fit any \
-request, never ask about colours, themes or visual style, and never ask what the \
-emails already answer. ask_user waits for the user and returns the answers (your \
-recommended options when they do not answer): follow them, write them into the guide \
-(Purpose, fields, What to ignore), and fill any gap you did not ask about with the most \
-likely reading.
+request, never ask about colours, themes or visual style (the look is asked \
+separately), and never ask what the emails already answer. Order the questions most \
+important first. ask_user returns at once: the user answers one question at a time \
+while you keep exploring (search_mail, read_thread) if that helps. Do not work on \
+anything an answer could change. Before write_guide, call get_answers: it waits for \
+the answers and returns them (your recommended option for any the user left \
+unanswered). Follow them, write them into the guide (Purpose, fields, What to ignore), \
+and fill any gap you did not ask about with the most likely reading.
 - Then read_thread on 5-10 varied threads, both obvious and borderline ones. \
 You have a budget of {DESIGN_MAX_SEARCHES} searches and {DESIGN_MAX_READS} thread reads; \
 a sample is enough.
@@ -167,8 +170,9 @@ user sees first, how they move around, what they can do, and how it all looks.
 
 What you get: the workspace <name>, the user's <request> in their own words, their \
 <clarifications> (answers to questions asked while it was built: they decide what \
-counts, how things are split and what matters first), the <guide> (the record types \
-and fields every record follows) and a <data_sample>. A separate system reads the \
+counts, how things are split and what matters first), their <look> when they chose \
+one, the <guide> (the record types and fields every record follows) and a \
+<data_sample>. A separate system reads the \
 emails and keeps the records up to date; your app only shows them.
 
 The experience:
@@ -186,6 +190,9 @@ an "Open email" action (openEmail(record)), and hover, focus and selected states
 in as emails are read), one record, many records, missing fields.
 
 The look:
+- The user's wishes come first: follow the <look> when there is one, and anything the \
+<request> says about colours, light or dark, or style. "Let Demux decide" (or no \
+<look>) means you choose. Within their wishes, keep the quality bar below.
 - High-end and specific to this workspace, never a generic white admin dashboard. Pick \
 a clear visual direction that suits the subject and the person (editorial and calm for \
 reading, precise and crisp for money, warm for travel, bold for a sales pipeline…), \
@@ -314,7 +321,7 @@ def _workspace_facts(
 ) -> str:
     return (
         f"<name>{name}</name>\n\n<request>\n{prompt}\n</request>\n\n"
-        f"{clarifications_block(config)}<guide>\n{guide}\n</guide>\n\n"
+        f"{clarifications_block(config)}{look_block(config)}<guide>\n{guide}\n</guide>\n\n"
         f"<data_sample>\n{data_sample(data)}\n</data_sample>"
     )
 
@@ -365,6 +372,12 @@ def interface_change_input(
         "Change the app as asked and return the whole new app. Keep everything the change "
         "does not touch (structure, look, behaviour) as it is."
     )
+
+
+def look_block(config: dict[str, Any] | None) -> str:
+    """How the user wants the workspace to look (the build's look moment), if they said."""
+    look = str((config or {}).get("look") or "").strip()
+    return f"<look>\n{look}\n</look>\n\n" if look else ""
 
 
 def clarifications_block(config: dict[str, Any] | None) -> str:

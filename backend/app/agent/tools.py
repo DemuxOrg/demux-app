@@ -11,7 +11,7 @@ import re
 import time
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any
 
 from app.agent.context import RunContext
@@ -248,6 +248,8 @@ def _above_learned(text: str) -> str:
 
 
 async def _write_guide(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
+    if ctx.asked_user and not ctx.answers_collected:
+        raise ToolError("call get_answers first: the guide must follow the user's answers")
     text = str(args.get("text", "")).strip()
     if not text:
         raise ToolError("text is required")
@@ -360,13 +362,28 @@ async def _change_interface(ctx: RunContext, args: dict[str, Any]) -> ToolOutput
     return ToolOutput({"ok": True}, None)
 
 
-async def wait_setup(ctx: RunContext, key: str) -> Any:
-    """The user's answer under `key` (written by the setup API), or None after the wait."""
-    deadline = time.monotonic() + max(0.0, ctx.setup_wait)
+async def wait_until(
+    ctx: RunContext,
+    done: Callable[[dict[str, Any]], bool],
+    activity: Callable[[dict[str, Any]], list[str]] = lambda _s: [],
+) -> dict[str, Any]:
+    """Wait for the user (the setup API writes into the run's input) until `done(setup)`,
+    or until they have been idle for `ctx.setup_wait` seconds: the deadline restarts at
+    each time `activity(setup)` returns (ISO timestamps of the question and of each
+    answer), so a user who is answering is never cut off. Returns the last setup seen."""
+    started = datetime.now(UTC)
     while True:
-        value = (await ctx.persister.get_setup()).get(key)
-        if value or time.monotonic() >= deadline:
-            return value
+        setup = await ctx.persister.get_setup()
+        if done(setup):
+            return setup
+        last = started
+        for stamp in activity(setup):
+            try:
+                last = max(last, datetime.fromisoformat(stamp))
+            except (TypeError, ValueError):
+                continue
+        if (datetime.now(UTC) - last).total_seconds() >= max(0.0, ctx.setup_wait):
+            return setup
         await asyncio.sleep(SETUP_POLL_SECONDS)
 
 
@@ -404,16 +421,39 @@ async def _ask_user(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
         )
     ctx.asked_user = True
     await ctx.persister.set_setup("questions", items)
+    await ctx.persister.set_setup("questions_at", datetime.now(UTC).isoformat())
     await ctx.persister.set_setup("questions_state", "asking")
     await ctx.persister.add_event(
         {"t": time.time(), "phase": "design", "tool": "ask_user",
          "label": f"Asked you {_plural(len(items), 'question')}"}
     )  # fmt: skip
-    answers = await wait_setup(ctx, "answers")
-    answered = isinstance(answers, dict) and bool(answers)
+    return ToolOutput(
+        {
+            "ok": True,
+            "note": "Questions sent; the user answers them one at a time. Keep exploring "
+            "the mailbox if it helps, then call get_answers before write_guide.",
+        },
+        None,
+    )
+
+
+async def _get_answers(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
+    if not ctx.asked_user:
+        raise ToolError("you asked nothing: write the guide from the request")
+    if ctx.answers_collected:
+        raise ToolError("you already have the answers")
+    setup = await ctx.persister.get_setup()
+    items = setup.get("questions") or []
+    ids = {it["id"] for it in items}
+    setup = await wait_until(
+        ctx,
+        done=lambda s: ids <= set(s.get("answers") or {}),
+        activity=lambda s: [s.get("questions_at"), *(s.get("answered_at") or {}).values()],
+    )
+    answers = setup.get("answers") or {}
     pairs = []
     for it in items:
-        given = _clip(answers.get(it["id"]), 300) if answered else ""
+        given = _clip(answers.get(it["id"]), 300)
         pairs.append(
             {
                 "question": it["question"],
@@ -421,7 +461,9 @@ async def _ask_user(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
                 "from": "user" if given else "recommended (no answer)",
             }
         )
-    await ctx.persister.set_setup("questions_state", "answered" if answered else "timed_out")
+    complete = ids <= set(answers)
+    await ctx.persister.set_setup("questions_state", "answered" if complete else "timed_out")
+    ctx.answers_collected = True
     ctx.state.config["clarifications"] = [
         {"question": p["question"], "answer": p["answer"]} for p in pairs
     ]
@@ -432,7 +474,7 @@ async def _ask_user(ctx: RunContext, args: dict[str, Any]) -> ToolOutput:
             "note": "Follow these answers and write them into the guide (Purpose, fields or "
             "What to ignore).",
         },
-        "Got your answers" if answered else "Used the recommended answers",
+        "Got your answers" if complete else "Used the recommended answers",
     )
 
 
@@ -602,8 +644,8 @@ TOOLS: dict[str, Tool] = {
             "ask_user",
             "Ask the user multiple-choice questions that fill the gaps in their request, "
             "once: one question per open point that changes the workspace (none for a "
-            "precise request, up to 5 for a vague one). Waits for the answers (or uses your "
-            "recommended options) and returns them.",
+            "precise request, up to 5 for a vague one), most important first. Returns at "
+            "once; the user answers one at a time. Call get_answers before write_guide.",
             {
                 "type": "object",
                 "properties": {
@@ -647,6 +689,14 @@ TOOLS: dict[str, Tool] = {
             _request_backfill,
         ),
         Tool(
+            "get_answers",
+            "After ask_user: wait for the user's answers (they answer one at a time; a user "
+            "who stops answering gets your recommended options) and return them. Call it "
+            "before write_guide.",
+            {"type": "object", "properties": {}},
+            _get_answers,
+        ),
+        Tool(
             "finish",
             "End this phase with a short, plain-language summary for the user (≤300 chars).",
             {
@@ -664,6 +714,7 @@ PHASE_TOOLS: dict[str, list[str]] = {
         "set_name",
         "search_mail",
         "ask_user",
+        "get_answers",
         "read_thread",
         "write_guide",
         "set_queries",

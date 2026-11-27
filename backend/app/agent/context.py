@@ -102,6 +102,7 @@ class RunContext:
     # for their answers (0 = do not wait, use the recommended ones: CLI and eval).
     setup_wait: float = 0.0
     asked_user: bool = False
+    answers_collected: bool = False  # get_answers ran (write_guide needs it once asked)
     # The interface designer (designer.Designer) and, in an edit, the user's message: the
     # edit agent's change_interface tool hands interface work to the designer.
     designer: Any = None
